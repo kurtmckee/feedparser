@@ -158,6 +158,9 @@ class FeedParserDict(UserDict):
         except:
             raise AttributeError, "object has no attribute '%s'" % key
 
+    def __contains(self, key):
+        return self.has_key(key)
+
 class _FeedParserMixin:
     namespaces = {"": "",
                   "http://backend.userland.com/rss": "",
@@ -726,20 +729,20 @@ class _FeedParserMixin:
         context.setdefault('contributors', [FeedParserDict()])
         context['contributors'][-1][key] = value
 
-    def _sync_author_detail(self):
+    def _sync_author_detail(self, key='author'):
         context = self._getContext()
-        detail = context.get('author_detail')
+        detail = context.get('%s_detail' % key)
         if detail:
             name = detail.get('name')
             email = detail.get('email')
             if name and email:
-                context['author'] = "%s (%s)" % (name, email)
+                context[key] = "%s (%s)" % (name, email)
             elif name:
-                context['author'] = name
+                context[key] = name
             elif email:
-                context['author'] = email
+                context[key] = email
         else:
-            author = context.get('author')
+            author = context.get(key)
             if not author: return
             emailmatch = re.search(r"""(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))""", author)
             if not emailmatch: return
@@ -753,9 +756,9 @@ class _FeedParserMixin:
             if author and (author[-1] == ')'):
                 author = author[:-1]
             author = author.strip()
-            context.setdefault('author_detail', FeedParserDict())
-            context['author_detail']['name'] = author
-            context['author_detail']['email'] = email
+            context.setdefault('%s_detail' % key, FeedParserDict())
+            context['%s_detail' % key]['name'] = author
+            context['%s_detail' % key]['email'] = email
             
     def _start_tagline(self, attrsD):
         self.incontent += 1
@@ -821,6 +824,7 @@ class _FeedParserMixin:
 
     def _end_dc_publisher(self):
         self.pop('publisher')
+        self._sync_author_detail('publisher')
     _end_webmaster = _end_dc_publisher
         
     def _start_dcterms_issued(self, attrsD):
@@ -2262,4 +2266,5 @@ if __name__ == '__main__':
 #  a 304; add handlers parameter to pass arbitrary urllib2 handlers (like
 #  digest auth or proxy support); add code to parse username/password
 #  out of url and send as basic authentication; expose downloading-related
-#  exceptions in bozo_exception (aaronsw)
+#  exceptions in bozo_exception (aaronsw); added __contains__ method to
+#  FeedParserDict (aaronsw); added publisher_detail (aaronsw)
