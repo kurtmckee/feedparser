@@ -2030,7 +2030,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
     if not use_strict_parser:
-        feedparser = _LooseFeedParser(baseuri, result['encoding'])
+        feedparser = _LooseFeedParser(baseuri, known_encoding and 'utf-8' or '')
         feedparser.feed(data)
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
@@ -2234,4 +2234,5 @@ if __name__ == '__main__':
 #  logic for determining character encoding and attempting XML parsing
 #  (should be similar enough for all vaguely useful cases, and is certainly
 #  much faster); increased default timeout to 20 seconds; test for presence
-#  of Location header on redirects
+#  of Location header on redirects; added tests for many alternate character
+#  encodings
