@@ -1467,7 +1467,7 @@ def _sanitizeHTML(htmlSource, encoding):
     p.feed(htmlSource)
     data = p.output()
     if _mxtidy and TIDY_MARKUP:
-        nerrors, nwarnings, data, errordata = _mxtidy.tidy(data, output_xhtml=1, numeric_entities=1, wrap=0)
+        nerrors, nwarnings, data, errordata = _mxtidy.tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding='utf8')
         if data.count('<body'):
             data = data.split('<body', 1)[1]
             if data.count('>'):
@@ -2571,4 +2571,5 @@ if __name__ == '__main__':
 #  redirecting to a URL that returns 304, redirecting to a URL that
 #  redirects to another URL with a different type of redirect); add
 #  support for HTTP 303 redirects
-#3.4 - MAP - support for relative URIs in xml:base attribute
+#3.4 - MAP - support for relative URIs in xml:base attribute; fixed
+#  encoding issue with mxTidy (phopkins)
