@@ -7,3 +7,5 @@ AddHandler server-parsed .html
 #XBitHack full
 
 AddType application/xml .xml
+AddType text/plain .py
+
