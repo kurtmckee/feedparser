@@ -1883,6 +1883,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         charset = charset.strip()
         return content_type, charset
 
+    sniffed_xml_encoding = ''
     xml_encoding = ''
     true_encoding = ''
     http_content_type, http_encoding = _parseHTTPContentType(http_headers.get("content-type"))
@@ -1896,39 +1897,39 @@ def _getCharacterEncoding(http_headers, xml_data):
             xml_data = _ebcdic_to_ascii(xml_data)
         elif xml_data[:4] == '\x00\x3c\x00\x3f':
             # UTF-16BE
-            xml_encoding = 'utf-16be'
+            sniffed_xml_encoding = 'utf-16be'
             xml_data = unicode(xml_data, 'utf-16be').encode('utf-8')
         elif (len(xml_data) >= 4) and (xml_data[:2] == '\xfe\xff') and (xml_data[2:4] != '\x00\x00'):
             # UTF-16BE with BOM
-            xml_encoding = 'utf-16be'
+            sniffed_xml_encoding = 'utf-16be'
             xml_data = unicode(xml_data[2:], 'utf-16be').encode('utf-8')
         elif xml_data[:4] == '\x3c\x00\x3f\x00':
             # UTF-16LE
-            xml_encoding = 'utf-16le'
+            sniffed_xml_encoding = 'utf-16le'
             xml_data = unicode(xml_data, 'utf-16le').encode('utf-8')
         elif (len(xml_data) >= 4) and (xml_data[:2] == '\xff\xfe') and (xml_data[2:4] != '\x00\x00'):
             # UTF-16LE with BOM
-            xml_encoding = 'utf-16le'
+            sniffed_xml_encoding = 'utf-16le'
             xml_data = unicode(xml_data[2:], 'utf-16le').encode('utf-8')
         elif xml_data[:4] == '\x00\x00\x00\x3c':
             # UTF-32BE
-            xml_encoding = 'utf-32be'
+            sniffed_xml_encoding = 'utf-32be'
             xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
         elif xml_data[:4] == '\x3c\x00\x00\x00':
             # UTF-32LE
-            xml_encoding = 'utf-32le'
+            sniffed_xml_encoding = 'utf-32le'
             xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
         elif xml_data[:4] == '\x00\x00\xfe\xff':
             # UTF-32BE with BOM
-            xml_encoding = 'utf-32be'
+            sniffed_xml_encoding = 'utf-32be'
             xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
         elif xml_data[:4] == '\xff\xfe\x00\x00':
             # UTF-32LE with BOM
-            xml_encoding = 'utf-32le'
+            sniffed_xml_encoding = 'utf-32le'
             xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
         elif xml_data[:3] == '\xef\xbb\xbf':
             # UTF-8 with BOM
-            xml_encoding = 'utf-8'
+            sniffed_xml_encoding = 'utf-8'
             xml_data = unicode(xml_data[3:], 'utf-8').encode('utf-8')
         else:
             # ASCII-compatible
@@ -1937,9 +1938,9 @@ def _getCharacterEncoding(http_headers, xml_data):
     except:
         xml_encoding_match = None
     if xml_encoding_match:
-        declared_encoding = xml_encoding_match.groups()[0].lower()
-        if declared_encoding not in ('iso-10646-ucs-2', 'ucs-2', 'csunicode', 'iso-10646-ucs-4', 'ucs-4', 'csucs4', 'utf-16', 'utf-32', 'utf_16', 'utf_32', 'utf16', 'u16'):
-            xml_encoding = declared_encoding
+        xml_encoding = xml_encoding_match.groups()[0].lower()
+        if sniffed_xml_encoding and (xml_encoding in ('iso-10646-ucs-2', 'ucs-2', 'csunicode', 'iso-10646-ucs-4', 'ucs-4', 'csucs4', 'utf-16', 'utf-32', 'utf_16', 'utf_32', 'utf16', 'u16')):
+            xml_encoding = sniffed_xml_encoding
     if (http_content_type == 'application/xml') or \
        (http_content_type == 'application/xml-dtd') or \
        (http_content_type == 'application/xml-external-parsed-entity') or \
@@ -1961,7 +1962,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         true_encoding = xml_encoding or 'utf-8' #'iso-8859-1'
     else:
         true_encoding = xml_encoding or 'utf-8'
-    return true_encoding, http_encoding, xml_encoding
+    return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding
     
 def _toUTF8(data, encoding):
     """Changes an XML data stream on the fly to specify a new encoding
@@ -2094,7 +2095,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # - xml_encoding is the encoding declared in the <?xml declaration
     # - http_encoding is the encoding declared in the Content-Type HTTP header
     # - result['encoding'] is the actual encoding, as specified by RFC 3023
-    result['encoding'], http_encoding, xml_encoding = \
+    result['encoding'], http_encoding, xml_encoding, sniffed_xml_encoding = \
         _getCharacterEncoding(result.get("headers", {}), data)
     result['version'], data = _stripDoctype(data)
     baseuri = result.get('headers', {}).get('content-location', result.get('url'))
@@ -2114,7 +2115,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     use_strict_parser = 0
     known_encoding = 0
     tried_encodings = []
-    for proposed_encoding in (result['encoding'], xml_encoding, 'utf-8', 'windows-1252'):
+    for proposed_encoding in (result['encoding'], xml_encoding, sniffed_xml_encoding, 'utf-8', 'windows-1252'):
         if proposed_encoding in tried_encodings: continue
         if not proposed_encoding: continue
         try:
