@@ -346,14 +346,20 @@ class _FeedParserMixin:
 
     def handle_charref(self, ref):
         # called for each character reference, e.g. for "&#160;", ref will be "160"
-        # Reconstruct the original character reference.
         if not self.elementstack: return
-        text = "&#%s;" % ref
+        ref = ref.lower()
+        if ref in ('34', '38', '39', '60', '62', 'x22', 'x26', 'x27', 'x3c', 'x3e'):
+            text = "&#%s;" % ref
+        else:
+            if ref[0] == 'x':
+                c = int(ref[1:], 16)
+            else:
+                c = int(ref)
+            text = unichr(c).encode('utf-8')
         self.elementstack[-1][2].append(text)
 
     def handle_entityref(self, ref):
         # called for each entity reference, e.g. for "&copy;", ref will be "copy"
-        # Reconstruct the original entity reference.
         if not self.elementstack: return
         if _debug: sys.stderr.write("entering handle_entityref with %s\n" % ref)
         if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
@@ -2205,4 +2211,6 @@ if __name__ == '__main__':
 #  recover from malformed content-type header parameter with no equals sign
 #  ("text/xml; charset:iso-8859-1")
 #3.0.2 - 6/23/2004 - MAP - added and passed tests for converting HTML entities
-#  to Unicode equivalents
+#  to Unicode equivalents in illformed feeds (aaronsw); added and
+#  passed tests for converting character entities to Unicode equivalents
+#  in illformed feeds (aaronsw)
