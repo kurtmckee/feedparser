@@ -19,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
-_debug = 1
+_debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -1870,16 +1870,15 @@ def _getCharacterEncoding(http_headers, xml_data):
         charset = charset.strip()
         return content_type, charset
 
-    xml_encoding = None
-    true_encoding = None
+    xml_encoding = ''
+    true_encoding = ''
     http_content_type, http_encoding = _parseHTTPContentType(http_headers.get("content-type"))
     # Must sniff for non-ASCII-compatible character encodings before
     # searching for XML declaration.  This heuristic is defined in
     # section F of the XML specification:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
-    if 1:#try:
+    try:
         if xml_data[:4] == '\x4c\x6f\xa7\x94':
-            print 'ebcdic'
             # EBCDIC
             xml_data = ebcdic_to_ascii(xml_data)
         elif xml_data[:4] == '\x00\x3c\x00\x3f':
@@ -1896,13 +1895,12 @@ def _getCharacterEncoding(http_headers, xml_data):
             xml_encoding = 'utf-16le'
         else:
             # ASCII-compatible
-            print 'ascii-compatible'
             pass
         xml_encoding_match = re.compile('<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(xml_data)
-#    except:
-#        xml_encoding_match = None
-    if not xml_encoding:
-        xml_encoding = xml_encoding_match and xml_encoding_match.groups()[0].lower() or ''
+    except:
+        xml_encoding_match = None
+    if xml_encoding_match and (not xml_encoding):
+        xml_encoding = xml_encoding_match.groups()[0].lower()
     if (http_content_type == 'application/xml') or \
        (http_content_type == 'application/xml-dtd') or \
        (http_content_type == 'application/xml-external-parsed-entity') or \
@@ -1973,7 +1971,6 @@ def _toUTF8(data, encoding):
 #        encoding = 'utf-32le'
 #        data = data[4:]
     newdata = unicode(data, encoding)
-    print newdata.encode('utf-8')
     if _debug: sys.stderr.write('successfully converted %s data to unicode\n' % encoding)
     declmatch = re.compile('^<\?xml[^>]*?>')
     newdecl = """<?xml version='1.0' encoding='utf-8'?>"""
@@ -1981,7 +1978,6 @@ def _toUTF8(data, encoding):
         newdata = declmatch.sub(newdecl, newdata)
     else:
         newdata = newdecl + u'\n' + newdata
-    print newdata.encode("utf-8")
     return newdata.encode("utf-8")
 
 def _stripDoctype(data):
