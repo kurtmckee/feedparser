@@ -11,7 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: libxml2 <http://xmlsoft.org/python.html>
 """
 
-__version__ = "3.0.2-cvs"
+__version__ = "3.1-cvs"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
@@ -1501,10 +1501,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         opener = apply(urllib2.build_opener, tuple([_FeedURLHandler()] + handlers))
         opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
         try:
-            try:
-                return opener.open(request)
-            except:
-                return _StringIO('')
+            return opener.open(request)
         finally:
             opener.close() # JohnD
     
@@ -1968,19 +1965,27 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['entries'] = []
     if type(handlers) == types.InstanceType:
         handlers = [handlers]
-    f = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers)
-    data = f.read()
+    try:
+        f = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers)
+        data = f.read()
+    except Exception, e:
+        result['bozo'] = 1
+        result['bozo_exception'] = e
+        data = ''
+        f = None
 
     # if feed is gzip-compressed, decompress it
-    if hasattr(f, "headers"):
-        if gzip and f.headers.get('content-encoding', '') == 'gzip':
+    if f and data and gzip and hasattr(f, "headers"):
+        if f.headers.get('content-encoding', '') == 'gzip':
             try:
                 data = gzip.GzipFile(fileobj=_StringIO(data)).read()
-            except:
+            except Exception, e:
                 # Some feeds claim to be gzipped but they're not, so
                 # we get garbage.  Ideally, we should re-request the
                 # feed without the "Accept-encoding: gzip" header,
                 # but we don't.
+                result['bozo'] = 1
+                result['bozo_exception'] = e
                 data = ''
 
     # save HTTP headers
@@ -1997,7 +2002,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result["status"] = f.status
     if hasattr(f, "headers"):
         result["headers"] = f.headers.dict
-    f.close()
+    if hasattr(f, "close"):
+        f.close()
 
     # there are three encodings to keep track of:
     # - xml_encoding is the encoding declared in the <?xml declaration
@@ -2013,6 +2019,10 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['version'] = ''
         result['debug_message'] = "The feed has not changed since you last checked, " + \
             "so the server sent no data.  This is a feature, not a bug!"
+        return result
+
+    # if there was a problem downloading, we're done
+    if not data:
         return result
 
     all_parse_params = []
@@ -2224,11 +2234,12 @@ if __name__ == '__main__':
 #3.0.1 - 6/22/2004 - MAP - default to us-ascii for all text/* content types;
 #  recover from malformed content-type header parameter with no equals sign
 #  ("text/xml; charset:iso-8859-1")
-#3.0.2 - 6/23/2004 - MAP - added and passed tests for converting HTML entities
+#3.1 - 6/24/2004 - MAP - added and passed tests for converting HTML entities
 #  to Unicode equivalents in illformed feeds (aaronsw); added and
 #  passed tests for converting character entities to Unicode equivalents
 #  in illformed feeds (aaronsw); test for valid parsers when setting
 #  XML_AVAILABLE; make version and encoding available when server returns
 #  a 304; add handlers parameter to pass arbitrary urllib2 handlers (like
 #  digest auth or proxy support); add code to parse username/password
-#  out of url and send as basic authentication
+#  out of url and send as basic authentication; expose downloading-related
+#  exceptions in bozo_exception (aaronsw)
