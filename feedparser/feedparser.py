@@ -2119,7 +2119,9 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             (result['encoding'], proposed_encoding))
         result['encoding'] = proposed_encoding
 
-    if _XML_AVAILABLE and use_strict_parser:
+    if not _XML_AVAILABLE:
+        use_strict_parser = 0
+    if use_strict_parser:
         # initialize the SAX parser
         feedparser = _StrictFeedParser(baseuri, 'utf-8')
         saxparser = xml.sax.make_parser(PREFERRED_XML_PARSERS)
@@ -2351,4 +2353,5 @@ if __name__ == '__main__':
 #  of Location header on redirects; added tests for many alternate character
 #  encodings; support various EBCDIC encodings; support UTF-16BE and
 #  UTF16-LE with or without a BOM; support UTF-8 with a BOM; support
-#  UTF-32BE and UTF-32LE with or without a BOM
+#  UTF-32BE and UTF-32LE with or without a BOM; fixed problem if no
+#  XML parsers are available
