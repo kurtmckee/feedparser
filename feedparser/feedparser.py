@@ -483,7 +483,7 @@ class _FeedParserMixin:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding)
 
-        if type(output) == types.StringType:
+        if self.encoding and (type(output) == types.StringType):
             try:
                 output = unicode(output, self.encoding)
             except:
