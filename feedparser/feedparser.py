@@ -20,7 +20,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -1580,7 +1580,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
             request.add_header("Authorization", "Basic %s" % auth)
         if ACCEPT_HEADER:
             request.add_header("Accept", ACCEPT_HEADER)
-        request.add_header("A-IM: feed") # RFC 3229 support
+        request.add_header("A-IM", "feed") # RFC 3229 support
         opener = apply(urllib2.build_opener, tuple([_FeedURLHandler()] + handlers))
         opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
         try:
