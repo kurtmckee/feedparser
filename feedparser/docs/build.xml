@@ -65,7 +65,7 @@
   <delete><fileset dir="${py}" includes="*.pyc"/></delete>
 </target>
 
-<target name="clean" depends="cleanhtml,cleanpy"/>
+<target name="clean" depends="prepare,cleanhtml,cleanpy"/>
 
 <!-- internal utility targets used by other targets -->
 <target name="copycss" depends="prepare">
