@@ -2471,7 +2471,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.title">
 <?dbhtml filename="reference-entry-title.html"?>
-<title>entry[i].title</title>
+<title>entries[i].title</title>
 <abstract>
 <title/>
 <para>The title of the entry.</para>
@@ -2493,7 +2493,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.title_detail">
 <?dbhtml filename="reference-entry-title_detail.html"?>
-<title>entry[i].title_detail</title>
+<title>entries[i].title_detail</title>
 <abstract>
 <title/>
 <para>A dictionary with details about the entry title.</para>
@@ -2511,27 +2511,27 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><xref linkend="reference.entry.title"/></para></listitem>
 </itemizedlist>
 <section id="reference.entry.title_detail.value">
-<title>entry[i].title_detail.value</title>
+<title>entries[i].title_detail.value</title>
 <para>Same as <xref linkend="reference.entry.title"/>.</para>
 &sanitized;
 </section>
 <section id="reference.entry.title_detail.type">
-<title>entry[i].title_detail.type</title>
+<title>entries[i].title_detail.type</title>
 <para>The content type of the entry title.</para>
 &type_details;
 </section>
 <section id="reference.entry.title_detail.language">
-<title>entry[i].title_detail.language</title>
+<title>entries[i].title_detail.language</title>
 <para>The language of the entry title.</para>
 &language_details;
 </section>
 <section id="reference.entry.title_detail.mode">
-<title>entry[i].title_detail.mode</title>
+<title>entries[i].title_detail.mode</title>
 <para>The original escaping mode used to encode the entry title.</para>
 &mode_details;
 </section>
 <section id="reference.entry.title_detail.base">
-<title>entry[i].title_detail.base</title>
+<title>entries[i].title_detail.base</title>
 <para>The original base &uri; for links within the entry title.</para>
 &base_details;
 </section>
@@ -2539,7 +2539,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.link">
 <?dbhtml filename="reference-entry-link.html"?>
-<title>entry[i].link</title>
+<title>entries[i].link</title>
 <abstract>
 <title/>
 <para>The primary link of this entry.  Most feeds use this as the permanent link to the entry in the site's archives.</para>
@@ -2561,7 +2561,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.links">
 <?dbhtml filename="reference-entry-links.html"?>
-<title>entry[i].links</title>
+<title>entries[i].links</title>
 <abstract>
 <title/>
 <para>A list of dictionaries with details on the links associated with the feed.  Each link has a <sgmltag class="attribute">rel</sgmltag> (relationship), <sgmltag class="attribute">type</sgmltag> (content type), and <sgmltag class="attribute">href</sgmltag> (the &url; that the link points to).  Some links may also have a <sgmltag class="attribute">title</sgmltag>.</para>
@@ -2577,7 +2577,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><xref linkend="reference.entry.link"/></para></listitem>
 </itemizedlist>
 <section id="reference.entry.links.rel">
-<title>entry[i].links[j].rel</title>
+<title>entries[i].links[j].rel</title>
 <para>The relationship of this entry link.</para>
 <para>Here is a partial list of common <sgmltag class="attribute">rel</sgmltag> values.  Other possible <sgmltag class="attribute">rel</sgmltag> values and their meanings are <ulink url="&url_linktagmeaning;">documented on the &atom; project site</ulink>.</para>
 <itemizedlist>
@@ -2590,22 +2590,22 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 </itemizedlist>
 </section>
 <section id="reference.entry.links.type">
-<title>entry[i].links[j].type</title>
+<title>entries[i].links[j].type</title>
 <para>The content type of the page that this entry link points to.</para>
 </section>
 <section id="reference.entry.links.href">
-<title>entry[i].links[j].href</title>
+<title>entries[i].links[j].href</title>
 <para>The &url; of the page that this entry link points to.</para>
 </section>
 <section id="reference.entry.links.title">
-<title>entry[i].links[j].title</title>
+<title>entries[i].links[j].title</title>
 <para>The title of this entry link.</para>
 </section>
 </section>
 
 <section id="reference.entry.summary">
 <?dbhtml filename="reference-entry-summary.html"?>
-<title>entry[i].summary</title>
+<title>entries[i].summary</title>
 <abstract>
 <title/>
 <para>A summary of the entry.</para>
@@ -2628,7 +2628,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.summary_detail">
 <?dbhtml filename="reference-entry-summary_detail.html"?>
-<title>entry[i].summary_detail</title>
+<title>entries[i].summary_detail</title>
 <abstract>
 <title/>
 <para>A dictionary with details about the entry summary.</para>
@@ -2646,27 +2646,27 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><xref linkend="reference.entry.summary"/></para></listitem>
 </itemizedlist>
 <section id="reference.entry.summary_detail.value">
-<title>entry[i].summary_detail.value</title>
+<title>entries[i].summary_detail.value</title>
 <para>Same as <xref linkend="reference.entry.summary"/>.</para>
 &sanitized;
 </section>
 <section id="reference.entry.summary_detail.type">
-<title>entry[i].summary_detail.type</title>
+<title>entries[i].summary_detail.type</title>
 <para>The content type of the entry summary.</para>
 &type_details;
 </section>
 <section id="reference.entry.summary_detail.language">
-<title>entry[i].summary_detail.language</title>
+<title>entries[i].summary_detail.language</title>
 <para>The language of the entry summary.</para>
 &language_details;
 </section>
 <section id="reference.entry.summary_detail.mode">
-<title>entry[i].summary_detail.mode</title>
+<title>entries[i].summary_detail.mode</title>
 <para>The original escaping mode used to encode the entry summary.</para>
 &mode_details;
 </section>
 <section id="reference.entry.summary_detail.base">
-<title>entry[i].summary_detail.base</title>
+<title>entries[i].summary_detail.base</title>
 <para>The original base &uri; for links within the entry summary.</para>
 &base_details;
 </section>
@@ -2674,7 +2674,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.content">
 <?dbhtml filename="reference-entry-content.html"?>
-<title>entry[i].content</title>
+<title>entries[i].content</title>
 <abstract>
 <title/>
 <para>A list of dictionaries with details about the full content of the entry.</para>
@@ -2690,27 +2690,27 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><literal>/rdf:RDF/rdf:item/content:encoded</literal></para></listitem>
 </itemizedlist>
 <section id="reference.entry.content.value">
-<title>entry[i].content[j].value</title>
+<title>entries[i].content[j].value</title>
 <para>The value of this piece of content.</para>
 &sanitized;
 </section>
 <section id="reference.entry.content.type">
-<title>entry[i].content[j].type</title>
+<title>entries[i].content[j].type</title>
 <para>The content type of this piece of content.</para>
 &type_details;
 </section>
 <section id="reference.entry.content.language">
-<title>entry[i].content[j].language</title>
+<title>entries[i].content[j].language</title>
 <para>The language of this piece of content.</para>
 &language_details;
 </section>
 <section id="reference.entry.content.mode">
-<title>entry[i].content[j].mode</title>
+<title>entries[i].content[j].mode</title>
 <para>The original escaping mode used to encode this piece of content.</para>
 &mode_details;
 </section>
 <section id="reference.entry.content.base">
-<title>entry[i].content[j].base</title>
+<title>entries[i].content[j].base</title>
 <para>The original base &uri; for links within this piece of content.</para>
 &base_details;
 </section>
@@ -2718,7 +2718,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.issued">
 <?dbhtml filename="reference-entry-issued.html"?>
-<title>entry[i].issued</title>
+<title>entries[i].issued</title>
 <abstract>
 <title/>
 <para>The date this entry was first issued (published), as a string in the same format as it was published in the original feed.</para>
@@ -2738,7 +2738,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.issued_parsed">
 <?dbhtml filename="reference-entry-issued_parsed.html"?>
-<title>entry[i].issued_parsed</title>
+<title>entries[i].issued_parsed</title>
 <abstract>
 <title/>
 <para>The date this entry was first issued (published), as a standard &python; 9-tuple.</para>
@@ -2757,7 +2757,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.created">
 <?dbhtml filename="reference-entry-created.html"?>
-<title>entry[i].created</title>
+<title>entries[i].created</title>
 <abstract>
 <title/>
 <para>The date this entry was first created (drafted), as a string in the same format as it was published in the original feed).</para>
@@ -2777,7 +2777,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.created_parsed">
 <?dbhtml filename="reference-entry-created_parsed.html"?>
-<title>entry[i].created_parsed</title>
+<title>entries[i].created_parsed</title>
 <abstract>
 <title/>
 <para>The date this entry was first created (drafted), as a standard &python; 9-tuple.</para>
@@ -2796,7 +2796,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.modified">
 <?dbhtml filename="reference-entry-modified.html"?>
-<title>entry[i].modified</title>
+<title>entries[i].modified</title>
 <abstract>
 <title/>
 <para>The date this entry was last modified, as a string in the same format as it was published in the original feed).</para>
@@ -2819,7 +2819,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.modified_parsed">
 <?dbhtml filename="reference-entry-modified_parsed.html"?>
-<title>entry[i].modified_parsed</title>
+<title>entries[i].modified_parsed</title>
 <abstract>
 <title/>
 <para>The date this entry was last modified, as a standard &python; 9-tuple.</para>
@@ -2841,7 +2841,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.expired">
 <?dbhtml filename="reference-entry-expired.html"?>
-<title>entry[i].expired</title>
+<title>entries[i].expired</title>
 <abstract>
 <title/>
 <para>The date this entry is set to expire, as a string in the same format as it was published in the original feed).</para>
@@ -2860,7 +2860,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.expired_parsed">
 <?dbhtml filename="reference-entry-expired_parsed.html"?>
-<title>entry[i].expired_parsed</title>
+<title>entries[i].expired_parsed</title>
 <abstract>
 <title/>
 <para>The date this entry is set to expire, as a standard &python; 9-tuple.</para>
@@ -2878,7 +2878,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.id">
 <?dbhtml filename="reference-entry-id.html"?>
-<title>entry[i].id</title>
+<title>entries[i].id</title>
 <abstract>
 <title/>
 <para>A globally unique identifier for this entry.</para>
@@ -2893,7 +2893,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.author">
 <?dbhtml filename="reference-entry-author.html"?>
-<title>entry[i].author</title>
+<title>entries[i].author</title>
 <abstract>
 <title/>
 <para>The author of this entry.</para>
@@ -2914,7 +2914,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.author_detail">
 <?dbhtml filename="reference-entry-author_detail.html"?>
-<title>entry[i].author_detail</title>
+<title>entries[i].author_detail</title>
 <abstract>
 <title/>
 <para>A dictionary with details about the author of this entry.</para>
@@ -2932,22 +2932,22 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><xref linkend="reference.entry.author"/></para></listitem>
 </itemizedlist>
 <section id="reference.entry.author_detail.name">
-<title>entry[i].author_detail.name</title>
+<title>entries[i].author_detail.name</title>
 <para>The name of this entry's author.</para>
 </section>
 <section id="reference.entry.author_detail.url">
-<title>entry[i].author_detail.url</title>
+<title>entries[i].author_detail.url</title>
 <para>The &url; of this entry's author.  This can be the author's home page, or a contact page with a webmail form.</para>
 </section>
 <section id="reference.entry.author_detail.email">
-<title>entry[i].author_detail.email</title>
+<title>entries[i].author_detail.email</title>
 <para>The email address of this entry's author.</para>
 </section>
 </section>
 
 <section id="reference.entry.contributors">
 <?dbhtml filename="reference-entry-contributors.html"?>
-<title>entry[i].contributors</title>
+<title>entries[i].contributors</title>
 <abstract>
 <title/>
 <para>A list of contributors (secondary authors) to this entry.</para>
@@ -2957,22 +2957,22 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><literal>/atom:feed/atom:entry/atom:contributor</literal></para></listitem>
 </itemizedlist>
 <section id="reference.entry.contributors.name">
-<title>entry[i].contributors[j].name</title>
+<title>entries[i].contributors[j].name</title>
 <para>The name of this contributor.</para>
 </section>
 <section id="reference.entry.contributors.url">
-<title>entry[i].contributors[j].url</title>
+<title>entries[i].contributors[j].url</title>
 <para>The &url; of this contributor.  This can be the contributor's home page, or a contact page with a webmail form.</para>
 </section>
 <section id="reference.entry.contributors.email">
-<title>entry[i].contributors[j].email</title>
+<title>entries[i].contributors[j].email</title>
 <para>The email address of this contributor.</para>
 </section>
 </section>
 
 <section id="reference.entry.enclosure">
 <?dbhtml filename="reference-entry-enclosure.html"?>
-<title>entry[i].enclosures</title>
+<title>entries[i].enclosures</title>
 <abstract>
 <title/>
 <para>A list of links to external files associated with this entry.</para>
@@ -2984,22 +2984,22 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><literal>/rss/channel/item/enclosure</literal></para></listitem>
 </itemizedlist>
 <section id="reference.entry.enclosure.url">
-<title>entry[i].enclosures[j].url</title>
+<title>entries[i].enclosures[j].url</title>
 <para>The &url; of the linked file.</para>
 </section>
 <section id="reference.entry.enclosure.length">
-<title>entry[i].enclosures[j].length</title>
+<title>entries[i].enclosures[j].length</title>
 <para>The length of the linked file.</para>
 </section>
 <section id="reference.entry.enclosure.type">
-<title>entry[i].enclosures[j].type</title>
+<title>entries[i].enclosures[j].type</title>
 <para>The content type of the linked file.</para>
 </section>
 </section>
 
 <section id="reference.entry.category">
 <?dbhtml filename="reference-entry-category.html"?>
-<title>entry[i].category</title>
+<title>entries[i].category</title>
 <abstract>
 <title/>
 <para>The primary category of the entry.</para>
@@ -3019,7 +3019,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.categories">
 <?dbhtml filename="reference-entry-categories.html"?>
-<title>entry[i].categories</title>
+<title>entries[i].categories</title>
 <abstract>
 <title/>
 <para>A list of all categories for the entry.</para>
@@ -3040,7 +3040,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.source">
 <?dbhtml filename="reference-entry-source.html"?>
-<title>entry[i].source</title>
+<title>entries[i].source</title>
 <abstract>
 <title/>
 <para>A dictionary with details about the source of the entry.</para>
@@ -3050,18 +3050,18 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <listitem><para><literal>/rss/channel/item/source</literal></para></listitem>
 </itemizedlist>
 <section id="reference.entry.source.url">
-<title>entry[i].source.url</title>
+<title>entries[i].source.url</title>
 <para>The &url; of the entry source.  The &rss; specification states that this must be the &url; of an &rss; feed, not an &html; page or other feed format.</para>
 </section>
 <section id="reference.entry.source.value">
-<title>entry[i].source.value</title>
+<title>entries[i].source.value</title>
 <para>The name of the entry source.  The &rss; specification states that this should be the title of the &rss; feed where this entry came from, not an entry title or page title.</para>
 </section>
 </section>
 
 <section id="reference.entry.comments">
 <?dbhtml filename="reference-entry-comments.html"?>
-<title>entry[i].comments</title>
+<title>entries[i].comments</title>
 <abstract>
 <title/>
 <para>A &url; of the &html; comment submission page associated with this entry.</para>
@@ -3074,7 +3074,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <section id="reference.entry.license">
 <?dbhtml filename="reference-entry-license.html"?>
-<title>entry[i].license</title>
+<title>entries[i].license</title>
 <abstract>
 <title/>
 <para>A &url; of the license under which this entry is distributed.</para>
