@@ -19,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
-_debug = 1
+_debug = 0
 _debug_never_use_libxml2 = 0
 
 # if you are embedding feedparser in a larger application, you should change this to your application name and URL
@@ -1781,6 +1781,7 @@ def _getCharacterEncoding(http_headers, xml_data):
     encoding given in the XML prefix of the document and default to
     "utf-8" as per the XML specification.  This part is probably wrong,
     as HTTP defaults to "iso-8859-1" if no Content-Type is specified.
+    
     Also, the default Content-Type and well-formedness of XML documents
     served as wacky types like "application/octet-stream" is still under
     discussion.
@@ -1841,7 +1842,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         else:
             true_encoding = 'us-ascii'
     elif http_headers and (not http_headers.has_key('content-type')):
-        true_encoding = xml_encoding or 'iso-8859-1'
+        true_encoding = xml_encoding or 'utf-8' #'iso-8859-1'
     else:
         true_encoding = xml_encoding or 'utf-8'
     return true_encoding, http_encoding, xml_encoding
