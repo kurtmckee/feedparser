@@ -19,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
-_debug = 0
+_debug = 1
 _debug_never_use_libxml2 = 0
 
 # if you are embedding feedparser in a larger application, you should change this to your application name and URL
@@ -1841,7 +1841,8 @@ def _getCharacterEncoding(http_headers, xml_data):
         else:
             true_encoding = 'us-ascii'
     elif http_headers and (not http_headers.has_key('content-type')):
-        true_encoding = xml_encoding 
+        true_encoding = xml_encoding or 'iso-8859-1'
+    else:
         true_encoding = xml_encoding or 'utf-8'
     return true_encoding, http_encoding, xml_encoding
     
@@ -1917,7 +1918,9 @@ def _attempt_parse(data, result, baseuri, use_strict_parser, declared_encoding, 
         # before continuing.
         if proposed_encoding != result['encoding']:
             try:
-                raise CharacterEncodingOverride, "document declared as %s, but parsed as %s" % (result['encoding'], proposed_encoding)
+                raise CharacterEncodingOverride, \
+                      "document declared as %s, but parsed as %s" % \
+                      (result['encoding'], proposed_encoding)
             except CharacterEncodingOverride, bozo_exception:
                 result['bozo'] = 1
                 result['bozo_exception'] = bozo_exception
