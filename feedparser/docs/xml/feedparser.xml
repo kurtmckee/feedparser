@@ -637,6 +637,30 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 
 </section>
 
+<section id="basic.existence">
+<?dbhtml filename="basic-existence.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>Feeds in the real world may be missing elements, even elements that are required by the specification.  You should always test for the existence of an element before getting its value.  Never assume an element is present.</para>
+</abstract>
+</sectioninfo>
+<title>Testing for Existence</title>
+<para>Use standard &python; dictionary functions such as <function>has_key</function> to test whether an element exists.</para>
+<example>
+<title>Testing if elements are present</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&example_atom;
+&prompt;<userinput>d.feed.has_key('title')</userinput>
+<computeroutput>True</computeroutput>
+&prompt;<userinput>d.feed.has_key('ttl')</userinput>
+<computeroutput>False</computeroutput>
+&prompt;<userinput>d.feed.get('title', 'No title')</userinput>
+<computeroutput>u'Sample feed'</computeroutput>
+&prompt;<userinput>d.feed.get('ttl', 60)</userinput>
+<computeroutput>60</computeroutput></screen>
+</example>
+</section>
 </chapter>
 
 <chapter id="advanced">
