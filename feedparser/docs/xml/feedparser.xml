@@ -6,7 +6,7 @@
 %entities_version;
 <!ENTITY gfdl SYSTEM "gfdl.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "3.0">
+<!ENTITY feedparser_version "3.0.1">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
@@ -207,6 +207,7 @@
 <pubdate>&fileversion;</pubdate>
 <abstract>
 <title/>
+<para>This documentation claims to describe the behavior of &feedparser; &feedparser_version;.  It does not claim to describe the behavior of any other version.</para>
 <para>This documentation lives at <ulink url="&url_book;"/>.  If you're reading it somewhere else, you may not have the latest version.</para>
 <!--<para>You can download this documentation in these formats: <ulink url="&url_download_html;">HTML</ulink>, <ulink url="&url_download_pdf;">PDF</ulink>, <ulink url="&url_download_doc;">Word</ulink>, <ulink url="&url_download_txt;">text</ulink>.</para>-->
 </abstract>
