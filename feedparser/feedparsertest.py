@@ -4,7 +4,7 @@ __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright (c) 2004, Mark Pilgrim"
 __license__ = "Python"
 
-import feedparser, unittest, new, os, sys, glob, re, urllib, string, posixpath, time
+import feedparser, unittest, new, os, sys, glob, re, urllib, string, posixpath, time, codecs
 from UserDict import UserDict
 import SimpleHTTPServer, BaseHTTPServer
 from threading import *
@@ -14,7 +14,12 @@ except NameError:
   from feedparser import dict
 
 _debug = 0
-
+try:
+  codecs.lookup('utf32-be')
+  _utf32_available = 1
+except:
+  _utf32_available = 0
+  
 #---------- custom HTTP server (used to serve test feeds) ----------
 
 _PORT = 8097 # not really configurable, must match hardcoded port in tests
@@ -96,12 +101,16 @@ def getDescription(xmlfile):
   if data[:4] == '\x4c\x6f\xa7\x94':
     data = feedparser._ebcdic_to_ascii(data)
   elif data[:4] == '\x00\x00\xfe\xff':
+    if not _utf32_available: return None, None, None, '0'
     data = unicode(data, 'utf-32be').encode('utf-8')
   elif data[:4] == '\xff\xfe\x00\x00':
+    if not _utf32_available: return None, None, None, '0'
     data = unicode(data, 'utf-32le').encode('utf-8')
   elif data[:4] == '\x00\x00\x00\x3c':
+    if not _utf32_available: return None, None, None, '0'
     data = unicode(data, 'utf-32be').encode('utf-8')
   elif data[:4] == '\x3c\x00\x00\x00':
+    if not _utf32_available: return None, None, None, '0'
     data = unicode(data, 'utf-32le').encode('utf-8')
   elif data[:4] == '\x00\x3c\x00\x3f':
     data = unicode(data, 'utf-16be').encode('utf-8')
