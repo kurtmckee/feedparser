@@ -89,6 +89,7 @@
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
 <!ENTITY url_pythonunicode "http://docs.python.org/tut/node5.html#SECTION005130000000000000000">
 <!ENTITY url_sectionf "http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info">
+<!ENTITY url_wellformedness "http://www.imc.org/atom-syntax/mail-archive/msg05575.html">
 <!ENTITY url_cjkcodecs "http://cjkpython.i18n.org/">
 
 <!ENTITY example_atom "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom;&#34;/>')</userinput>">
@@ -873,7 +874,7 @@ def myDateHandler(aDateString):
             int(hour), int(minute), int(second), 0, 0, 0)
 
 feedparser.registerDateHandler(myDateHandler)
-</programlisting>
+d = feedparser.parse(...)</programlisting>
 </example>
 
 <para>Your newly-registered date handler will be tried before all the other date handlers built into &feedparser;.  (More specifically, all date handlers are tried in LIFO order; the last handler to be registered is always the first one to be tried.)</para>
@@ -1447,6 +1448,8 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <para><ulink url="&url_rfc3023;">RFC 3023</ulink> defines the interaction between &xml; and &http; as it relates to character encoding.  &xml; and &http; have different ways of specifying character encoding and different defaults in case no encoding is specified, and determining which value takes precedence depends on a variety of factors.</para>
 </abstract>
 
+<section id="advanced.encoding.intro">
+<title>Introduction to character encoding</title>
 <para>In &xml;, the character encoding is optional and may be given in the &xml; declaration in the first line of the document, like this:</para>
 
 <informalexample>
@@ -1479,6 +1482,10 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <listitem><para>the encoding given in the charset parameter of the <literal>Content-Type</literal> &http; header, or</para></listitem>
 <listitem><para><literal>us-ascii</literal>.</para></listitem>
 </orderedlist>
+</section>
+
+<section id="advanced.encoding.override">
+<title>Handling incorrectly-declared encodings</title>
 
 <para>&feedparser; initially uses the rules specified in &rfc; 3023 to determine the character encoding of the feed.  If parsing succeeds, then that's that.  If parsing fails, &feedparser; sets the <varname>bozo</varname> bit to <literal>1</literal> and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingOverride</constant>.  Then it tries to reparse the feed with the following character encodings:</para>
 
@@ -1490,6 +1497,24 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 </orderedlist>
 
 <para>If the character encoding can not be determined, &feedparser; sets the <varname>bozo</varname> bit to <literal>1</literal> and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingUnknown</constant>.  In this case, parsed values will be strings, not Unicode strings.</para>
+</section>
+
+<section id="advanced.encoding.nonxml">
+<title>Handling incorrectly-declared media types</title>
+
+<para>&rfc; 3023 only applies when the feed is served over &http; with a <literal>Content-Type</literal> that declares the feed to be some kind of &xml;.  However, some web servers are severely misconfigured and serve feeds with a <literal>Content-Type</literal> of <literal>text/plain</literal>, <literal>application/octet-stream</literal>, or some completely bogus media type.</para>
+
+<para>&feedparser; will attempt to parse such feeds, but it will set the <varname>bozo</varname> bit to <literal>1</literal> and set <varname>bozo_exception</varname> to <constant>feedparser.NonXMLContentType</constant>.</para>
+
+<itemizedlist role="furtherreading">
+<title>Elsewhere</title>
+<listitem><para><ulink url="&url_rfc3023;">RFC 3023</ulink></para></listitem>
+<listitem><para><ulink url="&url_sectionf;">Section F of the XML specification</ulink></para></listitem>
+<listitem><para><ulink url="&url_wellformedness;">On the well-formedness of &xml; documents served as <literal>text/plain</literal></ulink></para></listitem>
+<listitem><para><ulink url="&url_cjkcodecs;">CJKCodecs and iconv_codec</ulink></para></listitem>
+</itemizedlist>
+
+</section>
 
 </section>
 
@@ -1520,8 +1545,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <computeroutput>6</computeroutput>
 </screen>
 </example>
-<para>If &feedparser; detects that the feed's character encoding is incorrect and reparses it with a different encoding, the <varname>bozo</varname> bit will be set to <literal>1</literal> and <varname>bozo_exception</varname> will be set to <constant>feedparser.CharacterEncodingOverride</constant>.</para>
-<para>If &feedparser; is unable to determine the feed's character encoding, the <varname>bozo</varname> bit will be set to <literal>1</literal> and <varname>bozo_exception</varname> will be set to <constant>feedparser.CharacterEncodingUnknown</constant>.</para>
+<para>There are many reasons an &xml; document could be non-well-formed besides this example (incomplete end tags)  See <xref linkend="advanced.encoding"/> for some other ways to trip the bozo bit.</para>
 </section>
 
 </chapter>
@@ -3747,70 +3771,11 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </tip>
 </section>
 </chapter>
-
-<!-- feed.title -->
-<!-- feed.title_detail -->
-<!-- feed.link -->
-<!-- feed.links -->
-<!-- feed.tagline -->
-<!-- feed.tagline_detail -->
-<!-- feed.copyright -->
-<!-- feed.copyright_detail -->
-<!-- feed.generator -->
-<!-- feed.info -->
-<!-- feed.info_detail -->
-<!-- feed.modified -->
-<!-- feed.modified_parsed -->
-<!-- feed.id -->
-<!-- feed.author -->
-<!-- feed.author_detail -->
-<!-- feed.contributors -->
-<!-- feed.image -->
-<!-- feed.textinput -->
-<!-- feed.cloud -->
-<!-- feed.publisher -->
-<!-- feed.categories -->
-<!-- feed.docs -->
-<!-- feed.ttl -->
-<!-- feed.skipHours -->
-<!-- feed.skipDays -->
-<!-- feed.language -->
-<!-- feed.license -->
-<!-- feed.errorreportsto -->
-
-<!-- entry.title -->
-<!-- entry.title_detail -->
-<!-- entry.link -->
-<!-- entry.links -->
-<!-- entry.summary -->
-<!-- entry.summary_detail -->
-<!-- entry.content -->
-<!-- entry.issued -->
-<!-- entry.issued_parsed -->
-<!-- entry.created -->
-<!-- entry.created_parsed -->
-<!-- entry.modified -->
-<!-- entry.modified_parsed -->
-<!-- entry.expired -->
-<!-- entry.expired_parsed -->
-<!-- entry.id -->
-<!-- entry.author -->
-<!-- entry.contributors -->
-<!-- entry.enclosure -->
-<!-- entry.category -->
-<!-- entry.categories -->
-<!-- entry.comments -->
-<!-- entry.source -->
-<!-- entry.license -->
-
-<!-- version -->
-<!-- encoding -->
-<!-- status -->
-<!-- url -->
-<!-- etag -->
-<!-- modified -->
-<!-- headers -->
-<!-- bozo -->
-<!-- bozo_exception -->
 &gfdl;
 </book>
+
+<!--
+TODO:
+- relative link handling
+- language handling
+-->
