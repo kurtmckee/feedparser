@@ -1,0 +1,9 @@
+<!--
+Description: oslash
+Expect:      bozo and feed['title'] == u'testing \xf8 entity'
+-->
+<rss>
+<channel>
+<title>testing &oslash; entity</title>
+</channel>
+</rss>

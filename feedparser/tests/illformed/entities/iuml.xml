@@ -1,0 +1,9 @@
+<!--
+Description: iuml
+Expect:      bozo and feed['title'] == u'testing \xef entity'
+-->
+<rss>
+<channel>
+<title>testing &iuml; entity</title>
+</channel>
+</rss>

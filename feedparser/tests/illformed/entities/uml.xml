@@ -1,0 +1,9 @@
+<!--
+Description: uml
+Expect:      bozo and feed['title'] == u'testing \xa8 entity'
+-->
+<rss>
+<channel>
+<title>testing &uml; entity</title>
+</channel>
+</rss>

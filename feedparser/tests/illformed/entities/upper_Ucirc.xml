@@ -1,0 +1,9 @@
+<!--
+Description: Ucirc
+Expect:      bozo and feed['title'] == u'testing \xdb entity'
+-->
+<rss>
+<channel>
+<title>testing &Ucirc; entity</title>
+</channel>
+</rss>

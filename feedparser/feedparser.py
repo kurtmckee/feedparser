@@ -11,7 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: libxml2 <http://xmlsoft.org/python.html>
 """
 
-__version__ = "3.0.1"
+__version__ = "3.0.2-cvs"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
@@ -243,7 +243,6 @@ class _FeedParserMixin:
         if _debug: sys.stderr.write('start %s with %s\n' % (tag, attrs))
         # normalize attrs
         attrs = [(k.lower(), v) for k, v in attrs]
-#        attrs = [(k.lower(), sgmllib.charref.sub(lambda m: unichr(int(m.groups()[0])), v).strip()) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
         
         # track xml:base and xml:lang
@@ -356,7 +355,23 @@ class _FeedParserMixin:
         # called for each entity reference, e.g. for "&copy;", ref will be "copy"
         # Reconstruct the original entity reference.
         if not self.elementstack: return
-        text = "&%s;" % ref
+        if _debug: sys.stderr.write("entering handle_entityref with %s\n" % ref)
+        if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
+            text = '&%s;' % ref
+        else:
+            # entity resolution graciously donated by Aaron Swartz
+            def name2cp(k):
+                import htmlentitydefs
+                if hasattr(htmlentitydefs, "name2codepoint"): # requires Python 2.3
+                    return htmlentitydefs.name2codepoint[k]
+                else:
+                    k = htmlentitydefs.entitydefs[k]
+                    if k.startswith("&#") and k.endswith(";"): return int(k[2:-1]) # not in latin-1
+                    return ord(k.decode('ISO-8859-1'))
+            try: name2cp(ref)
+            except KeyError: text = "&%s;" % ref
+            else: text = unichr(name2cp(ref)).encode('utf-8')
+        if _debug: sys.stderr.write('leaving handle_entityref\n')
         self.elementstack[-1][2].append(text)
 
     def handle_data(self, text, escape=1):
@@ -418,6 +433,8 @@ class _FeedParserMixin:
         element, expectingText, pieces = self.elementstack.pop()
         output = "".join(pieces)
         output = output.strip()
+        if _debug:
+            sys.stderr.write(output + '\n')
         if not expectingText: return output
         
         # decode base64 content
@@ -1165,7 +1182,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def normalize_attrs(self, attrs):
         # utility method to be called by descendants
         attrs = [(k.lower(), v) for k, v in attrs]
-#        attrs = [(k.lower(), sgmllib.charref.sub(lambda m: unichr(int(m.groups()[0])), v).strip()) for k, v in attrs]
         if self.encoding:
             attrs = [(k, v.encode(self.encoding)) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
@@ -2188,3 +2204,5 @@ if __name__ == '__main__':
 #3.0.1 - 6/22/2004 - MAP - default to us-ascii for all text/* content types;
 #  recover from malformed content-type header parameter with no equals sign
 #  ("text/xml; charset:iso-8859-1")
+#3.0.2 - 6/23/2004 - MAP - added and passed tests for converting HTML entities
+#  to Unicode equivalents
