@@ -11,7 +11,8 @@ Recommended: Python 2.3 or later
 Recommended: libxml2 <http://xmlsoft.org/python.html>
 """
 
-__version__ = "3.1"
+import time
+__version__ = "3.2-cvs-%s" % time.strftime('%Y-%m-%d', time.localtime(time.time()))
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
@@ -19,21 +20,26 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
-_debug = 0
-_debug_never_use_libxml2 = 0
+_debug = 1
 
-# if you are embedding feedparser in a larger application, you should change this to your application name and URL
+# HTTP "User-Agent" header to send to servers when downloading feeds.
+# If you are embedding feedparser in a larger application, you should
+# change this to your application name and URL.
 USER_AGENT = "UniversalFeedParser/%s%s +http://feedparser.org/" % (__version__, _debug and "-debug" or "")
 
-# If you want feedparser to automatically run HTML markup through HTML Tidy, set this to 1.
-# This is off by default because of reports of crashing on some platforms.  If it crashes
-# for you, please submit a bug report with your OS platform, Python version, and the URL
-# of the feed you were attempting to parse.
+# HTTP "Accept" header to send to servers when downloading feeds.
+ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
+
+# List of preferred XML parsers, by SAX driver name.  These will be tried first,
+# but if they're not installed, Python will keep searching until it finds one.
+PREFERRED_XML_PARSERS = ["drv_libxml2"]
+
+# If you want feedparser to automatically run HTML markup through HTML Tidy, set
+# this to 1.  This is off by default because of reports of crashing on some
+# platforms.  If it crashes for you, please submit a bug report with your OS
+# platform, Python version, and the URL of the feed you were attempting to parse.
 # Requires mxTidy <http://www.egenix.com/files/python/mxTidy.html>
 TIDY_MARKUP = 0
-
-# I can't think of a single reason why you would want to customize this:
-ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
 # ---------- required modules (should come with any Python distribution) ----------
 import sgmllib, re, sys, copy, urlparse, time, rfc822, types
@@ -70,20 +76,14 @@ if TIDY_MARKUP:
     except:
         pass
 
-# If a real XML parser is available, feedparser will attempt to use it.  feedparser works
-# with both the built-in SAX parser and PyXML SAX parser.  On platforms where the Python
-# distribution does not come with an XML parser (such as Mac OS X 10.2 and some versions of
-# FreeBSD), feedparser will just fall back on regex-based parsing.  If XML libraries are
-# available but the feed turns out not to be well-formed XML, feedparser will fall back
-# on regex-based parsing and set the "bozo" bit in the results to indicate that the feed
-# author is a bozo who can't generate well-formed XML.  The two advantages of using a real
-# XML parser are (1) Unicode support, and (2) to get people to stop yelling at me for not
-# using one.
+# If a real XML parser is available, feedparser will attempt to use it.  feedparser has
+# been tested with the built-in SAX parser, PyXML, and libxml2.  On platforms where the
+# Python distribution does not come with an XML parser (such as Mac OS X 10.2 and some
+# versions of FreeBSD), feedparser will quietly fall back on regex-based parsing.
 try:
     import xml.sax
-    xml.sax.make_parser() # test for valid parsers
+    xml.sax.make_parser(PREFERRED_XML_PARSERS) # test for valid parsers
     from xml.sax.saxutils import escape as _xmlescape
-    class CharacterEncodingOverride(xml.sax.SAXException): pass
     _XML_AVAILABLE = 1
 except:
     _XML_AVAILABLE = 0
@@ -92,16 +92,28 @@ except:
         data = data.replace(">", "&gt;")
         data = data.replace("<", "&lt;")
         return data
-#_XML_AVAILABLE = 0
-#sys.stderr.write("DEBUG: turned off XML support\n")
 
 # base64 support for Atom feeds that contain embedded binary data
 try:
     import base64, binascii
 except:
     base64 = binascii = None
-    
+
+# cjkcodecs and iconv_codec provide support for more character encodings.
+# Both are available from http://cjkpython.i18n.org/
+try:
+    import cjkcodecs.aliases
+except:
+    pass
+try:
+    import iconv_codec
+except:
+    pass
+
 # ---------- don't touch these ----------
+class CharacterEncodingOverride(Exception): pass
+class CharacterEncodingUnknown(Exception): pass
+
 sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
 sgmllib.special = re.compile('<!')
 sgmllib.charref = re.compile('&#(x?[0-9A-Fa-f]+)[^0-9A-Fa-f]')
@@ -158,7 +170,7 @@ class FeedParserDict(UserDict):
         except:
             raise AttributeError, "object has no attribute '%s'" % key
 
-    def __contains(self, key):
+    def __contains__(self, key):
         return self.has_key(key)
 
 class _FeedParserMixin:
@@ -257,7 +269,6 @@ class _FeedParserMixin:
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base'))
         if baseuri:
-            if _debug: sys.stderr.write('self.baseuri=%s\n' % baseuri)
             self.baseuri = baseuri
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang:
@@ -345,7 +356,6 @@ class _FeedParserMixin:
             self.basestack.pop()
             if self.basestack and self.basestack[-1]:
                 baseuri = self.basestack[-1]
-                if _debug: sys.stderr.write('self.baseuri=%s\n' % baseuri)
                 self.baseuri = baseuri
         if self.langstack:
             lang = self.langstack.pop()
@@ -385,7 +395,6 @@ class _FeedParserMixin:
             try: name2cp(ref)
             except KeyError: text = "&%s;" % ref
             else: text = unichr(name2cp(ref)).encode('utf-8')
-        if _debug: sys.stderr.write('leaving handle_entityref\n')
         self.elementstack[-1][2].append(text)
 
     def handle_data(self, text, escape=1):
@@ -447,8 +456,6 @@ class _FeedParserMixin:
         element, expectingText, pieces = self.elementstack.pop()
         output = "".join(pieces)
         output = output.strip()
-        if _debug:
-            sys.stderr.write(output + '\n')
         if not expectingText: return output
         
         # decode base64 content
@@ -567,7 +574,6 @@ class _FeedParserMixin:
 
     def _cdf_common(self, attrsD):
         if attrsD.has_key('lastmod'):
-            if _debug: sys.stderr.write(attrsD['lastmod'] + '\n')
             self._start_modified({})
             self.elementstack[-1][-1] = attrsD['lastmod']
             self._end_modified()
@@ -853,7 +859,6 @@ class _FeedParserMixin:
 
     def _end_dcterms_modified(self):
         value = self.pop('modified')
-        if _debug: sys.stderr.write('_end_dcterms_modified, value=' + value + '\n')
         parsed_value = _parse_date(value)
         self._save('modified_parsed', parsed_value)
     _end_modified = _end_dcterms_modified
@@ -1111,7 +1116,7 @@ class _FeedParserMixin:
     _end_prodlink = _end_content
 
 if _XML_AVAILABLE:
-    class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler, xml.sax.handler.EntityResolver):#, xml.sax.handler.DTDHandler):
+    class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):#, xml.sax.handler.EntityResolver):#, xml.sax.handler.DTDHandler):
         def __init__(self, baseuri, encoding):
             if _debug: sys.stderr.write('trying StrictFeedParser\n')
             xml.sax.handler.ContentHandler.__init__(self)
@@ -1150,8 +1155,8 @@ if _XML_AVAILABLE:
                 attrsD[str(qname).lower()] = attrs.getValueByQName(qname)
             self.unknown_starttag(localname, attrsD.items())
 
-        def resolveEntity(self, publicId, systemId):
-            return _StringIO()
+#        def resolveEntity(self, publicId, systemId):
+#            return _StringIO()
 
         def characters(self, text):
             self.handle_data(text)
@@ -1179,6 +1184,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     
     def __init__(self, encoding):
         self.encoding = encoding
+        if _debug: sys.stderr.write('entering BaseHTMLProcessor, encoding=%s\n' % self.encoding)
         sgmllib.SGMLParser.__init__(self)
         
     def reset(self):
@@ -1197,8 +1203,9 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def normalize_attrs(self, attrs):
         # utility method to be called by descendants
         attrs = [(k.lower(), v) for k, v in attrs]
-        if self.encoding:
-            attrs = [(k, v.encode(self.encoding)) for k, v in attrs]
+#        if self.encoding:
+#            if _debug: sys.stderr.write('normalize_attrs, encoding=%s\n' % self.encoding)
+#            attrs = [(k, v.encode(self.encoding)) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
         return attrs
 
@@ -1256,7 +1263,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     _new_declname_match = re.compile(r'[a-zA-Z][-_.a-zA-Z0-9:]*\s*').match
     def _scan_name(self, i, declstartpos):
         rawdata = self.rawdata
-        if _debug: sys.stderr.write("i=%s, declstartpos=%s, rawdata=%s\n" % (i, declstartpos, rawdata))
         n = len(rawdata)
         if i == n:
             return None, -1
@@ -1274,10 +1280,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
 
     def output(self):
         """Return processed HTML as a single string"""
-        if _debug:
-            for p in self.pieces:
-                sys.stderr.write(p)
-            sys.stderr.write('\n')
         return "".join([str(p) for p in self.pieces])
 
 class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
@@ -1346,7 +1348,6 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
 def _resolveRelativeURIs(htmlSource, baseURI, encoding):
     if _debug: sys.stderr.write("entering _resolveRelativeURIs\n")
     p = _RelativeURIResolver(baseURI, encoding)
-    if _debug: sys.stderr.write(repr(type(htmlSource)) + '\n')
     p.feed(htmlSource)
     return p.output()
 
@@ -1851,32 +1852,22 @@ def _getCharacterEncoding(http_headers, xml_data):
         true_encoding = xml_encoding or 'utf-8'
     return true_encoding, http_encoding, xml_encoding
     
-def _changeEncodingDeclaration(data, encoding):
+def _toUTF8(data, encoding):
     """Changes an XML data stream on the fly to specify a new encoding
 
     data is a raw sequence of bytes (not Unicode) that is presumed to be in %encoding already
     encoding is a string recognized by encodings.aliases
     """
-    if _debug: sys.stderr.write('entering _changeEncodingDeclaration\n')
-    if _debug: sys.stderr.write('proposed encoding: %s\n' % encoding)
-    #import cjkcodecs.aliases
-    #import japanese
-    data = unicode(data, encoding)
+    if _debug: sys.stderr.write('entering _toUTF8, trying encoding %s\n' % encoding)
+    newdata = unicode(data, encoding)
     if _debug: sys.stderr.write('successfully converted %s data to unicode\n' % encoding)
     declmatch = re.compile(u'^<\?xml[^>]*?>')
-    if _debug: sys.stderr.write('successfully created declmatch\n')
-#    newdecl = unicode("""<?xml version='1.0' encoding='%s'?>""" % encoding, encoding)
-    newdecl = """<?xml version='1.0' encoding='%s'?>""" % encoding
-    if _debug: sys.stderr.write('successfully created newdecl\n')
-    if declmatch.search(data):
-        if _debug: sys.stderr.write('successfully searched, found previous encoding declaration\n')
-        data = declmatch.sub(newdecl, data)
-        if _debug: sys.stderr.write('successfully replaced previous encoding\n')
+    newdecl = """<?xml version='1.0' encoding='utf-8'?>"""
+    if declmatch.search(newdata):
+        newdata = declmatch.sub(newdecl, newdata)
     else:
-        if _debug: sys.stderr.write('successfully searched but found no previous encoding declaration\n')
-        data = newdecl + u'\n' + data
-        if _debug: sys.stderr.write('successfully inserted new encoding declaration\n')
-    return data.encode(encoding)
+        newdata = newdecl + u'\n' + newdata
+    return newdata.encode("utf-8")
 
 def _stripDoctype(data):
     """Strips DOCTYPE from XML document, returns (rss_version, stripped_data)
@@ -1896,97 +1887,13 @@ def _stripDoctype(data):
     data = doctype_pattern.sub('', data)
     return version, data
     
-def _attempt_parse(data, result, baseuri, use_strict_parser, declared_encoding, proposed_encoding):
-    if use_strict_parser:
-        # use real XML parser
-        if _debug: sys.stderr.write('using xml library\n')
-        result['bozo'] = 0
-
-        # If encoding specified in <?xml declaration is not the
-        # encoding we want, change the <?xml declaration.  If this
-        # sounds like a hack, that's because it is.  In an ideal world,
-        # you could just pass the character encoding into your SAX
-        # parser and tell it to override the declared encoding.
-        # Python 2.3 actually has a property for that, but no SAX
-        # parsers currently support it.
-        if declared_encoding != proposed_encoding:
-            try:
-                data = _changeEncodingDeclaration(data, proposed_encoding)
-            except Exception, bozo_exception:
-                if _debug: sys.stderr.write('character encoding is wrong\n')
-                raise bozo_exception
-
-        # The document is now in the encoding we want, and it declares
-        # in its <?xml declaration that it is the encoding we want.
-        # But if this wasn't the encoding originally specified, then
-        # we want to note this in the results as a CharacterEncodingOverride
-        # before continuing.
-        if proposed_encoding != result['encoding']:
-            try:
-                raise CharacterEncodingOverride, \
-                      "document declared as %s, but parsed as %s" % \
-                      (result['encoding'], proposed_encoding)
-            except CharacterEncodingOverride, bozo_exception:
-                result['bozo'] = 1
-                result['bozo_exception'] = bozo_exception
-            result['encoding'] = proposed_encoding
-
-        # initialize the SAX parser
-        feedparser = _StrictFeedParser(baseuri, result['encoding'])
-        if _debug and _debug_never_use_libxml2:
-            sys.stderr.write('not using libxml2 (even if available)\n')
-            additional_parsers = []
-        else:
-            additional_parsers = ["drv_libxml2"]
-        saxparser = xml.sax.make_parser(additional_parsers)
-        saxparser.setFeature(xml.sax.handler.feature_namespaces, 1)
-        saxparser.setContentHandler(feedparser)
-        saxparser.setErrorHandler(feedparser)
-        try:
-            saxparser.setDTDHandler(feedparser)
-        except xml.sax.SAXNotSupportedException:
-            # libxml2 driver does not support DTDHandler
-            pass
-        try:
-            saxparser.setEntityResolver(feedparser)
-        except xml.sax.SAXNotSupportedException:
-            # libxml2 driver does not support EntityResolver
-            pass
-        source = xml.sax.xmlreader.InputSource()
-        source.setByteStream(_StringIO(data))
-        if hasattr(saxparser, '_ns_stack'):
-            # work around bug in built-in SAX parser (doesn't recognize xml: namespace)
-            # PyXML doesn't have this problem, and it doesn't have _ns_stack either
-            saxparser._ns_stack.append({'http://www.w3.org/XML/1998/namespace':'xml'})
-        try:
-            saxparser.parse(source)
-        except Exception, e:
-            if _debug:
-                import traceback
-                traceback.print_stack()
-                traceback.print_exc()
-                sys.stderr.write('xml parsing failed\n')
-            feedparser.bozo = 1
-            feedparser.bozo_exception = feedparser.exc or e
-        if feedparser.bozo:
-            raise feedparser.bozo_exception
-    else:
-        # use regular expression-based parser
-        if _debug: sys.stderr.write('using regexes, now you have two problems\n')
-        result['encoding'] = proposed_encoding
-        feedparser = _LooseFeedParser(baseuri, result['encoding'])
-        feedparser.feed(data)
-    
-    result['feed'] = feedparser.feeddata
-    result['entries'] = feedparser.entries
-    result['version'] = result['version'] or feedparser.version
-    return result
-
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[]):
     """Parse a feed from a URL, file, stream, or string"""
     result = FeedParserDict()
     result['feed'] = FeedParserDict()
     result['entries'] = []
+    if _XML_AVAILABLE:
+        result['bozo'] = 0
     if type(handlers) == types.InstanceType:
         handlers = [handlers]
     try:
@@ -2049,34 +1956,67 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if not data:
         return result
 
-    all_parse_params = []
-    if _XML_AVAILABLE:
-        all_parse_params.append({"use_strict_parser": 1, 'proposed_encoding': result['encoding']})
-        if xml_encoding and (xml_encoding != result['encoding']):
-            all_parse_params.append({"use_strict_parser": 1, 'proposed_encoding': xml_encoding})
-        if 'utf-8' not in (result['encoding'], xml_encoding):
-            all_parse_params.append({"use_strict_parser": 1, 'proposed_encoding': 'utf-8'})
-        if 'windows-1252' not in (result['encoding'], xml_encoding):
-            all_parse_params.append({"use_strict_parser": 1, 'proposed_encoding': 'windows-1252'})
-    all_parse_params.append({"use_strict_parser": 0, 'proposed_encoding': result['encoding']})
-    if xml_encoding and (xml_encoding != result['encoding']):
-        all_parse_params.append({"use_strict_parser": 0, 'proposed_encoding': xml_encoding})
-    if 'utf-8' not in (result['encoding'], xml_encoding):
-        all_parse_params.append({"use_strict_parser": 0, 'proposed_encoding': 'utf-8'})
-    if 'windows-1252' not in (result['encoding'], xml_encoding):
-        all_parse_params.append({"use_strict_parser": 0, 'proposed_encoding': 'windows-1252'})
-    all_parse_params.append({"use_strict_parser": 0, 'proposed_encoding': ''})
-
-    # try different combinations of parsing and encoding until one works
-    for parse_params in all_parse_params:
-        parse_params['baseuri'] = baseuri
-        parse_params['declared_encoding'] = xml_encoding
+    # determine character encoding
+    use_strict_parser = 0
+    known_encoding = 0
+    tried_encodings = []
+    for proposed_encoding in (result['encoding'], xml_encoding, 'utf-8', 'windows-1252'):
+        if proposed_encoding in tried_encodings: continue
         try:
-            result.update(apply(_attempt_parse, (data, result), parse_params))
+            data = _toUTF8(data, proposed_encoding)
+            known_encoding = 1
+            use_strict_parser = 1
             break
-        except Exception, bozo_exception:
+        except:
+            pass
+        tried_encodings.append(proposed_encoding)
+    if not known_encoding:
+        result['bozo'] = 1
+        result['bozo_exception'] = CharacterEncodingUnknown( \
+            "document encoding unknown, I tried " + \
+            "%s, %s, utf-8, and windows-1252 but nothing worked" % \
+            (result['encoding'], xml_encoding))
+        result['encoding'] = ''
+    elif proposed_encoding != result['encoding']:
+        result['bozo'] = 1
+        result['bozo_exception'] = CharacterEncodingOverride( \
+            "documented declared as %s, but parsed as %s" % \
+            (result['encoding'], proposed_encoding))
+        result['encoding'] = proposed_encoding
+
+    if _XML_AVAILABLE and use_strict_parser:
+        # initialize the SAX parser
+        feedparser = _StrictFeedParser(baseuri, 'utf-8')
+        saxparser = xml.sax.make_parser(PREFERRED_XML_PARSERS)
+        saxparser.setFeature(xml.sax.handler.feature_namespaces, 1)
+        saxparser.setContentHandler(feedparser)
+        saxparser.setErrorHandler(feedparser)
+        source = xml.sax.xmlreader.InputSource()
+        source.setByteStream(_StringIO(data))
+        if hasattr(saxparser, '_ns_stack'):
+            # work around bug in built-in SAX parser (doesn't recognize xml: namespace)
+            # PyXML doesn't have this problem, and it doesn't have _ns_stack either
+            saxparser._ns_stack.append({'http://www.w3.org/XML/1998/namespace':'xml'})
+        try:
+            saxparser.parse(source)
+        except Exception, e:
+            if _debug:
+                import traceback
+                traceback.print_stack()
+                traceback.print_exc()
+                sys.stderr.write('xml parsing failed\n')
             result['bozo'] = 1
-            result['bozo_exception'] = bozo_exception
+            result['bozo_exception'] = feedparser.exc or e
+            use_strict_parser = 0
+    if not use_strict_parser:
+        feedparser = _LooseFeedParser(baseuri, result['encoding'])
+        feedparser.feed(data)
+    result['feed'] = feedparser.feeddata
+    result['entries'] = feedparser.entries
+    result['version'] = result['version'] or feedparser.version
+    if _debug:
+        import pprint
+        pprint.pprint(result)
     return result
 
 if __name__ == '__main__':
@@ -2258,7 +2198,7 @@ if __name__ == '__main__':
 #3.0.1 - 6/22/2004 - MAP - default to us-ascii for all text/* content types;
 #  recover from malformed content-type header parameter with no equals sign
 #  ("text/xml; charset:iso-8859-1")
-#3.1 - 6/24/2004 - MAP - added and passed tests for converting HTML entities
+#3.1 - 6/28/2004 - MAP - added and passed tests for converting HTML entities
 #  to Unicode equivalents in illformed feeds (aaronsw); added and
 #  passed tests for converting character entities to Unicode equivalents
 #  in illformed feeds (aaronsw); test for valid parsers when setting
@@ -2268,3 +2208,8 @@ if __name__ == '__main__':
 #  out of url and send as basic authentication; expose downloading-related
 #  exceptions in bozo_exception (aaronsw); added __contains__ method to
 #  FeedParserDict (aaronsw); added publisher_detail (aaronsw)
+#3.2 - 6/29/2004 - MAP - use cjkcodecs and iconv_codec if available; always
+#  convert feed to UTF-8 before passing to XML parser; completely revamp
+#  logic for determining character encoding and attempting XML parsing
+#  (should be similar enough for all vaguely useful cases, and is certainly
+#  much faster)
