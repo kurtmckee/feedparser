@@ -2715,6 +2715,41 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <listitem><para><literal>/rss/channel/dc:publisher</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:publisher</literal></para></listitem>
 </itemizedlist>
+<itemizedlist role="seealso">
+<title>See also</title>
+<listitem><para><xref linkend="reference.feed.publisher_detail"/></para></listitem>
+</itemizedlist>
+</section>
+
+<section id="reference.feed.publisher_detail">
+<?dbhtml filename="reference-feed-publisher_detail.html"?>
+<title>feed.publisher_detail</title>
+<abstract>
+<title/>
+<para>A dictionary with details about the feed publisher.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/rss/channel/webMaster</literal></para></listitem>
+<listitem><para><literal>/rss/channel/dc:publisher</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:channel/dc:publisher</literal></para></listitem>
+</itemizedlist>
+<itemizedlist role="seealso">
+<title>See also</title>
+<listitem><para><xref linkend="reference.feed.publisher"/></para></listitem>
+</itemizedlist>
+<section id="reference.feed.publisher_detail.name">
+<title>feed.publisher_detail.name</title>
+<para>The name of this feed's publisher.</para>
+</section>
+<section id="reference.feed.publisher_detail.url">
+<title>feed.publisher_detail.url</title>
+<para>The &url; of this feed's publisher.  This can be the publisher's home page, or a contact page with a webmail form.</para>
+</section>
+<section id="reference.feed.publisher_detail.email">
+<title>feed.publisher_detail.email</title>
+<para>The email address of this feed's publisher.</para>
+</section>
 </section>
 
 <section id="reference.feed.category">
@@ -3374,6 +3409,54 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.entry.enclosure.type">
 <title>entries[i].enclosures[j].type</title>
 <para>The content type of the linked file.</para>
+</section>
+</section>
+
+<section id="reference.entry.publisher">
+<?dbhtml filename="reference-entry-publisher.html"?>
+<title>entries[i].publisher</title>
+<abstract>
+<title/>
+<para>The publisher of the entry.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/rss/item/dc:publisher</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/dc:publisher</literal></para></listitem>
+</itemizedlist>
+<itemizedlist role="seealso">
+<title>See also</title>
+<listitem><para><xref linkend="reference.entry.publisher_detail"/></para></listitem>
+</itemizedlist>
+</section>
+
+<section id="reference.entry.publisher_detail">
+<?dbhtml filename="reference-entry-publisher_detail.html"?>
+<title>entries[i].publisher_detail</title>
+<abstract>
+<title/>
+<para>A dictionary with details about the entry publisher.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/rss/item/dc:publisher</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/dc:publisher</literal></para></listitem>
+</itemizedlist>
+<itemizedlist role="seealso">
+<title>See also</title>
+<listitem><para><xref linkend="reference.entry.publisher"/></para></listitem>
+</itemizedlist>
+<section id="reference.entry.publisher_detail.name">
+<title>entries[i].publisher_detail.name</title>
+<para>The name of this entry's publisher.</para>
+</section>
+<section id="reference.entry.publisher_detail.url">
+<title>entries[i].publisher_detail.url</title>
+<para>The &url; of this entry's publisher.  This can be the publisher's home page, or a contact page with a webmail form.</para>
+</section>
+<section id="reference.entry.publisher_detail.email">
+<title>entries[i].publisher_detail.email</title>
+<para>The email address of this entry's publisher.</para>
 </section>
 </section>
 
