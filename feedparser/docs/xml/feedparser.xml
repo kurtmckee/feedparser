@@ -43,6 +43,7 @@
 <!ENTITY windows "Windows">
 <!ENTITY iewin "Internet Explorer for Windows">
 <!ENTITY javascript "Javascript">
+<!ENTITY xmlbaseattr "<sgmltag class='attribute'>xml:base</sgmltag>">
 <!ENTITY url_time "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_atomwiki "http://www.intertwingly.net/wiki/pie/">
 <!ENTITY url_linktagmeaning "&url_atomwiki;LinkTagMeaning">
@@ -73,18 +74,20 @@
 <!ENTITY url_w3cdtf "http://www.w3.org/TR/NOTE-datetime">
 <!ENTITY url_sf_feedparser "http://sourceforge.net/projects/feedparser/">
 
-<!ENTITY url_example_atom "http://feedparser.org/docs/examples/atom.xml">
-<!ENTITY url_example_rss20 "http://feedparser.org/docs/examples/rss20.xml">
-<!ENTITY url_example_rss20dc "http://feedparser.org/docs/examples/rss20dc.xml">
-<!ENTITY url_example_rss10 "http://feedparser.org/docs/examples/rss10.rdf">
-<!ENTITY url_example_prism "http://feedparser.org/docs/examples/prism.rdf">
-<!ENTITY url_example_nonstandard "http://feedparser.org/docs/examples/nonstandard_prefix.rdf">
-<!ENTITY url_example_temporary "http://feedparser.org/docs/examples/temporary.xml">
-<!ENTITY url_example_permanent "http://feedparser.org/docs/examples/permanent.xml">
-<!ENTITY url_example_gone "http://feedparser.org/docs/examples/gone.xml">
+<!ENTITY url_example "http://feedparser.org/docs/examples/">
+<!ENTITY url_example_atom "&url_example;atom.xml">
+<!ENTITY url_example_rss20 "&url_example;rss20.xml">
+<!ENTITY url_example_rss20dc "&url_example;rss20dc.xml">
+<!ENTITY url_example_rss10 "&url_example;rss10.rdf">
+<!ENTITY url_example_prism "&url_example;prism.rdf">
+<!ENTITY url_example_nonstandard "&url_example;nonstandard_prefix.rdf">
+<!ENTITY url_example_temporary "&url_example;temporary.xml">
+<!ENTITY url_example_permanent "&url_example;permanent.xml">
+<!ENTITY url_example_gone "&url_example;gone.xml">
 <!ENTITY url_example_basic_auth_inline "http://test:basic@feedparser.org/docs/examples/basic_auth.xml">
-<!ENTITY url_example_basic_auth "http://feedparser.org/docs/examples/basic_auth.xml">
-<!ENTITY url_example_digest_auth "http://feedparser.org/docs/examples/digest_auth.xml">
+<!ENTITY url_example_basic_auth "&url_example;basic_auth.xml">
+<!ENTITY url_example_digest_auth "&url_example;digest_auth.xml">
+<!ENTITY url_example_base "&url_example;base.xml">
 <!ENTITY url_tests_sanitize "http://feedparser.org/tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
@@ -124,7 +127,7 @@
 </itemizedlist>
 <para><varname>mode</varname> is only useful in rare situations and can usually be ignored.  It is the original escaping mode that the feed used to encode the value.  By the time you see it, &feedparser; has already unescaped the value properly.  <emphasis>Clients should never need to manually unescape values.</emphasis></para>">
 
-<!ENTITY base_details "<para><varname>base</varname> is only useful in rare situations and can usually be ignored.  It is the original base &uri; for this value, as specified by the element's <sgmltag class='attribute'>xml:base</sgmltag> attribute, or a parent element's <sgmltag class='attribute'>xml:base</sgmltag>, or the appropriate &http; header, or the &uri; of the feed.  (See <xref linkend='advanced.base'/> for more details.)  By the time you see it, &feedparser; has already resolved relative links in all values where it makes sense to do so.  <emphasis>Clients should never need to manually resolve relative links.</emphasis></para>">
+<!ENTITY base_details "<para><varname>base</varname> is only useful in rare situations and can usually be ignored.  It is the original base &uri; for this value, as specified by the element's &xmlbaseattr; attribute, or a parent element's &xmlbaseattr;, or the appropriate &http; header, or the &uri; of the feed.  (See <xref linkend='advanced.base'/> for more details.)  By the time you see it, &feedparser; has already resolved relative links in all values where it makes sense to do so.  <emphasis>Clients should never need to manually resolve relative links.</emphasis></para>">
 
 <!ENTITY all_versions "<para>Here is the complete list of known feed types and versions that may be returned in <varname>version</varname>:</para>
 <variablelist>
@@ -193,9 +196,9 @@
 
 <!ENTITY sanitized "<para>If this contains &html; or &xhtml;, it is <link linkend='advanced.sanitization'>sanitized</link> by default.</para>">
 
-<!ENTITY isrelativelink "<para>If this value is a relative &uri;, it is <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
+<!ENTITY isrelativelink "<para>If this is a relative &uri;, it is <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
 
-<!ENTITY containsrelativelinks "<para>If <literal>type</literal> is <literal>text/html</literal> or <literal>application/xhtml+xml</literal>, certain (X)HTML elements within this value may contain relative &uri;s.  If so, they are <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
+<!ENTITY containsrelativelinks "<para>If this contains &html; or &xhtml;, certain (X)HTML elements within this value may contain relative &uri;s.  If so, they are <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
 
 <!ENTITY parsedasadate "<link linkend='advanced.date'>parsed as a date</link>">
 ]>
@@ -1422,10 +1425,12 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <!--
 It is the original base &uri; for this value, as specified by the element's <sgmltag class='attribute'>xml:base</sgmltag> attribute, or a parent element's <sgmltag class='attribute'>xml:base</sgmltag>, or the &uri; of the feed.  (This behavior is spelled out in the <ulink url='&url_xmlbase;'>XML Base specification</ulink>.)  By the time you see it, &feedparser; has already resolved relative links in all values where it makes sense to do so.  <emphasis>Clients should never need to manually resolve relative links.</emphasis></para>">
 -->
-<para>Many feed elements and attributes are &uri;s.  &feedparser; resolves relative &uri;s according to the <ulink url="&url_xmlbase;">&xmlbase;</ulink> specification.</para>
+<para>Many feed elements and attributes are &uri;s.  &feedparser; resolves relative &uri;s according to the <ulink url="&url_xmlbase;">&xmlbase;</ulink> specification.  We'll see how that works in a minute, but first let's talk about which values are treated as &uri;s.</para>
 </abstract>
 </sectioninfo>
 <title>Relative Link Resolution</title>
+<section id="advanced.base.which">
+<title>Which Values Are &uri;s</title>
 <para>These feed elements are treated as &uri;s, and resolved if they are relative:</para>
 <itemizedlist>
 <listitem><para><xref linkend="reference.feed.link"/></para></listitem>
@@ -1452,7 +1457,21 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <listitem><para><xref linkend="reference.entry.license"/></para></listitem>
 </itemizedlist>
 
-<para>In addition, several elements may contain &html; or &xhtml; markup.  Certain elements and attributes in &html; can be relative &uri;s, and &feedparser; will resolve these &uri;s according to the same rules as the feed elements listed above.</para>
+<para>In addition, several feed elements may contain &html; or &xhtml; markup.  Certain elements and attributes in &html; can be relative &uri;s, and &feedparser; will resolve these &uri;s according to the same rules as the feed elements listed above.</para>
+
+<para>These feed elements may contain &html; or &xhtml; markup.  (In &atom; feeds, whether these elements are treated as &html; depends on the value of the <sgmltag class="attribute">type</sgmltag> attribute.  In &rss; feeds, these values are always treated as &html;.)</para>
+
+<itemizedlist>
+<listitem><para><xref linkend="reference.feed.title"/> (<xref linkend="reference.feed.title_detail.value"/>)</para></listitem>
+<listitem><para><xref linkend="reference.feed.tagline"/> (<xref linkend="reference.feed.tagline_detail.value"/>))</para></listitem>
+<listitem><para><xref linkend="reference.feed.info"/> (<xref linkend="reference.feed.info_detail.value"/>)</para></listitem>
+<listitem><para><xref linkend="reference.feed.copyright"/> (<xref linkend="reference.feed.copyright_detail.value"/>)</para></listitem>
+<listitem><para><xref linkend="reference.entry.title"/> (<xref linkend="reference.entry.title_detail.value"/>)</para></listitem>
+<listitem><para><xref linkend="reference.entry.summary"/> (<xref linkend="reference.entry.summary_detail.value"/>)</para></listitem>
+<listitem><para><xref linkend="reference.entry.content.value"/></para></listitem>
+</itemizedlist>
+
+<para>When any of these feed elements contains &html; or &xhtml; markup, the following &html; elements are treated as &uri;s and are resolved if they are relative:</para>
 
 <itemizedlist>
 <listitem><para><sgmltag>&lt;a href="..."&gt;</sgmltag></para></listitem>
@@ -1482,7 +1501,58 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <listitem><para><sgmltag>&lt;script src="..."&gt;</sgmltag></para></listitem>
 </itemizedlist>
 
-<para>xxx</para>
+</section>
+
+<section id="advanced.base.how">
+<title>How Relative &uri;s Are Resolved</title>
+<para>&feedparser; resolves relative &uri;s according to the <ulink url="&url_xmlbase;">&xmlbase;</ulink> specification.  This defines a hierarchical inheritance system, where one element can define the base &uri; for itself and all of its child elements, using an <sgmltag class="attribute">xml:base</sgmltag> attribute.  A child element can then override its parent's base &uri; by redeclaring <sgmltag class="attribute">xml:base</sgmltag> to a different value.</para>
+
+<para>If no <sgmltag class="attribute">xml:base</sgmltag> is specified, the feed has a default base &uri; defined in the <literal>Content-Location</literal> &http; header.</para>
+
+<para>If no <literal>Content-Location</literal> &http; header is present, the &url; used to retrieve the feed itself is the default base &uri; for all relative links within the feed.</para>
+
+<para>If the feed was retrieved via an &http; redirect (any &http; 3xx status code, such as <literal>301</literal> for a permanent redirect or <literal>302</literal> for a temporary redirect), then the final &url; of the feed is the default base &uri;.</para>
+
+<para>For example, an &xmlbaseattr; on the root-level element sets the base &uri; for all &uri;s in the feed.</para>
+
+<example>
+<title>&xmlbaseattr; on the root-level element</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_base;">&url_example_base;</ulink>")</userinput>
+&prompt;<userinput>d.feed.link</userinput>
+<computeroutput>u'http://example.org/index.html'</computeroutput>
+&prompt;<userinput>d.feed.generator_detail.url</userinput>
+<computeroutput>u'http://example.org/generator/'</computeroutput></screen>
+</example>
+
+<para>An &xmlbaseattr; attribute on an <sgmltag>&lt;entry&gt;</sgmltag> overrides the &xmlbaseattr; on the parent <sgmltag>&lt;feed&gt;</sgmltag>.</para>
+
+<example>
+<title>Overriding &xmlbaseattr; on an <sgmltag>&lt;entry&gt;</sgmltag></title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_base;">&url_example_base;</ulink>")</userinput>
+&prompt;<userinput>d.entries[0].link</userinput>
+<computeroutput>u'http://example.org/archives/000001.html'</computeroutput>
+&prompt;<userinput>d.entries[0].author_detail.url</userinput>
+<computeroutput>u'http://example.org/about/'</computeroutput></screen>
+</example>
+
+<para>An &xmlbaseattr; on <sgmltag>&lt;content&gt;</sgmltag> overrides the &xmlbaseattr; on the parent <sgmltag>&lt;entry&gt;</sgmltag>.  In addition, whatever the base &uri; is for the <sgmltag>&lt;content&gt;</sgmltag> element (whether defined directly on the <sgmltag>&lt;content&gt;</sgmltag> element, or inherited from the parent element) is used as the base &uri; for the embedded &html; or &xhtml; markup within the <sgmltag>content</sgmltag>.</para>
+
+<example>
+<title>Relative links within embedded &html;</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_base;">&url_example_base;</ulink>")</userinput>
+&prompt;<userinput>d.entries[0].content[0].value</userinput>
+<computeroutput>u'&lt;p id="anchor1">&lt;a href="http://example.org/archives/000001.html#anchor2">skip to anchor 2&lt;/a>&lt;/p>
+ &lt;p>Some content&lt;/p>
+ &lt;p id="anchor2">This is anchor 2&lt;/p>'</computeroutput></screen>
+</example>
+
+<para>xxx more here for an element that defines its own xml:base and then uses it in an attribute</para>
+
+<para>xxx more here for base2.xml (Content-Location)</para>
+</section>
 
 </section>
 
@@ -2211,6 +2281,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>The title of the feed.</para>
 </abstract>
 &sanitized;
+&containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom:feed/atom:title</literal></para></listitem>
@@ -2348,6 +2419,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>A tagline, slogan, or other short description of the feed.</para>
 </abstract>
 &sanitized;
+&containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom:feed/atom:tagline</literal></para></listitem>
@@ -2417,6 +2489,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>A human-readable copyright statement for the feed.</para>
 </abstract>
 &sanitized;
+&containsrelativelinks;
 <note>
 <title/>
 <para>For machine-readable copyright information, see <xref linkend="reference.feed.license"/>.</para>
@@ -2539,6 +2612,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>Free-form human-readable description of the feed format itself.  Intended for people who view the feed in a browser, to explain what they just clicked on.  This element is generally ignored by feed readers.</para>
 </abstract>
 &sanitized;
+&containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom:feed/atom:info</literal></para></listitem>
@@ -3076,6 +3150,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>The title of the entry.</para>
 </abstract>
 &sanitized;
+&containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom:feed/atom:entry/atom:title</literal></para></listitem>
@@ -3213,6 +3288,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>A summary of the entry.</para>
 </abstract>
 &sanitized;
+&containsrelativelinks;
 <para>Some publishing systems auto-generate this value from the first few words or first paragraph of the entry.  Other publishing systems misuse it to include the full content.  In the latter cases, &feedparser; ought to detect it and put the value in <xref linkend="reference.entry.content"/> instead, but it doesn't.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
