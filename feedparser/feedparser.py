@@ -11,8 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: libxml2 <http://xmlsoft.org/python.html>
 """
 
-#__version__ = "3.2-" + "$Revision$"[11:15] + "-cvs"
-__version__ = "3.2"
+__version__ = "pre-3.3-" + "$Revision$"[11:15] + "-cvs"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
@@ -2184,6 +2183,12 @@ if __name__ == '__main__':
         sys.exit(0)
     else:
         urls = sys.argv[1:]
+    del FeedParserDict
+    def FeedParserDict(aDict=None):
+        rc = {}
+        if aDict:
+            rc.update(aDict)
+        return rc
     from pprint import pprint
     for url in urls:
         print url
