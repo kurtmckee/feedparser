@@ -173,3 +173,7 @@
 <Files "http_item_xhtml_body_base_content_location.xml">
   Header set Content-Location http://example.com/
 </Files>
+
+<Files "http_relative_xml_base.xml">
+  Header set Content-Location http://example.com/
+</Files>
