@@ -6,7 +6,7 @@
 %entities_version;
 <!ENTITY gfdl SYSTEM "gfdl.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "3.2">
+<!ENTITY feedparser_version "3.2.1">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
@@ -785,7 +785,7 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 </row>
 <row>
 <entry>valid ISO 8601 (-yy-mm-dd)</entry>
-<entry><literal>03-12-31</literal></entry>
+<entry><literal>-03-12-31</literal></entry>
 <entry><literal>(2003, 12, 31, 0, 0, 0, 2, 365, 0)</literal></entry>
 </row>
 <row>
