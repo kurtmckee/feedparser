@@ -122,6 +122,10 @@
   AddType "text/xml;" .xml
 </Files>
 
+<Files http_text_xml_bogus_param.xml>
+  AddType "text/xml; charset:iso-8859-1" .xml
+</Files>
+
 <Files http_text_xml_charset.xml>
   AddType 'text/xml;charset= "us-ascii"' .xml
 </Files>

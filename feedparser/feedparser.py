@@ -11,7 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: libxml2 <http://xmlsoft.org/python.html>
 """
 
-__version__ = "3.0"
+__version__ = "3.0.1-cvs"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
@@ -1755,6 +1755,9 @@ def _getCharacterEncoding(http_headers, xml_data):
             # dunno if this is malformed but it sure was hard to track down
             return content_type, ''
         import string
+        if not paramstr[0].count('='):
+            # malformed declaration like "text/xml; charset:utf-8" (note : instead of =)
+            return content_type, ''
         params = dict([map(string.lower, map(string.strip, p.strip().split('=', 1))) for p in paramstr])
         charset = params.get('charset')
         if not charset:
@@ -1782,7 +1785,7 @@ def _getCharacterEncoding(http_headers, xml_data):
             true_encoding = 'utf-8'
     elif (http_content_type == 'text/xml') or \
          (http_content_type == 'text/xml-external-parsed-entity') or \
-         (http_content_type.startswith('text/') and http_content_type.endswith('+xml')):
+         (http_content_type.startswith('text/')):# and http_content_type.endswith('+xml')):
         if http_encoding:
             true_encoding = http_encoding
         else:
@@ -2182,3 +2185,6 @@ if __name__ == '__main__':
 #  iso-8859-1 and windows-1252 anyway, and most incorrectly marked feeds are
 #  windows-1252); fixed regression that could cause the same encoding to be
 #  tried twice (even if it failed the first time)
+#3.0.1 - 6/22/2004 - MAP - default to us-ascii for all text/* content types;
+#  recover from malformed content-type header parameter with no equals sign
+#  ("text/xml; charset:iso-8859-1")
