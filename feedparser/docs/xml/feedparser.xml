@@ -1692,16 +1692,21 @@ d = feedparser.parse('<ulink url="&url_example_basic_auth;">&url_example_basic_a
 <programlisting language="python">import urllib2, feedparser
 
 auth = urllib2.HTTPDigestAuthHandler()
-auth.add_password('DigestTest', 'feedparser.org', 'test', 'basic')
+auth.add_password('DigestTest', 'feedparser.org', 'test', 'digest')
 d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest_auth;</ulink>', \
                      handlers=[auth])</programlisting>
 </example>
+
+<caution id="caution.urllib2.buggy.as.all.hell">
+<title/>
+<para>Prior to &python; 2.3.3, &urllib2; did not properly support digest authentication.  These examples have been verified on &python; 2.3.3 on Windows and &python; 2.3.4 on Debian GNU/Linux.  Mac OS X 10.3 ships with &python; 2.3.  OS X users will need to upgrade to the latest version of &python; in order to use digest authentication.</para>
+</caution>
 
 <para>The examples so far have assumed that you know in advance that the feed is password-protected.  But what if you don't know?</para>
 
 <para>If you try to download a password-protected feed without sending all the proper password information, the server will return an &http; status code <literal>401</literal>.  &feedparser; makes this status code available in <varname>d.status</varname>.</para>
 
-<para>Details on the authentication scheme are in <varname>d.headers['www-authenticate']</varname>.  &feedparser; does not do any further parsing on this field; you will need to parse it yourself.  Everything before the first space is the type of authentication (probably <literal>Basic</literal> or <literal>Digest</literal>), which controls which type of handler you'll need to construct.  The realm name is given as <literal>realm="foo"</literal> -- so <literal>foo</literal> would be your first argument to the <varname>auth_handler.add_password</varname> function.  Other information in the <literal>www-authenticate</literal> header is probably safe to ignore; the &urllib2; module will handle it for you.</para>
+<para>Details on the authentication scheme are in <varname>d.headers['www-authenticate']</varname>.  &feedparser; does not do any further parsing on this field; you will need to parse it yourself.  Everything before the first space is the type of authentication (probably <literal>Basic</literal> or <literal>Digest</literal>), which controls which type of handler you'll need to construct.  The realm name is given as <literal>realm="foo"</literal> -- so <literal>foo</literal> would be your first argument to <methodname>auth.add_password</methodname>.  Other information in the <literal>www-authenticate</literal> header is probably safe to ignore; the &urllib2; module will handle it for you.</para>
 
 <example id="example.auth.required">
 <title>Determining that a feed is password-protected</title>
