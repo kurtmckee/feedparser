@@ -1678,6 +1678,25 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <chapter id="reference">
 <?dbhtml filename="reference.html"?>
 <title>Reference</title>
+<section id="reference.feed">
+<?dbhtml filename="reference-feed.html"?>
+<title>feed</title>
+<abstract>
+<title/>
+<para>A dictionary of data about the feed.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom:feed</literal></para></listitem>
+<listitem><para><literal>/rss/channel</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:channel</literal></para></listitem>
+</itemizedlist>
+<tip>
+<title/>
+<para>This element always exists, although it may be an empty dictionary.</para>
+</tip>
+</section>
+
 <section id="reference.feed.title">
 <?dbhtml filename="reference-feed-title.html"?>
 <title>feed.title</title>
@@ -2469,6 +2488,25 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 </itemizedlist>
 </section>
 
+<section id="reference.entry">
+<?dbhtml filename="reference-entry.html"?>
+<title>entries</title>
+<abstract>
+<title/>
+<para>A list of dictionaries.  Each dictionary contains data from a different entry.  Entries are listed in the order in which they appear in the original feed.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom:feed/atom:entry</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item</literal></para></listitem>
+</itemizedlist>
+<tip>
+<title/>
+<para>This element always exists, although it may be an empty list.</para>
+</tip>
+</section>
+
 <section id="reference.entry.title">
 <?dbhtml filename="reference-entry-title.html"?>
 <title>entries[i].title</title>
@@ -3096,6 +3134,10 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 </sectioninfo>
 <title>version</title>
 &all_versions;
+<tip>
+<title/>
+<para>This element always exists, although it may be an empty string if the version can not be determined.</para>
+</tip>
 </section>
 
 <section id="reference.encoding">
@@ -3111,6 +3153,10 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <title/>
 <para>The process by which &feedparser; determines the character encoding of the feed is explained in <xref linkend="advanced.encoding"/>.</para>
 </note>
+<tip>
+<title/>
+<para>This element always exists, although it may be an empty string if the character encoding can not be determined.</para>
+</tip>
 </section>
 
 <section id="reference.status">
