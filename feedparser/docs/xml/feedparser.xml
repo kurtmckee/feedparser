@@ -11,12 +11,6 @@
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
 <!ENTITY url_book "http://feedparser.org/docs/">
-<!ENTITY url_download_dir "&url_book;download/">
-<!ENTITY url_download_prefix "&url_download_dir;feedparser-&feedparser_version;-docs-&fileversion;">
-<!ENTITY url_download_html "&url_download_prefix;-html.zip">
-<!ENTITY url_download_pdf "&url_download_prefix;-pdf.zip">
-<!ENTITY url_download_doc "&url_download_prefix;-doc.zip">
-<!ENTITY url_download_txt "&url_download_prefix;-txt.zip">
 <!ENTITY python "<application>Python</application>">
 <!ENTITY prompt "<prompt>>>> </prompt>">
 <!ENTITY continuationprompt "<prompt>...     </prompt>">
@@ -76,6 +70,7 @@
 <!ENTITY url_rfc822 "http://www.ietf.org/rfc/rfc822.txt">
 <!ENTITY url_iso8601 "http://hydracen.com/dx/iso8601.htm">
 <!ENTITY url_w3cdtf "http://www.w3.org/TR/NOTE-datetime">
+<!ENTITY url_sf_feedparser "http://sourceforge.net/projects/feedparser/">
 
 <!ENTITY url_example_atom "http://feedparser.org/docs/examples/atom.xml">
 <!ENTITY url_example_rss20 "http://feedparser.org/docs/examples/rss20.xml">
@@ -218,7 +213,6 @@
 <title/>
 <para>This documentation claims to describe the behavior of &feedparser; &feedparser_version;.  It does not claim to describe the behavior of any other version.</para>
 <para>This documentation lives at <ulink url="&url_book;"/>.  If you're reading it somewhere else, you may not have the latest version.</para>
-<!--<para>You can download this documentation in these formats: <ulink url="&url_download_html;">HTML</ulink>, <ulink url="&url_download_pdf;">PDF</ulink>, <ulink url="&url_download_doc;">Word</ulink>, <ulink url="&url_download_txt;">text</ulink>.</para>-->
 </abstract>
 <keywordset>
 <keyword>RSS</keyword>
@@ -229,20 +223,6 @@
 <keyword>parser</keyword>
 <keyword>Python</keyword>
 </keywordset>
-<!--
-<revhistory>
-<revision>
-<revnumber>1.0</revnumber>
-<date>2004-05-09</date>
-<revdescription>
-<itemizedlist>
-<listitem><para>
-</para></listitem>
-</itemizedlist>
-</revdescription>
-</revision>
-</revhistory>
--->
 <legalnotice>
 <para>Permission is granted to copy, distribute, and/or modify this document under the terms of the <acronym condition="GNU's Not Unix">GNU</acronym> Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation, with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the license is included in <xref linkend="gfdl"/>.</para>
 </legalnotice>
@@ -871,6 +851,40 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <listitem><para><literal>MT</literal> is treated as <literal>MST</literal></para></listitem>
 <listitem><para><literal>PT</literal> is treated as <literal>PST</literal></para></listitem>
 </itemizedlist>
+</section>
+
+<section id="advanced.date.register">
+<title>Adding support for additional date formats</title>
+<para>&feedparser; supports many different date formats, but there are probably many more in the wild that are still unsupported.  If you find other date formats, you can support them by registering them with <function>registerDateHandler</function>.  It takes a single argument, a callback function.  The callback function should take a single argument, a string, and return a single value, a 9-tuple &python; date in UTC.</para>
+
+<example id="example.registerdatehandler">
+<title>Registering a third-party date handler</title>
+<programlisting language="python">import feedparser
+import re
+
+_my_date_pattern = re.compile( \
+    r'(\d{,2})/(\d{,2})/(\d{4}) (\d{,2}):(\d{2}):(\d{2})')
+
+def myDateHandler(aDateString):
+    """parse a UTC date in MM/DD/YYYY HH:MM:SS format"""
+    month, day, year, hour, minute, second = \
+        _my_date_pattern.search(aDateString).groups()
+    return (int(year), int(month), int(day), \
+            int(hour), int(minute), int(second), 0, 0, 0)
+
+feedparser.registerDateHandler(myDateHandler)
+</programlisting>
+</example>
+
+<para>Your newly-registered date handler will be tried before all the other date handlers built into &feedparser;.  (More specifically, all date handlers are tried in LIFO order; the last handler to be registered is always the first one to be tried.)</para>
+
+<para>If your date handler returns <constant>None</constant>, or anything other than a &python; 9-tuple date, or raises an exception of any kind, the error will be silently ignored and the other registered date handlers will be tried in order.  If no date handlers succeed, then the date is not parsed, but the original date string is still available in the appropriate element in the results dictionary.</para>
+
+<tip>
+<title/>
+<para>If you write a new date handler, you are encouraged (but not required) to <ulink url="&url_sf_feedparser;">submit a patch</ulink> so it can be integrated into the next version of &feedparser;.</para>
+</tip>
+
 </section>
 
 </section>
