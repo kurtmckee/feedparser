@@ -29,16 +29,16 @@
 </div>
 <p>Use standard <span class="application">Python</span> dictionary functions such as <tt class="function">has_key</tt> to test whether an element exists.</p>
 <div class="example">
-<a name="id4780572" class="skip" href="#id4780572" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Testing if elements are present</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
+<a name="example.existence" class="skip" href="#example.existence" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Testing if elements are present</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.has_key('title')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.has_key(<font color='olive'>'title'</font>)</span>
 <span class="computeroutput">True</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.has_key('ttl')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.has_key(<font color='olive'>'ttl'</font>)</span>
 <span class="computeroutput">False</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.get('title', 'No title')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.get(<font color='olive'>'title'</font>, <font color='olive'>'No title'</font>)</span>
 <span class="computeroutput">u'Sample feed'</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.get('ttl', 60)</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.get(<font color='olive'>'ttl'</font>, 60)</span>
 <span class="computeroutput">60</span></pre>
 </div>
 </div>

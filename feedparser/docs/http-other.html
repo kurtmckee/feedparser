@@ -9,7 +9,7 @@
 <meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
 <link rel="start" href="index.html" title="Documentation">
 <link rel="up" href="http.html" title="HTTP Features">
-<link rel="prev" href="http-redirect.html" title="HTTP Redirects">
+<link rel="prev" href="http-authentication.html" title="Password-Protected Feeds">
 <link rel="next" href="annotated-examples.html" title="Annotated Examples">
 </head>
 <body id="feedparser-org" class="docs">
@@ -29,7 +29,7 @@
 </div>
 <div class="example">
 <a name="example.http.headers" class="skip" href="#example.http.headers" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Accessing other <acronym title="Hypertext Transfer Protocol">HTTP</acronym> headers</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.headers</span>
 <span class="computeroutput">{'date': 'Fri, 11 Jun 2004 23:57:50 GMT',
@@ -44,7 +44,7 @@
  'content-type': 'application/xml'}</span></pre>
 </div>
 </div>
-<div style="float: left">← <a class="NavigationArrow" href="http-redirect.html">HTTP Redirects</a>
+<div style="float: left">← <a class="NavigationArrow" href="http-authentication.html">Password-Protected Feeds</a>
 </div>
 <div style="text-align: right">
 <a class="NavigationArrow" href="annotated-examples.html">Annotated Examples</a> →</div>

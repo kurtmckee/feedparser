@@ -38,7 +38,7 @@
 <p>The following <acronym title="HyperText Markup Language">HTML</acronym> attributes are allowed by default (all others are stripped):
 <span class="simplelist"><tt class="sgmltag-attribute">abbr</tt>, <tt class="sgmltag-attribute">accept</tt>, <tt class="sgmltag-attribute">accept-charset</tt>, <tt class="sgmltag-attribute">accesskey</tt>, <tt class="sgmltag-attribute">action</tt>, <tt class="sgmltag-attribute">align</tt>, <tt class="sgmltag-attribute">alt</tt>, <tt class="sgmltag-attribute">axis</tt>, <tt class="sgmltag-attribute">border</tt>, <tt class="sgmltag-attribute">cellpadding</tt>, <tt class="sgmltag-attribute">cellspacing</tt>, <tt class="sgmltag-attribute">char</tt>, <tt class="sgmltag-attribute">charoff</tt>, <tt class="sgmltag-attribute">charset</tt>, <tt class="sgmltag-attribute">checked</tt>, <tt class="sgmltag-attribute">cite</tt>, <tt class="sgmltag-attribute">class</tt>, <tt class="sgmltag-attribute">clear</tt>, <tt class="sgmltag-attribute">cols</tt>, <tt class="sgmltag-attribute">colspan</tt>, <tt class="sgmltag-attribute">color</tt>, <tt class="sgmltag-attribute">compact</tt>, <tt class="sgmltag-attribute">coords</tt>, <tt class="sgmltag-attribute">datetime</tt>, <tt class="sgmltag-attribute">dir</tt>, <tt class="sgmltag-attribute">disabled</tt>, <tt class="sgmltag-attribute">enctype</tt>, <tt class="sgmltag-attribute">for</tt>, <tt class="sgmltag-attribute">frame</tt>, <tt class="sgmltag-attribute">headers</tt>, <tt class="sgmltag-attribute">height</tt>, <tt class="sgmltag-attribute">href</tt>, <tt class="sgmltag-attribute">hreflang</tt>, <tt class="sgmltag-attribute">hspace</tt>, <tt class="sgmltag-attribute">id</tt>, <tt class="sgmltag-attribute">ismap</tt>, <tt class="sgmltag-attribute">label</tt>, <tt class="sgmltag-attribute">lang</tt>, <tt class="sgmltag-attribute">longdesc</tt>, <tt class="sgmltag-attribute">maxlength</tt>, <tt class="sgmltag-attribute">media</tt>, <tt class="sgmltag-attribute">method</tt>, <tt class="sgmltag-attribute">multiple</tt>, <tt class="sgmltag-attribute">name</tt>, <tt class="sgmltag-attribute">nohref</tt>, <tt class="sgmltag-attribute">noshade</tt>, <tt class="sgmltag-attribute">nowrap</tt>, <tt class="sgmltag-attribute">prompt</tt>, <tt class="sgmltag-attribute">readonly</tt>, <tt class="sgmltag-attribute">rel</tt>, <tt class="sgmltag-attribute">rev</tt>, <tt class="sgmltag-attribute">rows</tt>, <tt class="sgmltag-attribute">rowspan</tt>, <tt class="sgmltag-attribute">rules</tt>, <tt class="sgmltag-attribute">scope</tt>, <tt class="sgmltag-attribute">selected</tt>, <tt class="sgmltag-attribute">shape</tt>, <tt class="sgmltag-attribute">size</tt>, <tt class="sgmltag-attribute">span</tt>, <tt class="sgmltag-attribute">src</tt>, <tt class="sgmltag-attribute">start</tt>, <tt class="sgmltag-attribute">summary</tt>, <tt class="sgmltag-attribute">tabindex</tt>, <tt class="sgmltag-attribute">target</tt>, <tt class="sgmltag-attribute">title</tt>, <tt class="sgmltag-attribute">type</tt>, <tt class="sgmltag-attribute">usemap</tt>, <tt class="sgmltag-attribute">valign</tt>, <tt class="sgmltag-attribute">value</tt>, <tt class="sgmltag-attribute">vspace</tt>, <tt class="sgmltag-attribute">width</tt></span>
 </p>
-<a name="id4782737"></a><table class="note" border="0" summary="">
+<a name="id4783146"></a><table class="note" border="0" summary="">
 <tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td></tr>
 <tr><td colspan="2" align="left" valign="top" width="99%">The <a href="http://feedparser.org/tests/wellformed/sanitize/">unit tests for <acronym title="HyperText Markup Language">HTML</acronym> sanitizing</a> show many different examples of dangerous markup that <span class="application">Universal Feed Parser</span> sanitizes by default.</td></tr>
 </table>
@@ -66,12 +66,12 @@
 <div class="example">
 <a name="example.javascript" class="skip" href="#example.javascript" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Embedding Javascript in <acronym title="Cascading Style Sheets">CSS</acronym></h3>
 <p>This sample is taken from <a href="http://feedparser.org/docs/examples/rss20.xml">http://feedparser.org/docs/examples/rss20.xml</a>:</p>
-<pre class="programlisting">
+<pre class="programlisting ">
 &lt;description&gt;Watch out for
 &amp;lt;span style="background: url(javascript:window.location='http://example.org/')"&amp;gt;
 nasty tricks&amp;lt;/span&amp;gt;&lt;/description&gt;</pre>
 <p>This sample is more advanced, and does not contain the keyword <tt class="literal">javascript:</tt> that many naive <acronym title="HyperText Markup Language">HTML</acronym> sanitizers scan for:</p>
-<pre class="programlisting">&lt;description&gt;Watch out for
+<pre class="programlisting ">&lt;description&gt;Watch out for
 &amp;lt;span style="any: expression(window.location='http://example.org/')"&amp;gt;
 nasty tricks&amp;lt;/span&amp;gt;&lt;/description&gt;</pre>
 <p>Internet Explorer for Windows will execute the Javascript in both of these examples.</p>
@@ -80,15 +80,15 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description&gt;</pre>
 <div class="example">
 <a name="example.javascript.encoded" class="skip" href="#example.javascript.encoded" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Embedding encoded Javascript in <acronym title="Cascading Style Sheets">CSS</acronym></h3>
 <p>To a browser, this:</p>
-<pre class="programlisting">&lt;span style="any: expression(window.location='http://example.org/')"&gt;</pre>
+<pre class="programlisting ">&lt;span style="any: expression(window.location='http://example.org/')"&gt;</pre>
 <p>is the same as this (without the line breaks):</p>
-<pre class="programlisting">&lt;span style="&amp;#97;&amp;#110;&amp;#121;&amp;#58;&amp;#32;&amp;#101;&amp;#120;&amp;#112;&amp;#114;&amp;#101;
+<pre class="programlisting ">&lt;span style="&amp;#97;&amp;#110;&amp;#121;&amp;#58;&amp;#32;&amp;#101;&amp;#120;&amp;#112;&amp;#114;&amp;#101;
 &amp;#115;&amp;#115;&amp;#105;&amp;#111;&amp;#110;&amp;#40;&amp;#119;&amp;#105;&amp;#110;&amp;#100;&amp;#111;&amp;#119;
 &amp;#46;&amp;#108;&amp;#111;&amp;#99;&amp;#97;&amp;#116;&amp;#105;&amp;#111;&amp;#110;&amp;#61;&amp;#39;&amp;#104;
 &amp;#116;&amp;#116;&amp;#112;&amp;#58;&amp;#47;&amp;#47;&amp;#101;&amp;#120;&amp;#97;&amp;#109;&amp;#112;&amp;#108;
 &amp;#101;&amp;#46;&amp;#111;&amp;#114;&amp;#103;&amp;#47;&amp;#39;&amp;#41;"&gt;</pre>
 <p>which is the same as this (without the line breaks):</p>
-<pre class="programlisting">&lt;span style="&amp;#x61;&amp;#x6e;&amp;#x79;&amp;#x3a;&amp;#x20;&amp;#x65;&amp;#x78;&amp;#x70;&amp;#x72;
+<pre class="programlisting ">&lt;span style="&amp;#x61;&amp;#x6e;&amp;#x79;&amp;#x3a;&amp;#x20;&amp;#x65;&amp;#x78;&amp;#x70;&amp;#x72;
 &amp;#x65;&amp;#x73;&amp;#x73;&amp;#x69;&amp;#x6f;&amp;#x6e;&amp;#x28;&amp;#x77;&amp;#x69;&amp;#x6e;
 &amp;#x64;&amp;#x6f;&amp;#x77;&amp;#x2e;&amp;#x6c;&amp;#x6f;&amp;#x63;&amp;#x61;&amp;#x74;&amp;#x69;
 &amp;#x6f;&amp;#x6e;&amp;#x3d;&amp;#x27;&amp;#x68;&amp;#x74;&amp;#x74;&amp;#x70;&amp;#x3a;&amp;#x2f;

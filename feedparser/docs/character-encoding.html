@@ -28,10 +28,10 @@
 <div></div>
 </div>
 <p>In <acronym title="Extensible Markup Language">XML</acronym>, the character encoding is optional and may be given in the <acronym title="Extensible Markup Language">XML</acronym> declaration in the first line of the document, like this:</p>
-<div class="informalexample"><pre class="programlisting">&lt;xml version="1.0" encoding="iso-8859-1"?&gt;</pre></div>
+<div class="informalexample"><pre class="programlisting ">&lt;xml version="1.0" encoding="iso-8859-1"?&gt;</pre></div>
 <p>If no encoding is given and no Byte Order Mark is present (don't ask), <acronym title="Extensible Markup Language">XML</acronym> defaults to <tt class="literal">utf-8</tt>.</p>
 <p><acronym title="Hypertext Transfer Protocol">HTTP</acronym> uses <acronym>MIME</acronym> to define a method of specifying the character encoding, as part of the <tt class="literal">Content-Type</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, which looks like this:</p>
-<div class="informalexample"><pre class="programlisting">Content-Type: text/html; charset="utf-8"</pre></div>
+<div class="informalexample"><pre class="programlisting ">Content-Type: text/html; charset="utf-8"</pre></div>
 <p>If no charset is specified, <acronym title="Hypertext Transfer Protocol">HTTP</acronym> defaults to <tt class="literal">iso-8859-1</tt>, but only for <tt class="literal">text/*</tt> media types. For other media types, the default encoding is undefined, which is where <acronym title="Request For Comments">RFC</acronym> 3023 comes in.</p>
 <p>According to <acronym title="Request For Comments">RFC</acronym> 3023, if the media type given in the <tt class="literal">Content-Type</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header is <tt class="literal">application/xml</tt>, <tt class="literal">application/xml-dtd</tt>, <tt class="literal">application/xml-external-parsed-entity</tt>, or any one of the subtypes of <tt class="literal">application/xml</tt> such as <tt class="literal">application/atom+xml</tt> or <tt class="literal">application/rss+xml</tt> or even <tt class="literal">application/rdf+xml</tt>, then the encoding is</p>
 <div class="orderedlist"><ol type="1">

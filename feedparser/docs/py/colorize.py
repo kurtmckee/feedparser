@@ -87,15 +87,15 @@ class ColorizeParser(BaseHTMLProcessor):
     if self.needcolor:
       self.colorindex = len(self.pieces)
 
-#  def start_pre(self, attrs):
-#    self.unknown_starttag("pre", attrs)
-#    if ("class", "programlisting") in attrs:
-#      self.needcolor = 1
-#      self.colorindex = len(self.pieces)
+  def start_pre(self, attrs):
+    self.unknown_starttag("pre", attrs)
+    if ("class", "programlisting python") in attrs:
+      self.needcolor = 1
+      self.colorindex = len(self.pieces)
 
-#  def end_pre(self):
-#    self.needcolor = 0
-#    self.unknown_endtag("pre")
+  def end_pre(self):
+    self.needcolor = 0
+    self.unknown_endtag("pre")
     
   def start_span(self, attrs):
     self.unknown_starttag("span", attrs)

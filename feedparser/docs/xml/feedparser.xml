@@ -6,7 +6,7 @@
 %entities_version;
 <!ENTITY gfdl SYSTEM "gfdl.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "3.0.1">
+<!ENTITY feedparser_version "3.1">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
@@ -39,6 +39,7 @@
 <!ENTITY w3dtf "<acronym condition='W3C Date Time Format'>W3DTF</acronym>">
 <!ENTITY soap "<acronym condition='Simple Object Access Protocol'>SOAP</acronym>">
 <!ENTITY time "<filename class='headerfile'>time</filename>">
+<!ENTITY urllib2 "<filename class='headerfile'>urllib2</filename>">
 <!ENTITY parse "<function>parse</function>">
 <!ENTITY etag "ETag">
 <!ENTITY lastmodified "Last-Modified">
@@ -79,12 +80,18 @@
 <!ENTITY url_example_atom "http://feedparser.org/docs/examples/atom.xml">
 <!ENTITY url_example_rss20 "http://feedparser.org/docs/examples/rss20.xml">
 <!ENTITY url_example_rss20dc "http://feedparser.org/docs/examples/rss20dc.xml">
-<!ENTITY url_example_rss10 "http://feedparser.org/docs/examples/rss10.xml">
+<!ENTITY url_example_rss10 "http://feedparser.org/docs/examples/rss10.rdf">
+<!ENTITY url_example_prism "http://feedparser.org/docs/examples/prism.rdf">
+<!ENTITY url_example_nonstandard "http://feedparser.org/docs/examples/nonstandard_prefix.rdf">
 <!ENTITY url_example_temporary "http://feedparser.org/docs/examples/temporary.xml">
 <!ENTITY url_example_permanent "http://feedparser.org/docs/examples/permanent.xml">
 <!ENTITY url_example_gone "http://feedparser.org/docs/examples/gone.xml">
+<!ENTITY url_example_basic_auth_inline "http://test:basic@feedparser.org/docs/examples/basic_auth.xml">
+<!ENTITY url_example_basic_auth "http://feedparser.org/docs/examples/basic_auth.xml">
+<!ENTITY url_example_digest_auth "http://feedparser.org/docs/examples/digest_auth.xml">
 <!ENTITY url_tests_sanitize "http://feedparser.org/tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
+<!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
 <!ENTITY url_pythonunicode "http://docs.python.org/tut/node5.html#SECTION005130000000000000000">
 
 <!ENTITY example_atom "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom;&#34;/>')</userinput>">
@@ -654,7 +661,7 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 </sectioninfo>
 <title>Testing for Existence</title>
 <para>Use standard &python; dictionary functions such as <function>has_key</function> to test whether an element exists.</para>
-<example>
+<example id="example.existence">
 <title>Testing if elements are present</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &example_atom;
@@ -1139,6 +1146,231 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 </note>
 </section>
 
+<section id="advanced.namespaces">
+<?dbhtml filename="namespace-handling.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>&feedparser; attempts to expose all possible data in feeds, including elements in extension namespaces.</para>
+</abstract>
+</sectioninfo>
+<title>Namespace Handling</title>
+<para>Some common namespaced elements are mapped to core elements.  For further information about these mappings, see <xref linkend="reference"/>.</para>
+<para>Other namespaced elements are available with as <varname><replaceable>prefix</replaceable>_<replaceable>element</replaceable></varname>.</para>
+
+<example id="example.namespace">
+<title>Accessing namespaced elements</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_prism;">&url_example_prism;</ulink>')</userinput>
+&prompt;<userinput>d.feed.prism_issn</userinput>
+<computeroutput>u'0028-0836'</computeroutput></screen>
+</example>
+
+<para>The prefix used to construct the variable name is not guaranteed to be the same as the prefix of the namespaced element in the original feed.  If &feedparser; recognizes the namespace, it will use the namespace's preferred prefix to construct the variable name.</para>
+
+<para>In the previous example, the namespace (<literal>http://prismstandard.org/namespaces/1.2/basic/</literal>) was defined with the namespace's preferred prefix (<literal>prism</literal>), so the <sgmltag>prism:issn</sgmltag> element was accessible as the variable <varname>d.feed.prism_issn</varname>.  However, if the namespace is defined with a non-standard prefix, &feedparser; will still construct the variable name using the preferred prefix, <emphasis>not</emphasis> the actual prefix that is used in the feed.</para>
+
+<para>This will become clear with an example.</para>
+
+<example id="example.namespace.nonstandard">
+<title>Accessing namespaced elements with non-standard prefixes</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_nonstandard;">&url_example_nonstandard;</ulink>')</userinput>
+&prompt;<userinput>d.feed.prism_issn</userinput>
+<computeroutput>u'0028-0836'</computeroutput>
+&prompt;<userinput>d.feed.foo_issn</userinput>
+<computeroutput role="traceback">Traceback (most recent call last):
+  File "&lt;stdin>", line 1, in ?
+  File "feedparser.py", line 158, in __getattr__
+    raise AttributeError, "object has no attribute '%s'" % key
+AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
+</example>
+
+<para>This is the complete list of namespaces that &feedparser; recognizes and uses to construct the variable names for data in these namespaces:</para>
+
+<table>
+<title>Recognized Namespaces</title>
+<tgroup cols="2">
+<thead>
+<row>
+<entry>Prefix</entry>
+<entry>Namespace</entry>
+</row>
+</thead>
+<tbody>
+<row>
+<entry><literal>admin</literal></entry>
+<entry><literal>http://webns.net/mvcb/</literal></entry>
+</row>
+<row>
+<entry><literal>ag</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/aggregation/</literal></entry>
+</row>
+<row>
+<entry><literal>annotate</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/annotate/</literal></entry>
+</row>
+<row>
+<entry><literal>audio</literal></entry>
+<entry><literal>http://media.tangent.org/rss/1.0/</literal></entry>
+</row>
+<row>
+<entry><literal>blogChannel</literal></entry>
+<entry><literal>http://backend.userland.com/blogChannelModule</literal></entry>
+</row>
+<row>
+<entry><literal>cc</literal></entry>
+<entry><literal>http://web.resource.org/cc/</literal></entry>
+</row>
+<row>
+<entry><literal>creativeCommons</literal></entry>
+<entry><literal>http://backend.userland.com/creativeCommonsRssModule</literal></entry>
+</row>
+<row>
+<entry><literal>co</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/company</literal></entry>
+</row>
+<row>
+<entry><literal>content</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/content/</literal></entry>
+</row>
+<row>
+<entry><literal>cp</literal></entry>
+<entry><literal>http://my.theinfo.org/changed/1.0/rss/</literal></entry>
+</row>
+<row>
+<entry><literal>dc</literal></entry>
+<entry><literal>http://purl.org/dc/elements/1.1/</literal></entry>
+</row>
+<row>
+<entry><literal>dcterms</literal></entry>
+<entry><literal>http://purl.org/dc/terms/</literal></entry>
+</row>
+<row>
+<entry><literal>email</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/email/</literal></entry>
+</row>
+<row>
+<entry><literal>ev</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/event/</literal></entry>
+</row>
+<row>
+<entry><literal>icbm</literal></entry>
+<entry><literal>http://postneo.com/icbm/</literal></entry>
+</row>
+<row>
+<entry><literal>image</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/image/</literal></entry>
+</row>
+<row>
+<entry><literal>foaf</literal></entry>
+<entry><literal>http://xmlns.com/foaf/0.1/</literal></entry>
+</row>
+<row>
+<entry><literal>fm</literal></entry>
+<entry><literal>http://freshmeat.net/rss/fm/</literal></entry>
+</row>
+<row>
+<entry><literal>l</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/link/</literal></entry>
+</row>
+<row>
+<entry><literal>pingback</literal></entry>
+<entry><literal>http://madskills.com/public/xml/rss/module/pingback/</literal></entry>
+</row>
+<row>
+<entry><literal>prism</literal></entry>
+<entry><literal>http://prismstandard.org/namespaces/1.2/basic/</literal></entry>
+</row>
+<row>
+<entry><literal>rdf</literal></entry>
+<entry><literal>http://www.w3.org/1999/02/22-rdf-syntax-ns#</literal></entry>
+</row>
+<row>
+<entry><literal>rdfs</literal></entry>
+<entry><literal>http://www.w3.org/2000/01/rdf-schema#</literal></entry>
+</row>
+<row>
+<entry><literal>ref</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/reference/</literal></entry>
+</row>
+<row>
+<entry><literal>reqv</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/richequiv/</literal></entry>
+</row>
+<row>
+<entry><literal>search</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/search/</literal></entry>
+</row>
+<row>
+<entry><literal>slash</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/slash/</literal></entry>
+</row>
+<row>
+<entry><literal>ss</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/servicestatus/</literal></entry>
+</row>
+<row>
+<entry><literal>str</literal></entry>
+<entry><literal>http://hacks.benhammersley.com/rss/streaming/</literal></entry>
+</row>
+<row>
+<entry><literal>sub</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/subscription/</literal></entry>
+</row>
+<row>
+<entry><literal>sy</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/syndication/</literal></entry>
+</row>
+<row>
+<entry><literal>taxo</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/taxonomy/</literal></entry>
+</row>
+<row>
+<entry><literal>thr</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/threading/</literal></entry>
+</row>
+<row>
+<entry><literal>ti</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/textinput/</literal></entry>
+</row>
+<row>
+<entry><literal>trackback</literal></entry>
+<entry><literal>http://madskills.com/public/xml/rss/module/trackback/</literal></entry>
+</row>
+<row>
+<entry><literal>wfw</literal></entry>
+<entry><literal>http://wellformedweb.org/CommentAPI/</literal></entry>
+</row>
+<row>
+<entry><literal>wiki</literal></entry>
+<entry><literal>http://purl.org/rss/1.0/modules/wiki/</literal></entry>
+</row>
+<row>
+<entry><literal>soap</literal></entry>
+<entry><literal>http://schemas.xmlsoap.org/soap/envelope/</literal></entry>
+</row>
+<row>
+<entry><literal>xhtml</literal></entry>
+<entry><literal>http://www.w3.org/1999/xhtml</literal></entry>
+</row>
+<row>
+<entry><literal>xml</literal></entry>
+<entry><literal>http://www.w3.org/XML/1998/namespace</literal></entry>
+</row>
+</tbody>
+</tgroup>
+</table>
+
+<para/>
+
+<caution>
+<title/>
+<para>Data from namespaced elements is not <link linkend='advanced.sanitization'>sanitized</link> (even if it contains &html; markup).</para>
+</caution>
+
+</section>
+
 <section id="advanced.version">
 <?dbhtml filename="version-detection.html"?>
 <sectioninfo>
@@ -1412,6 +1644,85 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 </section>
 
+<section id="http.auth">
+<?dbhtml filename="http-authentication.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>&feedparser; supports downloading and parsing password-protected feeds that are protected by &http; authentication.  Both basic and digest authentication are supported.</para>
+</abstract>
+</sectioninfo>
+<title>Password-Protected Feeds</title>
+<para>For basic authentication, the easiest way is to embed the username and password in the feed &url; itself.</para>
+<example id="example.auth.inline">
+<title>Downloading a feed protected by &http; basic authentication (the easy way)</title>
+<para>In this example, the username is <literal>test</literal> and the password is <literal>basic</literal>.</para>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_basic_auth_inline;">&url_example_basic_auth_inline;</ulink>')</userinput>
+&prompt;<userinput>d.feed.title</userinput>
+<computeroutput>u'Sample Feed'</computeroutput>
+</screen>
+</example>
+<para>You can also construct a <classname>HTTPBasicAuthHandler</classname> that contains the password information, then pass that as a handler to the <function>parse</function> function.  <classname>HTTPBasicAuthHandler</classname> is part of the standard <ulink url="&url_urllib2;">&urllib2;</ulink> module.</para>
+<example id="example.auth.basic">
+<title>Downloading a feed protected by &http; basic authentication (the hard way)</title>
+<programlisting language="python">import urllib2, feedparser
+
+# Construct the authentication handler
+auth = urllib2.HTTPBasicAuthHandler()
+
+# Add password information: realm, host, user, password.
+# A single handler can contain passwords for multiple sites;
+# urllib2 will sort out which passwords get sent to which sites
+# based on the realm and host of the URL you're retrieving
+auth.add_password('BasicTest', 'feedparser.org', 'test', 'basic')
+
+# Pass the authentication handler to the feed parser.
+# handlers is a list because there might be more than one
+# type of handler (urllib2 defines lots of different ones,
+# and you can build your own)
+d = feedparser.parse('<ulink url="&url_example_basic_auth;">&url_example_basic_auth;</ulink>', \
+                     handlers=[auth])</programlisting>
+</example>
+
+<para>Digest authentication is handled in much the same way, by constructing an <classname>HTTPDigestAuthHandler</classname> and populating it with the necessary realm, host, user, and password information.  Note that there is no shortcut like stuffing the information into the &url;.  You need to do it this way:</para>
+
+<example id="example.auth.digest">
+<title>Downloading a feed protected by &http; digest authentication (the only way)</title>
+<programlisting language="python">import urllib2, feedparser
+
+auth = urllib2.HTTPDigestAuthHandler()
+auth.add_password('DigestTest', 'feedparser.org', 'test', 'basic')
+d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest_auth;</ulink>', \
+                     handlers=[auth])</programlisting>
+</example>
+
+<para>The examples so far have assumed that you know in advance that the feed is password-protected.  But what if you don't know?</para>
+
+<para>If you try to download a password-protected feed without sending all the proper password information, the server will return an &http; status code <literal>401</literal>.  &feedparser; makes this status code available in <varname>d.status</varname>.</para>
+
+<para>Details on the authentication scheme are in <varname>d.headers['www-authenticate']</varname>.  &feedparser; does not do any further parsing on this field; you will need to parse it yourself.  Everything before the first space is the type of authentication (probably <literal>Basic</literal> or <literal>Digest</literal>), which controls which type of handler you'll need to construct.  The realm name is given as <literal>realm="foo"</literal> -- so <literal>foo</literal> would be your first argument to the <varname>auth_handler.add_password</varname> function.  Other information in the <literal>www-authenticate</literal> header is probably safe to ignore; the &urllib2; module will handle it for you.</para>
+
+<example id="example.auth.required">
+<title>Determining that a feed is password-protected</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest_auth;</ulink>')</userinput>
+&prompt;<userinput>d.status</userinput>
+<computeroutput>401</computeroutput>
+&prompt;<userinput>d.headers['www-authenticate']</userinput>
+<computeroutput>'Basic realm="Use test/basic"'</computeroutput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest_auth;</ulink>')</userinput>
+&prompt;<userinput>d.status</userinput>
+<computeroutput>401</computeroutput>
+&prompt;<userinput>d.headers['www-authenticate']</userinput>
+<computeroutput>'Digest realm="DigestTest",
+ nonce="+LV/uLLdAwA=5d77397291261b9ef256b034e19bcb94f5b7992a",
+ algorithm=MD5,
+ qop="auth"'</computeroutput></screen>
+</example>
+
+</section>
+
 <section id="http.other">
 <?dbhtml filename="http-other.html"?>
 <sectioninfo>
@@ -1489,7 +1800,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
   &lt;dc:subject><link linkend="reference.entry.category">Quotes</link>&lt;/dc:subject>
   &lt;dc:date><link linkend="reference.entry.modified">2004-05-30T14:23:54-06:00</link>&lt;/dc:date>
   &lt;content:encoded>&lt;![CDATA[
-<link linkend="reference.entry.content">    &lt;cite>Ian Hickson&lt;/cite>: &lt;q>&lt;a href="http://ln.hixie.ch/?start=1030823786&amp;amp;count=1">
+<link linkend="reference.entry.content">    &lt;cite>Ian Hickson&lt;/cite>: &lt;q>&lt;a href="http://ln.hixie.ch/?start=1030823786&amp;count=1">
     Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.
     &lt;/a>&lt;/q>]]&gt;</link>
   &lt;/content:encoded>

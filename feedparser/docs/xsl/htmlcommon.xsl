@@ -11,6 +11,7 @@
 <xsl:param name="css.decoration">0</xsl:param>
 <xsl:param name="admon.graphics" select="1"/>
 <xsl:param name="callout.graphics" select="1"/>
+<xsl:param name="callout.list.table" select="1"/>
 <xsl:param name="spacing.paras" select="0"/>
 
 <!-- suppress line on title page -->
@@ -58,16 +59,36 @@ Environment: Netscape 6
 Workaround:  specify width of callout graphic <td> in absolute pixels to match image width
 -->
 <xsl:template match="callout">
-  <tr>
-    <td width="12" valign="top" align="left">
-      <xsl:call-template name="callout.arearefs">
-        <xsl:with-param name="arearefs" select="@arearefs"/>
-      </xsl:call-template>
-    </td>
-    <td valign="top" align="left">
-      <xsl:apply-templates/>
-    </td>
-  </tr>
+  <xsl:choose>
+    <xsl:when test="$callout.list.table != 0">
+      <tr>
+        <xsl:call-template name="tr.attributes">
+          <xsl:with-param name="rownum">
+            <xsl:number from="calloutlist" count="callout"/>
+          </xsl:with-param>
+        </xsl:call-template>
+
+        <td width="12" valign="top" align="left">
+          <xsl:call-template name="anchor"/>
+          <xsl:call-template name="callout.arearefs">
+            <xsl:with-param name="arearefs" select="@arearefs"/>
+          </xsl:call-template>
+        </td>
+        <td valign="top" align="left">
+          <xsl:apply-templates/>
+        </td>
+      </tr>
+    </xsl:when>
+    <xsl:otherwise>
+      <dt>
+        <xsl:call-template name="anchor"/>
+        <xsl:call-template name="callout.arearefs">
+          <xsl:with-param name="arearefs" select="@arearefs"/>
+        </xsl:call-template>
+      </dt>
+      <dd><xsl:apply-templates/></dd>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 <xsl:template match="acronym|abbrev">
@@ -92,6 +113,55 @@ Workaround:  specify width of callout graphic <td> in absolute pixels to match i
     </xsl:if>
     <xsl:copy-of select="$content"/>
   </acronym>
+</xsl:template>
+
+<xsl:template match="programlisting">
+  <xsl:param name="suppress-numbers" select="'0'"/>
+  <xsl:variable name="id">
+    <xsl:call-template name="object.id"/>
+  </xsl:variable>
+
+  <xsl:call-template name="anchor"/>
+
+  <xsl:variable name="language" select="@language"/>
+
+  <xsl:variable name="content">
+    <xsl:choose>
+      <xsl:when test="$suppress-numbers = '0'
+                      and @linenumbering = 'numbered'
+                      and $use.extensions != '0'
+                      and $linenumbering.extension != '0'">
+        <xsl:variable name="rtf">
+          <xsl:apply-templates/>
+        </xsl:variable>
+        <pre class="{name(.)}">
+          <xsl:call-template name="number.rtf.lines">
+            <xsl:with-param name="rtf" select="$rtf"/>
+          </xsl:call-template>
+        </pre>
+      </xsl:when>
+      <xsl:otherwise>
+        <pre class="{name(.)} {$language}">
+          <xsl:apply-templates/>
+        </pre>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:variable>
+
+  <xsl:choose>
+    <xsl:when test="$shade.verbatim != 0">
+      <table xsl:use-attribute-sets="shade.verbatim.style">
+        <tr>
+          <td>
+            <xsl:copy-of select="$content"/>
+          </td>
+        </tr>
+      </table>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:copy-of select="$content"/>
+    </xsl:otherwise>
+  </xsl:choose>
 </xsl:template>
 
 </xsl:stylesheet>

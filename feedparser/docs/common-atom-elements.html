@@ -23,7 +23,7 @@
 </div>
 <div class="abstract"><p>Atom feeds generally contain more information than <acronym title="Rich Site Summary">RSS</acronym> feeds (because more elements are required), but the most commonly used elements are still title, link, tagline/summary, various dates, and ID.</p></div>
 <p>This sample Atom feed is at <a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>.</p>
-<div class="informalexample"><pre class="programlisting">&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
+<div class="informalexample"><pre class="programlisting ">&lt;?xml version="1.0" encoding="iso-8859-1"?&gt;
 &lt;!-- several elements omitted in this example --&gt;
 &lt;feed version="0.3"
       xmlns="http://purl.org/atom/ns#"
@@ -55,7 +55,7 @@
 <p><tt class="sgmltag-element">feed</tt> elements are available in <tt class="varname">d.feed</tt>.</p>
 <div class="example">
 <a name="example.atom.feed" class="skip" href="#example.atom.feed" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Accessing Common Feed Elements</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title</span>
 <span class="computeroutput">u'Sample feed'</span>
@@ -73,7 +73,7 @@
 <p>Entries are available in <tt class="varname">d.entries</tt>, which is a list.  You access entries in the order in which they appear in the original feed, so the first entry is <tt class="varname">d.entries[0]</tt>.</p>
 <div class="example">
 <a name="example.atom.entry" class="skip" href="#example.atom.entry" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Accessing Common Entry Elements</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].title</span>
 <span class="computeroutput">u'First entry title'</span>
@@ -102,7 +102,7 @@
  'language': u'en',
  'value': u'&lt;div&gt;Watch out for &lt;span&gt;nasty tricks&lt;/span&gt;&lt;/div&gt;'}]</span></pre>
 </div>
-<a name="id4779454"></a><table class="note" border="0" summary="">
+<a name="id4779860"></a><table class="note" border="0" summary="">
 <tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td></tr>
 <tr><td colspan="2" align="left" valign="top" width="99%">The parsed <tt class="sgmltag-element">summary</tt> and <tt class="sgmltag-element">content</tt> are not the same as they appear in the original feed.  The original elements contained dangerous <acronym title="HyperText Markup Language">HTML</acronym> markup which was sanitized.  See <a href="html-sanitization.html" title="HTML Sanitization">HTML Sanitization</a> for details.</td></tr>
 </table>

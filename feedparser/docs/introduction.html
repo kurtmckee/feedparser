@@ -26,35 +26,35 @@
 <p><span class="application">Universal Feed Parser</span> is easy to use; the module is self-contained in a single file, <tt class="filename">feedparser.py</tt>, and it has only one public function, <tt class="function">parse</tt>.  <tt class="function">parse</tt> takes a number of arguments, but only one is required, and it can be a <acronym title="Uniform Resource Locator">URL</acronym>, a local filename, or a raw string containing feed data in any format.</p>
 <div class="example">
 <a name="example.parse.remote" class="skip" href="#example.parse.remote" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Parsing a feed from a remote <acronym title="Uniform Resource Locator">URL</acronym></h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d['feed']['title']</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d[<font color='olive'>'feed'</font>][<font color='olive'>'title'</font>]</span>
 <span class="computeroutput">u'Sample Feed'</span></pre>
 </div>
 <p>The following example assumes you are on Windows, and that you have saved a feed at <tt class="filename">c:\incoming\atom.xml</tt>.</p>
-<a name="id4708501"></a><table class="note" border="0" summary="">
+<a name="id4708860"></a><table class="note" border="0" summary="">
 <tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td></tr>
 <tr><td colspan="2" align="left" valign="top" width="99%">
 <span class="application">Universal Feed Parser</span> works on any platform that can run <span class="application">Python</span>; use the path syntax appropriate for your platform.</td></tr>
 </table>
 <div class="example">
 <a name="example.parse.local" class="skip" href="#example.parse.local" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Parsing a feed from a local file</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse(r'c:\incoming\atom.xml')</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d['feed']['title']</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse(r<font color='olive'>'c:\incoming\atom.xml'</font>)</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d[<font color='olive'>'feed'</font>][<font color='olive'>'title'</font>]</span>
 <span class="computeroutput">u'Sample Feed'</span></pre>
 </div>
 <p><span class="application">Universal Feed Parser</span> can also parse a feed in memory.</p>
 <div class="example">
 <a name="example.parse.string" class="skip" href="#example.parse.string" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Parsing a feed from a string</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">rawdata = """&lt;rss version="2.0"&gt;
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">rawdata = <font color='olive'>"""&lt;rss version="2.0"&gt;
 &lt;channel&gt;
 &lt;title&gt;Sample Feed&lt;/title&gt;
 &lt;/channel&gt;
-&lt;/rss&gt;"""</span>
+&lt;/rss&gt;"""</font></span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse(rawdata)</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d['feed']['title']</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d[<font color='olive'>'feed'</font>][<font color='olive'>'title'</font>]</span>
 <span class="computeroutput">u'Sample Feed'</span></pre>
 </div>
 <p>Values are returned as <span class="application">Python</span> Unicode strings.</p>

@@ -16,7 +16,7 @@
 <property name="py" value="py"/>
 <property name="dist" value="dist"/>
 <property name="tmp" value="${dist}/tmp"/>
-<property name="html" value="${dist}"/>
+<property name="html" value="."/>
 <property name="htmlflat" value="${dist}/htmlflat"/>
 <property name="htmldist" value="${dist}/docs"/>
 <property name="word" value="${dist}/doc"/>

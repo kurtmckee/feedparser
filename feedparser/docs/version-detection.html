@@ -9,7 +9,7 @@
 <meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
 <link rel="start" href="index.html" title="Documentation">
 <link rel="up" href="advanced.html" title="Advanced Features">
-<link rel="prev" href="content-normalization.html" title="Content Normalization">
+<link rel="prev" href="namespace-handling.html" title="Namespace Handling">
 <link rel="next" href="character-encoding.html" title="Character Encoding Detection">
 </head>
 <body id="feedparser-org" class="docs">
@@ -38,7 +38,7 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/rss20dc.xml">http://feedparser.org/docs/examples/rss20dc.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.version</span>
 <span class="computeroutput">'rss20'</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/rss10.xml">http://feedparser.org/docs/examples/rss10.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/rss10.rdf">http://feedparser.org/docs/examples/rss10.rdf</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.version</span>
 <span class="computeroutput">'rss10'</span></pre>
 </div>
@@ -80,7 +80,7 @@
 </dl></div>
 <p>If the feed type is completely unknown, <tt class="varname">version</tt> will be an empty string.</p>
 </div>
-<div style="float: left">← <a class="NavigationArrow" href="content-normalization.html">Content Normalization</a>
+<div style="float: left">← <a class="NavigationArrow" href="namespace-handling.html">Namespace Handling</a>
 </div>
 <div style="text-align: right">
 <a class="NavigationArrow" href="character-encoding.html">Character Encoding Detection</a> →</div>
