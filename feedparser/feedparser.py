@@ -11,7 +11,8 @@ Recommended: Python 2.3 or later
 Recommended: libxml2 <http://xmlsoft.org/python.html>
 """
 
-__version__ = "3.2-" + "$Revision$"[11:15] + "-cvs"
+#__version__ = "3.2-" + "$Revision$"[11:15] + "-cvs"
+__version__ = "3.2"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
@@ -2366,15 +2367,14 @@ if __name__ == '__main__':
 #  out of url and send as basic authentication; expose downloading-related
 #  exceptions in bozo_exception (aaronsw); added __contains__ method to
 #  FeedParserDict (aaronsw); added publisher_detail (aaronsw)
-#3.2 - 7/2/2004 - MAP - use cjkcodecs and iconv_codec if available; always
-#  convert feed to UTF-8 before passing to XML parser; completely revamp
+#3.2 - 7/3/2004 - MAP - use cjkcodecs and iconv_codec if available; always
+#  convert feed to UTF-8 before passing to XML parser; completely revamped
 #  logic for determining character encoding and attempting XML parsing
-#  (should be similar enough for all vaguely useful cases, and is certainly
-#  much faster); increased default timeout to 20 seconds; test for presence
+#  (much faster); increased default timeout to 20 seconds; test for presence
 #  of Location header on redirects; added tests for many alternate character
 #  encodings; support various EBCDIC encodings; support UTF-16BE and
 #  UTF16-LE with or without a BOM; support UTF-8 with a BOM; support
-#  UTF-32BE and UTF-32LE with or without a BOM; fixed problem if no
+#  UTF-32BE and UTF-32LE with or without a BOM; fixed crashing bug if no
 #  XML parsers are available; added support for "Content-encoding: deflate";
 #  send blank "Accept-encoding: " header if neither gzip nor zlib modules
 #  are available

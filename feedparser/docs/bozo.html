@@ -46,6 +46,7 @@
 </pre>
 </div>
 <p>If <span class="application">Universal Feed Parser</span> detects that the feed's character encoding is incorrect and reparses it with a different encoding, the <tt class="varname">bozo</tt> bit will be set to <tt class="literal">1</tt> and <tt class="varname">bozo_exception</tt> will be set to <tt class="constant">feedparser.CharacterEncodingOverride</tt>.</p>
+<p>If <span class="application">Universal Feed Parser</span> is unable to determine the feed's character encoding, the <tt class="varname">bozo</tt> bit will be set to <tt class="literal">1</tt> and <tt class="varname">bozo_exception</tt> will be set to <tt class="constant">feedparser.CharacterEncodingUnknown</tt>.</p>
 </div>
 <div style="float: left">← <a class="NavigationArrow" href="character-encoding.html">Character Encoding Detection</a>
 </div>

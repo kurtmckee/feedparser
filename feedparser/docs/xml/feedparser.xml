@@ -6,7 +6,7 @@
 %entities_version;
 <!ENTITY gfdl SYSTEM "gfdl.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "3.1">
+<!ENTITY feedparser_version "3.2">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
@@ -93,6 +93,8 @@
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
 <!ENTITY url_pythonunicode "http://docs.python.org/tut/node5.html#SECTION005130000000000000000">
+<!ENTITY url_sectionf "http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info">
+<!ENTITY url_cjkcodecs "http://cjkpython.i18n.org/">
 
 <!ENTITY example_atom "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom;&#34;/>')</userinput>">
 <!ENTITY example_rss20 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_rss20;&#34;/>')</userinput>">
@@ -289,7 +291,7 @@
 &prompt;<userinput>d['feed']['title']</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
-<para>Values are returned as &python; Unicode strings.</para>
+<para>Values are returned as &python; Unicode strings (except when they're not -- see <xref linkend="advanced.encoding"/> for all the gory details).</para>
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
 <listitem><para><ulink url="&url_pythonunicode;">Introduction to &python; Unicode strings</ulink></para></listitem>
@@ -1400,13 +1402,16 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 
 <section id="advanced.encoding">
 <?dbhtml filename="character-encoding.html"?>
-<sectioninfo>
+<title>Character Encoding Detection</title>
+<tip>
+<title/>
+<para>Feeds may be published in any character encoding.  &python; supports only a few character encodings by default.  To support the maximum number of character encodings (and be able to parse the maximum number of feeds), you should install <filename>cjkcodecs</filename> and <filename>iconv_codec</filename>.  Both are available at <ulink url="&url_cjkcodecs;"/>.</para>
+</tip>
+
 <abstract>
 <title/>
 <para><ulink url="&url_rfc3023;">RFC 3023</ulink> defines the interaction between &xml; and &http; as it relates to character encoding.  &xml; and &http; have different ways of specifying character encoding and different defaults in case no encoding is specified, and determining which value takes precedence depends on a variety of factors.</para>
 </abstract>
-</sectioninfo>
-<title>Character Encoding Detection</title>
 
 <para>In &xml;, the character encoding is optional and may be given in the &xml; declaration in the first line of the document, like this:</para>
 
@@ -1414,7 +1419,9 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <programlisting>&lt;xml version="1.0" encoding="iso-8859-1"?></programlisting>
 </informalexample>
 
-<para>If no encoding is given and no Byte Order Mark is present (don't ask), &xml; defaults to <literal>utf-8</literal>.</para>
+<para>If no encoding is given, XML supports the use of a Byte Order Mark to identify the document as some flavor of UTF-32, UTF-16, or UTF-8.  <ulink url="&url_sectionf;">Section F of the &xml; specification</ulink> outlines the process for determining the character encoding based on unique properties of the Byte Order Mark in the first two to four bytes of the document.</para>
+
+<para>If no encoding is specified and no Byte Order Mark is present, &xml; defaults to UTF-8.</para>
 
 <para>&http; uses &mime; to define a method of specifying the character encoding, as part of the <literal>Content-Type</literal> &http; header, which looks like this:</para>
 
@@ -1443,9 +1450,12 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 
 <orderedlist>
 <listitem><para>the encoding specified in the &xml; declaration</para></listitem>
+<listitem><para>the encoding sniffed from the first four bytes of the document (as per <ulink url="&url_sectionf;">Section F</ulink>)</para></listitem>
 <listitem><para><literal>utf-8</literal></para></listitem>
 <listitem><para><literal>windows-1252</literal></para></listitem>
 </orderedlist>
+
+<para>If the character encoding can not be determined, &feedparser; sets the <varname>bozo</varname> bit to <literal>1</literal> and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingUnknown</constant>.  In this case, parsed values will be strings, not Unicode strings.</para>
 
 </section>
 
@@ -1477,6 +1487,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 </screen>
 </example>
 <para>If &feedparser; detects that the feed's character encoding is incorrect and reparses it with a different encoding, the <varname>bozo</varname> bit will be set to <literal>1</literal> and <varname>bozo_exception</varname> will be set to <constant>feedparser.CharacterEncodingOverride</constant>.</para>
+<para>If &feedparser; is unable to determine the feed's character encoding, the <varname>bozo</varname> bit will be set to <literal>1</literal> and <varname>bozo_exception</varname> will be set to <constant>feedparser.CharacterEncodingUnknown</constant>.</para>
 </section>
 
 </chapter>
@@ -3682,7 +3693,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>See <xref linkend="advanced.bozo"/> for more details on the <varname>bozo</varname> bit.</para>
 <tip>
 <title/>
-<para><varname>bozo</varname> will only be present if an &xml; parser is available.  Some platforms, such as Mac OS X 10.2 and some versions of FreeBSD, do not include an &xml; parser in their &python; distributions.  &feedparser; will still work on these platforms, but it will not be able to detect whether the feed publisher is a bozo.</para>
+<para><varname>bozo</varname> may not be present.  Some platforms, such as Mac OS X 10.2 and some versions of FreeBSD, do not include an &xml; parser in their &python; distributions.  &feedparser; will still work on these platforms, but it will not be able to detect whether a feed is well-formed.  However, it <emphasis>can</emphasis> detect whether a feed's character encoding is incorrectly declared.  (This is done in &python;, not by the &xml; parser.)  See <xref linkend="advanced.encoding"/> for details.</para>
 </tip>
 </section>
 
@@ -3698,7 +3709,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>See <xref linkend="advanced.bozo"/> for more details.</para>
 <tip>
 <title/>
-<para><varname>bozo_exception</varname> will only be present if an &xml; parser is available.  Some platforms, such as Mac OS X 10.2 and some versions of FreeBSD, do not include an &xml; parser in their &python; distributions.  &feedparser; will still work on these platforms, but it will not be able to detect whether the feed publisher is a bozo.</para>
+<para><varname>bozo_exception</varname> will only be present if <varname>bozo</varname> is <literal>1</literal>.</para>
 </tip>
 </section>
 </chapter>
