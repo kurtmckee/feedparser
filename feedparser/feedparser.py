@@ -19,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -319,7 +319,6 @@ class _FeedParserMixin:
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
         self.baseuri = baseuri
-        if _debug: sys.stderr.write('self.lang = %s\n' % self.lang)
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang == '':
             # xml:lang could be explicitly set to '', we need to capture that
@@ -327,7 +326,6 @@ class _FeedParserMixin:
         elif lang is None:
             # if no xml:lang is specified, use parent lang
             lang = self.lang
-        if _debug: sys.stderr.write('new lang = %s\n' % lang)
         if lang:
             if tag in ('feed', 'rss', 'rdf:RDF'):
                 self.feeddata['language'] = lang
@@ -487,7 +485,7 @@ class _FeedParserMixin:
     def trackNamespace(self, prefix, uri):
         if (prefix, uri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
             self.version = 'rss090'
-        if (prefix, uri) == (None, 'http://purl.org/rss/1.0/') and not self.version:
+        if uri == 'http://purl.org/rss/1.0/' and not self.version:
             self.version = 'rss10'
         if not prefix: return
         if uri.find('backend.userland.com/rss') <> -1:
@@ -599,11 +597,10 @@ class _FeedParserMixin:
         return attrsD.get(self._mapToStandardPrefix(name))
 
     def _save(self, key, value):
-        if value:
-            if self.inentry:
-                self.entries[-1].setdefault(key, value)
-            elif self.feeddata:
-                self.feeddata.setdefault(key, value)
+        if self.inentry:
+            self.entries[-1].setdefault(key, value)
+        elif self.feeddata:
+            self.feeddata.setdefault(key, value)
 
     def _start_rss(self, attrsD):
         versionmap = {'0.91': 'rss091u',
@@ -999,6 +996,7 @@ class _FeedParserMixin:
 
     def _end_guid(self):
         value = self.pop('id')
+        self._save('guidislink', self.guidislink and not self._getContext().has_key('link'))
         if self.guidislink:
             # guid acts as link, but only if "ispermalink" is not present or is "true",
             # and only if the item doesn't already have a link element
@@ -2560,6 +2558,8 @@ if __name__ == '__main__':
 #  better than dictionary-like objects; added NonXMLContentType exception,
 #  which is stored in bozo_exception when a feed is served with a non-XML
 #  media type such as "text/plain"; respect Content-Language as default
-#  language if none other is specified; cloud dict is now FeedParserDict;
+#  language if not xml:lang is present; cloud dict is now FeedParserDict;
 #  generator dict is now FeedParserDict; better tracking of xml:lang,
-#  including support for xml:lang="" to unset the current language
+#  including support for xml:lang="" to unset the current language;
+#  recognize RSS 1.0 feeds even when RSS 1.0 namespace is not the default
+#  namespace
