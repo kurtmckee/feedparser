@@ -32,7 +32,7 @@
 <span class="computeroutput">u'Sample Feed'</span></pre>
 </div>
 <p>The following example assumes you are on Windows, and that you have saved a feed at <tt class="filename">c:\incoming\atom.xml</tt>.</p>
-<a name="id896273"></a><table class="note" border="0" summary="">
+<a name="id896280"></a><table class="note" border="0" summary="">
 <tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td></tr>
 <tr><td colspan="2" align="left" valign="top" width="99%">
 <span class="application">Universal Feed Parser</span> works on any platform that can run <span class="application">Python</span>; use the path syntax appropriate for your platform.</td></tr>
@@ -56,6 +56,11 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse(rawdata)</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d['feed']['title']</span>
 <span class="computeroutput">u'Sample Feed'</span></pre>
+</div>
+<p>Values are returned as <span class="application">Python</span> Unicode strings.</p>
+<div class="furtherreading">
+<h3>Elsewhere</h3>
+<ul><li><a href="http://docs.python.org/tut/node5.html#SECTION005130000000000000000">Introduction to <span class="application">Python</span> Unicode strings</a></li></ul>
 </div>
 </div>
 <div style="float: left">← <a class="NavigationArrow" href="basic.html">Basic Features</a>

@@ -85,6 +85,7 @@
 <!ENTITY url_example_gone "http://feedparser.org/docs/examples/gone.xml">
 <!ENTITY url_tests_sanitize "http://feedparser.org/tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
+<!ENTITY url_pythonunicode "http://docs.python.org/tut/node5.html#SECTION005130000000000000000">
 
 <!ENTITY example_atom "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom;&#34;/>')</userinput>">
 <!ENTITY example_rss20 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_rss20;&#34;/>')</userinput>">
@@ -280,6 +281,11 @@
 &prompt;<userinput>d['feed']['title']</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
+<para>Values are returned as &python; Unicode strings.</para>
+<itemizedlist role="furtherreading">
+<title>Elsewhere</title>
+<listitem><para><ulink url="&url_pythonunicode;">Introduction to &python; Unicode strings</ulink></para></listitem>
+</itemizedlist>
 </section>
 <section id="basic.rss">
 <?dbhtml filename="common-rss-elements.html"?>
