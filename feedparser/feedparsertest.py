@@ -13,7 +13,7 @@ try:
 except NameError:
   from feedparser import dict
 
-_debug = 1
+_debug = 0
 
 #---------- custom HTTP server (used to serve test feeds) ----------
 
