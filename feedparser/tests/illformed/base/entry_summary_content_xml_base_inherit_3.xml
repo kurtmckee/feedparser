@@ -1,5 +1,5 @@
 <!--
-Description: entry summary content xml:base inherited from parent element
+Description: entry summary content xml:base resets properly on new element
 Expect:      bozo and entries[0]['summary_detail']['base'] == u'http://example.com/summary/'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#" xml:base="http://example.com/parent/">

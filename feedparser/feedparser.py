@@ -303,9 +303,8 @@ class _FeedParserMixin:
         
         # track xml:base and xml:lang
         attrsD = dict(attrs)
-        baseuri = attrsD.get('xml:base', attrsD.get('base'))
-        if baseuri:
-            self.baseuri = baseuri
+        baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
+        self.baseuri = baseuri
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang:
             if (tag in ('feed', 'rss', 'rdf:RDF')) and (not self.lang):
@@ -2392,4 +2391,7 @@ if __name__ == '__main__':
 #  send blank "Accept-encoding: " header if neither gzip nor zlib modules
 #  are available
 #3.3 - 7/4/2004 - MAP - tweak FeedParserDict to make command-line debugging
-#  easier; optimize EBCDIC to ASCII conversion
+#  easier; optimize EBCDIC to ASCII conversion; fix obscure problem tracking
+#  xml:base if element declares it, child doesn't, first grandchild redeclares
+#  it, and second grandchild doesn't
+
