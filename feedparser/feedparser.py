@@ -57,7 +57,7 @@ except ImportError:
     import socket
     if hasattr(socket, 'setdefaulttimeout'):
         socket.setdefaulttimeout(10)
-import urllib2
+import urllib, urllib2
 
 _mxtidy = None
 if TIDY_MARKUP:
@@ -77,6 +77,7 @@ if TIDY_MARKUP:
 # using one.
 try:
     import xml.sax
+    xml.sax.make_parser() # test for valid parsers
     from xml.sax.saxutils import escape as _xmlescape
     class CharacterEncodingOverride(xml.sax.SAXException): pass
     _XML_AVAILABLE = 1
@@ -1431,7 +1432,7 @@ class _FeedURLHandler(urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandl
     http_error_300 = http_error_302
     http_error_307 = http_error_302
         
-def _open_resource(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None):
+def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers):
     """URL, filename, or string --> stream
 
     This function lets you define parsers that take any input source
@@ -1453,6 +1454,9 @@ def _open_resource(url_file_stream_or_string, etag=None, modified=None, agent=No
 
     If the referrer argument is supplied, it will be used as the value of a
     Referer[sic] request header.
+
+    If handlers is supplied, it is a list of handlers used to build a
+    urllib2 opener.
     """
 
     if hasattr(url_file_stream_or_string, "read"):
@@ -1464,6 +1468,16 @@ def _open_resource(url_file_stream_or_string, etag=None, modified=None, agent=No
     if urlparse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp'):
         if not agent:
             agent = USER_AGENT
+        # test for inline user:password for basic auth
+        auth = None
+        if base64:
+            urltype, rest = urllib.splittype(url_file_stream_or_string)
+            realhost, rest = urllib.splithost(rest)
+            if realhost:
+                user_passwd, realhost = urllib.splituser(realhost)
+                if user_passwd:
+                    url_file_stream_or_string = "%s://%s%s" % (urltype, realhost, rest)
+                    auth = base64.encodestring(user_passwd).strip()
         # try to open with urllib2 (to use optional headers)
         request = urllib2.Request(url_file_stream_or_string)
         request.add_header("User-Agent", agent)
@@ -1481,8 +1495,10 @@ def _open_resource(url_file_stream_or_string, etag=None, modified=None, agent=No
             request.add_header("Referer", referrer)
         if gzip:
             request.add_header("Accept-encoding", "gzip")
+        if auth:
+            request.add_header("Authorization", "Basic %s" % auth)
         request.add_header("Accept", "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1")
-        opener = urllib2.build_opener(_FeedURLHandler())
+        opener = apply(urllib2.build_opener, tuple([_FeedURLHandler()] + handlers))
         opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
         try:
             try:
@@ -1945,17 +1961,14 @@ def _attempt_parse(data, result, baseuri, use_strict_parser, declared_encoding, 
     result['version'] = result['version'] or feedparser.version
     return result
 
-def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None):
+def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[]):
     """Parse a feed from a URL, file, stream, or string"""
     result = FeedParserDict()
     result['feed'] = FeedParserDict()
     result['entries'] = []
-
-    f = _open_resource(url_file_stream_or_string,
-                       etag=etag,
-                       modified=modified,
-                       agent=agent,
-                       referrer=referrer)
+    if type(handlers) == types.InstanceType:
+        handlers = [handlers]
+    f = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers)
     data = f.read()
 
     # if feed is gzip-compressed, decompress it
@@ -1986,12 +1999,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result["headers"] = f.headers.dict
     f.close()
 
-    # if server sent 304, we're done
-    if result.get("status", 0) == 304:
-        result['debug_message'] = "The feed has not changed since you last checked, " + \
-            "so the server sent no data.  This is a feature, not a bug!"
-        return result
-
     # there are three encodings to keep track of:
     # - xml_encoding is the encoding declared in the <?xml declaration
     # - http_encoding is the encoding declared in the Content-Type HTTP header
@@ -2000,6 +2007,13 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         _getCharacterEncoding(result.get("headers", {}), data)
     result['version'], data = _stripDoctype(data)
     baseuri = result.get('headers', {}).get('content-location', result.get('url'))
+
+    # if server sent 304, we're done
+    if result.get("status", 0) == 304:
+        result['version'] = ''
+        result['debug_message'] = "The feed has not changed since you last checked, " + \
+            "so the server sent no data.  This is a feature, not a bug!"
+        return result
 
     all_parse_params = []
     if _XML_AVAILABLE:
@@ -2213,4 +2227,8 @@ if __name__ == '__main__':
 #3.0.2 - 6/23/2004 - MAP - added and passed tests for converting HTML entities
 #  to Unicode equivalents in illformed feeds (aaronsw); added and
 #  passed tests for converting character entities to Unicode equivalents
-#  in illformed feeds (aaronsw)
+#  in illformed feeds (aaronsw); test for valid parsers when setting
+#  XML_AVAILABLE; make version and encoding available when server returns
+#  a 304; add handlers parameter to pass arbitrary urllib2 handlers (like
+#  digest auth or proxy support); add code to parse username/password
+#  out of url and send as basic authentication
