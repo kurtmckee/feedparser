@@ -93,6 +93,8 @@ def getDescription(xmlfile):
   """
 
   data = open(xmlfile).read()
+  if data[:4] == '\x4c\x6f\xa7\x94':
+    data = feedparser.ebcdic_to_ascii(data)
   skip_results = skip_re.search(data)
   if skip_results:
     skipUnless = skip_results.group(1).strip()
@@ -114,7 +116,7 @@ def buildTestCase(xmlfile, description, method, evalString):
 if __name__ == "__main__":
   if sys.argv[1:]:
     import operator
-    allfiles = reduce(operator.add, map(glob.glob, sys.argv[1:]), [])
+    allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
     sys.argv = [sys.argv[0]] #+ sys.argv[2:]
   else:
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))

@@ -19,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -171,6 +171,30 @@ class FeedParserDict(UserDict):
 
     def __contains__(self, key):
         return self.has_key(key)
+
+def ebcdic_to_ascii(str):
+    ebcdic_to_ascii_map = (
+        0,1,2,3,156,9,134,127,151,141,142,11,12,13,14,15,
+        16,17,18,19,157,133,8,135,24,25,146,143,28,29,30,31,
+        128,129,130,131,132,10,23,27,136,137,138,139,140,5,6,7,
+        144,145,22,147,148,149,150,4,152,153,154,155,20,21,158,26,
+        32,160,161,162,163,164,165,166,167,168,91,46,60,40,43,33,
+        38,169,170,171,172,173,174,175,176,177,93,36,42,41,59,94,
+        45,47,178,179,180,181,182,183,184,185,124,44,37,95,62,63,
+        186,187,188,189,190,191,192,193,194,96,58,35,64,39,61,34,
+        195,97,98,99,100,101,102,103,104,105,196,197,198,199,200,201,
+        202,106,107,108,109,110,111,112,113,114,203,204,205,206,207,208,
+        209,126,115,116,117,118,119,120,121,122,210,211,212,213,214,215,
+        216,217,218,219,220,221,222,223,224,225,226,227,228,229,230,231,
+        123,65,66,67,68,69,70,71,72,73,232,233,234,235,236,237,
+        125,74,75,76,77,78,79,80,81,82,238,239,240,241,242,243,
+        92,159,83,84,85,86,87,88,89,90,244,245,246,247,248,249,
+        48,49,50,51,52,53,54,55,56,57,250,251,252,253,254,255
+        )
+    newstr = []
+    for ix in xrange(len(str)):
+        newstr.append(chr(ebcdic_to_ascii_map[ord(str[ix])]))
+    return "".join(newstr)
 
 class _FeedParserMixin:
     namespaces = {"": "",
@@ -1115,7 +1139,7 @@ class _FeedParserMixin:
     _end_prodlink = _end_content
 
 if _XML_AVAILABLE:
-    class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):#, xml.sax.handler.EntityResolver):#, xml.sax.handler.DTDHandler):
+    class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, encoding):
             if _debug: sys.stderr.write('trying StrictFeedParser\n')
             xml.sax.handler.ContentHandler.__init__(self)
@@ -1848,7 +1872,14 @@ def _getCharacterEncoding(http_headers, xml_data):
 
     true_encoding = None
     http_content_type, http_encoding = _parseHTTPContentType(http_headers.get("content-type"))
-    xml_encoding_match = re.compile('<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(xml_data)
+    xml_encoding_match = None
+    # TODO: more here to detect UTF-16, UTF-32
+    if xml_data[:4] == '\x4c\x6f\xa7\x94':
+        # EBCDIC
+        xml_encoding_match = re.compile('<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(ebcdic_to_ascii(xml_data))
+    else:
+        # ASCII-compatible (TODO: wrong, might be UTF-16 or UTF-32)
+        xml_encoding_match = re.compile('<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(xml_data)
     xml_encoding = xml_encoding_match and xml_encoding_match.groups()[0].lower() or ''
     if (http_content_type == 'application/xml') or \
        (http_content_type == 'application/xml-dtd') or \
@@ -1983,6 +2014,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     tried_encodings = []
     for proposed_encoding in (result['encoding'], xml_encoding, 'utf-8', 'windows-1252'):
         if proposed_encoding in tried_encodings: continue
+        if not proposed_encoding: continue
         try:
             data = _toUTF8(data, proposed_encoding)
             known_encoding = 1
@@ -2235,4 +2267,4 @@ if __name__ == '__main__':
 #  (should be similar enough for all vaguely useful cases, and is certainly
 #  much faster); increased default timeout to 20 seconds; test for presence
 #  of Location header on redirects; added tests for many alternate character
-#  encodings
+#  encodings; support various EBCDIC encodings
