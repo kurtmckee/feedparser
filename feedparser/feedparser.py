@@ -43,7 +43,7 @@ PREFERRED_XML_PARSERS = ["drv_libxml2"]
 TIDY_MARKUP = 0
 
 # ---------- required modules (should come with any Python distribution) ----------
-import sgmllib, re, sys, copy, urlparse, time, rfc822, types
+import sgmllib, re, sys, copy, urlparse, time, rfc822, types, cgi
 try:
     from cStringIO import StringIO as _StringIO
 except:
@@ -1985,31 +1985,9 @@ def _getCharacterEncoding(http_headers, xml_data):
         If no content type is specified, returns ('', '')
         Both return parameters are guaranteed to be lowercase strings
         """
-        if not content_type:
-            return '', ''
-        content_type = content_type.strip()
-        paramstr = content_type.split(';')[1:]
-        if not paramstr:
-            return content_type, ''
-        content_type = content_type.split(';', 1)[0].strip().lower()
-        if not paramstr[0]:
-            # declaration like "text/xml;" (note ending semicolon)
-            # dunno if this is malformed but it sure was hard to track down
-            return content_type, ''
-        import string
-        if not paramstr[0].count('='):
-            # malformed declaration like "text/xml; charset:utf-8" (note : instead of =)
-            return content_type, ''
-        params = dict([map(string.lower, map(string.strip, p.strip().split('=', 1))) for p in paramstr])
-        charset = params.get('charset')
-        if not charset:
-            return content_type, ''
-        if charset[0] in ('"', "'"):
-            charset = charset[1:]
-        if charset and charset[-1] in ('"', "'"):
-            charset = charset[:-1]
-        charset = charset.strip()
-        return content_type, charset
+        content_type = content_type or ''
+        content_type, params = cgi.parse_header(content_type)
+        return content_type, params.get('charset', '').replace("'", "")
 
     sniffed_xml_encoding = ''
     xml_encoding = ''
@@ -2525,7 +2503,6 @@ if __name__ == '__main__':
 
 # TODO
 # - add Content-Language + test cases
-# - use cgi.parse_header to parse HTTP headers
 # - add test case for "Content-type: application/xml; qs=0.9"
 # - add PDF docs
 # - add text docs (and distribute)
