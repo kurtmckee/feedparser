@@ -41,7 +41,7 @@ PREFERRED_XML_PARSERS = ["drv_libxml2"]
 TIDY_MARKUP = 0
 
 # ---------- required modules (should come with any Python distribution) ----------
-import sgmllib, re, sys, copy, urlparse, time, rfc822, types
+import sgmllib, re, sys, copy, urlparse, time, rfc822, types, codecs
 try:
     from cStringIO import StringIO as _StringIO
 except:
@@ -1870,17 +1870,39 @@ def _getCharacterEncoding(http_headers, xml_data):
         charset = charset.strip()
         return content_type, charset
 
+    xml_encoding = None
     true_encoding = None
     http_content_type, http_encoding = _parseHTTPContentType(http_headers.get("content-type"))
-    xml_encoding_match = None
-    # TODO: more here to detect UTF-16, UTF-32
-    if xml_data[:4] == '\x4c\x6f\xa7\x94':
-        # EBCDIC
-        xml_encoding_match = re.compile('<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(ebcdic_to_ascii(xml_data))
-    else:
-        # ASCII-compatible (TODO: wrong, might be UTF-16 or UTF-32)
+    # Must sniff for non-ASCII-compatible character encodings before
+    # searching for XML declaration.  This heuristic is defined in
+    # section F of the XML specification:
+    # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
+    if 1:#try:
+        if xml_data[:4] == '\x4c\x6f\xa7\x94':
+            print 'ebcdic'
+            # EBCDIC
+            xml_data = ebcdic_to_ascii(xml_data)
+        elif xml_data[:4] == '\x00\x3c\x00\x3f':
+            # UTF-16BE
+            xml_encoding = 'utf-16be'
+        elif (len(xml_data) >= 4) and (xml_data[:2] == '\xfe\xff') and (xml_data[2:4] != '\x00\x00'):
+            # UTF-16BE with BOM
+            xml_encoding = 'utf-16be'
+        elif xml_data[:4] == '\x3c\x00\x3f\x00':
+            # UTF-16LE
+            xml_encoding = 'utf-16le'
+        elif (len(xml_data) >= 4) and (xml_data[:2] == '\xff\xfe') and (xml_data[2:4] != '\x00\x00'):
+            # UTF-16LE with BOM
+            xml_encoding = 'utf-16le'
+        else:
+            # ASCII-compatible
+            print 'ascii-compatible'
+            pass
         xml_encoding_match = re.compile('<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(xml_data)
-    xml_encoding = xml_encoding_match and xml_encoding_match.groups()[0].lower() or ''
+#    except:
+#        xml_encoding_match = None
+    if not xml_encoding:
+        xml_encoding = xml_encoding_match and xml_encoding_match.groups()[0].lower() or ''
     if (http_content_type == 'application/xml') or \
        (http_content_type == 'application/xml-dtd') or \
        (http_content_type == 'application/xml-external-parsed-entity') or \
@@ -1911,14 +1933,55 @@ def _toUTF8(data, encoding):
     encoding is a string recognized by encodings.aliases
     """
     if _debug: sys.stderr.write('entering _toUTF8, trying encoding %s\n' % encoding)
+    # strip Byte Order Mark (if present)
+    if (len(data) >= 4) and (data[:2] == '\xfe\xff') and (data[2:4] != '\x00\x00'):
+        if _debug:
+            sys.stderr.write('stripping BOM\n')
+            if encoding != 'utf-16be':
+                sys.stderr.write('trying utf-16be instead\n')
+        encoding = 'utf-16be'
+        data = data[2:]
+    elif (len(data) >= 4) and (data[:2] == '\xff\xfe') and (data[2:4] != '\x00\x00'):
+        if _debug:
+            sys.stderr.write('stripping BOM\n')
+            if encoding != 'utf-16le':
+                sys.stderr.write('trying utf-16le instead\n')
+        encoding = 'utf-16le'
+        data = data[2:]
+    elif data[:3] == '\xef\xbb\xbf':
+        if _debug:
+            sys.stderr.write('stripping BOM\n')
+            if encoding != 'utf-8':
+                sys.stderr.write('trying utf-8 instead\n')
+        encoding = 'utf-8'
+        data = data[3:]
+#
+## no tests for UTF-32 yet
+#
+#    elif data[:4] == '\x00\x00\xfe\xff':
+#        if _debug:
+#            sys.stderr.write('stripping BOM\n')
+#            if encoding != 'utf-32be':
+#                sys.stderr.write('trying utf-32be instead\n')
+#        encoding = 'utf-32be'
+#        data = data[4:]
+#    elif data[:4] == '\xff\xfe\x00\x00':
+#        if _debug:
+#            sys.stderr.write('stripping BOM\n')
+#            if encoding != 'utf-32le':
+#                sys.stderr.write('trying utf-32le instead\n')
+#        encoding = 'utf-32le'
+#        data = data[4:]
     newdata = unicode(data, encoding)
+    print newdata.encode('utf-8')
     if _debug: sys.stderr.write('successfully converted %s data to unicode\n' % encoding)
-    declmatch = re.compile(u'^<\?xml[^>]*?>')
+    declmatch = re.compile('^<\?xml[^>]*?>')
     newdecl = """<?xml version='1.0' encoding='utf-8'?>"""
     if declmatch.search(newdata):
         newdata = declmatch.sub(newdecl, newdata)
     else:
         newdata = newdecl + u'\n' + newdata
+    print newdata.encode("utf-8")
     return newdata.encode("utf-8")
 
 def _stripDoctype(data):
@@ -2267,4 +2330,5 @@ if __name__ == '__main__':
 #  (should be similar enough for all vaguely useful cases, and is certainly
 #  much faster); increased default timeout to 20 seconds; test for presence
 #  of Location header on redirects; added tests for many alternate character
-#  encodings; support various EBCDIC encodings
+#  encodings; support various EBCDIC encodings; support UTF-16BE and
+#  UTF16-LE with or without a BOM; support UTF-8 with a BOM

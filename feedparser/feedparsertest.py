@@ -95,6 +95,16 @@ def getDescription(xmlfile):
   data = open(xmlfile).read()
   if data[:4] == '\x4c\x6f\xa7\x94':
     data = feedparser.ebcdic_to_ascii(data)
+  elif data[:4] == '\x00\x3c\x00\x3f':
+    data = unicode(data, 'utf-16be').encode('utf-8')
+  elif data[:4] == '\x3c\x00\x3f\x00':
+    data = unicode(data, 'utf-16le').encode('utf-8')
+  elif (data[:2] == '\xfe\xff') and (data[2:4] != '\x00\x00'):
+    data = unicode(data[2:], 'utf-16be').encode('utf-8')
+  elif (data[:2] == '\xff\xfe') and (data[2:4] != '\x00\x00'):
+    data = unicode(data[2:], 'utf-16le').encode('utf-8')
+  elif data[:3] == '\xef\xbb\xbf':
+    data = data[3:]
   skip_results = skip_re.search(data)
   if skip_results:
     skipUnless = skip_results.group(1).strip()
