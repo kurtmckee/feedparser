@@ -1488,7 +1488,8 @@ class _FeedURLHandler(urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandl
             infourl = urllib2.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
         else:
             infourl = urllib.addinfourl(fp, headers, req.get_full_url())
-        infourl.status = code
+        if not hasattr(infourl, 'status'):
+            infourl.status = code
         return infourl
 
     def http_error_301(self, req, fp, code, msg, headers):
@@ -1496,10 +1497,12 @@ class _FeedURLHandler(urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandl
             infourl = urllib2.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)
         else:
             infourl = urllib.addinfourl(fp, headers, req.get_full_url())
-        infourl.status = code
+        if not hasattr(infourl, 'status'):
+            infourl.status = code
         return infourl
 
     http_error_300 = http_error_302
+    http_error_303 = http_error_302
     http_error_307 = http_error_302
         
 def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers):
@@ -2562,4 +2565,7 @@ if __name__ == '__main__':
 #  generator dict is now FeedParserDict; better tracking of xml:lang,
 #  including support for xml:lang="" to unset the current language;
 #  recognize RSS 1.0 feeds even when RSS 1.0 namespace is not the default
-#  namespace
+#  namespace; don't overwrite final status on redirects (scenarios:
+#  redirecting to a URL that returns 304, redirecting to a URL that
+#  redirects to another URL with a different type of redirect); add
+#  support for HTTP 303 redirects
