@@ -26,7 +26,8 @@ _debug = 0
 # change this to your application name and URL.
 USER_AGENT = "UniversalFeedParser/%s%s +http://feedparser.org/" % (__version__, _debug and "-debug" or "")
 
-# HTTP "Accept" header to send to servers when downloading feeds.
+# HTTP "Accept" header to send to servers when downloading feeds.  If you don't
+# want to send an Accept header, set this to None.
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
 # List of preferred XML parsers, by SAX driver name.  These will be tried first,
@@ -54,6 +55,10 @@ try:
     import gzip
 except:
     gzip = None
+try:
+    import zlib
+except:
+    zlib = None
     
 # timeoutsocket allows feedparser to time out rather than hang forever on ultra-slow servers.
 # Python 2.3 now has this functionality available in the standard socket library, so under
@@ -1530,11 +1535,18 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
             request.add_header("If-Modified-Since", "%s, %02d %s %04d %02d:%02d:%02d GMT" % (short_weekdays[modified[6]], modified[2], months[modified[1] - 1], modified[0], modified[3], modified[4], modified[5]))
         if referrer:
             request.add_header("Referer", referrer)
-        if gzip:
+        if gzip and zlib:
+            request.add_header("Accept-encoding", "gzip, deflate")
+        elif gzip:
             request.add_header("Accept-encoding", "gzip")
+        elif zlib:
+            request.add_header("Accept-encoding", "deflate")
+        else:
+            request.add_header("Accept-encoding", "")
         if auth:
             request.add_header("Authorization", "Basic %s" % auth)
-        request.add_header("Accept", ACCEPT_HEADER)
+        if ACCEPT_HEADER:
+            request.add_header("Accept", ACCEPT_HEADER)
         opener = apply(urllib2.build_opener, tuple([_FeedURLHandler()] + handlers))
         opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
         try:
@@ -2040,8 +2052,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         f = None
 
     # if feed is gzip-compressed, decompress it
-    if f and data and gzip and hasattr(f, "headers"):
-        if f.headers.get('content-encoding', '') == 'gzip':
+    if f and data and hasattr(f, "headers"):
+        if gzip and f.headers.get('content-encoding', '') == 'gzip':
             try:
                 data = gzip.GzipFile(fileobj=_StringIO(data)).read()
             except Exception, e:
@@ -2049,6 +2061,13 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
                 # we get garbage.  Ideally, we should re-request the
                 # feed without the "Accept-encoding: gzip" header,
                 # but we don't.
+                result['bozo'] = 1
+                result['bozo_exception'] = e
+                data = ''
+        elif zlib and f.headers.get('content-encoding', '') == 'deflate':
+            try:
+                data = zlib.decompress(data, -zlib.MAX_WBITS)
+            except Exception, e:
                 result['bozo'] = 1
                 result['bozo_exception'] = e
                 data = ''
@@ -2354,4 +2373,6 @@ if __name__ == '__main__':
 #  encodings; support various EBCDIC encodings; support UTF-16BE and
 #  UTF16-LE with or without a BOM; support UTF-8 with a BOM; support
 #  UTF-32BE and UTF-32LE with or without a BOM; fixed problem if no
-#  XML parsers are available
+#  XML parsers are available; added support for "Content-encoding: deflate";
+#  send blank "Accept-encoding: " header if neither gzip nor zlib modules
+#  are available
