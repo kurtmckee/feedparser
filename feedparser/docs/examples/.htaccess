@@ -19,3 +19,7 @@ Redirect gone /docs/examples/gone.xml
   allow from all
   require valid-user
 </Files>
+
+<Files "http_base.xml">
+  Header set Content-Location http://example.org/
+</Files>

@@ -88,6 +88,7 @@
 <!ENTITY url_example_basic_auth "&url_example;basic_auth.xml">
 <!ENTITY url_example_digest_auth "&url_example;digest_auth.xml">
 <!ENTITY url_example_base "&url_example;base.xml">
+<!ENTITY url_example_http_base "&url_example;http_base.xml">
 <!ENTITY url_tests_sanitize "http://feedparser.org/tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
@@ -1549,7 +1550,30 @@ It is the original base &uri; for this value, as specified by the element's <sgm
  &lt;p id="anchor2">This is anchor 2&lt;/p>'</computeroutput></screen>
 </example>
 
-<para>xxx more here for an element that defines its own xml:base and then uses it in an attribute</para>
+<para>The &xmlbaseattr; affects other attributes in the element in which it is declared.</para>
+
+<example>
+<title>&xmlbaseattr; and sibling attributes</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_base;">&url_example_base;</ulink>")</userinput>
+&prompt;<userinput>d.entries[0].links[1].rel</userinput>
+<computeroutput>u'service.edit'</computeroutput>
+&prompt;<userinput>d.entries[0].links[1].href</userinput>
+<computeroutput>u'http://example.com/api/client/37'</computeroutput></screen>
+</example>
+
+<para>If no &xmlbaseattr; is specified, the default base &uri; is given in the <literal>Content-Location</literal> &http; header.</para>
+
+<example>
+<title><literal>Content-Location</literal> &http; header</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_http_base;">&url_example_http_base;</ulink>")</userinput>
+&prompt;<userinput>xxx</userinput>
+<computeroutput></computeroutput>
+&prompt;<userinput></userinput>
+<computeroutput></computeroutput>
+</screen>
+</example>
 
 <para>xxx more here for base2.xml (Content-Location)</para>
 </section>
