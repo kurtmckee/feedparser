@@ -11,8 +11,8 @@ Recommended: Python 2.3 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-#__version__ = "pre-3.3-" + "$Revision$"[11:15] + "-cvs"
-__version__ = "3.3"
+__version__ = "pre-3.4-" + "$Revision$"[11:15] + "-cvs"
+#__version__ = "3.3"
 __license__ = "Python"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
