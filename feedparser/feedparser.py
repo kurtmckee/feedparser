@@ -1423,18 +1423,23 @@ class _FeedURLHandler(urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandl
     def http_error_default(self, req, fp, code, msg, headers):
         if ((code / 100) == 3) and (code != 304):
             return self.http_error_302(req, fp, code, msg, headers)
-        from urllib import addinfourl
-        infourl = addinfourl(fp, headers, req.get_full_url())
+        infourl = urllib.addinfourl(fp, headers, req.get_full_url())
         infourl.status = code
         return infourl
 
     def http_error_302(self, req, fp, code, msg, headers):
-        infourl = urllib2.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
+        if headers.dict.has_key('location'):
+            infourl = urllib2.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
+        else:
+            infourl = urllib.addinfourl(fp, headers, req.get_full_url())
         infourl.status = code
         return infourl
 
     def http_error_301(self, req, fp, code, msg, headers):
-        infourl = urllib2.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)
+        if headers.dict.has_key('location'):
+            infourl = urllib2.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)
+        else:
+            infourl = urllib.addinfourl(fp, headers, req.get_full_url())
         infourl.status = code
         return infourl
 
@@ -2212,4 +2217,5 @@ if __name__ == '__main__':
 #  convert feed to UTF-8 before passing to XML parser; completely revamp
 #  logic for determining character encoding and attempting XML parsing
 #  (should be similar enough for all vaguely useful cases, and is certainly
-#  much faster); increased default timeout to 20 seconds
+#  much faster); increased default timeout to 20 seconds; test for presence
+#  of Location header on redirects
