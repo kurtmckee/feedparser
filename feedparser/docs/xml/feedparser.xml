@@ -89,6 +89,7 @@
 <!ENTITY url_example_digest_auth "&url_example;digest_auth.xml">
 <!ENTITY url_example_base "&url_example;base.xml">
 <!ENTITY url_example_http_base "&url_example;http_base.xml">
+<!ENTITY url_example_no_base "&url_example;no_base.xml">
 <!ENTITY url_tests_sanitize "http://feedparser.org/tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
@@ -1510,9 +1511,7 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 
 <para>If no <sgmltag class="attribute">xml:base</sgmltag> is specified, the feed has a default base &uri; defined in the <literal>Content-Location</literal> &http; header.</para>
 
-<para>If no <literal>Content-Location</literal> &http; header is present, the &url; used to retrieve the feed itself is the default base &uri; for all relative links within the feed.</para>
-
-<para>If the feed was retrieved via an &http; redirect (any &http; 3xx status code, such as <literal>301</literal> for a permanent redirect or <literal>302</literal> for a temporary redirect), then the final &url; of the feed is the default base &uri;.</para>
+<para>If no <literal>Content-Location</literal> &http; header is present, the &url; used to retrieve the feed itself is the default base &uri; for all relative links within the feed.  If the feed was retrieved via an &http; redirect (any &http; 3xx status code), then the final &url; of the feed is the default base &uri;.</para>
 
 <para>For example, an &xmlbaseattr; on the root-level element sets the base &uri; for all &uri;s in the feed.</para>
 
@@ -1562,20 +1561,30 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <computeroutput>u'http://example.com/api/client/37'</computeroutput></screen>
 </example>
 
-<para>If no &xmlbaseattr; is specified, the default base &uri; is given in the <literal>Content-Location</literal> &http; header.</para>
+<para>If no &xmlbaseattr; is specified on the root-level element, the default base &uri; is given in the <literal>Content-Location</literal> &http; header.  This can still be overridden by any child element that declares an &xmlbaseattr; attribute.</para>
 
 <example>
 <title><literal>Content-Location</literal> &http; header</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_http_base;">&url_example_http_base;</ulink>")</userinput>
-&prompt;<userinput>xxx</userinput>
-<computeroutput></computeroutput>
-&prompt;<userinput></userinput>
-<computeroutput></computeroutput>
-</screen>
+&prompt;<userinput>d.feed.link</userinput>
+<computeroutput>u'http://example.org/index.html'</computeroutput>
+&prompt;<userinput>d.entries[0].link</userinput>
+<computeroutput>u'http://example.org/archives/000001.html'</computeroutput></screen>
 </example>
 
-<para>xxx more here for base2.xml (Content-Location)</para>
+<para>Finally, if no root-level &xmlbaseattr; is declared, and no <literal>Content-Location</literal> &http; header is present, the &url; of the feed itself is the default base &uri;.  Again, this can still be overridden by any element that declares an &xmlbaseattr; attribute.</para>
+
+<example>
+<title>Feed &url; as default base &uri;</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_no_base;">&url_example_no_base;</ulink>")</userinput>
+&prompt;<userinput>d.feed.link</userinput>
+<computeroutput>u'&url_example;index.html</computeroutput>
+&prompt;<userinput>d.entries[0].link</userinput>
+<computeroutput>u'http://example.org/archives/000001.html'</computeroutput></screen>
+</example>
+
 </section>
 
 </section>
