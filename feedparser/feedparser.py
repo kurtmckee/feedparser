@@ -1923,7 +1923,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         xml_encoding_match = re.compile('^<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(xml_data)
     except:
         xml_encoding_match = None
-    if xml_encoding_match and (not xml_encoding):
+    if xml_encoding_match:
         declared_encoding = xml_encoding_match.groups()[0].lower()
         if declared_encoding not in ('iso-10646-ucs-2', 'ucs-2', 'csunicode', 'iso-10646-ucs-4', 'ucs-4', 'csucs4', 'utf-16', 'utf-32', 'utf_16', 'utf_32', 'utf16', 'u16'):
             xml_encoding = declared_encoding
