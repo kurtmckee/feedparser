@@ -15,7 +15,7 @@ except NameError:
 
 _debug = 0
 try:
-  codecs.lookup('utf32-be')
+  codecs.lookup('utf-32be')
   _utf32_available = 1
 except:
   _utf32_available = 0
