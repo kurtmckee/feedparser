@@ -1,9 +1,0 @@
-<!--
-Description: 199
-Expect:      bozo and feed['title'] == u'testing \xc7 entity'
--->
-<rss>
-<channel>
-<title>testing &#199; entity</title>
-</channel>
-</rss

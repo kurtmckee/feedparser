@@ -1,9 +1,0 @@
-<!--
-Description: 219
-Expect:      bozo and feed['title'] == u'testing \xdb entity'
--->
-<rss>
-<channel>
-<title>testing &#219; entity</title>
-</channel>
-</rss
