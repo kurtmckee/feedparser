@@ -11,8 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: libxml2 <http://xmlsoft.org/python.html>
 """
 
-import time
-__version__ = "3.2-cvs-%s" % time.strftime('%Y-%m-%d', time.localtime(time.time()))
+__version__ = "3.2-cvs-" + "$Revision$"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
@@ -20,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -1666,8 +1665,12 @@ rfc822._timezones.update(_additional_timezones)
 
 def _parse_date(date):
     """Parses a variety of date formats into a tuple of 9 integers"""
-    date = str(date)
     try:
+        # Make date a string.  If this fails due to character encoding
+        # issues (high bit characters in the date string -- yes, I've
+        # seen it happen), then we probably couldn't have salvaged
+        # anything from the date string anyway.
+        date = str(date)
         # try the standard rfc822 library, which handles
         # RFC822, RFC1123, RFC2822, and asctime
         tm = rfc822.parsedate_tz(date)
