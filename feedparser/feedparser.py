@@ -12,7 +12,6 @@ Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
 __version__ = "pre-3.3-" + "$Revision$"[11:15] + "-cvs"
-#__version__ = "3.3"
 __license__ = "Python"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
@@ -25,7 +24,7 @@ _debug = 0
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
 # change this to your application name and URL.
-USER_AGENT = "UniversalFeedParser/%s%s +http://feedparser.org/" % (__version__, _debug and "-debug" or "")
+USER_AGENT = "UniversalFeedParser/%s +http://feedparser.org/" % __version__
 
 # HTTP "Accept" header to send to servers when downloading feeds.  If you don't
 # want to send an Accept header, set this to None.
@@ -144,16 +143,16 @@ SUPPORTED_VERSIONS = {'': 'unknown',
                       }
 
 try:
-    dict
+    UserDict = dict
 except NameError:
-    # Python 2.1 does not have a built-in dict() function
+    # Python 2.1 does not have dict
+    from UserDict import UserDict
     def dict(aList):
         rc = {}
         for k, v in aList:
             rc[k] = v
         return rc
 
-from UserDict import UserDict
 class FeedParserDict(UserDict):
     def __getitem__(self, key):
         keymap = {'channel': 'feed',
@@ -959,7 +958,7 @@ class _FeedParserMixin:
     _end_keywords = _end_category
         
     def _start_cloud(self, attrsD):
-        self.feeddata['cloud'] = attrsD
+        self.feeddata['cloud'] = FeedParserDict(attrsD)
         
     def _start_link(self, attrsD):
         attrsD.setdefault('rel', 'alternate')
@@ -1077,7 +1076,7 @@ class _FeedParserMixin:
         if attrsD:
             if attrsD.has_key('url'):
                 attrsD['url'] = self.resolveURI(attrsD['url'])
-            self.feeddata['generator_detail'] = attrsD
+            self.feeddata['generator_detail'] = FeedParserDict(attrsD)
         self.push('generator', 1)
 
     def _end_generator(self):
@@ -2549,7 +2548,7 @@ if __name__ == '__main__':
 #  XML parsers are available; added support for "Content-encoding: deflate";
 #  send blank "Accept-encoding: " header if neither gzip nor zlib modules
 #  are available
-#3.3 - 7/9/2004 - MAP - optimize EBCDIC to ASCII conversion; fix obscure
+#3.3 - 7/15/2004 - MAP - optimize EBCDIC to ASCII conversion; fix obscure
 #  problem tracking xml:base and xml:lang if element declares it, child
 #  doesn't, first grandchild redeclares it, and second grandchild doesn't;
 #  refactored date parsing; defined public registerDateHandler so callers
@@ -2561,4 +2560,6 @@ if __name__ == '__main__':
 #  better than dictionary-like objects; added NonXMLContentType exception,
 #  which is stored in bozo_exception when a feed is served with a non-XML
 #  media type such as "text/plain"; respect Content-Language as default
-#  language if none other is specified
+#  language if none other is specified; cloud dict is now FeedParserDict;
+#  generator dict is now FeedParserDict; better tracking of xml:lang,
+#  including support for xml:lang="" to unset the current language
