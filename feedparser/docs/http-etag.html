@@ -30,7 +30,7 @@
 <p>The basic concept is that a feed publisher may provide a special <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, called an ETag, when it publishes a feed.  You should send this ETag back to the server on subsequent requests.  If the feed has not changed since the last time you requested it, the server will return a special <acronym title="Hypertext Transfer Protocol">HTTP</acronym> status code (<tt class="literal">304</tt>) and no feed data.</p>
 <div class="example">
 <a name="example.etags" class="skip" href="#example.etags" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Using ETags to reduce bandwidth</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.etag</span>
 <span class="computeroutput">'"6c132-941-ad7e3080"'</span>
@@ -48,7 +48,7 @@ the server sent no data.  This is a feature, not a bug!'</span></pre>
 <p>There is a related concept which accomplishes the same thing, but slightly differently.  In this case, the server publishes the last-modified date of the feed in the <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  You can send this back to the server on subsequent requests, and if the feed has not changed, the server will return <acronym title="Hypertext Transfer Protocol">HTTP</acronym> status code <tt class="literal">304</tt> and no feed data.</p>
 <div class="example">
 <a name="example.lastmodified" class="skip" href="#example.lastmodified" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Using Last-Modified headers to reduce bandwidth</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.modified</span>
 <span class="computeroutput">(2004, 6, 11, 23, 0, 34, 4, 163, 0)</span>
@@ -64,7 +64,7 @@ the server sent no data.  This is a feature, not a bug!'</span></pre>
 the server sent no data.  This is a feature, not a bug!'</span></pre>
 </div>
 <p>Clients should support both ETag and Last-Modified headers, as some servers support one but not the other.</p>
-<a name="id902450"></a><table class="important" border="0" summary="">
+<a name="id4784673"></a><table class="important" border="0" summary="">
 <tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/important.png" alt="Important" title="" width="24" height="24"></td></tr>
 <tr><td colspan="2" align="left" valign="top" width="99%">If you do not support ETag and Last-Modified headers, you will repeatedly download feeds that have not changed.  This wastes your bandwidth and the publisher's bandwidth, and the publisher may ban you from accessing their server.</td></tr>
 </table>

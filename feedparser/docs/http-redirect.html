@@ -31,7 +31,7 @@
 <p>There is nothing special you need to do with temporary redirects; by the time you learn about it, <span class="application">Universal Feed Parser</span> has already followed the redirect to the new location (available in <tt class="varname">d.url</tt>), downloaded the feed, and parsed it.  Since the redirect is temporary, you should continue requesting the original <acronym title="Uniform Resource Locator">URL</acronym> the next time you want to parse the feed.</p>
 <div class="example">
 <a name="example.redirect.temporary" class="skip" href="#example.redirect.temporary" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Noticing temporary redirects</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/temporary.xml">http://feedparser.org/docs/examples/temporary.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.status</span>
 <span class="computeroutput">302</span>
@@ -44,7 +44,7 @@
 <p>If you are polling a feed on a regular basis, it is very important to check the status code (<tt class="varname">d.status</tt>) every time you download.  If the feed has been permanently redirected, you should update your database or configuration file with the new address (<tt class="varname">d.url</tt>).  Repeatedly requesting the original address of a feed that has been permanently redirected is very rude, and may get you banned from the server.</p>
 <div class="example">
 <a name="example.redirect.permanent" class="skip" href="#example.redirect.permanent" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Noticing permanent redirects</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/permanent.xml">http://feedparser.org/docs/examples/permanent.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.status</span>
 <span class="computeroutput">301</span>
@@ -57,7 +57,7 @@
 <p>Repeatedly requesting a feed that has been marked as “<span class="quote">gone</span>” is very rude, and may get you banned from the server.</p>
 <div class="example">
 <a name="example.redirect.gone" class="skip" href="#example.redirect.gone" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Noticing feeds marked “<span class="quote">gone</span>”</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/gone.xml">http://feedparser.org/docs/examples/gone.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.status</span>
 <span class="computeroutput">410</span></pre>

@@ -14,14 +14,14 @@
 <property name="xsl" value="xsl"/>
 <property name="css" value="../css"/>
 <property name="py" value="py"/>
-<property name="dist" value="./"/>
-<property name="download" value="${dist}/download"/>
-<property name="tmp" value="${download}/tmp"/>
+<property name="dist" value="dist"/>
+<property name="tmp" value="${dist}/tmp"/>
 <property name="html" value="${dist}"/>
-<property name="htmlflat" value="${download}/htmlflat"/>
-<property name="word" value="${download}/doc"/>
-<property name="pdf" value="${download}/pdf"/>
-<property name="text" value="${download}/txt"/>
+<property name="htmlflat" value="${dist}/htmlflat"/>
+<property name="htmldist" value="${dist}/docs"/>
+<property name="word" value="${dist}/doc"/>
+<property name="pdf" value="${dist}/pdf"/>
+<property name="text" value="${dist}/txt"/>
 <property name="images" value="images"/>
 <property name="xsltproc" value="xsltproc"/>
 <!--<property name="crimson" value="lib/crimson.jar"/>-->
@@ -47,11 +47,11 @@
 </target>
 
 <target name="prepare" depends="init">
-  <mkdir dir="${dist}"/>
   <mkdir dir="${tmp}"/>
-  <mkdir dir="${download}"/>
+  <mkdir dir="${dist}"/>
   <mkdir dir="${html}"/>
   <mkdir dir="${htmlflat}"/>
+  <mkdir dir="${htmldist}"/>
   <mkdir dir="${word}"/>
   <mkdir dir="${pdf}"/>
   <mkdir dir="${text}"/>
@@ -107,6 +107,31 @@
     <param name="fonts" value="0"/>
   </antcall>
 </target>
+
+<target name="htmldist" depends="prepare,validate">
+  <antcall target="copycss">
+    <param name="target" value="${htmldist}"/>
+  </antcall>
+
+  <antcall target="copyimages">
+    <param name="target" value="${htmldist}/images"/>
+  </antcall>
+
+  <exec executable="${xsltproc}" failonerror="yes">
+    <arg line="${xsl}/htmldist.xsl ${xml}/${project}.xml"/>
+  </exec>
+
+  <antcall target="colorize">
+    <param name="target" value="${htmldist}"/>
+    <param name="fonts" value="0"/>
+  </antcall>
+</target>
+
+
+
+<!-- ============== nothing below this line works ============== -->
+
+
 
 <target name="htmlflat" depends="prepare,validate">
   <antcall target="copycss">
@@ -176,45 +201,44 @@
   </exec>
 </target>
 
-<!-- zip targets -->
 <target name="zipclean" depends="init">
   <delete>
-    <fileset dir="${download}"/>
+    <fileset dir="${dist}"/>
   </delete>
 </target>
 
 <target name="ziphtml" depends="prepare">
-  <zip zipfile="${download}/${project}-html${lang}-${version}.zip">
+  <zip zipfile="${dist}/${project}-html${lang}-${version}.zip">
     <zipfileset dir="${html}" prefix="html"/>
   </zip>
 </target>
 
 <target name="ziphtmlflat" depends="prepare">
-  <zip zipfile="${download}/${project}-html-flat${lang}-${version}.zip">
+  <zip zipfile="${dist}/${project}-html-flat${lang}-${version}.zip">
     <zipfileset dir="${htmlflat}" prefix="html"/>
   </zip>
 </target>
 
 <target name="zipword" if="illegalmonopoly" depends="prepare">
-  <zip zipfile="${download}/${project}-word${lang}-${version}.zip">
+  <zip zipfile="${dist}/${project}-word${lang}-${version}.zip">
     <zipfileset dir="${word}" includes="*.doc,images,images/*.*"/>
   </zip>
 </target>
 
 <target name="zippdf" depends="prepare">
-  <zip zipfile="${download}/${project}-pdf${lang}-${version}.zip">
+  <zip zipfile="${dist}/${project}-pdf${lang}-${version}.zip">
     <zipfileset dir="${pdf}" includes="*.pdf"/>
   </zip>
 </target>
 
 <target name="ziptext" depends="prepare">
-  <zip zipfile="${download}/${project}-text${lang}-${version}.zip">
+  <zip zipfile="${dist}/${project}-text${lang}-${version}.zip">
     <zipfileset dir="${text}" includes="*.txt"/>
   </zip>
 </target>
 
 <target name="zipxml" depends="prepare">
-  <zip zipfile="${download}/${project}-xml${lang}-${version}.zip">
+  <zip zipfile="${dist}/${project}-xml${lang}-${version}.zip">
     <zipfileset dir="." includes="build.xml"/>
     <zipfileset dir="." includes="make.*"/>
     <zipfileset dir="${xml}" includes="*.xml" prefix="${xml}"/>

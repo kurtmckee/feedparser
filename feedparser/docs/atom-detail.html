@@ -24,7 +24,7 @@
 <div class="abstract"><p>Several Atom elements share the Atom content model: <tt class="sgmltag-element">title</tt>, <tt class="sgmltag-element">tagline</tt>, <tt class="sgmltag-element">info</tt>, <tt class="sgmltag-element">copyright</tt>, <tt class="sgmltag-element">summary</tt>, and of course <tt class="sgmltag-element">content</tt>.  <span class="application">Universal Feed Parser</span> captures all relevant metadata about these elements, most importantly the content type and the value.</p></div>
 <div class="example">
 <a name="example.feed.detail" class="skip" href="#example.feed.detail" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Detailed Information on Feed Elements</h3>
-<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title_detail</span>
 <span class="computeroutput">{'type': u'text/plain',
