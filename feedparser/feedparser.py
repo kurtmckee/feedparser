@@ -41,7 +41,7 @@ PREFERRED_XML_PARSERS = ["drv_libxml2"]
 TIDY_MARKUP = 0
 
 # ---------- required modules (should come with any Python distribution) ----------
-import sgmllib, re, sys, copy, urlparse, time, rfc822, types, codecs
+import sgmllib, re, sys, copy, urlparse, time, rfc822, types
 try:
     from cStringIO import StringIO as _StringIO
 except:
