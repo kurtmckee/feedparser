@@ -1,0 +1,9 @@
+Options -Indexes +IncludesNoExec +ExecCGI
+
+AddHandler cgi-script .cgi
+
+AddType text/html;charset=utf-8 .html
+AddHandler server-parsed .html
+#XBitHack full
+
+AddType application/xml .xml

@@ -1,0 +1,3 @@
+<Files "http_i18n.xml">
+    AddType text/xml .xml
+</Files>

@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE project
+[
+<!ENTITY % version SYSTEM "xml/version.xml">
+%version;
+]>
+<project name="feedparser-docs" default="html" basedir=".">
+
+<property name="lang" value=""/>
+<property name="version" value="&fileversion;"/>
+<property name="project" value="feedparser"/>
+<property name="examples" value="examples"/>
+<property name="xml" value="xml"/>
+<property name="xsl" value="xsl"/>
+<property name="css" value="../css"/>
+<property name="py" value="py"/>
+<property name="dist" value="./"/>
+<property name="download" value="${dist}/download"/>
+<property name="tmp" value="${download}/tmp"/>
+<property name="html" value="${dist}"/>
+<property name="htmlflat" value="${download}/htmlflat"/>
+<property name="word" value="${download}/doc"/>
+<property name="pdf" value="${download}/pdf"/>
+<property name="text" value="${download}/txt"/>
+<property name="images" value="images"/>
+<property name="xsltproc" value="xsltproc"/>
+<!--<property name="crimson" value="lib/crimson.jar"/>-->
+<!--<property name="saxon" value="lib/saxon.jar;${crimson}"/>-->
+<property name="encoding" value="utf-8"/>
+<!--<property name="standardargs" value=""/>-->
+<property name="python" value="python"/>
+
+<!-- administrative targets -->
+<target name="init">
+  <condition property="htmldoc" value="htmldoc">
+    <os family="unix"/>
+  </condition>
+  <condition property="htmldoc" value="ghtmldoc">
+    <os family="windows"/>
+  </condition>
+
+  <condition property="illegalmonopoly">
+    <os family="windows"/>
+  </condition>
+
+  <tstamp/>
+</target>
+
+<target name="prepare" depends="init">
+  <mkdir dir="${dist}"/>
+  <mkdir dir="${tmp}"/>
+  <mkdir dir="${download}"/>
+  <mkdir dir="${html}"/>
+  <mkdir dir="${htmlflat}"/>
+  <mkdir dir="${word}"/>
+  <mkdir dir="${pdf}"/>
+  <mkdir dir="${text}"/>
+</target>
+
+<target name="cleanhtml" depends="init">
+  <delete><fileset dir="${html}" includes="*.html"/></delete>
+</target>
+
+<target name="cleanpy" depends="init">
+  <delete><fileset dir="${py}" includes="*.pyc"/></delete>
+</target>
+
+<target name="clean" depends="cleanhtml,cleanpy"/>
+
+<!-- internal utility targets used by other targets -->
+<target name="copycss" depends="prepare">
+  <copy todir="${target}">
+    <fileset dir="${css}">
+      <include name="${project}.css"/>
+    </fileset>
+  </copy>
+</target>
+
+<target name="copyimages" depends="prepare">
+  <copy todir="${target}">
+    <fileset dir="${images}">
+      <include name="**/*.png"/>
+      <include name="**/*.jpg"/>
+      <include name="**/*.gif"/>
+    </fileset>
+  </copy>
+</target>
+
+<target name="colorize" depends="init">
+  <exec executable="${python}" failonerror="yes">
+    <arg line="${py}/colorize.py ${target} ${fonts}"/>
+  </exec>
+</target>
+
+<target name="validate">
+  <xmlvalidate file="${xml}/${project}.xml" warn="no"/>
+</target>
+
+<!-- main targets -->
+<target name="html" depends="prepare,validate">
+  <exec executable="${xsltproc}" failonerror="yes">
+    <arg line="${xsl}/html.xsl ${xml}/${project}.xml"/>
+  </exec>
+
+  <antcall target="colorize">
+    <param name="target" value="${html}"/>
+    <param name="fonts" value="0"/>
+  </antcall>
+</target>
+
+<target name="htmlflat" depends="prepare,validate">
+  <antcall target="copycss">
+    <param name="target" value="${htmlflat}"/>
+  </antcall>
+
+  <antcall target="copyimages">
+    <param name="target" value="${htmlflat}/images"/>
+  </antcall>
+
+  <exec executable="${xsltproc}" failonerror="yes">
+    <arg line="-o ${htmlflat}/${project}${lang}.html ${xsl}/htmlsingle.xsl ${xml}/${project}.xml"/>
+  </exec>
+
+  <antcall target="colorize">
+    <param name="target" value="${htmlflat}"/>
+    <param name="fonts" value="0"/>
+  </antcall>
+</target>
+
+<target name="word" if="illegalmonopoly" depends="prepare,validate">
+  <antcall target="copyimages">
+    <param name="target" value="${word}/images"/>
+  </antcall>
+
+  <exec executable="${xsltproc}" failonerror="yes">
+    <arg line="-o ${word}/${project}.html ${xsl}/word2000.xsl ${xml}/${project}.xml"/>
+  </exec>
+
+  <exec executable="${python}" failonerror="yes">
+    <arg line="${py}/makerealworddoc.py ${word}/${project}.html ${word}/${project}${lang}.doc"/>
+  </exec>
+
+  <antcall target="colorize">
+    <param name="target" value="${html}"/>
+    <param name="fonts" value="1"/>
+  </antcall>
+</target>
+
+<target name="pdf" depends="prepare,validate">
+  <antcall target="copyimages">
+    <param name="target" value="${pdf}/images"/>
+  </antcall>
+
+  <exec executable="${xsltproc}" failonerror="yes">
+    <arg line="-o ${pdf}/${project}.html ${xsl}/pdf.xsl ${xml}/${project}.xml"/>
+  </exec>
+
+  <antcall target="colorize">
+    <param name="target" value="${pdf}"/>
+    <param name="fonts" value="1"/>
+  </antcall>
+
+  <exec executable="${htmldoc}" failonerror="no">
+    <arg line='-t pdf12 -f ${pdf}/${project}${lang}.pdf --book --toclevels 2 --no-numbered --toctitle "Table of Contents" --title --titleimage ${images}/atom-logo100px.gif --linkstyle plain --size Universal --left 0.50in --right 0.50in --top 0.50in --bottom 0.50in --header ... --footer t.1 --tocheader ... --tocfooter t.i --portrait --color --no-pscommands --compression=1 --jpeg=0 --fontsize 11.0 --fontspacing 1.2 --headingfont Helvetica --bodyfont Times --headfootsize 11.0 --headfootfont Helvetica --charset 8859-1 --pagemode outline --pagelayout single --firstpage c1 --pageeffect none --pageduration 10 --effectduration 1.0 --no-encryption --permissions all  --owner-password ""  --user-password "" --browserwidth 680 ${pdf}/${project}.html'/>
+  </exec>
+
+</target>
+
+<target name="text" depends="prepare,validate">
+  <exec executable="${xsltproc}" failonerror="yes">
+    <arg line="-o ${text}/${project}.html ${xsl}/text.xsl ${xml}/${project}.xml"/>
+  </exec>
+
+  <exec executable="w3m" output="${text}/${project}${lang}.txt" failonerror="yes">
+    <arg line="-dump ${text}/${project}.html"/>
+  </exec>
+</target>
+
+<!-- zip targets -->
+<target name="zipclean" depends="init">
+  <delete>
+    <fileset dir="${download}"/>
+  </delete>
+</target>
+
+<target name="ziphtml" depends="prepare">
+  <zip zipfile="${download}/${project}-html${lang}-${version}.zip">
+    <zipfileset dir="${html}" prefix="html"/>
+  </zip>
+</target>
+
+<target name="ziphtmlflat" depends="prepare">
+  <zip zipfile="${download}/${project}-html-flat${lang}-${version}.zip">
+    <zipfileset dir="${htmlflat}" prefix="html"/>
+  </zip>
+</target>
+
+<target name="zipword" if="illegalmonopoly" depends="prepare">
+  <zip zipfile="${download}/${project}-word${lang}-${version}.zip">
+    <zipfileset dir="${word}" includes="*.doc,images,images/*.*"/>
+  </zip>
+</target>
+
+<target name="zippdf" depends="prepare">
+  <zip zipfile="${download}/${project}-pdf${lang}-${version}.zip">
+    <zipfileset dir="${pdf}" includes="*.pdf"/>
+  </zip>
+</target>
+
+<target name="ziptext" depends="prepare">
+  <zip zipfile="${download}/${project}-text${lang}-${version}.zip">
+    <zipfileset dir="${text}" includes="*.txt"/>
+  </zip>
+</target>
+
+<target name="zipxml" depends="prepare">
+  <zip zipfile="${download}/${project}-xml${lang}-${version}.zip">
+    <zipfileset dir="." includes="build.xml"/>
+    <zipfileset dir="." includes="make.*"/>
+    <zipfileset dir="${xml}" includes="*.xml" prefix="${xml}"/>
+  </zip>
+</target>
+
+<target name="zip" depends="zipclean,ziphtml,ziphtmlflat,zipword,zippdf,ziptext,zipxml"/>
+
+<target name="all" depends="init,clean,html,htmlflat,word,pdf,text,zip"/>
+
+</project>

@@ -1,0 +1,221 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Date Parsing [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="home" href="index.html" title="Documentation">
+<link rel="up" href="advanced.html" title="Advanced Features">
+<link rel="previous" href="advanced.html" title="Advanced Features">
+<link rel="next" href="html-sanitization.html" title="HTML Sanitization">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="advanced.html">Advanced Features</a> → <span class="thispage">Date Parsing</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div><h2 class="title">
+<a name="advanced.date" class="skip" href="#advanced.date" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Date Parsing</h2></div>
+<div><div class="abstract">
+<h3 class="title"></h3>
+<p>Different feed types and versions use wildly different date formats.  <span class="application">Universal Feed Parser</span> will attempt to auto-detect the date format used in any date element, and parse it into a standard <span class="application">Python</span> 9-tuple, as documented in <a href="http://docs.python.org/lib/module-time.html">the <span class="application">Python</span> <tt class="filename">time</tt> module</a>.</p>
+</div></div>
+</div>
+<div></div>
+</div>
+<p>The following elements are parsed as dates:</p>
+<div class="itemizedlist"><ul>
+<li>
+<a href="reference-feed-modified.html" title="feed.modified">feed.modified</a> is parsed into <a href="reference-feed-modified_parsed.html" title="feed.modified_parsed">feed.modified_parsed</a>.</li>
+<li>
+<a href="reference-entry-issued.html" title="entry[i].issued">entry[i].issued</a> is parsed into <a href="reference-entry-issued_parsed.html" title="entry[i].issued_parsed">entry[i].issued_parsed</a>.</li>
+<li>
+<a href="reference-entry-created.html" title="entry[i].created">entry[i].created</a> is parsed into <a href="reference-entry-created_parsed.html" title="entry[i].created_parsed">entry[i].created_parsed</a>.</li>
+<li>
+<a href="reference-entry-modified.html" title="entry[i].modified">entry[i].modified</a> is parsed into <a href="reference-entry-modified_parsed.html" title="entry[i].modified_parsed">entry[i].modified_parsed</a>.</li>
+<li>
+<a href="reference-entry-expired.html" title="entry[i].expired">entry[i].expired</a> is parsed into <a href="reference-entry-expired_parsed.html" title="entry[i].expired_parsed">entry[i].expired_parsed</a>.</li>
+</ul></div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="advanced.date.history" class="skip" href="#advanced.date.history" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> History of Date Formats</h3></div></div>
+<div></div>
+</div>
+<p>Here is a brief history of feed date formats:</p>
+<div class="itemizedlist"><ul>
+<li>
+<acronym title="Channel Definition Format">CDF</acronym> states that all date values must conform to <acronym>ISO</acronym> 8601:1988.  <acronym>ISO</acronym> 8601:1988 is not a freely available specification, but a brief (non-normative) description of the date formats it describes is available here: <a href="http://hydracen.com/dx/iso8601.htm">ISO 8601:1988 Date/Time Representations</a>.</li>
+<li>
+<acronym title="Rich Site Summary">RSS</acronym> 0.90 has no date elements.</li>
+<li>Netscape <acronym title="Rich Site Summary">RSS</acronym> 0.91 does not specify a date format, but examples within the specification show <acronym title="Request For Comments">RFC</acronym> 822-style dates with 4-digit years.</li>
+<li>Userland <acronym title="Rich Site Summary">RSS</acronym> 0.91 states, “<span class="quote">All date-times in <acronym title="Rich Site Summary">RSS</acronym> conform to the Date and Time Specification of <acronym title="Request For Comments">RFC</acronym> 822.</span>”  <a href="http://www.ietf.org/rfc/rfc822.txt"><acronym title="Request For Comments">RFC</acronym> 822</a> mandates 2-digit years; it does not allow 4-digit years.</li>
+<li>
+<acronym title="Rich Site Summary">RSS</acronym> 1.0 states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3DTF</acronym></a>, which is a profile of <acronym>ISO</acronym> 8601:1988.</li>
+<li>
+<acronym title="Rich Site Summary">RSS</acronym> 2.0 states, “<span class="quote">All date-times in <acronym title="Rich Site Summary">RSS</acronym> conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred).</span>”</li>
+<li>Atom states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3DTF</acronym></a>.</li>
+</ul></div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="advanced.date.formats" class="skip" href="#advanced.date.formats" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Recognized Date Formats</h3></div></div>
+<div></div>
+</div>
+<p>Here is a representative list of the formats that <span class="application">Universal Feed Parser</span> can recognize in any date element:</p>
+<div class="table">
+<a name="id898715" class="skip" href="#id898715" title="link to this table"><img src="images/permalink.gif" alt="[link]" title="link to this table" width="8" height="9"></a> <h3 class="title">Recognized Date Formats</h3>
+<table summary="Recognized Date Formats" border="1">
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>Description</th>
+<th>Example</th>
+<th>Parsed Value</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>valid RFC 822 (2-digit year)</td>
+<td><tt class="literal">Thu, 01 Jan 04 19:48:21 GMT</tt></td>
+<td><tt class="literal">(2004, 1, 1, 19, 48, 21, 3, 1, 0)</tt></td>
+</tr>
+<tr>
+<td>valid RFC 822 (4-digit year)</td>
+<td><tt class="literal">Thu, 01 Jan 2004 19:48:21 GMT</tt></td>
+<td><tt class="literal">(2004, 1, 1, 19, 48, 21, 3, 1, 0)</tt></td>
+</tr>
+<tr>
+<td>valid W3DTF (numeric timezone)</td>
+<td><tt class="literal">2003-12-31T10:14:55-08:00</tt></td>
+<td><tt class="literal">(2003, 12, 31, 18, 14, 55, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>valid W3DTF (UTC timezone)</td>
+<td><tt class="literal">2003-12-31T10:14:55Z</tt></td>
+<td><tt class="literal">(2003, 12, 31, 10, 14, 55, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>valid W3DTF (yyyy)</td>
+<td><tt class="literal">2003</tt></td>
+<td><tt class="literal">(2003, 1, 1, 0, 0, 0, 2, 1, 0)</tt></td>
+</tr>
+<tr>
+<td>valid W3DTF (yyyy-mm)</td>
+<td><tt class="literal">2003-12</tt></td>
+<td><tt class="literal">(2003, 12, 1, 0, 0, 0, 0, 335, 0)</tt></td>
+</tr>
+<tr>
+<td>valid W3DTF (yyyy-mm-dd)</td>
+<td><tt class="literal">2003-12-31</tt></td>
+<td><tt class="literal">(2003, 12, 31, 0, 0, 0, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>valid ISO 8601 (yyyymmdd)</td>
+<td><tt class="literal">20031231</tt></td>
+<td><tt class="literal">(2003, 12, 31, 0, 0, 0, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>valid ISO 8601 (-yy-mm)</td>
+<td><tt class="literal">-03-12</tt></td>
+<td><tt class="literal">(2003, 12, 1, 0, 0, 0, 0, 335, 0)</tt></td>
+</tr>
+<tr>
+<td>valid ISO 8601 (-yymm)</td>
+<td><tt class="literal">-0312</tt></td>
+<td><tt class="literal">(2003, 12, 1, 0, 0, 0, 0, 335, 0)</tt></td>
+</tr>
+<tr>
+<td>valid ISO 8601 (-yy-mm-dd)</td>
+<td><tt class="literal">03-12-31</tt></td>
+<td><tt class="literal">(2003, 12, 31, 0, 0, 0, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>valid ISO 8601 (yymmdd)</td>
+<td><tt class="literal">031231</tt></td>
+<td><tt class="literal">(2003, 12, 31, 0, 0, 0, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>valid ISO 8601 (yyyy-o)</td>
+<td><tt class="literal">2003-335</tt></td>
+<td><tt class="literal">(2003, 12, 1, 0, 0, 0, 0, 335, 0)</tt></td>
+</tr>
+<tr>
+<td>valid ISO 8601 (yyo)</td>
+<td><tt class="literal">03335</tt></td>
+<td><tt class="literal">(2003, 12, 1, 0, 0, 0, 0, 335, 0)</tt></td>
+</tr>
+<tr>
+<td>valid asctime</td>
+<td><tt class="literal">Sun Jan  4 16:29:06 PST 2004</tt></td>
+<td><tt class="literal">(2004, 1, 5, 0, 29, 6, 0, 5, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus RFC 822 (invalid day/month)</td>
+<td><tt class="literal">Thu, 31 Jun 2004 19:48:21 GMT</tt></td>
+<td><tt class="literal">(2004, 7, 1, 19, 48, 21, 3, 183, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus RFC 822 (invalid month)</td>
+<td><tt class="literal">Mon, 26 January 2004 16:31:00 EST</tt></td>
+<td><tt class="literal">(2004, 1, 26, 21, 31, 0, 0, 26, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus RFC 822 (invalid timezone)</td>
+<td><tt class="literal">Mon, 26 Jan 2004 16:31:00 ET</tt></td>
+<td><tt class="literal">(2004, 1, 26, 21, 31, 0, 0, 26, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus W3DTF (invalid hour)</td>
+<td><tt class="literal">2003-12-31T25:14:55Z</tt></td>
+<td><tt class="literal">(2004, 1, 1, 1, 14, 55, 3, 1, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus W3DTF (invalid minute)</td>
+<td><tt class="literal">2003-12-31T10:61:55Z</tt></td>
+<td><tt class="literal">(2003, 12, 31, 11, 1, 55, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus W3DTF (invalid second)</td>
+<td><tt class="literal">2003-12-31T10:14:61Z</tt></td>
+<td><tt class="literal">(2003, 12, 31, 10, 15, 1, 2, 365, 0)</tt></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><span class="application">Universal Feed Parser</span> recognizes all character-based timezone abbreviations defined in <acronym title="Request For Comments">RFC</acronym> 822.  In addition, <span class="application">Universal Feed Parser</span> recognizes the following invalid timezones:</p>
+<div class="itemizedlist"><ul>
+<li>
+<tt class="literal">AT</tt> is treated as <tt class="literal">AST</tt>
+</li>
+<li>
+<tt class="literal">ET</tt> is treated as <tt class="literal">EST</tt>
+</li>
+<li>
+<tt class="literal">CT</tt> is treated as <tt class="literal">CST</tt>
+</li>
+<li>
+<tt class="literal">MT</tt> is treated as <tt class="literal">MST</tt>
+</li>
+<li>
+<tt class="literal">PT</tt> is treated as <tt class="literal">PST</tt>
+</li>
+</ul></div>
+</div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="advanced.html">Advanced Features</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="html-sanitization.html">HTML Sanitization</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>

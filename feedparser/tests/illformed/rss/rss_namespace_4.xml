@@ -1,0 +1,9 @@
+<!--
+Description: RSS Userland namespace #4 (illformed feed)
+Expect:      bozo and feed['description'] == u'Example description'
+-->
+<rss xmlns="http://blogs.law.harvard.edu/tech/rss">
+<channel>
+<description>Example description</description>
+</channel>
+</rss

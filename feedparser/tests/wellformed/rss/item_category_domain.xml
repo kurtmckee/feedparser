@@ -1,0 +1,11 @@
+<!--
+Description: item category with domain
+Expect:      not bozo and entries[0]['categories'][0] == (u'http://www.example.com/', u'Example category')
+-->
+<rss version="2.0">
+<channel>
+<item>
+<category domain="http://www.example.com/">Example category</category>
+</item>
+</channel>
+</rss>

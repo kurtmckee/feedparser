@@ -1,0 +1,9 @@
+<!--
+Description: crashes
+Expect:      1
+-->
+<rss>
+<item>
+<description><![CDATA[<a href="http://www.example.com/">¤</a><a href="&#38;"></a>]]></description>
+</item>
+</rss>

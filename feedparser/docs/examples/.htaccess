@@ -1,0 +1,3 @@
+Redirect /docs/examples/temporary.xml http://feedparser.org/docs/examples/atom.xml
+Redirect permanent /docs/examples/permanent.xml http://feedparser.org/docs/examples/atom.xml
+Redirect gone /docs/examples/gone.xml

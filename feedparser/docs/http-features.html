@@ -1,0 +1,127 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>HTTP Features [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="home" href="index.html" title="Documentation">
+<link rel="up" href="advanced-usage.html" title="Advanced Usage">
+<link rel="previous" href="content-normalization.html" title="Content Normalization">
+<link rel="next" href="version-detection.html" title="Feed Type and Version Detection">
+</head>
+<body><div class="container">
+<div class="z" id="intro"><div class="sectionInner"><div class="sectionInner2">
+<div class="s" id="pageHeader">
+<h1><a href="/"><span>Universal Feed Parser</span></a></h1>
+<p><span>Parse RSS and Atom feeds in Python.  2000 unit tests.  Open source.</span></p>
+</div>
+<div class="s" id="quickSummary"><ul>
+<li class="li1">
+<a href="/download/feedparser-3.0-fc-2.zip"><span>Download latest version (3.0fc2)</span></a> ·</li>
+<li class="li2">
+<a href="/docs/"><span>Documentation</span></a> ·</li>
+<li class="li3">
+<a href="/tests/"><span>Unit tests</span></a> ·</li>
+<li class="li4"><a href="/news/"><span>Devblog</span></a></li>
+</ul></div>
+</div></div></div>
+<div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="advanced-usage.html">Advanced Usage</a> → <span class="thispage">HTTP Features</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div><h2 class="title">
+<a name="advanced.http" class="skip" href="#advanced.http" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> HTTP Features</h2></div>
+<div><div class="abstract">
+<h3 class="title"></h3>
+<p>xxx
+</p>
+</div></div>
+</div>
+<div></div>
+</div>
+<p>xxx
+</p>
+<div class="example">
+<a name="example.etags" class="skip" href="#example.etags" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Using ETags to reduce bandwidth</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color="navy"><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">xxx</span>
+<span class="computeroutput"></span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"></span>
+<span class="computeroutput"></span>
+</pre>
+</div>
+<div class="example">
+<a name="example.lastmodified" class="skip" href="#example.lastmodified" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Using Last-Modified headers to reduce bandwidth</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color="navy"><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">xxx</span>
+<span class="computeroutput"></span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"></span>
+<span class="computeroutput"></span>
+</pre>
+</div>
+<div class="example">
+<a name="example.useragent" class="skip" href="#example.useragent" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Customizing the User-Agent</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color="navy"><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">xxx</span>
+<span class="computeroutput"></span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"></span>
+<span class="computeroutput"></span>
+</pre>
+</div>
+<div class="example">
+<a name="example.referrer" class="skip" href="#example.referrer" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Customizing the referrer</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color="navy"><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">xxx</span>
+<span class="computeroutput"></span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"></span>
+<span class="computeroutput"></span>
+</pre>
+</div>
+<div class="example">
+<a name="example.redirect.temporary" class="skip" href="#example.redirect.temporary" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Handling temporary redirects</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color="navy"><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">xxx</span>
+<span class="computeroutput"></span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"></span>
+<span class="computeroutput"></span>
+</pre>
+</div>
+<div class="example">
+<a name="exapmle.redirect.permanent" class="skip" href="#exapmle.redirect.permanent" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Handling permanent redirects</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color="navy"><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">xxx</span>
+<span class="computeroutput"></span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"></span>
+<span class="computeroutput"></span>
+</pre>
+</div>
+<div class="example">
+<a name="example.http.headers" class="skip" href="#example.http.headers" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Accessing other HTTP headers</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color="navy"><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">xxx</span>
+<span class="computeroutput"></span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"></span>
+<span class="computeroutput"></span>
+</pre>
+</div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="content-normalization.html">Content Normalization</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="version-detection.html">Feed Type and Version Detection</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004 Mark Pilgrim</p></div>
+</div></div>
+</div></body>
+</html>

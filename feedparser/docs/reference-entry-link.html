@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>entry[i].link [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="home" href="index.html" title="Documentation">
+<link rel="up" href="reference.html" title="Reference">
+<link rel="previous" href="reference-entry-title_detail.html" title="entry[i].title_detail">
+<link rel="next" href="reference-entry-links.html" title="entry[i].links">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="reference.html">Reference</a> → <span class="thispage">entry[i].link</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title">
+<a name="reference.entry.link" class="skip" href="#reference.entry.link" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entry[i].link</h2></div></div>
+<div></div>
+</div>
+<div class="abstract"><p>The primary link of this entry.  Most feeds use this as the permanent link to the entry in the site's archives.</p></div>
+<p>Some <acronym title="Rich Site Summary">RSS</acronym> feeds use <tt class="sgmltag-element">guid</tt> when they mean <tt class="sgmltag-element">link</tt>.  <tt class="sgmltag-element">guid</tt> can also be used as an opaque identifier that has nothing to do with links.  If an <acronym title="Rich Site Summary">RSS</acronym> feed uses <tt class="sgmltag-element">guid</tt> as the entry link and no <tt class="sgmltag-element">link</tt> is present, <span class="application">Universal Feed Parser</span> detects this and makes the <tt class="sgmltag-element">guid</tt> available in <tt class="varname">d.entries[i].link</tt>.</p>
+<p>In other words, <span class="emphasis"><em>you can always use <tt class="varname">d.entries[i].link</tt> to get the entry link</em></span>, regardless of how the feed is actually structured.</p>
+<div class="reference-from">
+<h3>Comes from</h3>
+<ul>
+<li><tt class="literal">/atom:feed/atom:entry/atom:link[rel="alternate"]/@href</tt></li>
+<li><tt class="literal">/rss/channel/item/link</tt></li>
+<li><tt class="literal">/rdf:RDF/rdf:item/rdf:link</tt></li>
+</ul>
+</div>
+<div class="seealso">
+<h3>See also</h3>
+<ul><li><a href="reference-entry-links.html" title="entry[i].links">entry[i].links</a></li></ul>
+</div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="reference-entry-title_detail.html">entry[i].title_detail</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="reference-entry-links.html">entry[i].links</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>

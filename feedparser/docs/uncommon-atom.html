@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Uncommon Atom Elements [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="home" href="index.html" title="Documentation">
+<link rel="up" href="basic.html" title="Basic Features">
+<link rel="previous" href="uncommon-rss.html" title="Uncommon RSS Elements">
+<link rel="next" href="advanced.html" title="Advanced Features">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="basic.html">Basic Features</a> → <span class="thispage">Uncommon Atom Elements</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div><h2 class="title">
+<a name="basic.atom.uncommon" class="skip" href="#basic.atom.uncommon" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Uncommon Atom Elements</h2></div>
+<div><div class="abstract">
+<h3 class="title"></h3>
+<p>These elements are less common, but are useful for niche applications and may be present in any Atom feed.</p>
+</div></div>
+</div>
+<div></div>
+</div>
+<p>Besides an author, each Atom feed or entry can have an arbitrary number of contributors.  <span class="application">Universal Feed Parser</span> makes these available as a list.</p>
+<div class="example">
+<a name="example.contributors" class="skip" href="#example.contributors" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Accessing contributors</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e = d.entries[0]</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">len(e.contributors)</span>
+<span class="computeroutput">2</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.contributors[0]</span>
+<span class="computeroutput">{'name': u'Joe',
+ 'url': u'http://example.org/joe/',
+ 'email': u'joe@example.org'}</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.contributors[1]</span>
+<span class="computeroutput">{'name': u'Sam',
+ 'url': u'http://example.org/sam/',
+ 'email': u'sam@example.org'}</span></pre>
+</div>
+<p>Besides an alternate link, each Atom feed or entry can have an arbitrary number of other links.  Each link is distinguished by its <tt class="sgmltag-attribute">type</tt> attribute, which is a MIME-style content type, and its <tt class="sgmltag-attribute">rel</tt> attribute.  Possible <tt class="sgmltag-attribute">rel</tt> values and their meanings are <a href="http://www.intertwingly.net/wiki/pie/LinkTagMeaning">documented on the Atom project site</a>.</p>
+<div class="example">
+<a name="example.links" class="skip" href="#example.links" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Accessing multiple links</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e = d.entries[0]</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">len(e.links)</span>
+<span class="computeroutput">3</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.links[0]</span>
+<span class="computeroutput">{'rel': u'alternate',
+ 'type': u'text/html',
+ 'href': u'http://example.org/entry/3'}</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.links[1]</span>
+<span class="computeroutput">{'rel': u'service.edit',
+ 'type': u'application/atom+xml',
+ 'href': u'http://example.org/entry/3',
+ 'title': u'Atom API endpoint to edit this entry'}</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.links[2]</span>
+<span class="computeroutput">{'rel': u'service.post',
+ 'type': u'application/atom+xml',
+ 'href': u'http://example.org/api/comment/3',
+ 'title': u'Atom API endpoint to add comments to this entry'}</span></pre>
+</div>
+<a name="id898329"></a><table class="note" border="0" summary="">
+<tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td></tr>
+<tr><td colspan="2" align="left" valign="top" width="99%">For more examples of accessing Atom elements, see the annotated example <a href="annotated-atom.html" title="Atom">Atom</a>.</td></tr>
+</table>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="uncommon-rss.html">Uncommon RSS Elements</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="advanced.html">Advanced Features</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>
