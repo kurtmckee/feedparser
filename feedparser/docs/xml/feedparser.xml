@@ -1458,7 +1458,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
   &lt;dc:subject><link linkend="reference.entry.category">Quotes</link>&lt;/dc:subject>
   &lt;dc:date><link linkend="reference.entry.modified">2004-05-30T14:23:54-06:00</link>&lt;/dc:date>
   &lt;content:encoded>&lt;![CDATA[
-<link linkend="reference.entry.content">    &lt;cite>Ian Hickson&lt;/cite>: &lt;q>&lt;a href="http://ln.hixie.ch/?start=1030823786&amp;amp;count=1?>
+<link linkend="reference.entry.content">    &lt;cite>Ian Hickson&lt;/cite>: &lt;q>&lt;a href="http://ln.hixie.ch/?start=1030823786&amp;amp;count=1">
     Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.
     &lt;/a>&lt;/q>]]&gt;</link>
   &lt;/content:encoded>
