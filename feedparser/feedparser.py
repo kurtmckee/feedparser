@@ -1580,6 +1580,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
             request.add_header("Authorization", "Basic %s" % auth)
         if ACCEPT_HEADER:
             request.add_header("Accept", ACCEPT_HEADER)
+        request.add_header("A-IM: feed") # RFC 3229 support
         opener = apply(urllib2.build_opener, tuple([_FeedURLHandler()] + handlers))
         opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
         try:
@@ -2572,4 +2573,4 @@ if __name__ == '__main__':
 #  redirects to another URL with a different type of redirect); add
 #  support for HTTP 303 redirects
 #3.4 - MAP - support for relative URIs in xml:base attribute; fixed
-#  encoding issue with mxTidy (phopkins)
+#  encoding issue with mxTidy (phopkins); support for RFC 3229
