@@ -31,7 +31,8 @@ USER_AGENT = "UniversalFeedParser/%s%s +http://feedparser.org/" % (__version__, 
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
 # List of preferred XML parsers, by SAX driver name.  These will be tried first,
-# but if they're not installed, Python will keep searching until it finds one.
+# but if they're not installed, Python will keep searching through its own list
+# of pre-installed parsers until it finds one that supports everything we need.
 PREFERRED_XML_PARSERS = ["drv_libxml2"]
 
 # If you want feedparser to automatically run HTML markup through HTML Tidy, set
@@ -2364,7 +2365,7 @@ if __name__ == '__main__':
 #  out of url and send as basic authentication; expose downloading-related
 #  exceptions in bozo_exception (aaronsw); added __contains__ method to
 #  FeedParserDict (aaronsw); added publisher_detail (aaronsw)
-#3.2 - 6/29/2004 - MAP - use cjkcodecs and iconv_codec if available; always
+#3.2 - 7/2/2004 - MAP - use cjkcodecs and iconv_codec if available; always
 #  convert feed to UTF-8 before passing to XML parser; completely revamp
 #  logic for determining character encoding and attempting XML parsing
 #  (should be similar enough for all vaguely useful cases, and is certainly
