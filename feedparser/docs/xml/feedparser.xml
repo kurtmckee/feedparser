@@ -119,7 +119,7 @@
 <para>Future enhancement: some versions of &rss; clearly specify that certain values default to <constant>text/plain</constant>, and &feedparser; should respect this, but it doesn't yet.</para>">
 
 <!ENTITY language_details "<para><varname>language</varname> is supposed to be a language code, as specified by <ulink url='&url_rfc3066;'>&rfc; 3066</ulink>, but publishers have been known to publish random values like <quote>English</quote> or <quote>German</quote>.  &feedparser; does not do any parsing or normalization of language codes.</para>
-<para><varname>language</varname> may come from the element's <sgmltag class='attribute'>xml:lang</sgmltag> attribute, or it may inherit from a parent element's <sgmltag class='attribute'>xml:lang</sgmltag>, or the appropriate &http; header.  (See <xref linkend='advanced.lang'/> for more details.)  If the feed does not specify a language, <varname>language</varname> will be <constant>None</constant>, the &python; null value.</para>">
+<para><varname>language</varname> may come from the element's <sgmltag class='attribute'>xml:lang</sgmltag> attribute, or it may inherit from a parent element's <sgmltag class='attribute'>xml:lang</sgmltag>, or the <literal>Content-Language</literal> &http; header.  If the feed does not specify a language, <varname>language</varname> will be <constant>None</constant>, the &python; null value.</para>">
 
 <!ENTITY mode_details "<para>Possible values:</para>
 <itemizedlist>
@@ -1589,6 +1589,7 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 
 </section>
 
+<!--
 <section id="advanced.lang">
 <?dbhtml filename="language-detection.html"?>
 <sectioninfo>
@@ -1600,6 +1601,7 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <title>Language Detection</title>
 <para>xxx</para>
 </section>
+-->
 
 <section id="advanced.version">
 <?dbhtml filename="version-detection.html"?>
@@ -3122,10 +3124,13 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <listitem><para><literal>/rss/channel/dc:language</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:language</literal></para></listitem>
 </itemizedlist>
+<!--
+xxx
 <note>
 <title/>
 <para>See <xref linkend="advanced.lang"/> for more details on language elements, attributes, and inheritance.</para>
 </note>
+-->
 </section>
 
 <section id="reference.feed.license">

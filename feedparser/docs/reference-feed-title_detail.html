@@ -70,7 +70,7 @@
 </div>
 <p>The language of the feed title.</p>
 <p><tt class="varname">language</tt> is supposed to be a language code, as specified by <a href="http://www.ietf.org/rfc/rfc3066.txt"><acronym title="Request For Comments">RFC</acronym> 3066</a>, but publishers have been known to publish random values like “<span class="quote">English</span>” or “<span class="quote">German</span>”.  <span class="application">Universal Feed Parser</span> does not do any parsing or normalization of language codes.</p>
-<p><tt class="varname">language</tt> may come from the element's <tt class="sgmltag-attribute">xml:lang</tt> attribute, or it may inherit from a parent element's <tt class="sgmltag-attribute">xml:lang</tt>, or the appropriate <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  (See <a href="language-detection.html" title="Language Detection">Language Detection</a> for more details.)  If the feed does not specify a language, <tt class="varname">language</tt> will be <tt class="constant">None</tt>, the <span class="application">Python</span> null value.</p>
+<p><tt class="varname">language</tt> may come from the element's <tt class="sgmltag-attribute">xml:lang</tt> attribute, or it may inherit from a parent element's <tt class="sgmltag-attribute">xml:lang</tt>, or the <tt class="literal">Content-Language</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  If the feed does not specify a language, <tt class="varname">language</tt> will be <tt class="constant">None</tt>, the <span class="application">Python</span> null value.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage">
