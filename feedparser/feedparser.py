@@ -20,7 +20,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -320,7 +320,15 @@ class _FeedParserMixin:
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
         self.baseuri = baseuri
-        lang = attrsD.get('xml:lang', attrsD.get('lang')) or self.lang
+        if _debug: sys.stderr.write('self.lang = %s\n' % self.lang)
+        lang = attrsD.get('xml:lang', attrsD.get('lang'))
+        if lang == '':
+            # xml:lang could be explicitly set to '', we need to capture that
+            lang = None
+        elif lang is None:
+            # if no xml:lang is specified, use parent lang
+            lang = self.lang
+        if _debug: sys.stderr.write('new lang = %s\n' % lang)
         if lang:
             if tag in ('feed', 'rss', 'rdf:RDF'):
                 self.feeddata['language'] = lang
@@ -408,7 +416,7 @@ class _FeedParserMixin:
                 self.baseuri = self.basestack[-1]
         if self.langstack:
             self.langstack.pop()
-            if self.langstack and self.langstack[-1]:
+            if self.langstack: # and (self.langstack[-1] is not None):
                 self.lang = self.langstack[-1]
 
     def handle_charref(self, ref):
@@ -819,8 +827,8 @@ class _FeedParserMixin:
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
                               'type': attrsD.get('type', 'text/plain'),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('tagline', 1)
     _start_subtitle = _start_tagline
 
@@ -836,8 +844,8 @@ class _FeedParserMixin:
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
                               'type': attrsD.get('type', 'text/plain'),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('copyright', 1)
     _start_dc_rights = _start_copyright
 
@@ -1005,10 +1013,12 @@ class _FeedParserMixin:
             
     def _start_title(self, attrsD):
         self.incontent += 1
+        if _debug: sys.stderr.write('attrsD.xml:lang = %s\n' % attrsD.get('xml:lang'))
+        if _debug: sys.stderr.write('self.lang = %s\n' % self.lang)
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
                               'type': attrsD.get('type', 'text/plain'),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('title', self.infeed or self.inentry)
     _start_dc_title = _start_title
 
@@ -1028,8 +1038,8 @@ class _FeedParserMixin:
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
                               'type': attrsD.get('type', default_content_type),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('description', self.infeed or self.inentry)
 
     def _start_abstract(self, attrsD):
@@ -1054,8 +1064,8 @@ class _FeedParserMixin:
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
                               'type': attrsD.get('type', 'text/plain'),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('info', 1)
 
     def _end_info(self):
@@ -1094,8 +1104,8 @@ class _FeedParserMixin:
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
                               'type': attrsD.get('type', 'text/plain'),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('summary', 1)
 
     def _end_summary(self):
@@ -1122,24 +1132,24 @@ class _FeedParserMixin:
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'xml'),
                               'type': attrsD.get('type', 'text/plain'),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('content', 1)
 
     def _start_prodlink(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'xml'),
                               'type': attrsD.get('type', 'text/html'),
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('content', 1)
 
     def _start_body(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': 'xml',
                               'type': 'application/xhtml+xml',
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('content', 1)
     _start_xhtml_body = _start_body
 
@@ -1147,8 +1157,8 @@ class _FeedParserMixin:
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': 'escaped',
                               'type': 'text/html',
-                              'language': attrsD.get('xml:lang', self.lang),
-                              'base': attrsD.get('xml:base', self.baseuri)})
+                              'language': self.lang,
+                              'base': self.baseuri})
         self.push('content', 1)
     _start_fullitem = _start_content_encoded
 

@@ -1,5 +1,5 @@
 <!--
-Description: entry summary content xml:lang inherits properly on new element
+Description: entry summary xml:lang inherits properly on new element
 Expect:      not bozo and entries[0]['summary_detail']['language'] == u'en'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#" xml:lang="en">

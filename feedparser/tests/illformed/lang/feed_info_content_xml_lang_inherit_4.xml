@@ -1,5 +1,5 @@
 <!--
-Description: feed info content xml:lang inherits properly on new element
+Description: feed info xml:lang inherits properly on new element
 Expect:      bozo and feed['info_detail']['language'] == u'en'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#" xml:lang="en">

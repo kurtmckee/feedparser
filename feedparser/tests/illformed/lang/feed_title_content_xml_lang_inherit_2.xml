@@ -1,5 +1,5 @@
 <!--
-Description: feed title content xml:lang overrides parent element
+Description: feed title xml:lang overrides parent element
 Expect:      bozo and feed['title_detail']['language'] == u'de'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#" xml:lang="en">
