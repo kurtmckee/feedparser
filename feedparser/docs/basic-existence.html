@@ -7,9 +7,9 @@
 <link rev="made" href="mailto:mark@diveintomark.org">
 <meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
 <meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
-<link rel="home" href="index.html" title="Documentation">
+<link rel="start" href="index.html" title="Documentation">
 <link rel="up" href="basic.html" title="Basic Features">
-<link rel="previous" href="uncommon-atom.html" title="Uncommon Atom Elements">
+<link rel="prev" href="uncommon-atom.html" title="Uncommon Atom Elements">
 <link rel="next" href="advanced.html" title="Advanced Features">
 </head>
 <body id="feedparser-org" class="docs">
@@ -29,7 +29,7 @@
 </div>
 <p>Use standard <span class="application">Python</span> dictionary functions such as <tt class="function">has_key</tt> to test whether an element exists.</p>
 <div class="example">
-<a name="id4780570" class="skip" href="#id4780570" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Testing if elements are present</h3>
+<a name="id4780572" class="skip" href="#id4780572" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Testing if elements are present</h3>
 <pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">import feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.has_key('title')</span>

@@ -570,7 +570,7 @@
     <xsl:call-template name="head.content"/>
 
     <xsl:if test="$home">
-      <link rel="home">
+      <link rel="start"> <!-- MAP -->
         <xsl:attribute name="href">
           <xsl:call-template name="href.target">
             <xsl:with-param name="object" select="$home"/>
@@ -597,7 +597,7 @@
     </xsl:if>
 
     <xsl:if test="$prev">
-      <link rel="previous">
+      <link rel="prev"> <!-- MAP -->
         <xsl:attribute name="href">
           <xsl:call-template name="href.target">
             <xsl:with-param name="object" select="$prev"/>
