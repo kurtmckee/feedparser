@@ -117,9 +117,10 @@ except:
     pass
 
 # ---------- don't touch these ----------
-class CharacterEncodingOverride(Exception): pass
-class CharacterEncodingUnknown(Exception): pass
-class NonXMLContentType(Exception): pass
+class ThingsNobodyCaresAboutButMe(Exception): pass
+class CharacterEncodingOverride(ThingsNobodyCaresAboutButMe): pass
+class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe): pass
+class NonXMLContentType(ThingsNobodyCaresAboutButMe): pass
 
 sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
 sgmllib.special = re.compile('<!')
@@ -319,7 +320,7 @@ class _FeedParserMixin:
         # track xml:base and xml:lang
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
-        self.baseuri = baseuri
+        self.baseuri = urlparse.urljoin(self.baseuri, baseuri)
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang == '':
             # xml:lang could be explicitly set to '', we need to capture that
@@ -331,7 +332,7 @@ class _FeedParserMixin:
             if tag in ('feed', 'rss', 'rdf:RDF'):
                 self.feeddata['language'] = lang
         self.lang = lang
-        self.basestack.append(baseuri)
+        self.basestack.append(self.baseuri)
         self.langstack.append(lang)
         
         # track namespaces
@@ -2570,3 +2571,4 @@ if __name__ == '__main__':
 #  redirecting to a URL that returns 304, redirecting to a URL that
 #  redirects to another URL with a different type of redirect); add
 #  support for HTTP 303 redirects
+#3.4 - MAP - support for relative URIs in xml:base attribute
