@@ -16,7 +16,8 @@ __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
-                    "Fazal Majid <http://www.majid.info/mylos/weblog/>"]
+                    "Fazal Majid <http://www.majid.info/mylos/weblog/>",
+                    "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
 _debug = 0
 _debug_never_use_libxml2 = 0
@@ -30,6 +31,9 @@ USER_AGENT = "UniversalFeedParser/%s%s +http://feedparser.org/" % (__version__, 
 # of the feed you were attempting to parse.
 # Requires mxTidy <http://www.egenix.com/files/python/mxTidy.html>
 TIDY_MARKUP = 0
+
+# I can't think of a single reason why you would want to customize this:
+ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
 # ---------- required modules (should come with any Python distribution) ----------
 import sgmllib, re, sys, copy, urlparse, time, rfc822, types
@@ -1497,7 +1501,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
             request.add_header("Accept-encoding", "gzip")
         if auth:
             request.add_header("Authorization", "Basic %s" % auth)
-        request.add_header("Accept", "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1")
+        request.add_header("Accept", ACCEPT_HEADER)
         opener = apply(urllib2.build_opener, tuple([_FeedURLHandler()] + handlers))
         opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
         try:
@@ -1764,11 +1768,22 @@ def _getCharacterEncoding(http_headers, xml_data):
     text/xml-external-parsed-entity, the encoding given in the XML prefix
     within the document is ALWAYS IGNORED and only the encoding given in
     the charset parameter of the HTTP Content-Type header should be
-    respected, and it defaults to "us-ascii" if not specified.  If
-    Content-Type is unspecified (input was local file or non-HTTP source)
+    respected, and it defaults to "us-ascii" if not specified.
+
+    Furthermore, discussion on the atom-syntax mailing list with the
+    author of RFC 3023 leads me to the conclusion that any document
+    served with a Content-Type of text/* and no charset parameter
+    must be treated as us-ascii.  (We now do this.)  And also that it
+    must always be flagged as non-well-formed.  (We do not do this.)
+    
+    If Content-Type is unspecified (input was local file or non-HTTP source)
     or unrecognized (server just got it totally wrong), then go by the
     encoding given in the XML prefix of the document and default to
-    "utf-8" as per the XML specification.
+    "utf-8" as per the XML specification.  This part is probably wrong,
+    as HTTP defaults to "iso-8859-1" if no Content-Type is specified.
+    Also, the default Content-Type and well-formedness of XML documents
+    served as wacky types like "application/octet-stream" is still under
+    discussion.
     """
 
     def _parseHTTPContentType(content_type):
@@ -1825,7 +1840,8 @@ def _getCharacterEncoding(http_headers, xml_data):
             true_encoding = http_encoding
         else:
             true_encoding = 'us-ascii'
-    else:
+    elif http_headers and (not http_headers.has_key('content-type')):
+        true_encoding = xml_encoding 
         true_encoding = xml_encoding or 'utf-8'
     return true_encoding, http_encoding, xml_encoding
     
