@@ -172,7 +172,7 @@ class FeedParserDict(UserDict):
     def __contains__(self, key):
         return self.has_key(key)
 
-def ebcdic_to_ascii(str):
+def _ebcdic_to_ascii(str):
     ebcdic_to_ascii_map = (
         0,1,2,3,156,9,134,127,151,141,142,11,12,13,14,15,
         16,17,18,19,157,133,8,135,24,25,146,143,28,29,30,31,
@@ -411,10 +411,10 @@ class _FeedParserMixin:
                 import htmlentitydefs
                 if hasattr(htmlentitydefs, "name2codepoint"): # requires Python 2.3
                     return htmlentitydefs.name2codepoint[k]
-                else:
-                    k = htmlentitydefs.entitydefs[k]
-                    if k.startswith("&#") and k.endswith(";"): return int(k[2:-1]) # not in latin-1
-                    return ord(k.decode('ISO-8859-1'))
+                k = htmlentitydefs.entitydefs[k]
+                if k.startswith("&#") and k.endswith(";"):
+                    return int(k[2:-1]) # not in latin-1
+                return ord(k)
             try: name2cp(ref)
             except KeyError: text = "&%s;" % ref
             else: text = unichr(name2cp(ref)).encode('utf-8')
@@ -1880,19 +1880,31 @@ def _getCharacterEncoding(http_headers, xml_data):
     try:
         if xml_data[:4] == '\x4c\x6f\xa7\x94':
             # EBCDIC
-            xml_data = ebcdic_to_ascii(xml_data)
+            xml_data = _ebcdic_to_ascii(xml_data)
         elif xml_data[:4] == '\x00\x3c\x00\x3f':
             # UTF-16BE
             xml_encoding = 'utf-16be'
         elif (len(xml_data) >= 4) and (xml_data[:2] == '\xfe\xff') and (xml_data[2:4] != '\x00\x00'):
-            # UTF-16BE with BOM
+            # UTF-16BE with BOM (BOM will be stripped out later in _toUTF8)
             xml_encoding = 'utf-16be'
         elif xml_data[:4] == '\x3c\x00\x3f\x00':
             # UTF-16LE
             xml_encoding = 'utf-16le'
         elif (len(xml_data) >= 4) and (xml_data[:2] == '\xff\xfe') and (xml_data[2:4] != '\x00\x00'):
-            # UTF-16LE with BOM
+            # UTF-16LE with BOM (BOM will be stripped out later in _toUTF8)
             xml_encoding = 'utf-16le'
+        elif xml_data[:4] == '\x00\x00\x00\x3c':
+            # UTF-32BE
+            xml_encoding = 'utf-32be'
+        elif xml_data[:4] == '\x3c\x00\x00\x00':
+            # UTF-32LE
+            xml_encoding = 'utf-32le'
+        elif xml_data[:4] == '\x00\x00\xfe\xff':
+            # UTF-32BE with BOM (BOM will be stripped out later in _toUTF8)
+            xml_encoding = 'utf-32be'
+        elif xml_data[:4] == '\xff\xfe\x00\x00':
+            # UTF-32LE with BOM (BOM will be stripped out later in _toUTF8)
+            xml_encoding = 'utf-32le'
         else:
             # ASCII-compatible
             pass
@@ -1953,23 +1965,20 @@ def _toUTF8(data, encoding):
                 sys.stderr.write('trying utf-8 instead\n')
         encoding = 'utf-8'
         data = data[3:]
-#
-## no tests for UTF-32 yet
-#
-#    elif data[:4] == '\x00\x00\xfe\xff':
-#        if _debug:
-#            sys.stderr.write('stripping BOM\n')
-#            if encoding != 'utf-32be':
-#                sys.stderr.write('trying utf-32be instead\n')
-#        encoding = 'utf-32be'
-#        data = data[4:]
-#    elif data[:4] == '\xff\xfe\x00\x00':
-#        if _debug:
-#            sys.stderr.write('stripping BOM\n')
-#            if encoding != 'utf-32le':
-#                sys.stderr.write('trying utf-32le instead\n')
-#        encoding = 'utf-32le'
-#        data = data[4:]
+    elif data[:4] == '\x00\x00\xfe\xff':
+        if _debug:
+            sys.stderr.write('stripping BOM\n')
+            if encoding != 'utf-32be':
+                sys.stderr.write('trying utf-32be instead\n')
+        encoding = 'utf-32be'
+        data = data[4:]
+    elif data[:4] == '\xff\xfe\x00\x00':
+        if _debug:
+            sys.stderr.write('stripping BOM\n')
+            if encoding != 'utf-32le':
+                sys.stderr.write('trying utf-32le instead\n')
+        encoding = 'utf-32le'
+        data = data[4:]
     newdata = unicode(data, encoding)
     if _debug: sys.stderr.write('successfully converted %s data to unicode\n' % encoding)
     declmatch = re.compile('^<\?xml[^>]*?>')
@@ -2327,4 +2336,5 @@ if __name__ == '__main__':
 #  much faster); increased default timeout to 20 seconds; test for presence
 #  of Location header on redirects; added tests for many alternate character
 #  encodings; support various EBCDIC encodings; support UTF-16BE and
-#  UTF16-LE with or without a BOM; support UTF-8 with a BOM
+#  UTF16-LE with or without a BOM; support UTF-8 with a BOM; support
+#  UTF-32BE and UTF-32LE with or without a BOM

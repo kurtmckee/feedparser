@@ -1,7 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
-Description: illformed UTF-8 with Byte Order Mark
-Expect:      bozo and encoding == 'utf-8'
+SkipUnless:   __import__('codecs').lookup('utf-8')
+Description:  Illformed UTF-8 with Byte Order Mark
+Expect:       bozo and encoding == 'utf-8'
 -->
-<rss version="2.0">
+<rss>
 </rss
