@@ -32,6 +32,7 @@
 <!ENTITY hotrss "Hot &rss;">
 <!ENTITY w3cdtf "<acronym condition='W3C Date Time Format'>W3CDTF</acronym>">
 <!ENTITY soap "<acronym condition='Simple Object Access Protocol'>SOAP</acronym>">
+<!ENTITY xmlbase "&xml;:Base">
 <!ENTITY time "<filename class='headerfile'>time</filename>">
 <!ENTITY urllib2 "<filename class='headerfile'>urllib2</filename>">
 <!ENTITY parse "<function>parse</function>">
@@ -91,6 +92,7 @@
 <!ENTITY url_sectionf "http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info">
 <!ENTITY url_wellformedness "http://www.imc.org/atom-syntax/mail-archive/msg05575.html">
 <!ENTITY url_cjkcodecs "http://cjkpython.i18n.org/">
+<!ENTITY url_xmlbase "http://www.w3.org/TR/xmlbase/">
 
 <!ENTITY example_atom "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom;&#34;/>')</userinput>">
 <!ENTITY example_rss20 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_rss20;&#34;/>')</userinput>">
@@ -112,7 +114,7 @@
 <para>Future enhancement: some versions of &rss; clearly specify that certain values default to <constant>text/plain</constant>, and &feedparser; should respect this, but it doesn't yet.</para>">
 
 <!ENTITY language_details "<para><varname>language</varname> is supposed to be a language code, as specified by <ulink url='&url_rfc3066;'>&rfc; 3066</ulink>, but publishers have been known to publish random values like <quote>English</quote> or <quote>German</quote>.  &feedparser; does not do any parsing or normalization of language codes.</para>
-<para><varname>language</varname> may come from the element's <sgmltag class='attribute'>xml:lang</sgmltag> attribute, or it may inherit from a parent element's <sgmltag class='attribute'>xml:lang</sgmltag>.  If the feed does not specify a language, <varname>language</varname> will be <constant>None</constant>, the &python; null value.</para>">
+<para><varname>language</varname> may come from the element's <sgmltag class='attribute'>xml:lang</sgmltag> attribute, or it may inherit from a parent element's <sgmltag class='attribute'>xml:lang</sgmltag>, or the appropriate &http; header.  (See <xref linkend='advanced.lang'/> for more details.)  If the feed does not specify a language, <varname>language</varname> will be <constant>None</constant>, the &python; null value.</para>">
 
 <!ENTITY mode_details "<para>Possible values:</para>
 <itemizedlist>
@@ -122,7 +124,7 @@
 </itemizedlist>
 <para><varname>mode</varname> is only useful in rare situations and can usually be ignored.  It is the original escaping mode that the feed used to encode the value.  By the time you see it, &feedparser; has already unescaped the value properly.  <emphasis>Clients should never need to manually unescape values.</emphasis></para>">
 
-<!ENTITY base_details "<para><varname>base</varname> is only useful in rare situations and can usually be ignored.  It is the original base &uri; for this value, as specified by the element's <sgmltag class='attribute'>xml:base</sgmltag> attribute, or a parent element's <sgmltag class='attribute'>xml:base</sgmltag>, or the &uri; of the feed.  (This behavior is spelled out in the <ulink url='&url_xmlbase;'>XML Base specification</ulink>.)  By the time you see it, &feedparser; has already resolved relative links in all values where it makes sense to do so.  <emphasis>Clients should never need to manually resolve relative links.</emphasis></para>">
+<!ENTITY base_details "<para><varname>base</varname> is only useful in rare situations and can usually be ignored.  It is the original base &uri; for this value, as specified by the element's <sgmltag class='attribute'>xml:base</sgmltag> attribute, or a parent element's <sgmltag class='attribute'>xml:base</sgmltag>, or the appropriate &http; header, or the &uri; of the feed.  (See <xref linkend='advanced.base'/> for more details.)  By the time you see it, &feedparser; has already resolved relative links in all values where it makes sense to do so.  <emphasis>Clients should never need to manually resolve relative links.</emphasis></para>">
 
 <!ENTITY all_versions "<para>Here is the complete list of known feed types and versions that may be returned in <varname>version</varname>:</para>
 <variablelist>
@@ -190,6 +192,10 @@
 <para>If the feed type is completely unknown, <varname>version</varname> will be an empty string.</para>">
 
 <!ENTITY sanitized "<para>If this contains &html; or &xhtml;, it is <link linkend='advanced.sanitization'>sanitized</link> by default.</para>">
+
+<!ENTITY isrelativelink "<para>If this value is a relative &uri;, it is <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
+
+<!ENTITY containsrelativelinks "<para>If <literal>type</literal> is <literal>text/html</literal> or <literal>application/xhtml+xml</literal>, certain (X)HTML elements within this value may contain relative &uri;s.  If so, they are <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
 
 <!ENTITY parsedasadate "<link linkend='advanced.date'>parsed as a date</link>">
 ]>
@@ -855,7 +861,7 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 </section>
 
 <section id="advanced.date.register">
-<title>Adding support for additional date formats</title>
+<title>Supporting Additional Date Formats</title>
 <para>&feedparser; supports many different date formats, but there are probably many more in the wild that are still unsupported.  If you find other date formats, you can support them by registering them with <function>registerDateHandler</function>.  It takes a single argument, a callback function.  The callback function should take a single argument, a string, and return a single value, a 9-tuple &python; date in UTC.</para>
 
 <example id="example.registerdatehandler">
@@ -1066,7 +1072,7 @@ d = feedparser.parse(...)</programlisting>
 </note>
 
 <section id="advanced.sanitization.why">
-<title>Whitelist, don't blacklist</title>
+<title>Whitelist, Don't Blacklist</title>
 <para>I am often asked why &feedparser; is so hard-assed about &html; sanitizing.  This topic usually comes up when someone notices that &feedparser; strips all <sgmltag class="attribute">style</sgmltag> attributes by default.</para>
 
 <para>Here is an incomplete list of potentially dangerous &html; tags and attributes:</para>
@@ -1408,6 +1414,90 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 
 </section>
 
+<section id="advanced.base">
+<?dbhtml filename="resolving-relative-links.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<!--
+It is the original base &uri; for this value, as specified by the element's <sgmltag class='attribute'>xml:base</sgmltag> attribute, or a parent element's <sgmltag class='attribute'>xml:base</sgmltag>, or the &uri; of the feed.  (This behavior is spelled out in the <ulink url='&url_xmlbase;'>XML Base specification</ulink>.)  By the time you see it, &feedparser; has already resolved relative links in all values where it makes sense to do so.  <emphasis>Clients should never need to manually resolve relative links.</emphasis></para>">
+-->
+<para>Many feed elements and attributes are &uri;s.  &feedparser; resolves relative &uri;s according to the <ulink url="&url_xmlbase;">&xmlbase;</ulink> specification.</para>
+</abstract>
+</sectioninfo>
+<title>Relative Link Resolution</title>
+<para>These feed elements are treated as &uri;s, and resolved if they are relative:</para>
+<itemizedlist>
+<listitem><para><xref linkend="reference.feed.link"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.links.href"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.generator_detail.url"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.id"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.image.url"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.image.link"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.textinput.link"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.author_detail.url"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.publisher_detail.url"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.contributors.url"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.docs"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.license"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.link"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.links.href"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.id"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.author_detail.url"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.publisher_detail.url"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.contributors.url"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.enclosure.url"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.source.url"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.comments"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.license"/></para></listitem>
+</itemizedlist>
+
+<para>In addition, several elements may contain &html; or &xhtml; markup.  Certain elements and attributes in &html; can be relative &uri;s, and &feedparser; will resolve these &uri;s according to the same rules as the feed elements listed above.</para>
+
+<itemizedlist>
+<listitem><para><sgmltag>&lt;a href="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;applet codebase="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;area href="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;blockquote cite="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;body background="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;del cite="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;form action="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;frame longdesc="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;frame src="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;iframe longdesc="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;iframe src="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;head profile="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;img longdesc="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;img src="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;img usemap="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;input src="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;input usemap="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;ins cite="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;link href="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;object classid="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;object codebase="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;object data="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;object usemap="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;q cite="..."&gt;</sgmltag></para></listitem>
+<listitem><para><sgmltag>&lt;script src="..."&gt;</sgmltag></para></listitem>
+</itemizedlist>
+
+<para>xxx</para>
+
+</section>
+
+<section id="advanced.lang">
+<?dbhtml filename="language-detection.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>&feedparser; xxx</para>
+</abstract>
+</sectioninfo>
+<title>Language Detection</title>
+<para>xxx</para>
+</section>
+
 <section id="advanced.version">
 <?dbhtml filename="version-detection.html"?>
 <sectioninfo>
@@ -1449,7 +1539,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 </abstract>
 
 <section id="advanced.encoding.intro">
-<title>Introduction to character encoding</title>
+<title>Introduction to Character Encoding</title>
 <para>In &xml;, the character encoding is optional and may be given in the &xml; declaration in the first line of the document, like this:</para>
 
 <informalexample>
@@ -1485,7 +1575,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 </section>
 
 <section id="advanced.encoding.override">
-<title>Handling incorrectly-declared encodings</title>
+<title>Handling Incorrectly-Declared Encodings</title>
 
 <para>&feedparser; initially uses the rules specified in &rfc; 3023 to determine the character encoding of the feed.  If parsing succeeds, then that's that.  If parsing fails, &feedparser; sets the <varname>bozo</varname> bit to <literal>1</literal> and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingOverride</constant>.  Then it tries to reparse the feed with the following character encodings:</para>
 
@@ -1500,7 +1590,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 </section>
 
 <section id="advanced.encoding.nonxml">
-<title>Handling incorrectly-declared media types</title>
+<title>Handling Incorrectly-Declared Media Types</title>
 
 <para>&rfc; 3023 only applies when the feed is served over &http; with a <literal>Content-Type</literal> that declares the feed to be some kind of &xml;.  However, some web servers are severely misconfigured and serve feeds with a <literal>Content-Type</literal> of <literal>text/plain</literal>, <literal>application/octet-stream</literal>, or some completely bogus media type.</para>
 
@@ -2158,6 +2248,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>feed.title_detail.value</title>
 <para>Same as <xref linkend="reference.feed.title"/>.</para>
 &sanitized;
+&containsrelativelinks;
 </section>
 <section id="reference.feed.title_detail.type">
 <title>feed.title_detail.type</title>
@@ -2189,6 +2280,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>The &url; of the &html; page associated with this feed.</para>
 </abstract>
 <para>For site feeds, this is probably the home page of the site.  For category feeds, this is probably the category's archive page.</para>
+&isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom:feed/atom:link[rel="alternate"]/@href</literal></para></listitem>
@@ -2240,6 +2332,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.links.href">
 <title>feed.links[i].href</title>
 <para>The &url; of the page that this feed link points to.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.links.title">
 <title>feed.links[i].title</title>
@@ -2292,6 +2385,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>feed.tagline_detail.value</title>
 <para>Same as <xref linkend="reference.feed.tagline"/>.</para>
 &sanitized;
+&containsrelativelinks;
 </section>
 <section id="reference.feed.tagline_detail.type">
 <title>feed.tagline_detail.type</title>
@@ -2362,6 +2456,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>feed.copyright_detail.value</title>
 <para>Same as <xref linkend="reference.feed.copyright"/>.</para>
 &sanitized;
+&containsrelativelinks;
 </section>
 <section id="reference.feed.copyright_detail.type">
 <title>feed.copyright_detail.type</title>
@@ -2428,6 +2523,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.generator_detail.url">
 <title>feed.generator_detail.url</title>
 <para>The &url; of the application used to generate the feed.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.generator_detail.version">
 <title>feed.generator_detail.version</title>
@@ -2472,6 +2568,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>feed.info_detail.value</title>
 <para>Same as <xref linkend="reference.feed.info"/>.</para>
 &sanitized;
+&containsrelativelinks;
 </section>
 <section id="reference.feed.info_detail.type">
 <title>feed.info_detail.type</title>
@@ -2545,6 +2642,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>A globally unique identifier for this feed.</para>
 </abstract>
+&isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom:feed/atom:id</literal></para></listitem>
@@ -2600,6 +2698,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.author_detail.url">
 <title>feed.author_detail.url</title>
 <para>The &url; of the feed author.  This can be the author's home page, or a contact page with a webmail form.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.author_detail.email">
 <title>feed.author_detail.email</title>
@@ -2625,6 +2724,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.contributors.url">
 <title>feed.contributors[i].url</title>
 <para>The &url; of this contributor.  This can be the contributor's home page, or a contact page with a webmail form.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.contributors.email">
 <title>feed.contributors[i].email</title>
@@ -2651,10 +2751,12 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.image.url">
 <title>feed.image.url</title>
 <para>The &url; of the feed image itself, which would go in the <sgmltag class="attribute">src</sgmltag> attribute if you rendered the feed image as an &html; <sgmltag>img</sgmltag> element.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.image.link">
 <title>feed.image.link</title>
 <para>The &url; which the feed image would point to.  If you rendered the feed image as an &html; <sgmltag>img</sgmltag> element, you would wrap it in an <sgmltag>a</sgmltag> element and put this in the <sgmltag class="attribute">href</sgmltag> attribute.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.image.width">
 <title>feed.image.width</title>
@@ -2714,6 +2816,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.textinput.link">
 <title>feed.textinput.link</title>
 <para>The link of the script which processes the text input form, which would go in the <sgmltag class="attribute">action</sgmltag> attirbute of the form.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.textinput.name">
 <title>feed.textinput.name</title>
@@ -2819,6 +2922,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.publisher_detail.url">
 <title>feed.publisher_detail.url</title>
 <para>The &url; of this feed's publisher.  This can be the publisher's home page, or a contact page with a webmail form.</para>
+&isrelativelink;
 </section>
 <section id="reference.feed.publisher_detail.email">
 <title>feed.publisher_detail.email</title>
@@ -2875,6 +2979,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>A &url; pointing to the specification which this feed conforms to.</para>
 </abstract>
 <para>This element is rare.  The reasoning was that in 25 years, someone will stumble on an &rss; feed and not know what it is, so we should waste everyone's bandwidth until then.  Most publishers skip it, and all clients ignore it.</para>
+&isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/docs</literal></para></listitem>
@@ -2910,6 +3015,10 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <listitem><para><literal>/rss/channel/dc:language</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:language</literal></para></listitem>
 </itemizedlist>
+<note>
+<title/>
+<para>See <xref linkend="advanced.lang"/> for more details on language elements, attributes, and inheritance.</para>
+</note>
 </section>
 
 <section id="reference.feed.license">
@@ -2919,6 +3028,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>A &url; of the license under which this feed is distributed.</para>
 </abstract>
+&isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/creativeCommons:license</literal></para></listitem>
@@ -3003,6 +3113,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>entries[i].title_detail.value</title>
 <para>Same as <xref linkend="reference.entry.title"/>.</para>
 &sanitized;
+&containsrelativelinks;
 </section>
 <section id="reference.entry.title_detail.type">
 <title>entries[i].title_detail.type</title>
@@ -3033,6 +3144,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>The primary link of this entry.  Most feeds use this as the permanent link to the entry in the site's archives.</para>
 </abstract>
+&isrelativelink;
 <para>Some &rss; feeds use <sgmltag>guid</sgmltag> when they mean <sgmltag>link</sgmltag>.  <sgmltag>guid</sgmltag> can also be used as an opaque identifier that has nothing to do with links.  If an &rss; feed uses <sgmltag>guid</sgmltag> as the entry link and no <sgmltag>link</sgmltag> is present, &feedparser; detects this and makes the <sgmltag>guid</sgmltag> available in <varname>d.entries[i].link</varname>.</para>
 
 <para>In other words, <emphasis>you can always use <varname>d.entries[i].link</varname> to get the entry link</emphasis>, regardless of how the feed is actually structured.</para>
@@ -3085,6 +3197,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.entry.links.href">
 <title>entries[i].links[j].href</title>
 <para>The &url; of the page that this entry link points to.</para>
+&isrelativelink;
 </section>
 <section id="reference.entry.links.title">
 <title>entries[i].links[j].title</title>
@@ -3138,6 +3251,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>entries[i].summary_detail.value</title>
 <para>Same as <xref linkend="reference.entry.summary"/>.</para>
 &sanitized;
+&containsrelativelinks;
 </section>
 <section id="reference.entry.summary_detail.type">
 <title>entries[i].summary_detail.type</title>
@@ -3182,6 +3296,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>entries[i].content[j].value</title>
 <para>The value of this piece of content.</para>
 &sanitized;
+&containsrelativelinks;
 </section>
 <section id="reference.entry.content.type">
 <title>entries[i].content[j].type</title>
@@ -3372,6 +3487,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>A globally unique identifier for this entry.</para>
 </abstract>
+&isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom:feed/atom:entry/id</literal></para></listitem>
@@ -3427,6 +3543,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.entry.author_detail.url">
 <title>entries[i].author_detail.url</title>
 <para>The &url; of this entry's author.  This can be the author's home page, or a contact page with a webmail form.</para>
+&isrelativelink;
 </section>
 <section id="reference.entry.author_detail.email">
 <title>entries[i].author_detail.email</title>
@@ -3452,6 +3569,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.entry.contributors.url">
 <title>entries[i].contributors[j].url</title>
 <para>The &url; of this contributor.  This can be the contributor's home page, or a contact page with a webmail form.</para>
+&isrelativelink;
 </section>
 <section id="reference.entry.contributors.email">
 <title>entries[i].contributors[j].email</title>
@@ -3475,6 +3593,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.entry.enclosure.url">
 <title>entries[i].enclosures[j].url</title>
 <para>The &url; of the linked file.</para>
+&isrelativelink;
 </section>
 <section id="reference.entry.enclosure.length">
 <title>entries[i].enclosures[j].length</title>
@@ -3527,6 +3646,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.entry.publisher_detail.url">
 <title>entries[i].publisher_detail.url</title>
 <para>The &url; of this entry's publisher.  This can be the publisher's home page, or a contact page with a webmail form.</para>
+&isrelativelink;
 </section>
 <section id="reference.entry.publisher_detail.email">
 <title>entries[i].publisher_detail.email</title>
@@ -3550,7 +3670,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.feed.categories"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.categories"/></para></listitem>
 </itemizedlist>
 </section>
 
@@ -3571,7 +3691,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.feed.category"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.category"/></para></listitem>
 </itemizedlist>
 </section>
 
@@ -3589,6 +3709,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.entry.source.url">
 <title>entries[i].source.url</title>
 <para>The &url; of the entry source.  The &rss; specification states that this must be the &url; of an &rss; feed, not an &html; page or other feed format.</para>
+&isrelativelink;
 </section>
 <section id="reference.entry.source.value">
 <title>entries[i].source.value</title>
@@ -3603,6 +3724,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>A &url; of the &html; comment submission page associated with this entry.</para>
 </abstract>
+&isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/item/comments</literal></para></listitem>
@@ -3616,6 +3738,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>A &url; of the license under which this entry is distributed.</para>
 </abstract>
+&isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/item/creativeCommons:license</literal></para></listitem>
