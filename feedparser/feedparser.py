@@ -62,11 +62,11 @@ except:
 # module is buggy and timeoutsocket is better.
 try:
     import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
-    timeoutsocket.setDefaultSocketTimeout(10)
+    timeoutsocket.setDefaultSocketTimeout(20)
 except ImportError:
     import socket
     if hasattr(socket, 'setdefaulttimeout'):
-        socket.setdefaulttimeout(10)
+        socket.setdefaulttimeout(20)
 import urllib, urllib2
 
 _mxtidy = None
@@ -2212,4 +2212,4 @@ if __name__ == '__main__':
 #  convert feed to UTF-8 before passing to XML parser; completely revamp
 #  logic for determining character encoding and attempting XML parsing
 #  (should be similar enough for all vaguely useful cases, and is certainly
-#  much faster)
+#  much faster); increased default timeout to 20 seconds
