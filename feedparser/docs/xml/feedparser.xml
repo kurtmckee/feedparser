@@ -6,7 +6,7 @@
 %entities_version;
 <!ENTITY gfdl SYSTEM "gfdl.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "3.2.1">
+<!ENTITY feedparser_version "3.3">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
@@ -36,7 +36,7 @@
 <!ENTITY rss "<acronym condition='Rich Site Summary'>RSS</acronym>">
 <!ENTITY atom "Atom">
 <!ENTITY hotrss "Hot &rss;">
-<!ENTITY w3dtf "<acronym condition='W3C Date Time Format'>W3DTF</acronym>">
+<!ENTITY w3cdtf "<acronym condition='W3C Date Time Format'>W3CDTF</acronym>">
 <!ENTITY soap "<acronym condition='Simple Object Access Protocol'>SOAP</acronym>">
 <!ENTITY time "<filename class='headerfile'>time</filename>">
 <!ENTITY urllib2 "<filename class='headerfile'>urllib2</filename>">
@@ -75,7 +75,7 @@
 <!ENTITY url_referrer_rfc2616 "http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.36">
 <!ENTITY url_rfc822 "http://www.ietf.org/rfc/rfc822.txt">
 <!ENTITY url_iso8601 "http://hydracen.com/dx/iso8601.htm">
-<!ENTITY url_w3dtf "http://www.w3.org/TR/NOTE-datetime">
+<!ENTITY url_w3cdtf "http://www.w3.org/TR/NOTE-datetime">
 
 <!ENTITY url_example_atom "http://feedparser.org/docs/examples/atom.xml">
 <!ENTITY url_example_rss20 "http://feedparser.org/docs/examples/rss20.xml">
@@ -711,9 +711,9 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <listitem><para>&rss; 0.90 has no date elements.</para></listitem>
 <listitem><para>Netscape &rss; 0.91 does not specify a date format, but examples within the specification show &rfc822;-style dates with 4-digit years.</para></listitem>
 <listitem><para>Userland &rss; 0.91 states, <quote>All date-times in &rss; conform to the Date and Time Specification of &rfc822;.</quote>  <ulink url="&url_rfc822;">&rfc822;</ulink> mandates 2-digit years; it does not allow 4-digit years.</para></listitem>
-<listitem><para>&rss; 1.0 states that all date elements must conform to <ulink url="&url_w3dtf;">&w3dtf;</ulink>, which is a profile of &iso; 8601:1988.</para></listitem>
+<listitem><para>&rss; 1.0 states that all date elements must conform to <ulink url="&url_w3cdtf;">&w3cdtf;</ulink>, which is a profile of &iso; 8601:1988.</para></listitem>
 <listitem><para>&rss; 2.0 states, <quote>All date-times in &rss; conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred).</quote></para></listitem>
-<listitem><para>&atom; states that all date elements must conform to <ulink url="&url_w3dtf;">&w3dtf;</ulink>.</para></listitem>
+<listitem><para>&atom; states that all date elements must conform to <ulink url="&url_w3cdtf;">&w3cdtf;</ulink>.</para></listitem>
 </itemizedlist>
 </section>
 
@@ -744,27 +744,27 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <entry><literal>(2004, 1, 1, 19, 48, 21, 3, 1, 0)</literal></entry>
 </row>
 <row>
-<entry>valid W3DTF (numeric timezone)</entry>
+<entry>valid W3CDTF (numeric timezone)</entry>
 <entry><literal>2003-12-31T10:14:55-08:00</literal></entry>
 <entry><literal>(2003, 12, 31, 18, 14, 55, 2, 365, 0)</literal></entry>
 </row>
 <row>
-<entry>valid W3DTF (UTC timezone)</entry>
+<entry>valid W3CDTF (UTC timezone)</entry>
 <entry><literal>2003-12-31T10:14:55Z</literal></entry>
 <entry><literal>(2003, 12, 31, 10, 14, 55, 2, 365, 0)</literal></entry>
 </row>
 <row>
-<entry>valid W3DTF (yyyy)</entry>
+<entry>valid W3CDTF (yyyy)</entry>
 <entry><literal>2003</literal></entry>
 <entry><literal>(2003, 1, 1, 0, 0, 0, 2, 1, 0)</literal></entry>
 </row>
 <row>
-<entry>valid W3DTF (yyyy-mm)</entry>
+<entry>valid W3CDTF (yyyy-mm)</entry>
 <entry><literal>2003-12</literal></entry>
 <entry><literal>(2003, 12, 1, 0, 0, 0, 0, 335, 0)</literal></entry>
 </row>
 <row>
-<entry>valid W3DTF (yyyy-mm-dd)</entry>
+<entry>valid W3CDTF (yyyy-mm-dd)</entry>
 <entry><literal>2003-12-31</literal></entry>
 <entry><literal>(2003, 12, 31, 0, 0, 0, 2, 365, 0)</literal></entry>
 </row>
@@ -824,19 +824,39 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <entry><literal>(2004, 1, 26, 21, 31, 0, 0, 26, 0)</literal></entry>
 </row>
 <row>
-<entry>bogus W3DTF (invalid hour)</entry>
+<entry>bogus W3CDTF (invalid hour)</entry>
 <entry><literal>2003-12-31T25:14:55Z</literal></entry>
 <entry><literal>(2004, 1, 1, 1, 14, 55, 3, 1, 0)</literal></entry>
 </row>
 <row>
-<entry>bogus W3DTF (invalid minute)</entry>
+<entry>bogus W3CDTF (invalid minute)</entry>
 <entry><literal>2003-12-31T10:61:55Z</literal></entry>
 <entry><literal>(2003, 12, 31, 11, 1, 55, 2, 365, 0)</literal></entry>
 </row>
 <row>
-<entry>bogus W3DTF (invalid second)</entry>
+<entry>bogus W3CDTF (invalid second)</entry>
 <entry><literal>2003-12-31T10:14:61Z</literal></entry>
 <entry><literal>(2003, 12, 31, 10, 15, 1, 2, 365, 0)</literal></entry>
+</row>
+<row>
+<entry>bogus (MSSQL)</entry>
+<entry><literal>2004-07-08 23:56:58.0</literal></entry>
+<entry><literal>(2004, 7, 8, 14, 56, 58, 3, 190, 0)</literal></entry>
+</row>
+<row>
+<entry>bogus (Korean)</entry>
+<entry><literal>2004-05-25 &#xc624; 11:23:17</literal></entry>
+<entry><literal>(2004, 5, 25, 14, 23, 17, 1, 146, 0)</literal></entry>
+</row>
+<row>
+<entry>bogus (Greek)</entry>
+<entry><literal>&#x039a;&#x03c5;&#x03c1;, 11 &#x0399;&#x03bf;&#x03cd;&#x03bb; 2004 12:00:00 EST</literal></entry>
+<entry><literal>(2004, 7, 11, 17, 0, 0, 6, 193, 0)</literal></entry>
+</row>
+<row>
+<entry>bogus (Hungarian)</entry>
+<entry><literal>j&#x00fa;lius-13T9:15-05:00</literal></entry>
+<entry><literal>(2004, 7, 13, 14, 15, 0, 1, 195, 0)</literal></entry>
 </row>
 </tbody>
 </tgroup>
