@@ -276,7 +276,7 @@ class _FeedParserMixin:
     can_contain_dangerous_markup = ['content', 'description', 'title', 'summary', 'info', 'tagline', 'copyright']
     html_types = ['text/html', 'application/xhtml+xml']
     
-    def __init__(self, baseuri=None, encoding='utf-8'):
+    def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
         if _debug: sys.stderr.write("initializing FeedParser\n")
         self.feeddata = FeedParserDict() # feed-level data
         self.encoding = encoding # character encoding
@@ -299,7 +299,9 @@ class _FeedParserMixin:
         self.basestack = []
         self.langstack = []
         self.baseuri = baseuri or ''
-        self.lang = None
+        self.lang = baselang or None
+        if baselang:
+            self.feeddata['language'] = baselang
 
     def unknown_starttag(self, tag, attrs):
         if _debug: sys.stderr.write('start %s with %s\n' % (tag, attrs))
@@ -313,7 +315,7 @@ class _FeedParserMixin:
         self.baseuri = baseuri
         lang = attrsD.get('xml:lang', attrsD.get('lang')) or self.lang
         if lang:
-            if (tag in ('feed', 'rss', 'rdf:RDF')) and (not self.lang):
+            if tag in ('feed', 'rss', 'rdf:RDF'):
                 self.feeddata['language'] = lang
         self.lang = lang
         self.basestack.append(baseuri)
@@ -1157,10 +1159,10 @@ class _FeedParserMixin:
 
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
-        def __init__(self, baseuri, encoding):
+        def __init__(self, baseuri, baselang, encoding):
             if _debug: sys.stderr.write('trying StrictFeedParser\n')
             xml.sax.handler.ContentHandler.__init__(self)
-            _FeedParserMixin.__init__(self, baseuri, encoding)
+            _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
             self.bozo = 0
             self.exc = None
         
@@ -1323,9 +1325,9 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         return "".join([str(p) for p in self.pieces])
 
 class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
-    def __init__(self, baseuri, encoding):
+    def __init__(self, baseuri, baselang, encoding):
         sgmllib.SGMLParser.__init__(self)
-        _FeedParserMixin.__init__(self, baseuri, encoding)
+        _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
 
     def decodeEntities(self, element, data):
         data = data.replace('&#60;', '&lt;')
@@ -2212,6 +2214,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['version'], data = _stripDoctype(data)
 
     baseuri = http_headers.get('content-location', result.get('url'))
+    baselang = http_headers.get('content-language', None)
 
     # if server sent 304, we're done
     if result.get("status", 0) == 304:
@@ -2257,7 +2260,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         use_strict_parser = 0
     if use_strict_parser:
         # initialize the SAX parser
-        feedparser = _StrictFeedParser(baseuri, 'utf-8')
+        feedparser = _StrictFeedParser(baseuri, baselang, 'utf-8')
         saxparser = xml.sax.make_parser(PREFERRED_XML_PARSERS)
         saxparser.setFeature(xml.sax.handler.feature_namespaces, 1)
         saxparser.setContentHandler(feedparser)
@@ -2280,7 +2283,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
     if not use_strict_parser:
-        feedparser = _LooseFeedParser(baseuri, known_encoding and 'utf-8' or '')
+        feedparser = _LooseFeedParser(baseuri, baselang, known_encoding and 'utf-8' or '')
         feedparser.feed(data)
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
@@ -2499,10 +2502,5 @@ if __name__ == '__main__':
 #  line debugging easier because pprint module formats real dictionaries
 #  better than dictionary-like objects; added NonXMLContentType exception,
 #  which is stored in bozo_exception when a feed is served with a non-XML
-#  media type such as "text/plain"
-
-# TODO
-# - add Content-Language + test cases
-# - add test case for "Content-type: application/xml; qs=0.9"
-# - add PDF docs
-# - add text docs (and distribute)
+#  media type such as "text/plain"; respect Content-Language as default
+#  language if none other is specified
