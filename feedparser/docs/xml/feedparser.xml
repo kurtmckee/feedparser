@@ -1683,7 +1683,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <title>feed.title</title>
 <abstract>
 <title/>
-<para>The feed title</para>
+<para>The title of the feed.</para>
 </abstract>
 &sanitized;
 <itemizedlist role="reference-from">
