@@ -19,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
 __license__ = "Python"
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -118,6 +118,7 @@ except:
 # ---------- don't touch these ----------
 class CharacterEncodingOverride(Exception): pass
 class CharacterEncodingUnknown(Exception): pass
+class NonXMLContentType(Exception): pass
 
 sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
 sgmllib.special = re.compile('<!')
@@ -178,6 +179,15 @@ class FeedParserDict(UserDict):
     def __contains__(self, key):
         return self.has_key(key)
 
+def zopeCompatibilityHack():
+    global FeedParserDict
+    del FeedParserDict
+    def FeedParserDict(aDict=None):
+        rc = {}
+        if aDict:
+            rc.update(aDict)
+        return rc
+
 _ebcdic_to_ascii_map = None
 def _ebcdic_to_ascii(str):
     global _ebcdic_to_ascii_map
@@ -204,10 +214,6 @@ def _ebcdic_to_ascii(str):
         _ebcdic_to_ascii_map = string.maketrans( \
             "".join(map(chr, range(256))), "".join(map(chr, emap)))
     return str.translate(_ebcdic_to_ascii_map)
-#    newstr = []
-#    for ix in xrange(len(str)):
-#        newstr.append(chr(ebcdic_to_ascii_map[ord(str[ix])]))
-#    return "".join(newstr)
 
 class _FeedParserMixin:
     namespaces = {"": "",
@@ -305,11 +311,11 @@ class _FeedParserMixin:
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
         self.baseuri = baseuri
-        lang = attrsD.get('xml:lang', attrsD.get('lang'))
+        lang = attrsD.get('xml:lang', attrsD.get('lang')) or self.lang
         if lang:
             if (tag in ('feed', 'rss', 'rdf:RDF')) and (not self.lang):
                 self.feeddata['language'] = lang
-            self.lang = lang
+        self.lang = lang
         self.basestack.append(baseuri)
         self.langstack.append(lang)
         
@@ -390,12 +396,11 @@ class _FeedParserMixin:
         if self.basestack:
             self.basestack.pop()
             if self.basestack and self.basestack[-1]:
-                baseuri = self.basestack[-1]
-                self.baseuri = baseuri
+                self.baseuri = self.basestack[-1]
         if self.langstack:
-            lang = self.langstack.pop()
-            if lang:
-                self.lang = lang
+            self.langstack.pop()
+            if self.langstack and self.langstack[-1]:
+                self.lang = self.langstack[-1]
 
     def handle_charref(self, ref):
         # called for each character reference, e.g. for "&#160;", ref will be "160"
@@ -1570,11 +1575,185 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     # treat url_file_stream_or_string as string
     return _StringIO(str(url_file_stream_or_string))
 
+_date_handlers = []
+def registerDateHandler(func):
+    """Register a date handler function (takes string, returns 9-tuple date in GMT)"""
+    _date_handlers.insert(0, func)
+    
+# ISO-8601 date parsing routines written by Fazal Majid.
+# The ISO 8601 standard is very convoluted and irregular - a full ISO 8601
+# parser is beyond the scope of feedparser and would be a worthwhile addition
+# to the Python library.
+# A single regular expression cannot parse ISO 8601 date formats into groups
+# as the standard is highly irregular (for instance is 030104 2003-01-04 or
+# 0301-04-01), so we use templates instead.
+# Please note the order in templates is significant because we need a
+# greedy match.
+_iso8601_tmpl = ['YYYY-?MM-?DD', 'YYYY-MM', 'YYYY-?OOO',
+                'YY-?MM-?DD', 'YY-?OOO', 'YYYY', 
+                '-YY-?MM', '-OOO', '-YY',
+                '--MM-?DD', '--MM',
+                '---DD',
+                'CC', '']
+_iso8601_re = [
+    tmpl.replace(
+    'YYYY', r'(?P<year>\d{4})').replace(
+    'YY', r'(?P<year>\d\d)').replace(
+    'MM', r'(?P<month>[01]\d)').replace(
+    'DD', r'(?P<day>[0123]\d)').replace(
+    'OOO', r'(?P<ordinal>[0123]\d\d)').replace(
+    'CC', r'(?P<century>\d\d$)')
+    + r'(T?(?P<hour>\d{2}):(?P<minute>\d{2})'
+    + r'(:(?P<second>\d{2}))?'
+    + r'(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?'
+    for tmpl in _iso8601_tmpl]
+del tmpl
+_iso8601_matches = [re.compile(regex).match for regex in _iso8601_re]
+del regex
+def _parse_date_iso8601(dateString):
+    """Parse a variety of ISO-8601-compatible formats like 20040105"""
+    m = None
+    for _iso8601_match in _iso8601_matches:
+        m = _iso8601_match(dateString)
+        if m: break
+    if not m: return
+    if m.span() == (0, 0): return
+    params = m.groupdict()
+    ordinal = params.get("ordinal", 0)
+    if ordinal:
+        ordinal = int(ordinal)
+    else:
+        ordinal = 0
+    year = params.get("year", "--")
+    if not year or year == "--":
+        year = time.gmtime()[0]
+    elif len(year) == 2:
+        # ISO 8601 assumes current century, i.e. 93 -> 2093, NOT 1993
+        year = 100 * int(time.gmtime()[0] / 100) + int(year)
+    else:
+        year = int(year)
+    month = params.get("month", "-")
+    if not month or month == "-":
+        # ordinals are NOT normalized by mktime, we simulate them
+        # by setting month=1, day=ordinal
+        if ordinal:
+            month = 1
+        else:
+            month = time.gmtime()[1]
+    month = int(month)
+    day = params.get("day", 0)
+    if not day:
+        # see above
+        if ordinal:
+            day = ordinal
+        elif params.get("century", 0) or \
+                 params.get("year", 0) or params.get("month", 0):
+            day = 1
+        else:
+            day = time.gmtime()[2]
+    else:
+        day = int(day)
+    # special case of the century - is the first year of the 21st century
+    # 2000 or 2001 ? The debate goes on...
+    if "century" in params.keys():
+        year = (int(params["century"]) - 1) * 100 + 1
+    # in ISO 8601 most fields are optional
+    for field in ["hour", "minute", "second", "tzhour", "tzmin"]:
+        if not params.get(field, None):
+            params[field] = 0
+    hour = int(params.get("hour", 0))
+    minute = int(params.get("minute", 0))
+    second = int(params.get("second", 0))
+    # weekday is normalized by mktime(), we can ignore it
+    weekday = 0
+    # daylight savings is complex, but not needed for feedparser's purposes
+    # as time zones, if specified, include mention of whether it is active
+    # (e.g. PST vs. PDT, CET). Using -1 is implementation-dependent and
+    # and most implementations have DST bugs
+    daylight_savings_flag = 0
+    tm = [year, month, day, hour, minute, second, weekday,
+          ordinal, daylight_savings_flag]
+    # ISO 8601 time zone adjustments
+    tz = params.get("tz")
+    if tz and tz != "Z":
+        if tz[0] == "-":
+            tm[3] += int(params.get("tzhour", 0))
+            tm[4] += int(params.get("tzmin", 0))
+        elif tz[0] == "+":
+            tm[3] -= int(params.get("tzhour", 0))
+            tm[4] -= int(params.get("tzmin", 0))
+        else:
+            return None
+    # Python's time.mktime() is a wrapper around the ANSI C mktime(3c)
+    # which is guaranteed to normalize d/m/y/h/m/s.
+    # Many implementations have bugs, but we'll pretend they don't.
+    return time.localtime(time.mktime(tm))
+registerDateHandler(_parse_date_iso8601)
+    
+# 8-bit date handling routines written by ytrewq1.
+_korean_year  = u'\ub144' # b3e2 in euc-kr
+_korean_month = u'\uc6d4' # bff9 in euc-kr
+_korean_day   = u'\uc77c' # c0cf in euc-kr
+_korean_am    = u'\uc624\uc804' # bfc0 c0fc in euc-kr
+_korean_pm    = u'\uc624\ud6c4' # bfc0 c8c4 in euc-kr
+
+_korean_onblog_date_re = \
+    re.compile('(\d{4})%s\s+(\d{2})%s\s+(\d{2})%s\s+(\d{2}):(\d{2}):(\d{2})' % \
+               (_korean_year, _korean_month, _korean_day))
+_korean_nate_date_re = \
+  re.compile(u'(\d{4})-(\d{2})-(\d{2})\s+(%s|%s)\s+(\d{,2}):(\d{,2}):(\d{,2})' % \
+             (_korean_am, _korean_pm))
+_mssql_date_re = \
+  re.compile('(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\.\d+')
+
+def _parse_date_onblog(dateString):
+    """Parse a string according to the OnBlog 8-bit date format"""
+    m = _korean_onblog_date_re.match(dateString)
+    if not m: return
+    w3dtfdate = "%(year)s-%(month)s-%(day)sT%(hour)s:%(minute)s:%(second)s%(zonediff)s" % \
+           {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
+            'hour': m.group(4), 'minute': m.group(5), 'second': m.group(6),\
+            'zonediff': '+09:00'}
+    if _debug: sys.stderr.write("OnBlog date parsed as: %s\n" % w3dtfdate)
+    return _parse_date_w3dtf(w3dtfdate)
+registerDateHandler(_parse_date_onblog)
+
+def _parse_date_nate(dateString):
+    """Parse a string according to the Nate 8-bit date format"""
+    m = _korean_nate_date_re.match(dateString)
+    if not m: return
+    hour = int(m.group(5))
+    ampm = m.group(4)
+    if (ampm == _korean_pm):
+        hour += 12
+    hour = str(hour)
+    if len(hour) == 1:
+        hour = '0' + hour
+    w3dtfdate = "%(year)s-%(month)s-%(day)sT%(hour)s:%(minute)s:%(second)s%(zonediff)s" % \
+           {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
+            'hour': hour, 'minute': m.group(6), 'second': m.group(7),\
+            'zonediff': '+09:00'}
+    if _debug: sys.stderr.write("Nate date parsed as: %s\n" % w3dtfdate)
+    return _parse_date_w3dtf(w3dtfdate)
+registerDateHandler(_parse_date_nate)
+
+def _parse_date_mssql(dateString):
+    """Parse a string according to the MS SQL date format"""
+    m = _mssql_date_re.match(dateString)
+    if not m: return
+    w3dtfdate = "%(year)s-%(month)s-%(day)sT%(hour)s:%(minute)s:%(second)s%(zonediff)s" % \
+           {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
+            'hour': m.group(4), 'minute': m.group(5), 'second': m.group(6),\
+            'zonediff': '+09:00'}
+    if _debug: sys.stderr.write("MS SQL date parsed as: %s\n" % w3dtfdate)
+    return _parse_date_w3dtf(w3dtfdate)
+registerDateHandler(_parse_date_mssql)
+
 # W3DTF-style date parsing adapted from PyXML xml.utils.iso8601, written by
 # Drake and licensed under the Python license.  Removed all range checking
 # for month, day, hour, minute, and second, since mktime will normalize
 # these later
-def _w3dtf_parse(s):
+def _parse_date_w3dtf(dateString):
     def __extract_date(m):
         year = int(m.group("year"))
         if year < 100:
@@ -1662,163 +1841,39 @@ def _w3dtf_parse(s):
                  + __tzd_re)
     __datetime_re = "%s(?:T%s)?" % (__date_re, __time_re)
     __datetime_rx = re.compile(__datetime_re)
-    m = __datetime_rx.match(s)
-    if m is None or m.group() != s:
-        return None
+    m = __datetime_rx.match(dateString)
+    if (m is None) or (m.group() != dateString): return
     gmt = __extract_date(m) + __extract_time(m) + (0, 0, 0)
     if gmt[0] == 0: return
-    return time.mktime(gmt) + __extract_tzd(m) - time.timezone
+    return time.gmtime(time.mktime(gmt) + __extract_tzd(m) - time.timezone)
+registerDateHandler(_parse_date_w3dtf)
 
-# Additional ISO-8601 date parsing routines written by Fazal Majid
-# The ISO 8601 standard is very convoluted and irregular - a full ISO 8601
-# parser is beyond the scope of feedparser and would be a worthwhile addition
-# to the Python library
-# A single regular expression cannot parse ISO 8601 date formats into groups
-# as the standard is highly irregular (for instance is 030104 2003-01-04 or
-# 0301-04-01), so we use templates instead
-# Please note the order in templates is significant because we need a
-# greedy match
-_iso8601_tmpl = ['YYYY-?MM-?DD', 'YYYY-MM', 'YYYY-?OOO',
-                'YY-?MM-?DD', 'YY-?OOO', 'YYYY', 
-                '-YY-?MM', '-OOO', '-YY',
-                '--MM-?DD', '--MM',
-                '---DD',
-                'CC', '']
-_iso8601_re = [
-    tmpl.replace(
-    'YYYY', r'(?P<year>\d{4})').replace(
-    'YY', r'(?P<year>\d\d)').replace(
-    'MM', r'(?P<month>[01]\d)').replace(
-    'DD', r'(?P<day>[0123]\d)').replace(
-    'OOO', r'(?P<ordinal>[0123]\d\d)').replace(
-    'CC', r'(?P<century>\d\d$)')
-    + r'(T?(?P<hour>\d{2}):(?P<minute>\d{2})'
-    + r'(:(?P<second>\d{2}))?'
-    + r'(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?'
-    for tmpl in _iso8601_tmpl]
-del tmpl
-
-_iso8601_matches = [re.compile(regex).match for regex in _iso8601_re]
-del regex
-
+def _parse_date_rfc822(dateString):
+    """Parse an RFC822, RFC1123, RFC2822, or asctime-style date"""
+    tm = rfc822.parsedate_tz(dateString)
+    if tm:
+        return time.gmtime(rfc822.mktime_tz(tm))
 # rfc822.py defines several time zones, but we define some extra ones.
 # "ET" is equivalent to "EST", etc.
 _additional_timezones = {'AT': -400, 'ET': -500, 'CT': -600, 'MT': -700, 'PT': -800}
 rfc822._timezones.update(_additional_timezones)
+registerDateHandler(_parse_date_rfc822)    
 
-# utf-8 sequences for some Korean characters seen in pubDate
-_korean_year  = u'\xEB\x85\x84'
-_korean_month = u'\xEC\x9B\x94'
-_korean_day   = u'\xEC\x9D\xBC'
-_korean_date_1_re = \
-    re.compile('(\d{4})%s\s+(\d{2})%s\s+(\d{2})%s\s+(\d{2}):(\d{2}):(\d{2})' % \
-               (_korean_year, _korean_month, _korean_day))
-
-def _parse_date(date):
-    """Parses a variety of date formats into a tuple of 9 integers"""
-    try:
-        if type(date) == types.UnicodeType:
-            date = date.encode('utf-8')
-        if type(date) != types.StringType: return
-
-        # munge Korean dates into usable format
-        match = _korean_date_1_re.match(date)
-        if match:
-            date = "%s-%s-%sT%s:%s:%s+09:00" % match.groups()[:6]
-
-        # try the standard rfc822 library, which handles
-        # RFC822, RFC1123, RFC2822, and asctime
-        tm = rfc822.parsedate_tz(date)
-        if tm:
-            return time.gmtime(rfc822.mktime_tz(tm))
-
-        # not a RFC2822 date, try W3DTF profile of ISO-8601
+def _parse_date(dateString):
+    """Parses a variety of date formats into a 9-tuple in GMT"""
+    for handler in _date_handlers:
         try:
-            tm = _w3dtf_parse(date)
-        except ValueError:
-            tm = None
-        if tm:
-            return time.gmtime(tm)
-
-        # try various non-W3DTF ISO-8601-compatible formats like 20040105
-        m = None
-        for _iso8601_match in _iso8601_matches:
-            m = _iso8601_match(date)
-            if m: break
-        if not m: return
-        if m.span() == (0, 0): return
-        params = m.groupdict()
-        ordinal = params.get("ordinal", 0)
-        if ordinal:
-            ordinal = int(ordinal)
-        else:
-            ordinal = 0
-        year = params.get("year", "--")
-        if not year or year == "--":
-            year = time.gmtime()[0]
-        elif len(year) == 2:
-            # ISO 8601 assumes current century, i.e. 93 -> 2093, NOT 1993
-            year = 100 * int(time.gmtime()[0] / 100) + int(year)
-        else:
-            year = int(year)
-        month = params.get("month", "-")
-        if not month or month == "-":
-            # ordinals are NOT normalized by mktime, we simulate them
-            # by setting month=1, day=ordinal
-            if ordinal:
-                month = 1
-            else:
-                month = time.gmtime()[1]
-        month = int(month)
-        day = params.get("day", 0)
-        if not day:
-            # see above
-            if ordinal:
-                day = ordinal
-            elif params.get("century", 0) or \
-                     params.get("year", 0) or params.get("month", 0):
-                day = 1
-            else:
-                day = time.gmtime()[2]
-        else:
-            day = int(day)
-        # special case of the century - is the first year of the 21st century
-        # 2000 or 2001 ? The debate goes on...
-        if "century" in params.keys():
-            year = (int(params["century"]) - 1) * 100 + 1
-        # in ISO 8601 most fields are optional
-        for field in ["hour", "minute", "second", "tzhour", "tzmin"]:
-            if not params.get(field, None):
-                params[field] = 0
-        hour = int(params.get("hour", 0))
-        minute = int(params.get("minute", 0))
-        second = int(params.get("second", 0))
-        # weekday is normalized by mktime(), we can ignore it
-        weekday = 0
-        # daylight savings is complex, but not needed for feedparser's purposes
-        # as time zones, if specified, include mention of whether it is active
-        # (e.g. PST vs. PDT, CET). Using -1 is implementation-dependent and
-        # and most implementations have DST bugs
-        daylight_savings_flag = 0
-        tm = [year, month, day, hour, minute, second, weekday,
-              ordinal, daylight_savings_flag]
-        # ISO 8601 time zone adjustments
-        tz = params.get("tz")
-        if tz and tz != "Z":
-            if tz[0] == "-":
-                tm[3] += int(params.get("tzhour", 0))
-                tm[4] += int(params.get("tzmin", 0))
-            elif tz[0] == "+":
-                tm[3] -= int(params.get("tzhour", 0))
-                tm[4] -= int(params.get("tzmin", 0))
-            else:
-                return None
-        # Python's time.mktime() is a wrapper around the ANSI C mktime(3c)
-        # which is guaranteed to normalize d/m/y/h/m/s
-        # many implementations have bugs, but we'll pretend they don't
-        return time.localtime(time.mktime(tm))
-    except:
-        return None
+            date9tuple = handler(dateString)
+            if not date9tuple: continue
+            if len(date9tuple) != 9:
+                if _debug: sys.stderr.write("date handler function must return 9-tuple\n")
+                raise ValueError
+            map(int, date9tuple)
+            return date9tuple
+        except Exception, e:
+            if _debug: sys.stderr.write("%s raised %s\n" % (handler.__name__, repr(e)))
+            pass
+    return None
 
 def _getCharacterEncoding(http_headers, xml_data):
     """Get the character encoding of the XML document
@@ -1826,9 +1881,9 @@ def _getCharacterEncoding(http_headers, xml_data):
     http_headers is a dictionary
     xml_data is a raw string (not Unicode)
     
-    This is so much trickier than it sounds,
-    it's not even funny.  According to RFC 3023 ("XML Media Types"), if
-    the HTTP Content-Type is application/xml, application/*+xml,
+    This is so much trickier than it sounds, it's not even funny.
+    According to RFC 3023 ("XML Media Types"), if the HTTP Content-Type
+    is application/xml, application/*+xml,
     application/xml-external-parsed-entity, or application/xml-dtd,
     the encoding given in the charset parameter of the HTTP Content-Type
     takes precedence over the encoding given in the XML prefix within the
@@ -1843,17 +1898,29 @@ def _getCharacterEncoding(http_headers, xml_data):
     author of RFC 3023 leads me to the conclusion that any document
     served with a Content-Type of text/* and no charset parameter
     must be treated as us-ascii.  (We now do this.)  And also that it
-    must always be flagged as non-well-formed.  (We do not do this.)
+    must always be flagged as non-well-formed.  (We now do this too.)
     
     If Content-Type is unspecified (input was local file or non-HTTP source)
     or unrecognized (server just got it totally wrong), then go by the
     encoding given in the XML prefix of the document and default to
-    "utf-8" as per the XML specification.  This part is probably wrong,
-    as HTTP defaults to "iso-8859-1" if no Content-Type is specified.
+    "iso-8859-1" as per the HTTP specification (RFC 2616).
     
-    Also, the default Content-Type and well-formedness of XML documents
-    served as wacky types like "application/octet-stream" is still under
-    discussion.
+    Then, assuming we didn't find a character encoding in the HTTP headers
+    (and the HTTP Content-type allowed us to look in the body), we need
+    to sniff the first few bytes of the XML data and try to determine
+    whether the encoding is ASCII-compatible.  Section F of the XML
+    specification shows the way here:
+    http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
+
+    If the sniffed encoding is not ASCII-compatible, we need to make it
+    ASCII compatible so that we can sniff further into the XML declaration
+    to find the encoding attribute, which will tell us the true encoding.
+
+    Of course, none of this guarantees that we will be able to parse the
+    feed in the declared character encoding (assuming it was declared
+    correctly, which many are not).  CJKCodecs and iconv_codec help a lot;
+    you should definitely install them if you can.
+    http://cjkpython.i18n.org/
     """
 
     def _parseHTTPContentType(content_type):
@@ -1897,8 +1964,7 @@ def _getCharacterEncoding(http_headers, xml_data):
     # searching for XML declaration.  This heuristic is defined in
     # section F of the XML specification:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
-    if 1:
-#    try:
+    try:
         if xml_data[:4] == '\x4c\x6f\xa7\x94':
             # EBCDIC
             xml_data = _ebcdic_to_ascii(xml_data)
@@ -1942,34 +2008,30 @@ def _getCharacterEncoding(http_headers, xml_data):
             # ASCII-compatible
             pass
         xml_encoding_match = re.compile('^<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(xml_data)
-#    except:
-#        xml_encoding_match = None
+    except:
+        xml_encoding_match = None
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].lower()
         if sniffed_xml_encoding and (xml_encoding in ('iso-10646-ucs-2', 'ucs-2', 'csunicode', 'iso-10646-ucs-4', 'ucs-4', 'csucs4', 'utf-16', 'utf-32', 'utf_16', 'utf_32', 'utf16', 'u16')):
             xml_encoding = sniffed_xml_encoding
-    if (http_content_type == 'application/xml') or \
-       (http_content_type == 'application/xml-dtd') or \
-       (http_content_type == 'application/xml-external-parsed-entity') or \
+    acceptable_content_type = 0
+    application_content_types = ('application/xml', 'application/xml-dtd', 'application/xml-external-parsed-entity')
+    text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
+    if (http_content_type in application_content_types) or \
        (http_content_type.startswith('application/') and http_content_type.endswith('+xml')):
-        if http_encoding:
-            true_encoding = http_encoding
-        elif xml_encoding:
-            true_encoding = xml_encoding
-        else:
-            true_encoding = 'utf-8'
-    elif (http_content_type == 'text/xml') or \
-         (http_content_type == 'text/xml-external-parsed-entity') or \
-         (http_content_type.startswith('text/')):# and http_content_type.endswith('+xml')):
-        if http_encoding:
-            true_encoding = http_encoding
-        else:
-            true_encoding = 'us-ascii'
+        acceptable_content_type = 1
+        true_encoding = http_encoding or xml_encoding or 'utf-8'
+    elif (http_content_type in text_content_types) or \
+         (http_content_type.startswith('text/')) and http_content_type.endswith('+xml'):
+        acceptable_content_type = 1
+        true_encoding = http_encoding or 'us-ascii'
+    elif http_content_type.startswith('text/'):
+        true_encoding = http_encoding or 'us-ascii'
     elif http_headers and (not http_headers.has_key('content-type')):
-        true_encoding = xml_encoding or 'utf-8' #'iso-8859-1'
+        true_encoding = xml_encoding or 'iso-8859-1'
     else:
         true_encoding = xml_encoding or 'utf-8'
-    return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding
+    return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type
     
 def _toUTF8(data, encoding):
     """Changes an XML data stream on the fly to specify a new encoding
@@ -2098,14 +2160,25 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if hasattr(f, "close"):
         f.close()
 
-    # there are three encodings to keep track of:
-    # - xml_encoding is the encoding declared in the <?xml declaration
+    # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
-    # - result['encoding'] is the actual encoding, as specified by RFC 3023
-    result['encoding'], http_encoding, xml_encoding, sniffed_xml_encoding = \
-        _getCharacterEncoding(result.get("headers", {}), data)
+    # - xml_encoding is the encoding declared in the <?xml declaration
+    # - sniffed_encoding is the encoding sniffed from the first 4 bytes of the XML data
+    # - result['encoding'] is the actual encoding, as per RFC 3023 and a variety of other conflicting specifications
+    http_headers = result.get("headers", {})
+    result['encoding'], http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type = \
+        _getCharacterEncoding(http_headers, data)
+    if http_headers and (not acceptable_content_type):
+        if http_headers.has_key('content-type'):
+            bozo_message = '%s is not an XML media type' % http_headers['content-type']
+        else:
+            bozo_message = 'no Content-type specified'
+        result['bozo'] = 1
+        result['bozo_exception'] = NonXMLContentType(bozo_message)
+        
     result['version'], data = _stripDoctype(data)
-    baseuri = result.get('headers', {}).get('content-location', result.get('url'))
+
+    baseuri = http_headers.get('content-location', result.get('url'))
 
     # if server sent 304, we're done
     if result.get("status", 0) == 304:
@@ -2179,9 +2252,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
     result['version'] = result['version'] or feedparser.version
-    if _debug:
-        import pprint
-        pprint.pprint(result)
     return result
 
 if __name__ == '__main__':
@@ -2190,12 +2260,7 @@ if __name__ == '__main__':
         sys.exit(0)
     else:
         urls = sys.argv[1:]
-    del FeedParserDict
-    def FeedParserDict(aDict=None):
-        rc = {}
-        if aDict:
-            rc.update(aDict)
-        return rc
+    zopeCompatibilityHack()
     from pprint import pprint
     for url in urls:
         print url
@@ -2390,8 +2455,22 @@ if __name__ == '__main__':
 #  XML parsers are available; added support for "Content-encoding: deflate";
 #  send blank "Accept-encoding: " header if neither gzip nor zlib modules
 #  are available
-#3.3 - 7/4/2004 - MAP - tweak FeedParserDict to make command-line debugging
-#  easier; optimize EBCDIC to ASCII conversion; fix obscure problem tracking
-#  xml:base if element declares it, child doesn't, first grandchild redeclares
-#  it, and second grandchild doesn't
+#3.3 - 7/9/2004 - MAP - optimize EBCDIC to ASCII conversion; fix obscure
+#  problem tracking xml:base and xml:lang if element declares it, child
+#  doesn't, first grandchild redeclares it, and second grandchild doesn't;
+#  refactored date parsing; defined public registerDateHandler so callers
+#  can add support for additional date formats at runtime; added support
+#  for OnBlog, Nate, and MSSQL dates (ytrewq1); zopeCompatibilityHack()
+#  turns FeedParserDict into a regular dictionary, required for Zope
+#  compatibility, and also makes command-line debugging easier because
+#  pprint module formats real dictionaries better than dictionary-like
+#  objects; added NonXMLContentType exception, which is stored in
+#  bozo_exception when a feed is served with a non-XML media type such
+#  as "text/plain"; ad
 
+# TODO
+# - add Content-Language + test cases
+# - use cgi.parse_header to parse HTTP headers
+# - add test case for "Content-type: application/xml; qs=0.9"
+# - add PDF docs
+# - add text docs (and distribute)
