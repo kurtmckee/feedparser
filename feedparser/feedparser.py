@@ -11,8 +11,8 @@ Recommended: Python 2.3 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-#__version__ = "pre-3.3-" + "$Revision$"[11:15] + "-cvs"
-__version__ = "3.3"
+__version__ = "pre-3.3-" + "$Revision$"[11:15] + "-cvs"
+#__version__ = "3.3"
 __license__ = "Python"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
@@ -160,9 +160,15 @@ class FeedParserDict(UserDict):
                   'items': 'entries',
                   'guid': 'id',
                   'date': 'modified',
-                  'date_parsed': 'modified_parsed'}
-        key = keymap.get(key, key)
-        return UserDict.__getitem__(self, key)
+                  'date_parsed': 'modified_parsed',
+                  'description': ['tagline', 'summary']}
+        realkey = keymap.get(key, key)
+        if type(realkey) == types.ListType:
+            for k in realkey:
+                if UserDict.has_key(self, k):
+                    return UserDict.__getitem__(self, k)
+            return UserDict.__getitem__(self, key)
+        return UserDict.__getitem__(self, realkey)
 
     def has_key(self, key):
         return hasattr(self, key) or UserDict.has_key(self, key)
@@ -273,8 +279,8 @@ class _FeedParserMixin:
 }
 
     can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'comments', 'license']
-    can_contain_relative_uris = ['content', 'title', 'summary', 'info', 'tagline', 'copyright']
-    can_contain_dangerous_markup = ['content', 'title', 'summary', 'info', 'tagline', 'copyright']
+    can_contain_relative_uris = ['content', 'title', 'summary', 'info', 'tagline', 'copyright', 'description']
+    can_contain_dangerous_markup = ['content', 'title', 'summary', 'info', 'tagline', 'copyright', 'description']
     html_types = ['text/html', 'application/xhtml+xml']
     
     def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
@@ -551,14 +557,16 @@ class _FeedParserMixin:
                 if output:
                     self.entries[-1]['links'][-1]['href'] = output
             else:
+                if element == 'description':
+                    element = 'summary'
                 self.entries[-1][element] = output
                 if self.incontent:
-                    if element == 'description':
-                        element = 'summary'
                     contentparams = copy.deepcopy(self.contentparams)
                     contentparams['value'] = output
                     self.entries[-1][element + '_detail'] = contentparams
         elif self.infeed and (not self.intextinput) and (not self.inimage):
+            if element == 'description':
+                element = 'tagline'
             self.feeddata[element] = output
             if element == 'category':
                 domain = self.feeddata['categories'][-1][0]
@@ -566,8 +574,6 @@ class _FeedParserMixin:
             elif element == 'link':
                 self.feeddata['links'][-1]['href'] = output
             elif self.incontent:
-                if element == 'description':
-                    element = 'tagline'
                 contentparams = copy.deepcopy(self.contentparams)
                 contentparams['value'] = output
                 self.feeddata[element + '_detail'] = contentparams
@@ -1038,10 +1044,10 @@ class _FeedParserMixin:
             context['textinput']['description'] = value
         elif self.inimage:
             context['image']['description'] = value
-        elif self.inentry:
-            context['summary'] = value
-        elif self.infeed:
-            context['tagline'] = value
+#        elif self.inentry:
+#            context['summary'] = value
+#        elif self.infeed:
+#            context['tagline'] = value
     _end_abstract = _end_description
 
     def _start_info(self, attrsD):
