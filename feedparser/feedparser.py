@@ -1663,19 +1663,32 @@ del regex
 _additional_timezones = {'AT': -400, 'ET': -500, 'CT': -600, 'MT': -700, 'PT': -800}
 rfc822._timezones.update(_additional_timezones)
 
+# utf-8 sequences for some Korean characters seen in pubDate
+_korean_year  = u'\xEB\x85\x84'
+_korean_month = u'\xEC\x9B\x94'
+_korean_day   = u'\xEC\x9D\xBC'
+_korean_date_1_re = \
+    re.compile('(\d{4})%s\s+(\d{2})%s\s+(\d{2})%s\s+(\d{2}):(\d{2}):(\d{2})' % \
+               (_korean_year, _korean_month, _korean_day))
+
 def _parse_date(date):
     """Parses a variety of date formats into a tuple of 9 integers"""
     try:
-        # Make date a string.  If this fails due to character encoding
-        # issues (high bit characters in the date string -- yes, I've
-        # seen it happen), then we probably couldn't have salvaged
-        # anything from the date string anyway.
-        date = str(date)
+        if type(date) == types.UnicodeType:
+            date = date.encode('utf-8')
+        if type(date) != types.StringType: return
+
+        # munge Korean dates into usable format
+        match = _korean_date_1_re.match(date)
+        if match:
+            date = "%s-%s-%sT%s:%s:%s+09:00" % match.groups()[:6]
+
         # try the standard rfc822 library, which handles
         # RFC822, RFC1123, RFC2822, and asctime
         tm = rfc822.parsedate_tz(date)
         if tm:
             return time.gmtime(rfc822.mktime_tz(tm))
+
         # not a RFC2822 date, try W3DTF profile of ISO-8601
         try:
             tm = _w3dtf_parse(date)
@@ -1683,13 +1696,13 @@ def _parse_date(date):
             tm = None
         if tm:
             return time.gmtime(tm)
+
         # try various non-W3DTF ISO-8601-compatible formats like 20040105
         m = None
         for _iso8601_match in _iso8601_matches:
             m = _iso8601_match(date)
             if m: break
         if not m: return
-        # catch truly malformed strings
         if m.span() == (0, 0): return
         params = m.groupdict()
         ordinal = params.get("ordinal", 0)
