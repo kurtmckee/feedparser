@@ -8,17 +8,18 @@ Visit http://feedparser.org/docs/ for the latest documentation
 
 Required: Python 2.1 or later
 Recommended: Python 2.3 or later
-Recommended: libxml2 <http://xmlsoft.org/python.html>
+Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "pre-3.3-" + "$Revision$"[11:15] + "-cvs"
-__author__ = "Mark Pilgrim <http://diveintomark.org/>"
+#__version__ = "pre-3.3-" + "$Revision$"[11:15] + "-cvs"
+__version__ = "3.3"
+__license__ = "Python"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
+__author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
-__license__ = "Python"
 _debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
@@ -189,7 +190,7 @@ def zopeCompatibilityHack():
         return rc
 
 _ebcdic_to_ascii_map = None
-def _ebcdic_to_ascii(str):
+def _ebcdic_to_ascii(s):
     global _ebcdic_to_ascii_map
     if not _ebcdic_to_ascii_map:
         emap = (
@@ -213,7 +214,7 @@ def _ebcdic_to_ascii(str):
         import string
         _ebcdic_to_ascii_map = string.maketrans( \
             "".join(map(chr, range(256))), "".join(map(chr, emap)))
-    return str.translate(_ebcdic_to_ascii_map)
+    return s.translate(_ebcdic_to_ascii_map)
 
 class _FeedParserMixin:
     namespaces = {"": "",
@@ -271,9 +272,9 @@ class _FeedParserMixin:
                   "http://www.w3.org/XML/1998/namespace":                 "xml"
 }
 
-    can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'comments']
-    can_contain_relative_uris = ['content', 'description', 'title', 'summary', 'info', 'tagline', 'copyright']
-    can_contain_dangerous_markup = ['content', 'description', 'title', 'summary', 'info', 'tagline', 'copyright']
+    can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'comments', 'license']
+    can_contain_relative_uris = ['content', 'title', 'summary', 'info', 'tagline', 'copyright']
+    can_contain_dangerous_markup = ['content', 'title', 'summary', 'info', 'tagline', 'copyright']
     html_types = ['text/html', 'application/xhtml+xml']
     
     def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
@@ -1705,9 +1706,6 @@ _korean_onblog_date_re = \
 _korean_nate_date_re = \
     re.compile(u'(\d{4})-(\d{2})-(\d{2})\s+(%s|%s)\s+(\d{,2}):(\d{,2}):(\d{,2})' % \
                (_korean_am, _korean_pm))
-_mssql_date_re = \
-    re.compile('(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\.\d+')
-
 def _parse_date_onblog(dateString):
     """Parse a string according to the OnBlog 8-bit date format"""
     m = _korean_onblog_date_re.match(dateString)
@@ -1739,6 +1737,8 @@ def _parse_date_nate(dateString):
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_nate)
 
+_mssql_date_re = \
+    re.compile('(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\.\d+')
 def _parse_date_mssql(dateString):
     """Parse a string according to the MS SQL date format"""
     m = _mssql_date_re.match(dateString)

@@ -38,6 +38,7 @@
 </div>
 <p>Same as <a href="reference-feed-info.html" title="feed.info">feed.info</a>.</p>
 <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, it is <a href="html-sanitization.html" title="HTML Sanitization">sanitized</a> by default.</p>
+<p>If <tt class="literal">type</tt> is <tt class="literal">text/html</tt> or <tt class="literal">application/xhtml+xml</tt>, certain (X)HTML elements within this value may contain relative <acronym title="Uniform Resource Identifier">URI</acronym>s.  If so, they are <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage">
@@ -63,7 +64,7 @@
 </div>
 <p>The language of the feed info.</p>
 <p><tt class="varname">language</tt> is supposed to be a language code, as specified by <a href="http://www.ietf.org/rfc/rfc3066.txt"><acronym title="Request For Comments">RFC</acronym> 3066</a>, but publishers have been known to publish random values like “<span class="quote">English</span>” or “<span class="quote">German</span>”.  <span class="application">Universal Feed Parser</span> does not do any parsing or normalization of language codes.</p>
-<p><tt class="varname">language</tt> may come from the element's <tt class="sgmltag-attribute">xml:lang</tt> attribute, or it may inherit from a parent element's <tt class="sgmltag-attribute">xml:lang</tt>.  If the feed does not specify a language, <tt class="varname">language</tt> will be <tt class="constant">None</tt>, the <span class="application">Python</span> null value.</p>
+<p><tt class="varname">language</tt> may come from the element's <tt class="sgmltag-attribute">xml:lang</tt> attribute, or it may inherit from a parent element's <tt class="sgmltag-attribute">xml:lang</tt>, or the appropriate <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  (See <a href="language-detection.html" title="Language Detection">Language Detection</a> for more details.)  If the feed does not specify a language, <tt class="varname">language</tt> will be <tt class="constant">None</tt>, the <span class="application">Python</span> null value.</p>
 </div>
 <div class="section" lang="en">
 <div class="titlepage">
@@ -87,7 +88,7 @@
 <div></div>
 </div>
 <p>The original base <acronym title="Uniform Resource Identifier">URI</acronym> for links within the feed copyright.</p>
-<p><tt class="varname">base</tt> is only useful in rare situations and can usually be ignored.  It is the original base <acronym title="Uniform Resource Identifier">URI</acronym> for this value, as specified by the element's <tt class="sgmltag-attribute">xml:base</tt> attribute, or a parent element's <tt class="sgmltag-attribute">xml:base</tt>, or the <acronym title="Uniform Resource Identifier">URI</acronym> of the feed.  (This behavior is spelled out in the <a href="http://www.w3.org/TR/xmlbase/">XML Base specification</a>.)  By the time you see it, <span class="application">Universal Feed Parser</span> has already resolved relative links in all values where it makes sense to do so.  <span class="emphasis"><em>Clients should never need to manually resolve relative links.</em></span></p>
+<p><tt class="varname">base</tt> is only useful in rare situations and can usually be ignored.  It is the original base <acronym title="Uniform Resource Identifier">URI</acronym> for this value, as specified by the element's <tt class="sgmltag-attribute">xml:base</tt> attribute, or a parent element's <tt class="sgmltag-attribute">xml:base</tt>, or the appropriate <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, or the <acronym title="Uniform Resource Identifier">URI</acronym> of the feed.  (See <a href="resolving-relative-links.html" title="Relative Link Resolution">Relative Link Resolution</a> for more details.)  By the time you see it, <span class="application">Universal Feed Parser</span> has already resolved relative links in all values where it makes sense to do so.  <span class="emphasis"><em>Clients should never need to manually resolve relative links.</em></span></p>
 </div>
 </div>
 <div style="float: left">← <a class="NavigationArrow" href="reference-feed-info.html">feed.info</a>

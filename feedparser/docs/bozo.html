@@ -45,8 +45,7 @@
 <span class="computeroutput">6</span>
 </pre>
 </div>
-<p>If <span class="application">Universal Feed Parser</span> detects that the feed's character encoding is incorrect and reparses it with a different encoding, the <tt class="varname">bozo</tt> bit will be set to <tt class="literal">1</tt> and <tt class="varname">bozo_exception</tt> will be set to <tt class="constant">feedparser.CharacterEncodingOverride</tt>.</p>
-<p>If <span class="application">Universal Feed Parser</span> is unable to determine the feed's character encoding, the <tt class="varname">bozo</tt> bit will be set to <tt class="literal">1</tt> and <tt class="varname">bozo_exception</tt> will be set to <tt class="constant">feedparser.CharacterEncodingUnknown</tt>.</p>
+<p>There are many reasons an <acronym title="Extensible Markup Language">XML</acronym> document could be non-well-formed besides this example (incomplete end tags)  See <a href="character-encoding.html" title="Character Encoding Detection">Character Encoding Detection</a> for some other ways to trip the bozo bit.</p>
 </div>
 <div style="float: left">← <a class="NavigationArrow" href="character-encoding.html">Character Encoding Detection</a>
 </div>

@@ -1491,7 +1491,7 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <sectioninfo>
 <abstract>
 <title/>
-<para>&feedparser; xxx</para>
+<para>xxx</para>
 </abstract>
 </sectioninfo>
 <title>Language Detection</title>

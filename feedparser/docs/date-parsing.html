@@ -55,10 +55,10 @@
 <li>Netscape <acronym title="Rich Site Summary">RSS</acronym> 0.91 does not specify a date format, but examples within the specification show <acronym title="Request For Comments">RFC</acronym> 822-style dates with 4-digit years.</li>
 <li>Userland <acronym title="Rich Site Summary">RSS</acronym> 0.91 states, “<span class="quote">All date-times in <acronym title="Rich Site Summary">RSS</acronym> conform to the Date and Time Specification of <acronym title="Request For Comments">RFC</acronym> 822.</span>”  <a href="http://www.ietf.org/rfc/rfc822.txt"><acronym title="Request For Comments">RFC</acronym> 822</a> mandates 2-digit years; it does not allow 4-digit years.</li>
 <li>
-<acronym title="Rich Site Summary">RSS</acronym> 1.0 states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3DTF</acronym></a>, which is a profile of <acronym>ISO</acronym> 8601:1988.</li>
+<acronym title="Rich Site Summary">RSS</acronym> 1.0 states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3CDTF</acronym></a>, which is a profile of <acronym>ISO</acronym> 8601:1988.</li>
 <li>
 <acronym title="Rich Site Summary">RSS</acronym> 2.0 states, “<span class="quote">All date-times in <acronym title="Rich Site Summary">RSS</acronym> conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred).</span>”</li>
-<li>Atom states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3DTF</acronym></a>.</li>
+<li>Atom states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3CDTF</acronym></a>.</li>
 </ul></div>
 </div>
 <div class="section" lang="en">
@@ -69,7 +69,7 @@
 </div>
 <p>Here is a representative list of the formats that <span class="application">Universal Feed Parser</span> can recognize in any date element:</p>
 <div class="table">
-<a name="id4775133" class="skip" href="#id4775133" title="link to this table"><img src="images/permalink.gif" alt="[link]" title="link to this table" width="8" height="9"></a> <h3 class="title">Recognized Date Formats</h3>
+<a name="id4775139" class="skip" href="#id4775139" title="link to this table"><img src="images/permalink.gif" alt="[link]" title="link to this table" width="8" height="9"></a> <h3 class="title">Recognized Date Formats</h3>
 <table summary="Recognized Date Formats" border="1">
 <colgroup>
 <col>
@@ -93,27 +93,27 @@
 <td><tt class="literal">(2004, 1, 1, 19, 48, 21, 3, 1, 0)</tt></td>
 </tr>
 <tr>
-<td>valid W3DTF (numeric timezone)</td>
+<td>valid W3CDTF (numeric timezone)</td>
 <td><tt class="literal">2003-12-31T10:14:55-08:00</tt></td>
 <td><tt class="literal">(2003, 12, 31, 18, 14, 55, 2, 365, 0)</tt></td>
 </tr>
 <tr>
-<td>valid W3DTF (UTC timezone)</td>
+<td>valid W3CDTF (UTC timezone)</td>
 <td><tt class="literal">2003-12-31T10:14:55Z</tt></td>
 <td><tt class="literal">(2003, 12, 31, 10, 14, 55, 2, 365, 0)</tt></td>
 </tr>
 <tr>
-<td>valid W3DTF (yyyy)</td>
+<td>valid W3CDTF (yyyy)</td>
 <td><tt class="literal">2003</tt></td>
 <td><tt class="literal">(2003, 1, 1, 0, 0, 0, 2, 1, 0)</tt></td>
 </tr>
 <tr>
-<td>valid W3DTF (yyyy-mm)</td>
+<td>valid W3CDTF (yyyy-mm)</td>
 <td><tt class="literal">2003-12</tt></td>
 <td><tt class="literal">(2003, 12, 1, 0, 0, 0, 0, 335, 0)</tt></td>
 </tr>
 <tr>
-<td>valid W3DTF (yyyy-mm-dd)</td>
+<td>valid W3CDTF (yyyy-mm-dd)</td>
 <td><tt class="literal">2003-12-31</tt></td>
 <td><tt class="literal">(2003, 12, 31, 0, 0, 0, 2, 365, 0)</tt></td>
 </tr>
@@ -134,7 +134,7 @@
 </tr>
 <tr>
 <td>valid ISO 8601 (-yy-mm-dd)</td>
-<td><tt class="literal">03-12-31</tt></td>
+<td><tt class="literal">-03-12-31</tt></td>
 <td><tt class="literal">(2003, 12, 31, 0, 0, 0, 2, 365, 0)</tt></td>
 </tr>
 <tr>
@@ -173,19 +173,39 @@
 <td><tt class="literal">(2004, 1, 26, 21, 31, 0, 0, 26, 0)</tt></td>
 </tr>
 <tr>
-<td>bogus W3DTF (invalid hour)</td>
+<td>bogus W3CDTF (invalid hour)</td>
 <td><tt class="literal">2003-12-31T25:14:55Z</tt></td>
 <td><tt class="literal">(2004, 1, 1, 1, 14, 55, 3, 1, 0)</tt></td>
 </tr>
 <tr>
-<td>bogus W3DTF (invalid minute)</td>
+<td>bogus W3CDTF (invalid minute)</td>
 <td><tt class="literal">2003-12-31T10:61:55Z</tt></td>
 <td><tt class="literal">(2003, 12, 31, 11, 1, 55, 2, 365, 0)</tt></td>
 </tr>
 <tr>
-<td>bogus W3DTF (invalid second)</td>
+<td>bogus W3CDTF (invalid second)</td>
 <td><tt class="literal">2003-12-31T10:14:61Z</tt></td>
 <td><tt class="literal">(2003, 12, 31, 10, 15, 1, 2, 365, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus (MSSQL)</td>
+<td><tt class="literal">2004-07-08 23:56:58.0</tt></td>
+<td><tt class="literal">(2004, 7, 8, 14, 56, 58, 3, 190, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus (Korean)</td>
+<td><tt class="literal">2004-05-25 오 11:23:17</tt></td>
+<td><tt class="literal">(2004, 5, 25, 14, 23, 17, 1, 146, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus (Greek)</td>
+<td><tt class="literal">Κυρ, 11 Ιούλ 2004 12:00:00 EST</tt></td>
+<td><tt class="literal">(2004, 7, 11, 17, 0, 0, 6, 193, 0)</tt></td>
+</tr>
+<tr>
+<td>bogus (Hungarian)</td>
+<td><tt class="literal">július-13T9:15-05:00</tt></td>
+<td><tt class="literal">(2004, 7, 13, 14, 15, 0, 1, 195, 0)</tt></td>
 </tr>
 </tbody>
 </table>
@@ -208,6 +228,38 @@
 <tt class="literal">PT</tt> is treated as <tt class="literal">PST</tt>
 </li>
 </ul></div>
+</div>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="advanced.date.register" class="skip" href="#advanced.date.register" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Supporting Additional Date Formats</h3></div></div>
+<div></div>
+</div>
+<p><span class="application">Universal Feed Parser</span> supports many different date formats, but there are probably many more in the wild that are still unsupported.  If you find other date formats, you can support them by registering them with <tt class="function">registerDateHandler</tt>.  It takes a single argument, a callback function.  The callback function should take a single argument, a string, and return a single value, a 9-tuple <span class="application">Python</span> date in UTC.</p>
+<div class="example">
+<a name="example.registerdatehandler" class="skip" href="#example.registerdatehandler" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Registering a third-party date handler</h3>
+<pre class="programlisting python"><font color='navy'><b>import</b></font> feedparser
+<font color='navy'><b>import</b></font> re
+
+_my_date_pattern = re.compile( \
+    r<font color='olive'>'(\d{,2})/(\d{,2})/(\d{4}) (\d{,2}):(\d{2}):(\d{2})'</font>)
+
+<font color='navy'><b>def</b></font><font color='blue'><b> myDateHandler</b></font>(aDateString):
+    <font color='olive'>"""parse a UTC date in MM/DD/YYYY HH:MM:SS format"""</font>
+    month, day, year, hour, minute, second = \
+        _my_date_pattern.search(aDateString).groups()
+    <font color='navy'><b>return</b></font> (int(year), int(month), int(day), \
+            int(hour), int(minute), int(second), 0, 0, 0)
+
+feedparser.registerDateHandler(myDateHandler)
+d = feedparser.parse(...)</pre>
+</div>
+<p>Your newly-registered date handler will be tried before all the other date handlers built into <span class="application">Universal Feed Parser</span>.  (More specifically, all date handlers are tried in LIFO order; the last handler to be registered is always the first one to be tried.)</p>
+<p>If your date handler returns <tt class="constant">None</tt>, or anything other than a <span class="application">Python</span> 9-tuple date, or raises an exception of any kind, the error will be silently ignored and the other registered date handlers will be tried in order.  If no date handlers succeed, then the date is not parsed, but the original date string is still available in the appropriate element in the results dictionary.</p>
+<a name="id4775933"></a><table class="tip" border="0" summary="">
+<tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/tip.png" alt="Tip" title="" width="24" height="24"></td></tr>
+<tr><td colspan="2" align="left" valign="top" width="99%">If you write a new date handler, you are encouraged (but not required) to <a href="http://sourceforge.net/projects/feedparser/">submit a patch</a> so it can be integrated into the next version of <span class="application">Universal Feed Parser</span>.</td></tr>
+</table>
 </div>
 </div>
 <div style="float: left">← <a class="NavigationArrow" href="advanced.html">Advanced Features</a>

@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Relative Link Resolution [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="start" href="index.html" title="Documentation">
+<link rel="up" href="advanced.html" title="Advanced Features">
+<link rel="prev" href="namespace-handling.html" title="Namespace Handling">
+<link rel="next" href="language-detection.html" title="Language Detection">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="advanced.html">Advanced Features</a> → <span class="thispage">Relative Link Resolution</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div>
+<div><h2 class="title">
+<a name="advanced.base" class="skip" href="#advanced.base" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Relative Link Resolution</h2></div>
+<div><div class="abstract">
+<h3 class="title"></h3>
+<p>Many feed elements and attributes are <acronym title="Uniform Resource Identifier">URI</acronym>s.  <span class="application">Universal Feed Parser</span> resolves relative <acronym title="Uniform Resource Identifier">URI</acronym>s according to the <a href="http://www.w3.org/TR/xmlbase/"><acronym title="Extensible Markup Language">XML</acronym>:Base</a> specification.</p>
+</div></div>
+</div>
+<div></div>
+</div>
+<p>These feed elements are treated as <acronym title="Uniform Resource Identifier">URI</acronym>s, and resolved if they are relative:</p>
+<div class="itemizedlist"><ul>
+<li><a href="reference-feed-link.html" title="feed.link">feed.link</a></li>
+<li><a href="reference-feed-links.html#reference.feed.links.href" title="feed.links[i].href">feed.links[i].href</a></li>
+<li><a href="reference-feed-generator_detail.html#reference.feed.generator_detail.url" title="feed.generator_detail.url">feed.generator_detail.url</a></li>
+<li><a href="reference-feed-id.html" title="feed.id">feed.id</a></li>
+<li><a href="reference-feed-image.html#reference.feed.image.url" title="feed.image.url">feed.image.url</a></li>
+<li><a href="reference-feed-image.html#reference.feed.image.link" title="feed.image.link">feed.image.link</a></li>
+<li><a href="reference-feed-textinput.html#reference.feed.textinput.link" title="feed.textinput.link">feed.textinput.link</a></li>
+<li><a href="reference-feed-author_detail.html#reference.feed.author_detail.url" title="feed.author_detail.url">feed.author_detail.url</a></li>
+<li><a href="reference-feed-publisher_detail.html#reference.feed.publisher_detail.url" title="feed.publisher_detail.url">feed.publisher_detail.url</a></li>
+<li><a href="reference-feed-contributors.html#reference.feed.contributors.url" title="feed.contributors[i].url">feed.contributors[i].url</a></li>
+<li><a href="reference-feed-docs.html" title="feed.docs">feed.docs</a></li>
+<li><a href="reference-feed-license.html" title="feed.license">feed.license</a></li>
+<li><a href="reference-entry-link.html" title="entries[i].link">entries[i].link</a></li>
+<li><a href="reference-entry-links.html#reference.entry.links.href" title="entries[i].links[j].href">entries[i].links[j].href</a></li>
+<li><a href="reference-entry-id.html" title="entries[i].id">entries[i].id</a></li>
+<li><a href="reference-entry-author_detail.html#reference.entry.author_detail.url" title="entries[i].author_detail.url">entries[i].author_detail.url</a></li>
+<li><a href="reference-entry-publisher_detail.html#reference.entry.publisher_detail.url" title="entries[i].publisher_detail.url">entries[i].publisher_detail.url</a></li>
+<li><a href="reference-entry-contributors.html#reference.entry.contributors.url" title="entries[i].contributors[j].url">entries[i].contributors[j].url</a></li>
+<li><a href="reference-entry-enclosure.html#reference.entry.enclosure.url" title="entries[i].enclosures[j].url">entries[i].enclosures[j].url</a></li>
+<li><a href="reference-entry-source.html#reference.entry.source.url" title="entries[i].source.url">entries[i].source.url</a></li>
+<li><a href="reference-entry-comments.html" title="entries[i].comments">entries[i].comments</a></li>
+<li><a href="reference-entry-license.html" title="entries[i].license">entries[i].license</a></li>
+</ul></div>
+<p>In addition, several elements may contain <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym> markup.  Certain elements and attributes in <acronym title="HyperText Markup Language">HTML</acronym> can be relative <acronym title="Uniform Resource Identifier">URI</acronym>s, and <span class="application">Universal Feed Parser</span> will resolve these <acronym title="Uniform Resource Identifier">URI</acronym>s according to the same rules as the feed elements listed above.</p>
+<div class="itemizedlist"><ul>
+<li><tt class="sgmltag-element">&lt;a href="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;applet codebase="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;area href="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;blockquote cite="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;body background="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;del cite="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;form action="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;frame longdesc="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;frame src="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;iframe longdesc="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;iframe src="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;head profile="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;img longdesc="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;img src="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;img usemap="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;input src="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;input usemap="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;ins cite="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;link href="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;object classid="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;object codebase="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;object data="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;object usemap="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;q cite="..."&gt;</tt></li>
+<li><tt class="sgmltag-element">&lt;script src="..."&gt;</tt></li>
+</ul></div>
+<p>xxx</p>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="namespace-handling.html">Namespace Handling</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="language-detection.html">Language Detection</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>
