@@ -8,11 +8,5 @@ Python-licensed
 To install:
 $ python setup.py install
 
-To run test suite:
-$ python feedparsertest.py
-
-Test suite files are available in the tests/ directory, or online at
-http://feedparser.org/tests/
-
 Full documentation is available in the docs/ directory, or online at
 http://feedparser.org/docs/
