@@ -235,6 +235,7 @@ body.docs .section h3.title a.skip:hover {
   border: 1px solid #a9a9a9;
   padding: 3px 3px 3px 13px;
   background: white;
+  position: relative;
 }
 
 .reference-from, .seealso, .furtherreading {
