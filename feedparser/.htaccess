@@ -9,3 +9,10 @@ AddHandler server-parsed .html
 AddType application/xml .xml
 AddType text/plain .py
 
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_X_MOZ} ^prefetch$
+RewriteRule ^.*$ - [F]
+RewriteCond %{REMOTE_ADDR} ^72.14.192.      
+RewriteRule ^.*$ - [F]
+
