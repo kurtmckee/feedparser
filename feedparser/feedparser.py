@@ -68,11 +68,11 @@ except:
 # module is buggy and timeoutsocket is better.
 try:
     import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
-    timeoutsocket.setDefaultSocketTimeout(20)
+    timeoutsocket.setDefaultSocketTimeout(60)
 except ImportError:
     import socket
     if hasattr(socket, 'setdefaulttimeout'):
-        socket.setdefaulttimeout(20)
+        socket.setdefaulttimeout(60)
 import urllib, urllib2
 
 _mxtidy = None
