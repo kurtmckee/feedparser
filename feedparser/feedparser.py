@@ -11,8 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "pre-3.4-" + "$Revision$"[11:15] + "-cvs"
-#__version__ = "3.3"
+__version__ = "pre-4.0-" + "$Revision$"[11:15] + "-cvs"
 __license__ = "Python"
 __copyright__ = "Copyright 2002-4, Mark Pilgrim"
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
@@ -20,7 +19,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com>"]
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -66,13 +65,13 @@ except:
 # Python 2.3 now has this functionality available in the standard socket library, so under
 # 2.3 you don't need to install anything.  But you probably should anyway, because the socket
 # module is buggy and timeoutsocket is better.
-try:
-    import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
-    timeoutsocket.setDefaultSocketTimeout(60)
-except ImportError:
-    import socket
-    if hasattr(socket, 'setdefaulttimeout'):
-        socket.setdefaulttimeout(60)
+#try:
+#    import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
+#    timeoutsocket.setDefaultSocketTimeout(60)
+#except ImportError:
+#    import socket
+#    if hasattr(socket, 'setdefaulttimeout'):
+#        socket.setdefaulttimeout(60)
 import urllib, urllib2
 
 _mxtidy = None
@@ -139,6 +138,7 @@ SUPPORTED_VERSIONS = {'': 'unknown',
                       'atom01': 'Atom 0.1',
                       'atom02': 'Atom 0.2',
                       'atom03': 'Atom 0.3',
+                      'atom10': 'Atom 1.0',
                       'atom': 'Atom (unknown version)',
                       'cdf': 'CDF',
                       'hotrss': 'Hot RSS'
@@ -235,6 +235,7 @@ class _FeedParserMixin:
                   "uri/of/echo/namespace#": "",
                   "http://purl.org/pie/": "",
                   "http://purl.org/atom/ns#": "",
+                  "http://www.w3.org/2005/Atom": "",
                   "http://purl.org/rss/1.0/modules/rss091#": "",
                   
                   "http://webns.net/mvcb/":                               "admin",
@@ -484,11 +485,23 @@ class _FeedParserMixin:
             k = self.rawdata.find('>', i)
             return k+1
 
+    def mapContentType(self, contentType):
+        contentType = contentType.lower()
+        if contentType == 'text':
+            contentType = 'text/plain'
+        elif contentType == 'html':
+            contentType = 'text/html'
+        elif contentType == 'xhtml':
+            contentType = 'application/xhtml+xml'
+        return contentType
+    
     def trackNamespace(self, prefix, uri):
         if (prefix, uri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
             self.version = 'rss090'
         if uri == 'http://purl.org/rss/1.0/' and not self.version:
             self.version = 'rss10'
+        if uri == 'http://www.w3.org/2005/Atom' and not self.version:
+            self.version = 'atom10'
         if not prefix: return
         if uri.find('backend.userland.com/rss') <> -1:
             # match any backend.userland.com namespace
@@ -531,12 +544,12 @@ class _FeedParserMixin:
         output = self.decodeEntities(element, output)
 
         # resolve relative URIs within embedded markup
-        if self.contentparams.get('type', 'text/html') in self.html_types:
+        if self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types:
             if element in self.can_contain_relative_uris:
                 output = _resolveRelativeURIs(output, self.baseuri, self.encoding)
         
         # sanitize embedded markup
-        if self.contentparams.get('type', 'text/html') in self.html_types:
+        if self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding)
 
@@ -824,7 +837,7 @@ class _FeedParserMixin:
     def _start_tagline(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
-                              'type': attrsD.get('type', 'text/plain'),
+                              'type': self.mapContentType(attrsD.get('type', 'text/plain')),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('tagline', 1)
@@ -841,7 +854,7 @@ class _FeedParserMixin:
     def _start_copyright(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
-                              'type': attrsD.get('type', 'text/plain'),
+                              'type': self.mapContentType(attrsD.get('type', 'text/plain')),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('copyright', 1)
@@ -973,7 +986,7 @@ class _FeedParserMixin:
             self.feeddata['links'].append(FeedParserDict(attrsD))
         if attrsD.has_key('href'):
             expectingText = 0
-            if attrsD.get('type', '') in self.html_types:
+            if self.mapContentType(attrsD.get('type', '')) in self.html_types:
                 if self.inentry:
                     self.entries[-1]['link'] = attrsD['href']
                 elif self.infeed:
@@ -1015,7 +1028,7 @@ class _FeedParserMixin:
         if _debug: sys.stderr.write('attrsD.xml:lang = %s\n' % attrsD.get('xml:lang'))
         if _debug: sys.stderr.write('self.lang = %s\n' % self.lang)
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
-                              'type': attrsD.get('type', 'text/plain'),
+                              'type': self.mapContentType(attrsD.get('type', 'text/plain')),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('title', self.infeed or self.inentry)
@@ -1036,7 +1049,7 @@ class _FeedParserMixin:
     def _start_description(self, attrsD, default_content_type='text/html'):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
-                              'type': attrsD.get('type', default_content_type),
+                              'type': self.mapContentType(attrsD.get('type', default_content_type)),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('description', self.infeed or self.inentry)
@@ -1062,7 +1075,7 @@ class _FeedParserMixin:
     def _start_info(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
-                              'type': attrsD.get('type', 'text/plain'),
+                              'type': self.mapContentType(attrsD.get('type', 'text/plain')),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('info', 1)
@@ -1102,7 +1115,7 @@ class _FeedParserMixin:
     def _start_summary(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'escaped'),
-                              'type': attrsD.get('type', 'text/plain'),
+                              'type': self.mapContentType(attrsD.get('type', 'text/plain')),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('summary', 1)
@@ -1130,7 +1143,7 @@ class _FeedParserMixin:
     def _start_content(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'xml'),
-                              'type': attrsD.get('type', 'text/plain'),
+                              'type': self.mapContentType(attrsD.get('type', 'text/plain')),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('content', 1)
@@ -1138,7 +1151,7 @@ class _FeedParserMixin:
     def _start_prodlink(self, attrsD):
         self.incontent += 1
         self.contentparams = FeedParserDict({'mode': attrsD.get('mode', 'xml'),
-                              'type': attrsD.get('type', 'text/html'),
+                              'type': self.mapContentType(attrsD.get('type', 'text/html')),
                               'language': self.lang,
                               'base': self.baseuri})
         self.push('content', 1)
@@ -1163,7 +1176,7 @@ class _FeedParserMixin:
 
     def _end_content(self):
         value = self.pop('content')
-        if self.contentparams.get('type') in (['text/plain'] + self.html_types):
+        if self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types):
             self._save('description', value)
         self.incontent -= 1
         self.contentparams.clear()

@@ -1,0 +1,7 @@
+<!--
+Description: feed copyright type='text/plain'
+Expect:      not bozo and feed['copyright_detail']['type'] == 'text/plain'
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <copyright type="text">Example Atom</copyright>
+</feed>

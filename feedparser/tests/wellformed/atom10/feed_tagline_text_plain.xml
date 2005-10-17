@@ -1,0 +1,7 @@
+<!--
+Description: feed tagline with explicit type='text/plain'
+Expect:      not bozo and feed['tagline'] == u'Example Atom'
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <tagline type="text">Example Atom</tagline>
+</feed>
