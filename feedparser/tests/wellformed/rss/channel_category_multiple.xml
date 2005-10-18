@@ -1,6 +1,6 @@
 <!--
 Description: channel multiple categories
-Expect:      not bozo and feed['categories'] == [(u'http://www.example.com/1', u'Example category 1'), (u'http://www.example.com/2', u'Example category 2')]
+Expect:      not bozo and feed['categories'] == [{'term': 'Example category 1', 'scheme': 'http://www.example.com/1', 'label': None}, {'term': 'Example category 2', 'scheme': 'http://www.example.com/2', 'label': None}]
 -->
 <rss version="2.0">
 <channel>

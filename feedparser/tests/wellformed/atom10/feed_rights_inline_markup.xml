@@ -1,7 +1,7 @@
 <!--
-Description: feed copyright inline XHTML
-Expect:      not bozo and feed['copyright'] == u'<div>Example <b>Atom</b></div>'
+Description: feed rights inline XHTML
+Expect:      not bozo and feed['rights'] == u'<div>Example <b>Atom</b></div>'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <copyright type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">Example <b>Atom</b></div></copyright>
+  <rights type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml">Example <b>Atom</b></div></rights>
 </feed>

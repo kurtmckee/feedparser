@@ -1,7 +1,7 @@
 <!--
-Description: feed copyright escaped HTML
-Expect:      not bozo and feed['copyright'] == u'Example <b>Atom</b>'
+Description: feed rights escaped HTML
+Expect:      not bozo and feed['rights'] == u'Example <b>Atom</b>'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <copyright type="html">Example &lt;b&gt;Atom&lt;/b&gt;</copyright>
+  <rights type="html">Example &lt;b&gt;Atom&lt;/b&gt;</rights>
 </feed>

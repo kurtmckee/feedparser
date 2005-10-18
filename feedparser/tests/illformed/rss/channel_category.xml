@@ -1,6 +1,6 @@
 <!--
 Description: channel single category
-Expect:      bozo and feed['category'] == u'Example category'
+Expect:      bozo and feed['categories'][0]['term'] == u'Example category'
 -->
 <rss version="2.0">
 <channel>

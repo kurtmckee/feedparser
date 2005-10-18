@@ -1,7 +1,7 @@
 <!--
-Description: feed copyright content value
-Expect:      not bozo and feed['copyright_detail']['value'] == u'Example Atom'
+Description: feed rights content value
+Expect:      not bozo and feed['rights_detail']['value'] == u'Example Atom'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <copyright>Example Atom</copyright>
+  <rights>Example Atom</rights>
 </feed>
