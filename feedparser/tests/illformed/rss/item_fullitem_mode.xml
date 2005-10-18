@@ -1,6 +1,6 @@
 <!--
 Description: fullitem mode
-Expect:      bozo and entries[0]['content'][0]['mode'] == u'escaped'
+Expect:      1
 -->
 <rss version="2.0">
 <channel>

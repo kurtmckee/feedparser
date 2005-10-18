@@ -1,6 +1,7 @@
 <!--
+Note:        support for RSS source element was dropped in 4.0
 Description: item source
-Expect:      bozo and entries[0]['source']['value'] == u'Example source'
+Expect:      1
 -->
 <rss version="2.0">
 <channel>

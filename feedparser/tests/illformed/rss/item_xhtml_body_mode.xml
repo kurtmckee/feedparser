@@ -1,6 +1,6 @@
 <!--
 Description: xhtml:body mode
-Expect:      bozo and entries[0]['content'][0]['mode'] == u'xml'
+Expect:      1
 -->
 <rss version="2.0">
 <channel>

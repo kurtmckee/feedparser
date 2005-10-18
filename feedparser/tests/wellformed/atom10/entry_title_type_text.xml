@@ -1,5 +1,5 @@
 <!--
-Description: entry title type='text/plain'
+Description: entry title type='text'
 Expect:      not bozo and entries[0]['title_detail']['type'] == 'text/plain'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">

@@ -1,5 +1,5 @@
 <!--
-Description: feed rights with explicit type='text/plain'
+Description: feed rights with explicit type='text'
 Expect:      not bozo and feed['rights'] == u'Example Atom'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
