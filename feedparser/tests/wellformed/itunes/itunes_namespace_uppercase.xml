@@ -1,0 +1,9 @@
+<!--
+Description: iTunes namespace (uppercase)
+Expect:      not bozo and feed['itunes_summary'] == u'Example iTunes summary'
+-->
+<rss xmlns:itunes="HTTP://WWW.ITUNES.COM/DTDS/PODCAST-1.0.DTD">
+<channel>
+  <itunes:summary>Example iTunes summary</itunes:summary>
+</channel>
+</rss>

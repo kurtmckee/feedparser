@@ -233,6 +233,11 @@ def _ebcdic_to_ascii(s):
     return s.translate(_ebcdic_to_ascii_map)
 
 class _FeedParserMixin:
+    # These are *NOT* the official namespaces of these formats and extensions!
+    # All namespaces listed here are lowercase because iTunes treats them as case-insensitive
+    # so we need to lowercase them manually before mapping them to prefixes.
+    # Do *NOT* copy these namespaces into your own feeds verbatim!  Many are
+    # supposed to include certain uppercase characters (such as the Atom 1.0 namespace).
     namespaces = {'': '',
                   'http://backend.userland.com/rss': '',
                   'http://blogs.law.harvard.edu/tech/rss': '',
@@ -244,16 +249,16 @@ class _FeedParserMixin:
                   'uri/of/echo/namespace#': '',
                   'http://purl.org/pie/': '',
                   'http://purl.org/atom/ns#': '',
-                  'http://www.w3.org/2005/Atom': '',
+                  'http://www.w3.org/2005/atom': '',
                   'http://purl.org/rss/1.0/modules/rss091#': '',
                   
                   'http://webns.net/mvcb/':                               'admin',
                   'http://purl.org/rss/1.0/modules/aggregation/':         'ag',
                   'http://purl.org/rss/1.0/modules/annotate/':            'annotate',
                   'http://media.tangent.org/rss/1.0/':                    'audio',
-                  'http://backend.userland.com/blogChannelModule':        'blogChannel',
+                  'http://backend.userland.com/blogchannelmodule':        'blogChannel',
                   'http://web.resource.org/cc/':                          'cc',
-                  'http://backend.userland.com/creativeCommonsRssModule': 'creativeCommons',
+                  'http://backend.userland.com/creativecommonsrssmodule': 'creativeCommons',
                   'http://purl.org/rss/1.0/modules/company':              'co',
                   'http://purl.org/rss/1.0/modules/content/':             'content',
                   'http://my.theinfo.org/changed/1.0/rss/':               'cp',
@@ -263,6 +268,8 @@ class _FeedParserMixin:
                   'http://purl.org/rss/1.0/modules/event/':               'ev',
                   'http://postneo.com/icbm/':                             'icbm',
                   'http://purl.org/rss/1.0/modules/image/':               'image',
+                  'http://www.itunes.com/dtds/podcast-1.0.dtd':           'itunes',
+                  'http://example.com/dtds/podcast-1.0.dtd':              'itunes',
                   'http://xmlns.com/foaf/0.1/':                           'foaf',
                   'http://freshmeat.net/rss/fm/':                         'fm',
                   'http://purl.org/rss/1.0/modules/link/':                'l',
@@ -282,11 +289,11 @@ class _FeedParserMixin:
                   'http://purl.org/rss/1.0/modules/threading/':           'thr',
                   'http://purl.org/rss/1.0/modules/textinput/':           'ti',
                   'http://madskills.com/public/xml/rss/module/trackback/':'trackback',
-                  'http://wellformedweb.org/CommentAPI/':                 'wfw',
+                  'http://wellformedweb.org/commentapi/':                 'wfw',
                   'http://purl.org/rss/1.0/modules/wiki/':                'wiki',
                   'http://schemas.xmlsoap.org/soap/envelope/':            'soap',
                   'http://www.w3.org/1999/xhtml':                         'xhtml',
-                  'http://www.w3.org/XML/1998/namespace':                 'xml'
+                  'http://www.w3.org/xml/1998/namespace':                 'xml'
 }
 
     can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'href', 'comments', 'license']
@@ -507,11 +514,12 @@ class _FeedParserMixin:
         return contentType
     
     def trackNamespace(self, prefix, uri):
+        uri = uri.lower() # thanks Apple!
         if (prefix, uri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
             self.version = 'rss090'
         if uri == 'http://purl.org/rss/1.0/' and not self.version:
             self.version = 'rss10'
-        if uri == 'http://www.w3.org/2005/Atom' and not self.version:
+        if uri == 'http://www.w3.org/2005/atom' and not self.version:
             self.version = 'atom10'
         if not prefix: return
         if uri.find('backend.userland.com/rss') <> -1:
@@ -1255,9 +1263,9 @@ if _XML_AVAILABLE:
         
         def startElementNS(self, name, qname, attrs):
             namespace, localname = name
-            namespace = str(namespace or '')
+            namespace = str(namespace or '').lower() # thanks Apple!
             if namespace.find('backend.userland.com/rss') <> -1:
-                # match any backend.userland.com namespace
+                # match any backend.userland.com namespace, thanks Dave!
                 namespace = 'http://backend.userland.com/rss'
             prefix = self.namespaces.get(namespace, 'unknown')
             if prefix:
@@ -1273,6 +1281,7 @@ if _XML_AVAILABLE:
             # tirelessly telling me that it didn't work yet.
             attrsD = {}
             for (namespace, attrlocalname), attrvalue in attrs._attrs.items():
+                namespace = (namespace or '').lower() # thanks Apple!
                 prefix = self.namespaces.get(namespace, '')
                 if prefix:
                     attrlocalname = prefix + ':' + attrlocalname
@@ -1289,7 +1298,7 @@ if _XML_AVAILABLE:
 
         def endElementNS(self, name, qname):
             namespace, localname = name
-            namespace = str(namespace)
+            namespace = str(namespace).lower() # thanks Apple!
             prefix = self.namespaces.get(namespace, '')
             if prefix:
                 localname = prefix + ':' + localname
