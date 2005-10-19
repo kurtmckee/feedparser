@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Universal feed parser
 
-Handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom feeds
+Handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds
 
 Visit http://feedparser.org/ for the latest version
 Visit http://feedparser.org/docs/ for the latest documentation
@@ -514,7 +514,7 @@ class _FeedParserMixin:
         return contentType
     
     def trackNamespace(self, prefix, uri):
-        uri = uri.lower() # thanks Apple!
+        uri = uri.lower()
         if (prefix, uri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
             self.version = 'rss090'
         if uri == 'http://purl.org/rss/1.0/' and not self.version:
@@ -537,13 +537,14 @@ class _FeedParserMixin:
     def push(self, element, expectingText):
         self.elementstack.append([element, expectingText, []])
 
-    def pop(self, element):
+    def pop(self, element, stripWhitespace=1):
         if not self.elementstack: return
         if self.elementstack[-1][0] != element: return
 
         element, expectingText, pieces = self.elementstack.pop()
         output = ''.join(pieces)
-        output = output.strip()
+        if stripWhitespace:
+            output = output.strip()
         if not expectingText: return output
         
         # decode base64 content
@@ -752,6 +753,7 @@ class _FeedParserMixin:
     _start_managingeditor = _start_author
     _start_dc_author = _start_author
     _start_dc_creator = _start_author
+    _start_itunes_author = _start_author
 
     def _end_author(self):
         self.pop('author')
@@ -760,6 +762,7 @@ class _FeedParserMixin:
     _end_managingeditor = _end_author
     _end_dc_author = _end_author
     _end_dc_creator = _end_author
+    _end_itunes_author = _end_author
 
     def _start_contributor(self, attrsD):
         self.incontributor = 1
@@ -1249,6 +1252,10 @@ class _FeedParserMixin:
     _end_fullitem = _end_content
     _end_prodlink = _end_content
 
+    def _end_itunes_block(self):
+        value = self.pop('itunes_block', 0)
+        self._getContext()['itunes_block'] = (value == 'yes') and 1 or 0
+
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
@@ -1263,9 +1270,9 @@ if _XML_AVAILABLE:
         
         def startElementNS(self, name, qname, attrs):
             namespace, localname = name
-            namespace = str(namespace or '').lower() # thanks Apple!
+            namespace = str(namespace or '').lower()
             if namespace.find('backend.userland.com/rss') <> -1:
-                # match any backend.userland.com namespace, thanks Dave!
+                # match any backend.userland.com namespace
                 namespace = 'http://backend.userland.com/rss'
             prefix = self.namespaces.get(namespace, 'unknown')
             if prefix:
@@ -1281,7 +1288,7 @@ if _XML_AVAILABLE:
             # tirelessly telling me that it didn't work yet.
             attrsD = {}
             for (namespace, attrlocalname), attrvalue in attrs._attrs.items():
-                namespace = (namespace or '').lower() # thanks Apple!
+                namespace = (namespace or '').lower()
                 prefix = self.namespaces.get(namespace, '')
                 if prefix:
                     attrlocalname = prefix + ':' + attrlocalname
@@ -1298,7 +1305,7 @@ if _XML_AVAILABLE:
 
         def endElementNS(self, name, qname):
             namespace, localname = name
-            namespace = str(namespace).lower() # thanks Apple!
+            namespace = str(namespace).lower()
             prefix = self.namespaces.get(namespace, '')
             if prefix:
                 localname = prefix + ':' + localname
