@@ -163,7 +163,7 @@ class FeedParserDict(UserDict):
                   'date': 'updated',
                   'date_parsed': 'updated_parsed',
                   'description': ['subtitle', 'summary'],
-                  'url': 'href',
+                  'url': ['href'],
                   'modified': 'updated',
                   'modified_parsed': 'updated_parsed',
                   'issued': 'published',
@@ -177,6 +177,7 @@ class FeedParserDict(UserDict):
             for k in realkey:
                 if UserDict.has_key(self, k):
                     return UserDict.__getitem__(self, k)
+        if UserDict.has_key(self, key):
             return UserDict.__getitem__(self, key)
         return UserDict.__getitem__(self, realkey)
 
@@ -634,6 +635,21 @@ class _FeedParserMixin:
                 context[element + '_detail'] = contentparams
         return output
 
+    def pushContent(self, tag, attrsD, defaultContentType, expectingText):
+        self.incontent += 1
+        self.contentparams = FeedParserDict({
+            'type': self.mapContentType(attrsD.get('type', defaultContentType)),
+            'language': self.lang,
+            'base': self.baseuri})
+        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
+        self.push(tag, expectingText)
+
+    def popContent(self, tag):
+        value = self.pop(tag)
+        self.incontent -= 1
+        self.contentparams.clear()
+        return value
+        
     def _mapToStandardPrefix(self, name):
         colonpos = name.find(':')
         if colonpos <> -1:
@@ -895,38 +911,22 @@ class _FeedParserMixin:
             context.setdefault('%s_detail' % key, FeedParserDict())
             context['%s_detail' % key]['name'] = author
             context['%s_detail' % key]['email'] = email
-            
+
     def _start_subtitle(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', 'text/plain')),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('subtitle', 1)
+        self.pushContent('subtitle', attrsD, 'text/plain', 1)
     _start_tagline = _start_subtitle
 
     def _end_subtitle(self):
-        value = self.pop('subtitle')
-        self.incontent -= 1
-        self.contentparams.clear()
-        if self.infeed:
-            self.feeddata['description'] = value
+        self.popContent('subtitle')
     _end_tagline = _end_subtitle
             
     def _start_rights(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', 'text/plain')),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('rights', 1)
+        self.pushContent('rights', attrsD, 'text/plain', 1)
     _start_dc_rights = _start_rights
     _start_copyright = _start_rights
 
     def _end_rights(self):
-        self.pop('rights')
-        self.incontent -= 1
-        self.contentparams.clear()
+        self.popContent('rights')
     _end_dc_rights = _end_rights
     _end_copyright = _end_rights
 
@@ -1022,12 +1022,11 @@ class _FeedParserMixin:
 
     def _start_category(self, attrsD):
         self.push('category', 1)
-        term = self._getAttribute(attrsD, 'term') or None
-        scheme = self._getAttribute(attrsD, 'scheme') or self._getAttribute(attrsD, 'domain') or None
-        label = self._getAttribute(attrsD, 'label') or None
+        term = attrsD.get('term')
+        scheme = attrsD.get('scheme', attrsD.get('domain'))
+        label = attrsD.get('label')
         context = self._getContext()
-        cats = context.setdefault('categories', [])
-        cats.append({'term': term, 'scheme': scheme, 'label': label})
+        context.setdefault('categories', []).append({'term': term, 'scheme': scheme, 'label': label})
     _start_dc_subject = _start_category
     _start_keywords = _start_category
         
@@ -1035,9 +1034,18 @@ class _FeedParserMixin:
         self.pop('category')
     _end_dc_subject = _end_category
     _end_keywords = _end_category
+    _end_itunes_category = _end_category
+
+    def _start_itunes_category(self, attrsD):
+        self.push('category', 0)
+        term = attrsD.get('text')
+        scheme = 'itms://itunes.com/browse?bp=/'
+        label = None
+        context = self._getContext()
+        context.setdefault('categories', []).append({'term': term, 'scheme': scheme, 'label': label})
         
     def _start_cloud(self, attrsD):
-        self.feeddata['cloud'] = FeedParserDict(attrsD)
+        self._getContext()['cloud'] = FeedParserDict(attrsD)
         
     def _start_link(self, attrsD):
         attrsD.setdefault('rel', 'alternate')
@@ -1045,7 +1053,7 @@ class _FeedParserMixin:
         attrsD = self._itsAnHrefDamnIt(attrsD)
         if attrsD.has_key('href'):
             attrsD['href'] = self.resolveURI(attrsD['href'])
-        expectingText = self.infeed or self.inentry
+        expectingText = self.infeed or self.inentry or self.insource
         context = self._getContext()
         context.setdefault('links', [])
         context['links'].append(FeedParserDict(attrsD))
@@ -1061,11 +1069,10 @@ class _FeedParserMixin:
 
     def _end_link(self):
         value = self.pop('link')
+        context = self._getContext()
         if self.intextinput:
-            context = self._getContext()
             context['textinput']['link'] = value
         if self.inimage:
-            context = self._getContext()
             context['image']['link'] = value
     _end_producturl = _end_link
 
@@ -1081,50 +1088,27 @@ class _FeedParserMixin:
             # and only if the item doesn't already have a link element
             self._save('link', value)
 
-    def _start_id(self, attrsD):
-        self.push('id', 1)
-
-    def _end_id(self):
-        value = self.pop('id')
-            
     def _start_title(self, attrsD):
-        self.incontent += 1
-        if _debug: sys.stderr.write('attrsD.xml:lang = %s\n' % attrsD.get('xml:lang'))
-        if _debug: sys.stderr.write('self.lang = %s\n' % self.lang)
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', 'text/plain')),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('title', self.infeed or self.inentry)
+        self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
 
     def _end_title(self):
-        value = self.pop('title')
-        self.incontent -= 1
-        self.contentparams.clear()
+        value = self.popContent('title')
+        context = self._getContext()
         if self.intextinput:
-            context = self._getContext()
             context['textinput']['title'] = value
         elif self.inimage:
-            context = self._getContext()
             context['image']['title'] = value
     _end_dc_title = _end_title
 
-    def _start_description(self, attrsD, default_content_type='text/html'):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', default_content_type)),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('description', self.infeed or self.inentry)
+    def _start_description(self, attrsD):
+        self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
 
     def _start_abstract(self, attrsD):
-        return self._start_description(attrsD, 'text/plain')
+        self.pushContent('description', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_description(self):
-        value = self.pop('description')
-        self.incontent -= 1
-        self.contentparams.clear()
+        value = self.popContent('description')
         context = self._getContext()
         if self.intextinput:
             context['textinput']['description'] = value
@@ -1133,17 +1117,10 @@ class _FeedParserMixin:
     _end_abstract = _end_description
 
     def _start_info(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', 'text/plain')),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('info', 1)
+        self.pushContent('info', attrsD, 'text/plain', 1)
 
     def _end_info(self):
-        self.pop('info')
-        self.incontent -= 1
-        self.contentparams.clear()
+        self.popContent('info')
 
     def _start_generator(self, attrsD):
         if attrsD:
@@ -1165,7 +1142,7 @@ class _FeedParserMixin:
         if value:
             self.elementstack[-1][2].append(value)
         self.pop('generator')
-        self.feeddata['generator_detail'] = FeedParserDict({'href': value})
+        self._getContext()['generator_detail'] = FeedParserDict({'href': value})
 
     def _start_admin_errorreportsto(self, attrsD):
         self.push('errorreportsto', 1)
@@ -1175,25 +1152,14 @@ class _FeedParserMixin:
         self.pop('errorreportsto')
         
     def _start_summary(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', 'text/plain')),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('summary', 1)
+        self.pushContent('summary', attrsD, 'text/plain', 1)
 
     def _end_summary(self):
-        value = self.pop('summary')
-        if self.entries:
-            self.entries[-1]['description'] = value
-        self.incontent -= 1
-        self.contentparams.clear()
+        self.popContent('summary')
         
     def _start_enclosure(self, attrsD):
-        if self.inentry:
-            attrsD = self._itsAnHrefDamnIt(attrsD)
-            self.entries[-1].setdefault('enclosures', [])
-            self.entries[-1]['enclosures'].append(FeedParserDict(attrsD))
+        attrsD = self._itsAnHrefDamnIt(attrsD)
+        self._getContext().setdefault('enclosures', []).append(FeedParserDict(attrsD))
             
     def _start_source(self, attrsD):
         self.insource = 1
@@ -1204,57 +1170,47 @@ class _FeedParserMixin:
         self.sourcedata.clear()
 
     def _start_content(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', 'text/plain')),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
+        self.pushContent('content', attrsD, 'text/plain', 1)
         src = attrsD.get('src')
         if src:
             self.contentparams['src'] = src
         self.push('content', 1)
 
     def _start_prodlink(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': self.mapContentType(attrsD.get('type', 'text/html')),
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('content', 1)
+        self.pushContent('content', attrsD, 'text/html', 1)
 
     def _start_body(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': 'application/xhtml+xml',
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('content', 1)
+        self.pushContent('content', attrsD, 'application/xhtml+xml', 1)
     _start_xhtml_body = _start_body
 
     def _start_content_encoded(self, attrsD):
-        self.incontent += 1
-        self.contentparams = FeedParserDict({'type': 'text/html',
-                              'language': self.lang,
-                              'base': self.baseuri})
-        self.contentparams['base64'] = self._isBase64(attrsD, self.contentparams)
-        self.push('content', 1)
+        self.pushContent('content', attrsD, 'text/html', 1)
     _start_fullitem = _start_content_encoded
 
     def _end_content(self):
-        value = self.pop('content')
-        if self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types):
+        copyToDescription = self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types)
+        value = self.popContent('content')
+        if copyToDescription:
             self._save('description', value)
-        self.incontent -= 1
-        self.contentparams.clear()
     _end_body = _end_content
     _end_xhtml_body = _end_content
     _end_content_encoded = _end_content
     _end_fullitem = _end_content
     _end_prodlink = _end_content
 
+    def _start_itunes_image(self, attrsD):
+        self.push('itunes_image', 0)
+        self._getContext()['image'] = {'href': attrsD.get('href')}
+    _start_itunes_link = _start_itunes_image
+        
     def _end_itunes_block(self):
         value = self.pop('itunes_block', 0)
         self._getContext()['itunes_block'] = (value == 'yes') and 1 or 0
+
+    def _end_itunes_explicit(self):
+        value = self.pop('itunes_explicit', 0)
+        self._getContext()['itunes_explicit'] = (value == 'yes') and 1 or 0
+        
 
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
