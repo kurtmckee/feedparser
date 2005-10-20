@@ -1,9 +1,9 @@
 <!--
-Description: iTunes channel category
+Description: iTunes channel keywords
 Expect:      not bozo and feed['tags'][0]['term'] == u'Technology'
 -->
 <rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd">
 <channel>
-<itunes:category text="Technology"></itunes:category>
+<itunes:keywords>Technology</itunes:keywords>
 </channel>
 </rss>

@@ -1,6 +1,6 @@
 <!--
 Description: entry source category scheme
-Expect:      not bozo and entries[0]['source']['categories'][0]['scheme'] == u'http://feedparser.org/tests/'
+Expect:      not bozo and entries[0]['source']['tags'][0]['scheme'] == u'http://feedparser.org/tests/'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

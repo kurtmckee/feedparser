@@ -1,6 +1,6 @@
 <!--
 Description: item multiple categories
-Expect:      bozo and entries[0]['categories'] == [{'term': 'Example category 1', 'scheme': 'http://www.example.com/1', 'label': None}, {'term': 'Example category 2', 'scheme': 'http://www.example.com/2', 'label': None}]
+Expect:      bozo and entries[0]['categories'][1][0] == u'http://www.example.com/2'
 -->
 <rss version="2.0">
 <channel>

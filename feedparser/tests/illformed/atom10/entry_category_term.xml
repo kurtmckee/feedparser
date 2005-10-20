@@ -1,6 +1,6 @@
 <!--
 Description: entry category term
-Expect:      bozo and entries[0]['categories'][0]['term'] == u'atom10'
+Expect:      bozo and entries[0]['tags'][0]['term'] == u'atom10'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

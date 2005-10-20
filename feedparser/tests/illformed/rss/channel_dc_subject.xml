@@ -1,6 +1,6 @@
 <!--
 Description: channel dc:subject
-Expect:      bozo and feed['categories'][0]['term'] == u'Example category'
+Expect:      bozo and feed['category'] == u'Example category'
 -->
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>

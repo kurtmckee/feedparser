@@ -172,6 +172,10 @@ class FeedParserDict(UserDict):
                   'copyright_detail': 'rights_detail',
                   'tagline': 'subtitle',
                   'tagline_detail': 'subtitle_detail'}
+        if key == 'category':
+            return UserDict.__getitem__(self, 'tags')[0]['term']
+        if key == 'categories':
+            return [(tag['scheme'], tag['term']) for tag in UserDict.__getitem__(self, 'tags')]
         realkey = keymap.get(key, key)
         if type(realkey) == types.ListType:
             for k in realkey:
@@ -547,7 +551,7 @@ class _FeedParserMixin:
         if stripWhitespace:
             output = output.strip()
         if not expectingText: return output
-        
+
         # decode base64 content
         if base64 and self.contentparams.get('base64', 0):
             try:
@@ -590,7 +594,11 @@ class _FeedParserMixin:
                 output = unicode(output, self.encoding)
             except:
                 pass
-            
+
+        # categories/tags/keywords/whatever are handled in _end_category
+        if element == 'category':
+            return output
+        
         # store output in appropriate place(s)
         if self.inentry and not self.insource:
             if element == 'content':
@@ -598,13 +606,6 @@ class _FeedParserMixin:
                 contentparams = copy.deepcopy(self.contentparams)
                 contentparams['value'] = output
                 self.entries[-1][element].append(contentparams)
-            elif element == 'category':
-                self.entries[-1][element] = output
-                currentCategory = self.entries[-1]['categories'][-1]
-                if not currentCategory.get('term', None):
-                    currentCategory['term'] = output
-            elif element == 'source':
-                self.entries[-1]['source']['value'] = output
             elif element == 'link':
                 self.entries[-1][element] = output
                 if output:
@@ -621,13 +622,8 @@ class _FeedParserMixin:
             context = self._getContext()
             if element == 'description':
                 element = 'subtitle'
-            if element != 'category':
-                context[element] = output
-            if element == 'category':
-                currentCategory = context['categories'][-1]
-                if not currentCategory.get('term', None):
-                    currentCategory['term'] = output
-            elif element == 'link':
+            context[element] = output
+            if element == 'link':
                 context['links'][-1]['href'] = output
             elif self.incontent:
                 contentparams = copy.deepcopy(self.contentparams)
@@ -1020,30 +1016,45 @@ class _FeedParserMixin:
     def _end_creativecommons_license(self):
         self.pop('license')
 
+    def _addTag(self, term, scheme, label):
+        context = self._getContext()
+        tags = context.setdefault('tags', [])
+        if (not term) and (not scheme) and (not label): return
+        value = {'term': term, 'scheme': scheme, 'label': label}
+        if value not in tags:
+            tags.append({'term': term, 'scheme': scheme, 'label': label})
+
     def _start_category(self, attrsD):
-        self.push('category', 1)
+        if _debug: sys.stderr.write('entering _start_category with %s\n' % repr(attrsD))
         term = attrsD.get('term')
         scheme = attrsD.get('scheme', attrsD.get('domain'))
         label = attrsD.get('label')
-        context = self._getContext()
-        context.setdefault('categories', []).append({'term': term, 'scheme': scheme, 'label': label})
+        self._addTag(term, scheme, label)
+        self.push('category', 1)
     _start_dc_subject = _start_category
     _start_keywords = _start_category
         
+    def _end_itunes_keywords(self):
+        for term in self.pop('itunes_keywords').split():
+            self._addTag(term, 'http://www.itunes.com/', None)
+        
+    def _start_itunes_category(self, attrsD):
+        self._addTag(attrsD.get('text'), 'http://www.itunes.com/', None)
+        self.push('category', 1)
+        
     def _end_category(self):
-        self.pop('category')
+        value = self.pop('category')
+        if not value: return
+        context = self._getContext()
+        tags = context['tags']
+        if value and len(tags) and not tags[-1]['term']:
+            tags[-1]['term'] = value
+        else:
+            self._addTag(value, None, None)
     _end_dc_subject = _end_category
     _end_keywords = _end_category
     _end_itunes_category = _end_category
 
-    def _start_itunes_category(self, attrsD):
-        self.push('category', 0)
-        term = attrsD.get('text')
-        scheme = 'itms://itunes.com/browse?bp=/'
-        label = None
-        context = self._getContext()
-        context.setdefault('categories', []).append({'term': term, 'scheme': scheme, 'label': label})
-        
     def _start_cloud(self, attrsD):
         self._getContext()['cloud'] = FeedParserDict(attrsD)
         
@@ -1210,7 +1221,6 @@ class _FeedParserMixin:
     def _end_itunes_explicit(self):
         value = self.pop('itunes_explicit', 0)
         self._getContext()['itunes_explicit'] = (value == 'yes') and 1 or 0
-        
 
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
