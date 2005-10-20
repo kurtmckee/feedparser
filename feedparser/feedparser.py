@@ -314,8 +314,7 @@ class _FeedParserMixin:
         self.version = '' # feed type/version, see SUPPORTED_VERSIONS
 
         # the following are used internally to track state;
-        # some of this is kind of out of control and should
-        # probably be refactored into a finite state machine
+        # this is really out of control and should be refactored
         self.infeed = 0
         self.inentry = 0
         self.incontent = 0
@@ -323,6 +322,7 @@ class _FeedParserMixin:
         self.inimage = 0
         self.inauthor = 0
         self.incontributor = 0
+        self.inpublisher = 0
         self.insource = 0
         self.sourcedata = FeedParserDict()
         self.contentparams = FeedParserDict()
@@ -776,6 +776,15 @@ class _FeedParserMixin:
     _end_dc_creator = _end_author
     _end_itunes_author = _end_author
 
+    def _start_itunes_owner(self, attrsD):
+        self.inpublisher = 1
+        self.push('publisher', 0)
+
+    def _end_itunes_owner(self):
+        self.pop('publisher')
+        self.inpublisher = 0
+        self._sync_author_detail('publisher')
+
     def _start_contributor(self, attrsD):
         self.incontributor = 1
         context = self._getContext()
@@ -789,16 +798,20 @@ class _FeedParserMixin:
         
     def _start_name(self, attrsD):
         self.push('name', 0)
+    _start_itunes_name = _start_name
 
     def _end_name(self):
         value = self.pop('name')
-        if self.inauthor:
+        if self.inpublisher:
+            self._save_author('name', value, 'publisher')
+        elif self.inauthor:
             self._save_author('name', value)
         elif self.incontributor:
             self._save_contributor('name', value)
         elif self.intextinput:
             context = self._getContext()
             context['textinput']['name'] = value
+    _end_itunes_name = _end_name
 
     def _start_width(self, attrsD):
         self.push('width', 0)
@@ -848,14 +861,17 @@ class _FeedParserMixin:
 
     def _start_email(self, attrsD):
         self.push('email', 0)
+    _start_itunes_email = _start_email
 
     def _end_email(self):
         value = self.pop('email')
-        if self.inauthor:
+        if self.inpublisher:
+            self._save_author('email', value, 'publisher')
+        elif self.inauthor:
             self._save_author('email', value)
         elif self.incontributor:
             self._save_contributor('email', value)
-            pass
+    _end_itunes_email = _end_email
 
     def _getContext(self):
         if self.insource:
@@ -866,10 +882,10 @@ class _FeedParserMixin:
             context = self.feeddata
         return context
 
-    def _save_author(self, key, value):
+    def _save_author(self, key, value, prefix='author'):
         context = self._getContext()
-        context.setdefault('author_detail', FeedParserDict())
-        context['author_detail'][key] = value
+        context.setdefault(prefix + '_detail', FeedParserDict())
+        context[prefix + '_detail'][key] = value
         self._sync_author_detail()
 
     def _save_contributor(self, key, value):
@@ -911,10 +927,12 @@ class _FeedParserMixin:
     def _start_subtitle(self, attrsD):
         self.pushContent('subtitle', attrsD, 'text/plain', 1)
     _start_tagline = _start_subtitle
+    _start_itunes_subtitle = _start_subtitle
 
     def _end_subtitle(self):
         self.popContent('subtitle')
     _end_tagline = _end_subtitle
+    _end_itunes_subtitle = _end_subtitle
             
     def _start_rights(self, attrsD):
         self.pushContent('rights', attrsD, 'text/plain', 1)
@@ -960,7 +978,7 @@ class _FeedParserMixin:
         self.pop('publisher')
         self._sync_author_detail('publisher')
     _end_webmaster = _end_dc_publisher
-        
+
     def _start_published(self, attrsD):
         self.push('published', 1)
     _start_dcterms_issued = _start_published
@@ -1020,9 +1038,9 @@ class _FeedParserMixin:
         context = self._getContext()
         tags = context.setdefault('tags', [])
         if (not term) and (not scheme) and (not label): return
-        value = {'term': term, 'scheme': scheme, 'label': label}
+        value = FeedParserDict({'term': term, 'scheme': scheme, 'label': label})
         if value not in tags:
-            tags.append({'term': term, 'scheme': scheme, 'label': label})
+            tags.append(FeedParserDict({'term': term, 'scheme': scheme, 'label': label}))
 
     def _start_category(self, attrsD):
         if _debug: sys.stderr.write('entering _start_category with %s\n' % repr(attrsD))
@@ -1164,13 +1182,20 @@ class _FeedParserMixin:
         
     def _start_summary(self, attrsD):
         self.pushContent('summary', attrsD, 'text/plain', 1)
+    _start_itunes_summary = _start_summary
 
     def _end_summary(self):
         self.popContent('summary')
+    _end_itunes_summary = _end_summary
         
     def _start_enclosure(self, attrsD):
         attrsD = self._itsAnHrefDamnIt(attrsD)
         self._getContext().setdefault('enclosures', []).append(FeedParserDict(attrsD))
+        href = attrsD.get('href')
+        if href:
+            context = self._getContext()
+            if not context.get('id'):
+                context['id'] = href
             
     def _start_source(self, attrsD):
         self.insource = 1
@@ -1211,7 +1236,7 @@ class _FeedParserMixin:
 
     def _start_itunes_image(self, attrsD):
         self.push('itunes_image', 0)
-        self._getContext()['image'] = {'href': attrsD.get('href')}
+        self._getContext()['image'] = FeedParserDict({'href': attrsD.get('href')})
     _start_itunes_link = _start_itunes_image
         
     def _end_itunes_block(self):
