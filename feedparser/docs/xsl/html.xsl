@@ -183,7 +183,7 @@ set       toc
   </div>
   <hr style="clear:both"/>
   <div class="footer">
-    <xsl:apply-templates select="//copyright" mode="titlepage.mode"/>
+    <xsl:apply-templates select="//bookinfo//copyright" mode="titlepage.mode"/>
   </div>
 </xsl:template>
     

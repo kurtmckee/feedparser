@@ -59,7 +59,7 @@
 
 <div class="s" id="pageHeader">
 <h1><a href="/"><span>Universal Feed Parser</span></a></h1>
-<p><span>Parse RSS and Atom feeds in Python.  2000 unit tests.  Open source.</span></p>
+<p><span>Parse RSS and Atom feeds in Python.  3000 unit tests.  Open source.</span></p>
 </div> <!-- pageHeader -->
 
 <div class="s" id="quickSummary">

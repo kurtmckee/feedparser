@@ -4,9 +4,9 @@
 [
 <!ENTITY % entities_version SYSTEM "version.xml">
 %entities_version;
-<!ENTITY gfdl SYSTEM "gfdl.xml">
+<!ENTITY gpl SYSTEM "gpl.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "3.3">
+<!ENTITY feedparser_version "4.0">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
@@ -46,7 +46,6 @@
 <!ENTITY xmlbaseattr "<sgmltag class='attribute'>xml:base</sgmltag>">
 <!ENTITY url_time "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_atomwiki "http://www.intertwingly.net/wiki/pie/">
-<!ENTITY url_linktagmeaning "&url_atomwiki;LinkTagMeaning">
 <!ENTITY url_rss090 "http://www.purplepages.ie/RSS/netscape/rss0.90.html">
 <!ENTITY url_rss091n "http://my.netscape.com/publish/formats/rss-spec-0.91.html">
 <!ENTITY url_rss091u "http://backend.userland.com/rss091">
@@ -57,6 +56,7 @@
 <!ENTITY url_atom01 "http://www.intertwingly.net/blog/1506.html">
 <!ENTITY url_atom02 "http://diveintomark.org/public/2003/08/atom02spec.txt">
 <!ENTITY url_atom03 "http://www.mnot.net/drafts/draft-nottingham-atom-format-02.html">
+<!ENTITY url_atom10 "http://TODO">
 <!ENTITY url_cdf "http://www.w3.org/TR/NOTE-CDFsubmit.html">
 <!ENTITY url_hotrss "http://diveintomark.org/archives/2004/04/14/hot-rss">
 <!ENTITY url_enclosure_problems "http://gonze.com/weblog/story/5-17-4">
@@ -75,7 +75,8 @@
 <!ENTITY url_sf_feedparser "http://sourceforge.net/projects/feedparser/">
 
 <!ENTITY url_example "http://feedparser.org/docs/examples/">
-<!ENTITY url_example_atom "&url_example;atom.xml">
+<!ENTITY url_example_atom10 "&url_example;atom10.xml">
+<!ENTITY url_example_atom03 "&url_example;atom03.xml">
 <!ENTITY url_example_rss20 "&url_example;rss20.xml">
 <!ENTITY url_example_rss20dc "&url_example;rss20dc.xml">
 <!ENTITY url_example_rss10 "&url_example;rss10.rdf">
@@ -99,7 +100,8 @@
 <!ENTITY url_cjkcodecs "http://cjkpython.i18n.org/">
 <!ENTITY url_xmlbase "http://www.w3.org/TR/xmlbase/">
 
-<!ENTITY example_atom "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom;&#34;/>')</userinput>">
+<!ENTITY example_atom03 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom03;&#34;/>')</userinput>">
+<!ENTITY example_atom10 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom10;&#34;/>')</userinput>">
 <!ENTITY example_rss20 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_rss20;&#34;/>')</userinput>">
 <!ENTITY example_rss20dc "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_rss20dc;&#34;/>')</userinput>">
 <!ENTITY example_rss10 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_rss10;&#34;/>')</userinput>">
@@ -120,14 +122,6 @@
 
 <!ENTITY language_details "<para><varname>language</varname> is supposed to be a language code, as specified by <ulink url='&url_rfc3066;'>&rfc; 3066</ulink>, but publishers have been known to publish random values like <quote>English</quote> or <quote>German</quote>.  &feedparser; does not do any parsing or normalization of language codes.</para>
 <para><varname>language</varname> may come from the element's <sgmltag class='attribute'>xml:lang</sgmltag> attribute, or it may inherit from a parent element's <sgmltag class='attribute'>xml:lang</sgmltag>, or the <literal>Content-Language</literal> &http; header.  If the feed does not specify a language, <varname>language</varname> will be <constant>None</constant>, the &python; null value.</para>">
-
-<!ENTITY mode_details "<para>Possible values:</para>
-<itemizedlist>
-<listitem><para><literal>escaped</literal></para></listitem>
-<listitem><para><literal>xml</literal></para></listitem>
-<listitem><para><literal>base64</literal></para></listitem>
-</itemizedlist>
-<para><varname>mode</varname> is only useful in rare situations and can usually be ignored.  It is the original escaping mode that the feed used to encode the value.  By the time you see it, &feedparser; has already unescaped the value properly.  <emphasis>Clients should never need to manually unescape values.</emphasis></para>">
 
 <!ENTITY base_details "<para><varname>base</varname> is only useful in rare situations and can usually be ignored.  It is the original base &uri; for this value, as specified by the element's &xmlbaseattr; attribute, or a parent element's &xmlbaseattr;, or the appropriate &http; header, or the &uri; of the feed.  (See <xref linkend='advanced.base'/> for more details.)  By the time you see it, &feedparser; has already resolved relative links in all values where it makes sense to do so.  <emphasis>Clients should never need to manually resolve relative links.</emphasis></para>">
 
@@ -182,6 +176,10 @@
 <listitem><para><ulink url='&url_atom03;'>&atom; 0.3</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
+<term><literal>atom10</literal></term>
+<listitem><para><ulink url='&url_atom10;'>&atom; 1.0</ulink></para></listitem>
+</varlistentry>
+<varlistentry>
 <term><literal>atom</literal></term>
 <listitem><para>&atom; (unknown or unrecognized version)</para></listitem>
 </varlistentry>
@@ -203,6 +201,16 @@
 <!ENTITY containsrelativelinks "<para>If this contains &html; or &xhtml;, certain (X)HTML elements within this value may contain relative &uri;s.  If so, they are <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
 
 <!ENTITY parsedasadate "<link linkend='advanced.date'>parsed as a date</link>">
+
+<!ENTITY listofrelvalues "<para>&atom; 1.0 defines five standard link relationships and describes the process for registering others.  Here are the five standard <sgmltag class='attribute'>rel</sgmltag> values:</para>
+<itemizedlist>
+<listitem><para><literal>alternate</literal></para></listitem>
+<listitem><para><literal>self</literal></para></listitem>
+<listitem><para><literal>related</literal></para></listitem>
+<listitem><para><literal>via</literal></para></listitem>
+<listitem><para><literal>enclosure</literal></para></listitem>
+</itemizedlist>">
+
 ]>
 
 <book lang="en">
@@ -218,6 +226,7 @@
 </authorgroup>
 <copyright>
 <year>2004</year>
+<year>2005</year>
 <holder>Mark Pilgrim</holder>
 </copyright>
 <pubdate>&fileversion;</pubdate>
@@ -236,7 +245,7 @@
 <keyword>Python</keyword>
 </keywordset>
 <legalnotice>
-<para>Permission is granted to copy, distribute, and/or modify this document under the terms of the <acronym condition="GNU's Not Unix">GNU</acronym> Free Documentation License, Version 1.2 or any later version published by the Free Software Foundation, with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.  A copy of the license is included in <xref linkend="gfdl"/>.</para>
+<para>This documentation and sample code are free software. You can redistribute them and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License or (at your option) any later version. This documentation and sample code are distributed in the hope that they will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <xref linkend="license"/> for more details.</para>
 </legalnotice>
 </bookinfo>
 <chapter id="basic">
@@ -247,18 +256,18 @@
 <?dbhtml filename="introduction.html"?>
 <abstract>
 <title/>
-<para>&feedparser; is a &python; module for downloading and parsing syndicated feeds.  It can handle &rss; 0.90, Netscape &rss; 0.91, Userland &rss; 0.91, &rss; 0.92, &rss; 0.93, &rss; 0.94, &rss; 1.0, &rss; 2.0, &atom;, and &cdf; feeds.</para>
+<para>&feedparser; is a &python; module for downloading and parsing syndicated feeds.  It can handle &rss; 0.90, Netscape &rss; 0.91, Userland &rss; 0.91, &rss; 0.92, &rss; 0.93, &rss; 0.94, &rss; 1.0, &rss; 2.0, &atom; 0.3, &atom; 1.0, and &cdf; feeds.  It also parses several popular extension modules, including Dublin Core and Apple's iTunes extensions.</para>
 </abstract>
 <para>To use &feedparser;, you will need &python; 2.1 or later.  &feedparser; is not meant to run standalone; it is a module for you to use as part of a larger &python; program.</para>
 <para>&feedparser; is easy to use; the module is self-contained in a single file, &feedparser_filename;, and it has only one public function, &parse;.  &parse; takes a number of arguments, but only one is required, and it can be a &url;, a local filename, or a raw string containing feed data in any format.</para>
 <example id="example.parse.remote">
 <title>Parsing a feed from a remote &url;</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d['feed']['title']</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
-<para>The following example assumes you are on &windows;, and that you have saved a feed at <filename>c:\incoming\atom.xml</filename>.</para>
+<para>The following example assumes you are on &windows;, and that you have saved a feed at <filename>c:\incoming\atom10.xml</filename>.</para>
 <note>
 <title/>
 <para>&feedparser; works on any platform that can run &python;; use the path syntax appropriate for your platform.</para>
@@ -266,7 +275,7 @@
 <example id="example.parse.local">
 <title>Parsing a feed from a local file</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&prompt;<userinput>d = feedparser.parse(r'c:\incoming\atom.xml')</userinput>
+&prompt;<userinput>d = feedparser.parse(r'c:\incoming\atom10.xml')</userinput>
 &prompt;<userinput>d['feed']['title']</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
@@ -298,7 +307,7 @@
 </abstract>
 <para>This sample &rss; feed is at <ulink url="&url_example_rss20;"/>.</para>
 <informalexample>
-<programlisting>&lt;?xml version="1.0" encoding="iso-8859-1"?>
+<programlisting>&lt;?xml version="1.0" encoding="utf-8"?>
 &lt;rss version="2.0">
 &lt;channel>
   &lt;title>Sample Feed&lt;/title>
@@ -328,11 +337,11 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <computeroutput>u'Sample Feed'</computeroutput>
 &prompt;<userinput>d.feed.link</userinput>
 <computeroutput>u'http://example.org/'</computeroutput>
-&prompt;<userinput>d.feed.tagline</userinput>
-<computeroutput>u'For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;&lt;'</computeroutput>
-&prompt;<userinput>d.feed.modified</userinput>
+&prompt;<userinput>d.feed.description</userinput>
+<computeroutput>u'For documentation &lt;em&gt;only&lt;/em&gt;'</computeroutput>
+&prompt;<userinput>d.feed.date</userinput>
 <computeroutput>u'Sat, 07 Sep 2002 0:00:01 GMT'</computeroutput>
-&prompt;<userinput>d.feed.modified_parsed</userinput>
+&prompt;<userinput>d.feed.date_parsed</userinput>
 <computeroutput>(2002, 9, 7, 0, 0, 1, 5, 250, 0)</computeroutput></screen>
 </example>
 <para>The items are available in <varname>d.entries</varname>, which is a list.  You access items in the list in the same order in which they appear in the original feed, so the first item is available in <varname>d.entries[0]</varname>.</para>
@@ -344,18 +353,18 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <computeroutput>u'First item title'</computeroutput>
 &prompt;<userinput>d.entries[0].link</userinput>
 <computeroutput>u'http://example.org/item/1'</computeroutput>
-&prompt;<userinput>d.entries[0].summary</userinput>
+&prompt;<userinput>d.entries[0].description</userinput>
 <computeroutput>u'Watch out for &lt;span>nasty tricks&lt;/span>'</computeroutput>
-&prompt;<userinput>d.entries[0].modified</userinput>
+&prompt;<userinput>d.entries[0].date</userinput>
 <computeroutput>u'Thu, 05 Sep 2002 0:00:01 GMT'</computeroutput>
-&prompt;<userinput>d.entries[0].modified_parsed</userinput>
+&prompt;<userinput>d.entries[0].date_parsed</userinput>
 <computeroutput>(2002, 9, 5, 0, 0, 1, 3, 248, 0)</computeroutput>
 &prompt;<userinput>d.entries[0].id</userinput>
 <computeroutput>u'http://example.org/guid/1'</computeroutput></screen>
 </example>
 <tip>
 <title/>
-<para>You can also access data from &rss; feeds using &rss; terminology.  See <xref linkend="advanced.normalization"/> for details.</para>
+<para>You can also access data from &rss; feeds using &atom; terminology.  See <xref linkend="advanced.normalization"/> for details.</para>
 </tip>
 </section>
 <section id="basic.atom">
@@ -363,30 +372,49 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <title>Common &atom; Elements</title>
 <abstract>
 <title/>
-<para>&atom; feeds generally contain more information than &rss; feeds (because more elements are required), but the most commonly used elements are still title, link, tagline/summary, various dates, and ID.</para>
+<para>&atom; feeds generally contain more information than &rss; feeds (because more elements are required), but the most commonly used elements are still title, link, subtitle/description, various dates, and ID.</para>
 </abstract>
-<para>This sample &atom; feed is at <ulink url="&url_example_atom;"/>.</para>
+<para>This sample &atom; feed is at <ulink url="&url_example_atom10;"/>.</para>
 <informalexample>
-<programlisting>&lt;?xml version="1.0" encoding="iso-8859-1"?>
-&lt;!-- several elements omitted in this example -->
-&lt;feed version="0.3"
-      xmlns="http://purl.org/atom/ns#"
+<programlisting>&lt;?xml version="1.0" encoding="utf-8"?>
+&lt;feed xmlns="http://www.w3.org/2005/Atom"
       xml:base="http://example.org/"
       xml:lang="en">
-  &lt;title type="text/plain" mode="escaped">Sample Feed&lt;/title>
-  &lt;tagline type="text/html" mode="escaped"
+  &lt;title type="text">Sample Feed&lt;/title>
+  &lt;subtitle type="html">
     For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;
-  &lt;/tagline>
-  &lt;link rel="alternate" type="text/html" href="/"/>
-  &lt;id>tag:feedparser.org,2004-04-20:/docs/examples/atom.xml&lt;/id>
-  &lt;modified>2004-04-20T11:56:34Z&lt;/modified>
+  &lt;/subtitle>
+  &lt;link rel="alternate" href="/"/>
+  &lt;link rel="self"
+      type="application/atom+xml"
+      href="http://www.example.org/atom10.xml"/>
+  &lt;rights type="html">
+      &amp;lt;p>Copyright 2005, Mark Pilgrim&amp;lt;/p>&amp;lt;
+  &lt;/rights>
+  &lt;id>tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml&lt;/id>
+  &lt;generator
+      uri="http://example.org/generator/"
+      version="4.0">
+          Sample Toolkit
+  &lt;/generator>
+  &lt;updated>2005-11-09T11:56:34Z&lt;/updated>
   &lt;entry>
     &lt;title>First entry title&lt;/title>
-    &lt;link rel="alternate" type="text/html" href="/entry/3"/>
-    &lt;id>tag:feedparser.org,2004-04-20:/docs/examples/atom.xml:3&lt;/id>
-    &lt;created>2004-04-19T07:45:00Z&lt;/created>
-    &lt;issued>2004-04-20T00:23:47Z&lt;/issued>
-    &lt;modified>2004-04-20T11:56:34Z&lt;/modified>
+    &lt;link rel="alternate"
+        href="/entry/3"/>
+    &lt;link rel="related"
+        type="text/html"
+        href="http://search.example.com/"/>
+    &lt;link rel="via"
+        type="text/html"
+        href="http://toby.example.com/examples/atom10"/>
+    &lt;link rel="enclosure"
+        type="video/mpeg4"
+        href="http://www.example.com/movie.mp4"
+        length="42301"/>
+    &lt;id>tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml:3&lt;/id>
+    &lt;published>2005-11-09T00:23:47Z&lt;/published>
+    &lt;updated>2005-11-09T11:56:34Z&lt;/updated>
     &lt;summary type="text/plain" mode="escaped">Watch out for nasty tricks&lt;/summary>
     &lt;content type="application/xhtml+xml" mode="xml"
              xml:base="http://example.org/entry/3" xml:lang="en-US">
@@ -397,52 +425,47 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
   &lt;/entry>
 &lt;/feed></programlisting>
 </informalexample>
-<para><sgmltag>feed</sgmltag> elements are available in <varname>d.feed</varname>.</para>
+<para>The <sgmltag>feed</sgmltag> elements are available in <varname>d.feed</varname>.</para>
 <example id="example.atom.feed">
 <title>Accessing Common Feed Elements</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d.feed.title</userinput>
 <computeroutput>u'Sample feed'</computeroutput>
 &prompt;<userinput>d.feed.link</userinput>
 <computeroutput>u'http://example.org/'</computeroutput>
-&prompt;<userinput>d.feed.tagline</userinput>
+&prompt;<userinput>d.feed.subtitle</userinput>
 <computeroutput>u'For documentation &lt;em>only&lt;/em>'</computeroutput>
-&prompt;<userinput>d.feed.modified</userinput>
-<computeroutput>2004-04-20T11:56:34Z</computeroutput>
-&prompt;<userinput>d.feed.modified_parsed</userinput>
-<computeroutput>(2004, 4, 20, 11, 56, 34, 1, 111, 0)</computeroutput>
+&prompt;<userinput>d.feed.updated</userinput>
+<computeroutput>u'2005-11-09T11:56:34Z'</computeroutput>
+&prompt;<userinput>d.feed.updated_parsed</userinput>
+<computeroutput>(2005, 11, 9, 11, 56, 34, 2, 313, 0)</computeroutput>
 &prompt;<userinput>d.feed.id</userinput>
-<computeroutput>u'tag:feedparser.org,2004-04-20:/docs/examples/atom.xml'</computeroutput></screen>
+<computeroutput>u'tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml'</computeroutput></screen>
 </example>
 <para>Entries are available in <varname>d.entries</varname>, which is a list.  You access entries in the order in which they appear in the original feed, so the first entry is <varname>d.entries[0]</varname>.</para>
 <example id="example.atom.entry">
 <title>Accessing Common Entry Elements</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d.entries[0].title</userinput>
 <computeroutput>u'First entry title'</computeroutput>
 &prompt;<userinput>d.entries[0].link</userinput>
 <computeroutput>u'http://example.org/entry/3</computeroutput>
 &prompt;<userinput>d.entries[0].id</userinput>
-<computeroutput>u'tag:feedparser.org,2004-04-20:/docs/examples/atom.xml:3'</computeroutput>
-&prompt;<userinput>d.entries[0].created</userinput>
-<computeroutput>u'2004-04-19T07:45:00Z'</computeroutput>
-&prompt;<userinput>d.entries[0].created_parsed</userinput>
-<computeroutput>(2004, 4, 19, 7, 45, 0, 0, 110, 0)</computeroutput>
-&prompt;<userinput>d.entries[0].issued</userinput>
+<computeroutput>u'tag:feedparser.org,2004-04-20:/docs/examples/atom10.xml:3'</computeroutput>
+&prompt;<userinput>d.entries[0].published</userinput>
 <computeroutput>u'2004-04-20T00:23:47Z'</computeroutput>
-&prompt;<userinput>d.entries[0].issued_parsed</userinput>
+&prompt;<userinput>d.entries[0].published_parsed</userinput>
 <computeroutput>(2004, 4, 20, 0, 23, 47, 1, 111, 0)</computeroutput>
-&prompt;<userinput>d.entries[0].modified</userinput>
+&prompt;<userinput>d.entries[0].updated</userinput>
 <computeroutput>u'2004-04-20T11:56:34Z'</computeroutput>
-&prompt;<userinput>d.entries[0].modified_parsed</userinput>
+&prompt;<userinput>d.entries[0].updated_parsed</userinput>
 <computeroutput>(2004, 4, 20, 11, 56, 34, 1, 111, 0)</computeroutput>
 &prompt;<userinput>d.entries[0].summary</userinput>
 <computeroutput>u'Watch out for nasty tricks'</computeroutput>
 &prompt;<userinput>d.entries[0].content</userinput>
 <computeroutput>[{'type': u'application/xhtml+xml',
- 'mode': u'xml',
  'base': u'http://example.org/',
  'language': u'en',
  'value': u'&lt;div>Watch out for &lt;span>nasty tricks&lt;/span>&lt;/div>'}]</computeroutput></screen>
@@ -459,45 +482,39 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <title>Getting Detailed Information on &atom; Elements</title>
 <abstract>
 <title/>
-<para>Several &atom; elements share the &atom; content model: <sgmltag>title</sgmltag>, <sgmltag>tagline</sgmltag>, <sgmltag>info</sgmltag>, <sgmltag>copyright</sgmltag>, <sgmltag>summary</sgmltag>, and of course <sgmltag>content</sgmltag>.  &feedparser; captures all relevant metadata about these elements, most importantly the content type and the value.</para>
+<para>Several &atom; elements share the &atom; content model: <sgmltag>title</sgmltag>, <sgmltag>subtitle</sgmltag>, <sgmltag>info</sgmltag>, <sgmltag>copyright</sgmltag>, <sgmltag>summary</sgmltag>, and of course <sgmltag>content</sgmltag>.  &feedparser; captures all relevant metadata about these elements, most importantly the content type and the value.</para>
 </abstract>
 <example id="example.feed.detail">
 <title>Detailed Information on Feed Elements</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d.feed.title_detail</userinput>
 <computeroutput>{'type': u'text/plain',
- 'mode': u'escaped',
  'base': u'http://example.org/',
  'language': u'en',
  'value': u'Sample Feed'}</computeroutput>
-&prompt;<userinput>d.feed.tagline_detail</userinput>
+&prompt;<userinput>d.feed.subtitle_detail</userinput>
 <computeroutput>{'type': u'text/html',
- 'mode': u'escaped',
  'base': u'http://example.org/',
  'language': u'en',
  'value': u'For documentation &lt;em>only&lt;/em>'}</computeroutput>
 &prompt;<userinput>d.feed.info_detail</userinput>
 <computeroutput>{'type': u'application/xhtml+xml', 
- 'mode': u'xml',
  'base': u'http://example.org/', 
  'language': u'en',
  'value': u'&lt;div>&lt;p>This is an Atom syndication feed.&lt;/p>&lt;/div>'}</computeroutput>
 &prompt;<userinput>d.feed.copyright_detail</userinput>
 <computeroutput>{'type': u'text/html',
- 'mode': u'escaped',
  'base': u'http://example.org/',
  'language': u'en',
  'value': u'&lt;p>Copyright 2004, Mark Pilgrim&lt;/p>'}</computeroutput>
 &prompt;<userinput>d.entries[0].title_detail</userinput>
 <computeroutput>{'type': 'text/plain',
- 'mode': 'escaped',
  'base': u'http://example.org/',
  'language': u'en',
  'value': u'First entry title'}</computeroutput>
 &prompt;<userinput>d.entries[0].summary_detail</userinput>
 <computeroutput>{'type': u'text/plain',
- 'mode': u'escaped',
  'base': u'http://example.org/',
  'language': u'en',
  'value': u'Watch out for nasty tricks'}</computeroutput>
@@ -505,7 +522,6 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <computeroutput>1</computeroutput>
 &prompt;<userinput>d.entries[0].content[0]</userinput>
 <computeroutput>{'type': u'application/xhtml+xml',
- 'mode': u'xml',
  'base': u'http://example.org/entry/3',
  'language': u'en-US'
  'value': u'&lt;div>Watch out for &lt;span>nasty tricks&lt;/span>&lt;/div>'}</computeroutput></screen>
@@ -547,8 +563,8 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
  (u'dmoz', 'Top/Society/People/Personal_Homepages/P/')]</computeroutput></screen>
 </example>
 
-<para>Each item in an &rss; feed can have an <quote>enclosure</quote>, a delightful misnomer that is simply a link to an external file.  Some aggregators automatically download enclosures (although this technique has <ulink url="&url_enclosure_problems;">known problems</ulink>).  Some aggregators render each enclosure as a link.  Most aggregators ignore them.</para>
-<para>The &rss; specification states that there can be at most one enclosure per item.  However, because some feeds break this rule, &feedparser; captures all of them and makes them available as a list.</para>
+<para>Each item in an &rss; feed can have an <quote>enclosure</quote>, a delightful misnomer that is simply a link to an external file (usually a music or video file, but any type of file can be "enclosed").  Once rare, this element has recently gained popularity due to the rise of <ulink url="TODO">podcasting</ulink>.  Some clients may automatically download enclosures; others may simply render each enclosure as a link.</para>
+<para>The &rss; specification states that there can be at most one enclosure per item.  However, &atom; entries may contain more than one enclosure per entry, so &feedparser; captures all of them and makes them available as a list.</para>
 
 <example id="example.enclosure">
 <title>Accessing enclosures</title>
@@ -599,7 +615,7 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <example id="example.contributors">
 <title>Accessing contributors</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>e = d.entries[0]</userinput>
 &prompt;<userinput>len(e.contributors)</userinput>
 <computeroutput>2</computeroutput>
@@ -613,12 +629,13 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
  'email': u'sam@example.org'}</computeroutput></screen>
 </example>
 
-<para>Besides an alternate link, each &atom; feed or entry can have an arbitrary number of other links.  Each link is distinguished by its <sgmltag class="attribute">type</sgmltag> attribute, which is a MIME-style content type, and its <sgmltag class="attribute">rel</sgmltag> attribute.  Possible <sgmltag class="attribute">rel</sgmltag> values and their meanings are <ulink url="&url_linktagmeaning;">documented on the &atom; project site</ulink>.</para>
+<para>Besides an alternate link, each &atom; feed or entry can have an arbitrary number of other links.  Each link is distinguished by its <sgmltag class="attribute">type</sgmltag> attribute, which is a MIME-style content type, and its <sgmltag class="attribute">rel</sgmltag> attribute.</para>
 
+<!-- TODO: fix this example to match Atom 1.0 example feed -->
 <example id="example.links">
 <title>Accessing multiple links</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>e = d.entries[0]</userinput>
 &prompt;<userinput>len(e.links)</userinput>
 <computeroutput>3</computeroutput>
@@ -640,7 +657,7 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 
 <note>
 <title/>
-<para>For more examples of accessing &atom; elements, see the annotated example <xref linkend="annotated.atom"/>.</para>
+<para>For more examples of accessing &atom; elements, see the annotated examples <xref linkend="annotated.atom10"/> and <xref linkend="annotated.atom03"/>.</para>
 </note>
 
 </section>
@@ -658,7 +675,7 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <example id="example.existence">
 <title>Testing if elements are present</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d.feed.has_key('title')</userinput>
 <computeroutput>True</computeroutput>
 &prompt;<userinput>d.feed.has_key('ttl')</userinput>
@@ -686,10 +703,10 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <title>Date Parsing</title>
 <para>The following elements are parsed as dates:</para>
 <itemizedlist>
-<listitem><para><xref linkend="reference.feed.modified"/> is parsed into <xref linkend="reference.feed.modified_parsed"/>.</para></listitem>
+<listitem><para><xref linkend="reference.feed.updated"/> is parsed into <xref linkend="reference.feed.updated_parsed"/>.</para></listitem>
 <listitem><para><xref linkend="reference.entry.issued"/> is parsed into <xref linkend="reference.entry.issued_parsed"/>.</para></listitem>
 <listitem><para><xref linkend="reference.entry.created"/> is parsed into <xref linkend="reference.entry.created_parsed"/>.</para></listitem>
-<listitem><para><xref linkend="reference.entry.modified"/> is parsed into <xref linkend="reference.entry.modified_parsed"/>.</para></listitem>
+<listitem><para><xref linkend="reference.entry.updated"/> is parsed into <xref linkend="reference.entry.updated_parsed"/>.</para></listitem>
 <listitem><para><xref linkend="reference.entry.expired"/> is parsed into <xref linkend="reference.entry.expired_parsed"/>.</para></listitem>
 </itemizedlist>
 
@@ -911,7 +928,7 @@ d = feedparser.parse(...)</programlisting>
 <para>These elements are sanitized by default:</para>
 <itemizedlist>
 <listitem><para><xref linkend="reference.feed.title"/></para></listitem>
-<listitem><para><xref linkend="reference.feed.tagline"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.subtitle"/></para></listitem>
 <listitem><para><xref linkend="reference.feed.info"/></para></listitem>
 <listitem><para><xref linkend="reference.feed.copyright"/></para></listitem>
 <listitem><para><xref linkend="reference.entry.title"/></para></listitem>
@@ -1142,7 +1159,7 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <example id="example.atom.as.rss">
 <title>Accessing an &atom; feed as an &rss; feed</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d['channel']['title']</userinput>
 <computeroutput>u'Sample Feed'</computeroutput>
 &prompt;<userinput>d['channel']['link']</userinput>
@@ -1166,9 +1183,8 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <title>Accessing an &rss; feed as an &atom; feed</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &example_rss20;
-&prompt;<userinput>d.feed.tagline_detail</userinput>
+&prompt;<userinput>d.feed.subtitle_detail</userinput>
 <computeroutput>{'type': 'text/html',
- 'mode': 'escaped',
  'base': '&url_example_rss20;',
  'language': None,
  'value': u'For documentation &lt;em&gt;only&lt;/em&gt;'}</computeroutput>
@@ -1181,11 +1197,10 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
   'href': u'http://example.org/item/1'}]</computeroutput>
 &prompt;<userinput>e.summary_detail</userinput>
 <computeroutput>{'type': 'text/html',
- 'mode': 'escaped',
  'base': '&url_example_rss20;',
  'language': u'en',
  'value': u'Watch out for &lt;span&gt;nasty tricks&lt;/span&gt;'}</computeroutput>
-&prompt;<userinput>e.modified_parsed</userinput>
+&prompt;<userinput>e.updated_parsed</userinput>
 <computeroutput>(2002, 9, 5, 0, 0, 1, 3, 248, 0)</computeroutput></screen>
 </example>
 <note>
@@ -1465,7 +1480,7 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 
 <itemizedlist>
 <listitem><para><xref linkend="reference.feed.title"/> (<xref linkend="reference.feed.title_detail.value"/>)</para></listitem>
-<listitem><para><xref linkend="reference.feed.tagline"/> (<xref linkend="reference.feed.tagline_detail.value"/>))</para></listitem>
+<listitem><para><xref linkend="reference.feed.subtitle"/> (<xref linkend="reference.feed.subtitle_detail.value"/>))</para></listitem>
 <listitem><para><xref linkend="reference.feed.info"/> (<xref linkend="reference.feed.info_detail.value"/>)</para></listitem>
 <listitem><para><xref linkend="reference.feed.copyright"/> (<xref linkend="reference.feed.copyright_detail.value"/>)</para></listitem>
 <listitem><para><xref linkend="reference.entry.title"/> (<xref linkend="reference.entry.title_detail.value"/>)</para></listitem>
@@ -1614,9 +1629,9 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <title>Feed Type and Version Detection</title>
 <example id="example.version">
 <title>Accessing feed version</title>
-<screen>&example_atom;
+<screen>&example_atom10;
 &prompt;<userinput>d.version</userinput>
-<computeroutput>'atom03'</computeroutput>
+<computeroutput>'atom10'</computeroutput>
 &example_rss20;
 &prompt;<userinput>d.version</userinput>
 <computeroutput>'rss20'</computeroutput>
@@ -1648,7 +1663,7 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <para>In &xml;, the character encoding is optional and may be given in the &xml; declaration in the first line of the document, like this:</para>
 
 <informalexample>
-<programlisting>&lt;xml version="1.0" encoding="iso-8859-1"?></programlisting>
+<programlisting>&lt;xml version="1.0" encoding="utf-8"?></programlisting>
 </informalexample>
 
 <para>If no encoding is given, XML supports the use of a Byte Order Mark to identify the document as some flavor of UTF-32, UTF-16, or UTF-8.  <ulink url="&url_sectionf;">Section F of the &xml; specification</ulink> outlines the process for determining the character encoding based on unique properties of the Byte Order Mark in the first two to four bytes of the document.</para>
@@ -1725,7 +1740,7 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <example id="example.bozo">
 <title>Detecting a non-well-formed feed</title>
 <screen>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d.bozo</userinput>
 <computeroutput>0</computeroutput>
 &prompt;<userinput>d = feedparser.parse('<ulink url="http://feedparser.org/tests/illformed/rss/aaa_illformed.xml"/>')</userinput>
@@ -1761,10 +1776,10 @@ It is the original base &uri; for this value, as specified by the element's <sgm
 <example id="example.etags">
 <title>Using ETags to reduce bandwidth</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d.etag</userinput>
 <computeroutput>'"6c132-941-ad7e3080"'</computeroutput>
-&prompt;<userinput>d2 = feedparser.parse('<ulink url="&url_example_atom;"/>', etag=d.etag)</userinput>
+&prompt;<userinput>d2 = feedparser.parse('<ulink url="&url_example_atom10;"/>', etag=d.etag)</userinput>
 &prompt;<userinput>d2.status</userinput>
 <computeroutput>304</computeroutput>
 &prompt;<userinput>d2.feed</userinput>
@@ -1781,10 +1796,10 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <example id="example.lastmodified">
 <title>Using Last-Modified headers to reduce bandwidth</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom10;
 &prompt;<userinput>d.modified</userinput>
 <computeroutput>(2004, 6, 11, 23, 0, 34, 4, 163, 0)</computeroutput>
-&prompt;<userinput>d2 = feedparser.parse('<ulink url="&url_example_atom;"/>', modified=d.modified)</userinput>
+&prompt;<userinput>d2 = feedparser.parse('<ulink url="&url_example_atom10;"/>', modified=d.modified)</userinput>
 &prompt;<userinput>d2.status</userinput>
 <computeroutput>304</computeroutput>
 &prompt;<userinput>d2.feed</userinput>
@@ -1830,7 +1845,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <example id="example.useragent">
 <title>Customizing the &useragent;</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_atom;"/>', \</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_atom10;"/>', \</userinput>
 <prompt>... </prompt>    <userinput>    agent='MyApp/1.0 +http://example.com/')</userinput></screen>
 </example>
 
@@ -1840,7 +1855,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <title>Customizing the &useragent; permanently</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &prompt;<userinput>feedparser.USER_AGENT = "MyApp/1.0 +http://example.com/"</userinput>
-&example_atom;</screen>
+&example_atom10;</screen>
 </example>
 
 <para>&feedparser; also lets you set the referrer when you download a feed from a web server.  This is discouraged, because it is a violation of <ulink url="&url_referrer_rfc2616;">RFC 2616</ulink>.  The default behavior is to send a blank referrer, and you should never need to override this.</para>
@@ -1848,7 +1863,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <example id="example.referrer">
 <title>Customizing the referrer</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_atom;"/>', \</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_atom10;"/>', \</userinput>
 <prompt>... </prompt>    <userinput>referrer='http://example.com/')</userinput></screen>
 </example>
 
@@ -1873,7 +1888,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 &prompt;<userinput>d.status</userinput>
 <computeroutput>302</computeroutput>
 &prompt;<userinput>d.url</userinput>
-<computeroutput>'&url_example_atom;'</computeroutput>
+<computeroutput>'&url_example_atom10;'</computeroutput>
 &prompt;<userinput>d.feed.title</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
@@ -1889,7 +1904,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 &prompt;<userinput>d.status</userinput>
 <computeroutput>301</computeroutput>
 &prompt;<userinput>d.url</userinput>
-<computeroutput>'&url_example_atom;'</computeroutput>
+<computeroutput>'&url_example_atom10;'</computeroutput>
 &prompt;<userinput>d.feed.title</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
@@ -2005,7 +2020,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <example id="example.http.headers">
 <title>Accessing other &http; headers</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&example_atom;
+&example_atom03;
 &prompt;<userinput>d.headers</userinput>
 <computeroutput>{'date': 'Fri, 11 Jun 2004 23:57:50 GMT',
  'server': 'Apache/2.0.49 (Debian GNU/Linux)',
@@ -2025,56 +2040,111 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <chapter id="annotated">
 <?dbhtml filename="annotated-examples.html"?>
 <title>Annotated Examples</title>
-<section id="annotated.rss10">
-<?dbhtml filename="annotated-rss10.html"?>
+
+<section id="annotated.atom10">
+<?dbhtml filename="annotated-atom10.html"?>
 <sectioninfo>
 <abstract>
 <title/>
-<para>This is a sample &rss; 1.0 feed, annotated with links that show how each value can be accessed once the feed is parsed.</para>
+<para>This is a sample &atom; 1.0 feed, annotated with links that show how each value can be accessed once the feed is parsed.</para>
 </abstract>
 </sectioninfo>
-<title>&rss; 1.0</title>
+<title>&atom; 1.0</title>
 &feed_disclaimer;
-<example id="example.annotated.rss10">
-<title>Annotated &rss; 1.0 feed</title>
+<example id="example.annotated.atom10">
+<title>Annotated &atom; 1.0 feed</title>
+<programlisting>TODO</programlisting>
+</example>
+</section>
+
+<section id="annotated.atom03">
+<?dbhtml filename="annotated-atom03.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>This is a sample &atom; 0.3 feed, annotated with links that show how each value can be accessed once the feed is parsed.</para>
+</abstract>
+</sectioninfo>
+<title>&atom; 0.3</title>
+&feed_disclaimer;
+<example id="example.annotated.atom03">
+<title>Annotated &atom; 0.3 feed</title>
 <programlisting>&lt;?xml version="1.0" encoding="<link linkend="reference.encoding">utf-8</link>"?>
-&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:dc="http://purl.org/dc/elements/1.1/"
-  xmlns:admin="http://webns.net/mvcb/"
-  xmlns:content="http://purl.org/rss/1.0/modules/content/"
-  xmlns:cc="http://web.resource.org/cc/"
-  xmlns="<link linkend="reference.version">http://purl.org/rss/1.0/</link>">
-&lt;channel rdf:about="http://www.example.org/index.rdf">
-  &lt;title><link linkend="reference.feed.title">Sample Feed</link>&lt;/title>
-  &lt;link><link linkend="reference.feed.link">http://www.example.org/</link>&lt;/link>
-  &lt;description><link linkend="reference.feed.tagline">For documentation only</link>&lt;/description>
-  &lt;dc:language><link linkend="reference.feed.language">en</link>&lt;/dc:language>
-  &lt;cc:license rdf:resource="<link linkend="reference.feed.license">http://web.resource.org/cc/PublicDomain</link>"/>
-  &lt;dc:creator><link linkend="reference.feed.author_detail.name">Mark Pilgrim</link> (<link linkend="reference.feed.author_detail.email">mark@example.org</link>)&lt;/dc:creator>
-  &lt;dc:date><link linkend="reference.feed.modified">2004-06-04T17:40:33-05:00</link>&lt;/dc:date>
-  &lt;admin:generatorAgent rdf:resource="<link linkend="reference.feed.generator_detail.url">http://www.exampletoolkit.org/</link>"/>
-  &lt;admin:errorReportsTo rdf:resource="<link linkend="reference.feed.errorreportsto">mailto:mark@example.org</link>"/>
-  &lt;items>
-    &lt;rdf:Seq>
-      &lt;rdf:li rdf:resource="http://www.example.org/1" />
-    &lt;/rdf:Seq>
-  &lt;/items>
-&lt;/channel>
-&lt;item rdf:about="<link linkend="reference.entry.id">http://www.example.org/1</link>">
-  &lt;title><link linkend="reference.entry.title">First of all</link>&lt;/title>
-  &lt;link><link linkend="reference.entry.link">http://example.org/archives/2002/09/04.html#first_of_all</link>&lt;/link>
-  &lt;description>
-    <link linkend="reference.entry.summary">Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.</link>
-  &lt;/description>
-  &lt;dc:subject><link linkend="reference.entry.category">Quotes</link>&lt;/dc:subject>
-  &lt;dc:date><link linkend="reference.entry.modified">2004-05-30T14:23:54-06:00</link>&lt;/dc:date>
-  &lt;content:encoded>&lt;![CDATA[
-<link linkend="reference.entry.content">    &lt;cite>Ian Hickson&lt;/cite>: &lt;q>&lt;a href="http://ln.hixie.ch/?start=1030823786&amp;count=1">
-    Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.
-    &lt;/a>&lt;/q>]]&gt;</link>
-  &lt;/content:encoded>
-&lt;/item>
-&lt;/rdf:RDF></programlisting>
+&lt;feed version="<link linkend="reference.version">0.3</link>"
+      xmlns="http://purl.org/atom/ns#"
+      xml:base="http://example.org/"
+      xml:lang="en">
+  &lt;title type="<link linkend="reference.feed.title_detail.type">text/plain</link>"
+         mode="escaped">
+    <link linkend="reference.feed.title">Sample Feed</link>
+  &lt;/title>
+  &lt;tagline type="<link linkend="reference.feed.subtitle_detail.type">text/html</link>"
+           mode="escaped">
+    <link linkend="reference.feed.subtitle">For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;</link>
+  &lt;/tagline>
+  &lt;link rel="<link linkend="reference.feed.links.rel">alternate</link>"
+        type="<link linkend="reference.feed.links.type">text/html</link>"
+        href="<link linkend="reference.feed.links.href">/</link>"/>
+  &lt;copyright type="<link linkend="reference.feed.copyright_detail.type">text/html</link>"
+             mode="escaped">
+    <link linkend="reference.feed.copyright">&amp;lt;p>Copyright 2004, Mark Pilgrim&amp;lt;/p>&amp;lt;</link>
+  &lt;/copyright>
+  &lt;generator url="<link linkend="reference.feed.generator_detail.url">http://example.org/generator/</link>"
+             version="<link linkend="reference.feed.generator_detail.version">3.0</link>">
+    <link linkend="reference.feed.generator">Sample Toolkit</link>
+  &lt;/generator>
+  &lt;id><link linkend="reference.feed.id">tag:feedparser.org,2004-04-20:/docs/examples/atom03.xml</link>&lt;/id>
+  &lt;modified><link linkend="reference.feed.updated">2004-04-20T11:56:34Z</link>&lt;/modified>
+  &lt;info type="<link linkend="reference.feed.info_detail.type">application/xhtml+xml</link>"
+        mode="xml">
+    <link linkend="reference.feed.info">&lt;div xmlns="http://www.w3.org/1999/xhtml">&lt;p>This is an Atom syndication feed.&lt;/p>&lt;/div></link>
+  &lt;/info>
+  &lt;entry>
+    &lt;title><link linkend="reference.entry.title">First entry title</link>&lt;/title>
+    &lt;link rel="<link linkend="reference.entry.links.rel">alternate</link>"
+          type="<link linkend="reference.entry.links.type">text/html</link>"
+          href="<link linkend="reference.entry.links.href">/entry/3</link>"/>
+    &lt;link rel="<link linkend="reference.entry.links.rel">service.edit</link>"
+          type="<link linkend="reference.entry.links.type">application/atom+xml</link>"
+          title="<link linkend="reference.entry.links.title">Atom API entrypoint to edit this entry</link>"
+          href="<link linkend="reference.entry.links.href">/api/edit/3</link>"/>
+    &lt;link rel="<link linkend="reference.entry.links.rel">service.post</link>"
+          type="<link linkend="reference.entry.links.type">application/atom+xml</link>"
+          title="<link linkend="reference.entry.links.title">Atom API entrypoint to add comments to this entry</link>"
+          href="<link linkend="reference.entry.links.href">/api/comment/3</link>"/>
+    &lt;id><link linkend="reference.entry.id">tag:feedparser.org,2004-04-20:/docs/examples/atom03.xml:3</link>&lt;/id>
+    &lt;created><link linkend="reference.entry.created">2004-04-19T07:45:00Z</link>&lt;/created>
+    &lt;issued><link linkend="reference.entry.issued">2004-04-20T00:23:47Z</link>&lt;/issued>
+    &lt;modified><link linkend="reference.entry.updated">2004-04-20T11:56:34Z</link>&lt;/modified>
+    &lt;author>
+      &lt;name><link linkend="reference.entry.author_detail.name">Mark Pilgrim</link>&lt;/name>
+      &lt;url><link linkend="reference.entry.author_detail.url">http://diveintomark.org/</link>&lt;/url>
+      &lt;email><link linkend="reference.entry.author_detail.email">mark@example.org</link>&lt;/email>
+    &lt;/author>
+    &lt;contributor>
+      &lt;name><link linkend="reference.entry.contributors.name">Joe</link>&lt;/name>
+      &lt;url><link linkend="reference.entry.contributors.url">http://example.org/joe/</link>&lt;/url>
+      &lt;email><link linkend="reference.entry.contributors.email">joe@example.org</link>&lt;/email>
+    &lt;/contributor>
+    &lt;contributor>
+      &lt;name><link linkend="reference.entry.contributors.name">Sam</link>&lt;/name>
+      &lt;url><link linkend="reference.entry.contributors.url">http://example.org/sam/</link>&lt;/url>
+      &lt;email><link linkend="reference.entry.contributors.email">sam@example.org</link>&lt;/email>
+    &lt;/contributor>
+    &lt;summary type="<link linkend="reference.entry.summary_detail.type">text/plain</link>"
+             mode="escaped">
+      <link linkend="reference.entry.summary">Watch out for nasty tricks</link>
+    &lt;/summary>
+    &lt;content type="<link linkend="reference.entry.content.type">application/xhtml+xml</link>"
+              mode="xml"
+              xml:base="<link linkend="reference.entry.content.base">http://example.org/entry/3</link>"
+              xml:lang="<link linkend="reference.entry.content.language">en-US</link>">
+<link linkend="reference.entry.content.value">      &lt;div xmlns="http://www.w3.org/1999/xhtml">Watch out for
+      &lt;span style="background-image: url(javascript:window.location='http://example.org/')">
+      nasty tricks&lt;/span>&lt;/div></link>
+    &lt;/content>
+  &lt;/entry>
+&lt;/feed></programlisting>
 </example>
 </section>
 
@@ -2090,17 +2160,17 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 &feed_disclaimer;
 <example id="example.annotated.rss20">
 <title>Annotated &rss; 2.0 feed</title>
-<programlisting>&lt;?xml version="1.0" encoding="<link linkend="reference.encoding">iso-8859-1</link>"?>
+<programlisting>&lt;?xml version="1.0" encoding="<link linkend="reference.encoding">utf-8</link>"?>
 &lt;rss version="<link linkend="reference.version">2.0</link>">
 &lt;channel>
   &lt;title><link linkend="reference.feed.title">Sample Feed</link>&lt;/title>
-  &lt;description><link linkend="reference.feed.tagline">For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;</link>&lt;/description>
+  &lt;description><link linkend="reference.feed.subtitle">For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;</link>&lt;/description>
   &lt;link><link linkend="reference.feed.link">http://example.org/</link>&lt;/link>
   &lt;language><link linkend="reference.feed.language">en</link>&lt;/language>
   &lt;copyright><link linkend="reference.feed.copyright">Copyright 2004, Mark Pilgrim</link>&lt;/copyright>
   &lt;managingEditor><link linkend="reference.feed.author">editor@example.org</link>&lt;/managingEditor>
   &lt;webMaster><link linkend="reference.feed.publisher">webmaster@example.org</link>&lt;/webMaster>
-  &lt;pubDate><link linkend="reference.feed.modified">Sat, 07 Sep 2002 0:00:01 GMT</link>&lt;/pubDate>
+  &lt;pubDate><link linkend="reference.feed.updated">Sat, 07 Sep 2002 0:00:01 GMT</link>&lt;/pubDate>
   &lt;category><link linkend="reference.feed.category">Examples</link>&lt;/category>
   &lt;generator><link linkend="reference.feed.generator">Sample Toolkit</link>&lt;/generator>
   &lt;docs><link linkend="reference.feed.docs">http://feedvalidator.org/docs/rss2.html</link>&lt;/docs>
@@ -2136,7 +2206,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
     &lt;comments><link linkend="reference.entry.comments">http://example.org/comments/1</link>&lt;/comments>
     &lt;enclosure url="<link linkend="reference.entry.enclosure.url">http://example.org/audio/demo.mp3</link>" length="<link linkend="reference.entry.enclosure.length">1069871</link>" type="<link linkend="reference.entry.enclosure.type">audio/mpeg</link>"/>
     &lt;guid><link linkend="reference.entry.id">http://example.org/guid/1</link>&lt;/guid>
-    &lt;pubDate><link linkend="reference.entry.modified">Thu, 05 Sep 2002 0:00:01 GMT</link>&lt;/pubDate>
+    &lt;pubDate><link linkend="reference.entry.updated">Thu, 05 Sep 2002 0:00:01 GMT</link>&lt;/pubDate>
     &lt;source url="<link linkend="reference.entry.source.url">http://other.example.org/rss.xml</link>"><link linkend="reference.entry.source.value">Other RSS feed</link>&lt;/source>
   &lt;/item>
 &lt;/channel>
@@ -2165,11 +2235,11 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 &lt;channel>
   &lt;title><link linkend="reference.feed.title">Sample Feed</link>&lt;/title>
   &lt;link><link linkend="reference.feed.link">http://example.org/</link>&lt;/link>
-  &lt;description><link linkend="reference.feed.tagline">For documentation only</link>&lt;/description>
+  &lt;description><link linkend="reference.feed.subtitle">For documentation only</link>&lt;/description>
   &lt;dc:language><link linkend="reference.feed.language">en-us</link>&lt;/dc:language>
   &lt;dc:creator><link linkend="reference.feed.author_detail.name">Mark Pilgrim</link> (<link linkend="reference.feed.author_detail.email">mark@example.org</link>)&lt;/dc:creator>
   &lt;dc:rights><link linkend="reference.feed.copyright">Copyright 2004 Mark Pilgrim</link>&lt;/dc:rights>
-  &lt;dc:date><link linkend="reference.feed.modified">2004-06-04T17:40:33-05:00</link>&lt;/dc:date>
+  &lt;dc:date><link linkend="reference.feed.updated">2004-06-04T17:40:33-05:00</link>&lt;/dc:date>
   &lt;admin:generatorAgent rdf:resource="<link linkend="reference.feed.generator_detail.url">http://www.exampletoolkit.org/</link>"/>
   &lt;admin:errorReportsTo rdf:resource="<link linkend="reference.feed.errorreportsto">mailto:mark@example.org</link>"/>
 
@@ -2181,7 +2251,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
       <link linkend="reference.entry.summary">Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.</link>
     &lt;/description>
     &lt;dc:subject><link linkend="reference.entry.category">Quotes</link>&lt;/dc:subject>
-    &lt;dc:date><link linkend="reference.entry.modified">2002-09-04T13:54:20-05:00</link>&lt;/dc:date>
+    &lt;dc:date><link linkend="reference.entry.updated">2002-09-04T13:54:20-05:00</link>&lt;/dc:date>
     &lt;content:encoded>&lt;![CDATA[
 <link linkend="reference.entry.content.value">      &lt;cite>Ian Hickson&lt;/cite>: &lt;q>&lt;a href="http://ln.hixie.ch/?start=1030823786&amp;amp;count=1?>
       Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.
@@ -2194,96 +2264,59 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </example>
 </section>
 
-<section id="annotated.atom">
-<?dbhtml filename="annotated-atom.html"?>
+<section id="annotated.rss10">
+<?dbhtml filename="annotated-rss10.html"?>
 <sectioninfo>
 <abstract>
 <title/>
-<para>This is a sample &atom; feed, annotated with links that show how each value can be accessed once the feed is parsed.</para>
+<para>This is a sample &rss; 1.0 feed, annotated with links that show how each value can be accessed once the feed is parsed.</para>
 </abstract>
 </sectioninfo>
-<title>Atom</title>
+<title>&rss; 1.0</title>
 &feed_disclaimer;
-<example id="example.annotated.atom">
-<title>Annotated &atom; feed</title>
-<programlisting>&lt;?xml version="1.0" encoding="<link linkend="reference.encoding">iso-8859-1</link>"?>
-&lt;feed version="<link linkend="reference.version">0.3</link>"
-      xmlns="http://purl.org/atom/ns#"
-      xml:base="http://example.org/"
-      xml:lang="en">
-  &lt;title type="<link linkend="reference.feed.title_detail.type">text/plain</link>"
-         mode="<link linkend="reference.feed.title_detail.mode">escaped</link>">
-    <link linkend="reference.feed.title">Sample Feed</link>
-  &lt;/title>
-  &lt;tagline type="<link linkend="reference.feed.tagline_detail.type">text/html</link>"
-           mode="<link linkend="reference.feed.tagline_detail.mode">escaped</link>">
-    <link linkend="reference.feed.tagline">For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;</link>
-  &lt;/tagline>
-  &lt;link rel="<link linkend="reference.feed.links.rel">alternate</link>"
-        type="<link linkend="reference.feed.links.type">text/html</link>"
-        href="<link linkend="reference.feed.links.href">/</link>"/>
-  &lt;copyright type="<link linkend="reference.feed.copyright_detail.type">text/html</link>"
-             mode="<link linkend="reference.feed.copyright_detail.mode">escaped</link>">
-    <link linkend="reference.feed.copyright">&amp;lt;p>Copyright 2004, Mark Pilgrim&amp;lt;/p>&amp;lt;</link>
-  &lt;/copyright>
-  &lt;generator url="<link linkend="reference.feed.generator_detail.url">http://example.org/generator/</link>"
-             version="<link linkend="reference.feed.generator_detail.version">3.0</link>">
-    <link linkend="reference.feed.generator">Sample Toolkit</link>
-  &lt;/generator>
-  &lt;id><link linkend="reference.feed.id">tag:feedparser.org,2004-04-20:/docs/examples/atom.xml</link>&lt;/id>
-  &lt;modified><link linkend="reference.feed.modified">2004-04-20T11:56:34Z</link>&lt;/modified>
-  &lt;info type="<link linkend="reference.feed.info_detail.type">application/xhtml+xml</link>"
-        mode="<link linkend="reference.feed.info_detail.mode">xml</link>">
-    <link linkend="reference.feed.info">&lt;div xmlns="http://www.w3.org/1999/xhtml">&lt;p>This is an Atom syndication feed.&lt;/p>&lt;/div></link>
-  &lt;/info>
-  &lt;entry>
-    &lt;title><link linkend="reference.entry.title">First entry title</link>&lt;/title>
-    &lt;link rel="<link linkend="reference.entry.links.rel">alternate</link>"
-          type="<link linkend="reference.entry.links.type">text/html</link>"
-          href="<link linkend="reference.entry.links.href">/entry/3</link>"/>
-    &lt;link rel="<link linkend="reference.entry.links.rel">service.edit</link>"
-          type="<link linkend="reference.entry.links.type">application/atom+xml</link>"
-          title="<link linkend="reference.entry.links.title">Atom API entrypoint to edit this entry</link>"
-          href="<link linkend="reference.entry.links.href">/api/edit/3</link>"/>
-    &lt;link rel="<link linkend="reference.entry.links.rel">service.post</link>"
-          type="<link linkend="reference.entry.links.type">application/atom+xml</link>"
-          title="<link linkend="reference.entry.links.title">Atom API entrypoint to add comments to this entry</link>"
-          href="<link linkend="reference.entry.links.href">/api/comment/3</link>"/>
-    &lt;id><link linkend="reference.entry.id">tag:feedparser.org,2004-04-20:/docs/examples/atom.xml:3</link>&lt;/id>
-    &lt;created><link linkend="reference.entry.created">2004-04-19T07:45:00Z</link>&lt;/created>
-    &lt;issued><link linkend="reference.entry.issued">2004-04-20T00:23:47Z</link>&lt;/issued>
-    &lt;modified><link linkend="reference.entry.modified">2004-04-20T11:56:34Z</link>&lt;/modified>
-    &lt;author>
-      &lt;name><link linkend="reference.entry.author_detail.name">Mark Pilgrim</link>&lt;/name>
-      &lt;url><link linkend="reference.entry.author_detail.url">http://diveintomark.org/</link>&lt;/url>
-      &lt;email><link linkend="reference.entry.author_detail.email">mark@example.org</link>&lt;/email>
-    &lt;/author>
-    &lt;contributor>
-      &lt;name><link linkend="reference.entry.contributors.name">Joe</link>&lt;/name>
-      &lt;url><link linkend="reference.entry.contributors.url">http://example.org/joe/</link>&lt;/url>
-      &lt;email><link linkend="reference.entry.contributors.email">joe@example.org</link>&lt;/email>
-    &lt;/contributor>
-    &lt;contributor>
-      &lt;name><link linkend="reference.entry.contributors.name">Sam</link>&lt;/name>
-      &lt;url><link linkend="reference.entry.contributors.url">http://example.org/sam/</link>&lt;/url>
-      &lt;email><link linkend="reference.entry.contributors.email">sam@example.org</link>&lt;/email>
-    &lt;/contributor>
-    &lt;summary type="<link linkend="reference.entry.summary_detail.type">text/plain</link>"
-             mode="<link linkend="reference.entry.summary_detail.mode">escaped</link>">
-      <link linkend="reference.entry.summary">Watch out for nasty tricks</link>
-    &lt;/summary>
-    &lt;content type="<link linkend="reference.entry.content.type">application/xhtml+xml</link>"
-              mode="<link linkend="reference.entry.content.mode">xml</link>"
-              xml:base="<link linkend="reference.entry.content.base">http://example.org/entry/3</link>"
-              xml:lang="<link linkend="reference.entry.content.language">en-US</link>">
-<link linkend="reference.entry.content.value">      &lt;div xmlns="http://www.w3.org/1999/xhtml">Watch out for
-      &lt;span style="background-image: url(javascript:window.location='http://example.org/')">
-      nasty tricks&lt;/span>&lt;/div></link>
-    &lt;/content>
-  &lt;/entry>
-&lt;/feed></programlisting>
+<example id="example.annotated.rss10">
+<title>Annotated &rss; 1.0 feed</title>
+<programlisting>&lt;?xml version="1.0" encoding="<link linkend="reference.encoding">utf-8</link>"?>
+&lt;rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:admin="http://webns.net/mvcb/"
+  xmlns:content="http://purl.org/rss/1.0/modules/content/"
+  xmlns:cc="http://web.resource.org/cc/"
+  xmlns="<link linkend="reference.version">http://purl.org/rss/1.0/</link>">
+&lt;channel rdf:about="http://www.example.org/index.rdf">
+  &lt;title><link linkend="reference.feed.title">Sample Feed</link>&lt;/title>
+  &lt;link><link linkend="reference.feed.link">http://www.example.org/</link>&lt;/link>
+  &lt;description><link linkend="reference.feed.subtitle">For documentation only</link>&lt;/description>
+  &lt;dc:language><link linkend="reference.feed.language">en</link>&lt;/dc:language>
+  &lt;cc:license rdf:resource="<link linkend="reference.feed.license">http://web.resource.org/cc/PublicDomain</link>"/>
+  &lt;dc:creator><link linkend="reference.feed.author_detail.name">Mark Pilgrim</link> (<link linkend="reference.feed.author_detail.email">mark@example.org</link>)&lt;/dc:creator>
+  &lt;dc:date><link linkend="reference.feed.updated">2004-06-04T17:40:33-05:00</link>&lt;/dc:date>
+  &lt;admin:generatorAgent rdf:resource="<link linkend="reference.feed.generator_detail.url">http://www.exampletoolkit.org/</link>"/>
+  &lt;admin:errorReportsTo rdf:resource="<link linkend="reference.feed.errorreportsto">mailto:mark@example.org</link>"/>
+  &lt;items>
+    &lt;rdf:Seq>
+      &lt;rdf:li rdf:resource="http://www.example.org/1" />
+    &lt;/rdf:Seq>
+  &lt;/items>
+&lt;/channel>
+&lt;item rdf:about="<link linkend="reference.entry.id">http://www.example.org/1</link>">
+  &lt;title><link linkend="reference.entry.title">First of all</link>&lt;/title>
+  &lt;link><link linkend="reference.entry.link">http://example.org/archives/2002/09/04.html#first_of_all</link>&lt;/link>
+  &lt;description>
+    <link linkend="reference.entry.summary">Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.</link>
+  &lt;/description>
+  &lt;dc:subject><link linkend="reference.entry.category">Quotes</link>&lt;/dc:subject>
+  &lt;dc:date><link linkend="reference.entry.updated">2004-05-30T14:23:54-06:00</link>&lt;/dc:date>
+  &lt;content:encoded>&lt;![CDATA[
+<link linkend="reference.entry.content">    &lt;cite>Ian Hickson&lt;/cite>: &lt;q>&lt;a href="http://ln.hixie.ch/?start=1030823786&amp;count=1">
+    Americans are fat. Smokers are stupid. People who don't speak Perl are irrelevant.
+    &lt;/a>&lt;/q>]]&gt;</link>
+  &lt;/content:encoded>
+&lt;/item>
+&lt;/rdf:RDF></programlisting>
 </example>
 </section>
+
 </chapter>
 
 <chapter id="reference">
@@ -2298,7 +2331,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed</literal></para></listitem>
+<listitem><para><literal>/atom10:feed</literal></para></listitem>
+<listitem><para><literal>/atom03:feed</literal></para></listitem>
 <listitem><para><literal>/rss/channel</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel</literal></para></listitem>
 </itemizedlist>
@@ -2319,7 +2353,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 &containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:title</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:title</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:title</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/rdf:title</literal></para></listitem>
@@ -2340,7 +2375,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:title</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:title</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:title</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/rdf:title</literal></para></listitem>
@@ -2366,11 +2402,6 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>The language of the feed title.</para>
 &language_details;
 </section>
-<section id="reference.feed.title_detail.mode">
-<title>feed.title_detail.mode</title>
-<para>The original escaping mode used to encode the feed title.</para>
-&mode_details;
-</section>
 <section id="reference.feed.title_detail.base">
 <title>feed.title_detail.base</title>
 <para>The original base &uri; for links within the feed title.</para>
@@ -2385,11 +2416,13 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>The &url; of the &html; page associated with this feed.</para>
 </abstract>
-<para>For site feeds, this is probably the home page of the site.  For category feeds, this is probably the category's archive page.</para>
+<para>For site feeds, this is probably the home page of the site.  For category feeds, this is probably the category's archive page.  For search feeds, this is probably the web page that displays the search results for the given search parameters.</para>
 &isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:link[rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:link[rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:link[@not rel]/@href</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:link[rel="alternate"]/@href</literal></para></listitem>
 <listitem><para><literal>/rss/channel/link</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/rdf:link</literal></para></listitem>
 </itemizedlist>
@@ -2408,7 +2441,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:link</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:link</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:link</literal></para></listitem>
 <listitem><para><literal>/rss/channel/link</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/rdf:link</literal></para></listitem>
 </itemizedlist>
@@ -2419,17 +2453,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.links.rel">
 <title>feed.links[i].rel</title>
 <para>The relationship of this feed link.</para>
-<para>Here is a partial list of common <sgmltag class="attribute">rel</sgmltag> values.  Other possible <sgmltag class="attribute">rel</sgmltag> values and their meanings are <ulink url="&url_linktagmeaning;">documented on the &atom; project site</ulink>.</para>
-<itemizedlist>
-<listitem><para><literal>alternate</literal></para></listitem>
-<listitem><para><literal>icon</literal></para></listitem>
-<listitem><para><literal>comments</literal></para></listitem>
-<listitem><para><literal>start</literal></para></listitem>
-<listitem><para><literal>next</literal></para></listitem>
-<listitem><para><literal>prev</literal></para></listitem>
-<listitem><para><literal>service.post</literal></para></listitem>
-<listitem><para><literal>service.feed</literal></para></listitem>
-</itemizedlist>
+&listofrelvalues;
 </section>
 <section id="reference.feed.links.type">
 <title>feed.links[i].type</title>
@@ -2446,18 +2470,19 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </section>
 </section>
 
-<section id="reference.feed.tagline">
-<?dbhtml filename="reference-feed-tagline.html"?>
-<title>feed.tagline</title>
+<section id="reference.feed.subtitle">
+<?dbhtml filename="reference-feed-subtitle.html"?>
+<title>feed.subtitle</title>
 <abstract>
 <title/>
-<para>A tagline, slogan, or other short description of the feed.</para>
+<para>A subtitle, tagline, slogan, or other short description of the feed.</para>
 </abstract>
 &sanitized;
 &containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:tagline</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:subtitle</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:tagline</literal></para></listitem>
 <listitem><para><literal>/rss/channel/description</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:description</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/rdf:description</literal></para></listitem>
@@ -2465,20 +2490,21 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.feed.tagline_detail"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.subtitle_detail"/></para></listitem>
 </itemizedlist>
 </section>
 
-<section id="reference.feed.tagline_detail">
-<?dbhtml filename="reference-feed-tagline_detail.html"?>
-<title>feed.tagline_detail</title>
+<section id="reference.feed.subtitle_detail">
+<?dbhtml filename="reference-feed-subtitle_detail.html"?>
+<title>feed.subtitle_detail</title>
 <abstract>
 <title/>
-<para>A dictionary with details about the feed tagline.</para>
+<para>A dictionary with details about the feed subtitle.</para>
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:tagline</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:subtitle</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:tagline</literal></para></listitem>
 <listitem><para><literal>/rss/channel/description</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:description</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/rdf:description</literal></para></listitem>
@@ -2486,32 +2512,27 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.feed.tagline"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.subtitle"/></para></listitem>
 </itemizedlist>
-<section id="reference.feed.tagline_detail.value">
-<title>feed.tagline_detail.value</title>
-<para>Same as <xref linkend="reference.feed.tagline"/>.</para>
+<section id="reference.feed.subtitle_detail.value">
+<title>feed.subtitle_detail.value</title>
+<para>Same as <xref linkend="reference.feed.subtitle"/>.</para>
 &sanitized;
 &containsrelativelinks;
 </section>
-<section id="reference.feed.tagline_detail.type">
-<title>feed.tagline_detail.type</title>
-<para>The content type of the feed tagline.</para>
+<section id="reference.feed.subtitle_detail.type">
+<title>feed.subtitle_detail.type</title>
+<para>The content type of the feed subtitle.</para>
 &type_details;
 </section>
-<section id="reference.feed.tagline_detail.language">
-<title>feed.tagline_detail.language</title>
-<para>The language of the feed tagline.</para>
+<section id="reference.feed.subtitle_detail.language">
+<title>feed.subtitle_detail.language</title>
+<para>The language of the feed subtitle.</para>
 &language_details;
 </section>
-<section id="reference.feed.tagline_detail.mode">
-<title>feed.tagline_detail.mode</title>
-<para>The original escaping mode used to encode the feed tagline.</para>
-&mode_details;
-</section>
-<section id="reference.feed.tagline_detail.base">
-<title>feed.tagline_detail.base</title>
-<para>The original base &uri; for links within the feed tagline.</para>
+<section id="reference.feed.subtitle_detail.base">
+<title>feed.subtitle_detail.base</title>
+<para>The original base &uri; for links within the feed subtitle.</para>
 &base_details;
 </section>
 </section>
@@ -2531,7 +2552,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </note>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:copyright</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:rights</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:copyright</literal></para></listitem>
 <listitem><para><literal>/rss/channel/copyright</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:rights</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:rights</literal></para></listitem>
@@ -2551,7 +2573,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:copyright</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:rights</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:copyright</literal></para></listitem>
 <listitem><para><literal>/rss/channel/copyright</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:rights</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:rights</literal></para></listitem>
@@ -2576,11 +2599,6 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>The language of the feed copyright.</para>
 &language_details;
 </section>
-<section id="reference.feed.copyright_detail.mode">
-<title>feed.copyright_detail.mode</title>
-<para>The original escaping mode used to encode the feed copyright.</para>
-&mode_details;
-</section>
 <section id="reference.feed.copyright_detail.base">
 <title>feed.copyright_detail.base</title>
 <para>The original base &uri; for links within the feed copyright.</para>
@@ -2597,7 +2615,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:generator</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:generator</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:generator</literal></para></listitem>
 <listitem><para><literal>/rss/channel/generator</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/admin:generatorAgent/@rdf:resource</literal></para></listitem>
 </itemizedlist>
@@ -2616,7 +2635,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:generator</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:generator</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:generator</literal></para></listitem>
 <listitem><para><literal>/rss/channel/generator</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/admin:generatorAgent/@rdf:resource</literal></para></listitem>
 </itemizedlist>
@@ -2650,7 +2670,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 &containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:info</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:info</literal></para></listitem>
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
@@ -2667,7 +2687,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:info</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:info</literal></para></listitem>
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
@@ -2689,11 +2709,6 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>The language of the feed info.</para>
 &language_details;
 </section>
-<section id="reference.feed.info_detail.mode">
-<title>feed.info_detail.mode</title>
-<para>The original escaping mode used to encode the feed info.</para>
-&mode_details;
-</section>
 <section id="reference.feed.info_detail.base">
 <title>feed.info_detail.base</title>
 <para>The original base &uri; for links within the feed copyright.</para>
@@ -2701,17 +2716,18 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </section>
 </section>
 
-<section id="reference.feed.modified">
-<?dbhtml filename="reference-feed-modified.html"?>
-<title>feed.modified</title>
+<section id="reference.feed.updated">
+<?dbhtml filename="reference-feed-updated.html"?>
+<title>feed.updated</title>
 <abstract>
 <title/>
-<para>The date the feed was last modified, as a string in the same format as it was published in the original feed.</para>
+<para>The date the feed was last updated, as a string in the same format as it was published in the original feed.</para>
 </abstract>
-<para>This element is &parsedasadate; and stored in <xref linkend="reference.feed.modified_parsed"/>.</para>
+<para>This element is &parsedasadate; and stored in <xref linkend="reference.feed.updated_parsed"/>.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:modified</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:updated</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:modified</literal></para></listitem>
 <listitem><para><literal>/rss/channel/pubDate</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:date</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:date</literal></para></listitem>
@@ -2719,20 +2735,21 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.feed.modified_parsed"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.updated_parsed"/></para></listitem>
 </itemizedlist>
 </section>
 
-<section id="reference.feed.modified_parsed">
-<?dbhtml filename="reference-feed-modified_parsed.html"?>
-<title>feed.modified_parsed</title>
+<section id="reference.feed.updated_parsed">
+<?dbhtml filename="reference-feed-updated_parsed.html"?>
+<title>feed.updated_parsed</title>
 <abstract>
 <title/>
-<para>The date the feed was last modified, as a standard &python; 9-tuple.</para>
+<para>The date the feed was last updated, as a standard &python; 9-tuple.</para>
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:modified</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:updated</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:modified</literal></para></listitem>
 <listitem><para><literal>/rss/channel/pubDate</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:date</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:date</literal></para></listitem>
@@ -2740,7 +2757,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.feed.modified"/></para></listitem>
+<listitem><para><xref linkend="reference.feed.updated"/></para></listitem>
 </itemizedlist>
 </section>
 
@@ -2754,7 +2771,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 &isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:id</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:id</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:id</literal></para></listitem>
 </itemizedlist>
 </section>
 
@@ -2767,7 +2785,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:author</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:author</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:author</literal></para></listitem>
 <listitem><para><literal>/rss/channel/managingEditor</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:creator</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:author</literal></para></listitem>
@@ -2789,7 +2808,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:author</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:author</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:author</literal></para></listitem>
 <listitem><para><literal>/rss/channel/managingEditor</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:creator</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:author</literal></para></listitem>
@@ -2824,7 +2844,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:contributor</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:contributor</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:contributor</literal></para></listitem>
 </itemizedlist>
 <section id="reference.feed.contributors.name">
 <title>feed.contributors[i].name</title>
@@ -2902,6 +2923,10 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 
 </section>
 
+<!-- TODO: feed.icon -->
+
+<!-- TODO: feed.logo -->
+
 <section id="reference.feed.textinput">
 <?dbhtml filename="reference-feed-textinput.html"?>
 <title>feed.textinput</title>
@@ -2918,9 +2943,6 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <section id="reference.feed.textinput.title">
 <title>feed.textinput.title</title>
 <para>The title of the text input form, which would go in the <sgmltag class="attribute">value</sgmltag> attribute of the form's submit button.</para>
-<!--
-<para>A short description of the feed image, which would go in the <sgmltag class="attribute">title</sgmltag> attribute if you rendered the feed image as an &html; <sgmltag>img</sgmltag> element.  This element is rare; it was available in Netscape &rss; 0.91 but was dropped from Userland &rss; 0.91.</para>
--->
 </section>
 <section id="reference.feed.textinput.link">
 <title>feed.textinput.link</title>
@@ -2999,6 +3021,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/webMaster</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:publisher</literal></para></listitem>
+<listitem><para><literal>/rss/channel/itunes:owner</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:publisher</literal></para></listitem>
 </itemizedlist>
 <itemizedlist role="seealso">
@@ -3018,6 +3041,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/webMaster</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:publisher</literal></para></listitem>
+<listitem><para><literal>/rss/channel/itunes:owner</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:publisher</literal></para></listitem>
 </itemizedlist>
 <itemizedlist role="seealso">
@@ -3048,7 +3072,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/dc:subject</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/category</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rss/channel/category</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:subject</literal></para></listitem>
@@ -3069,7 +3094,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>For historical reasons, the format of <varname>feed.categories</varname> is a list of tuples, not a list of dictionaries.  See <xref linkend="example.categories"/> for an example.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/dc:subject</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/category</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rss/channel/category</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:subject</literal></para></listitem>
@@ -3080,6 +3106,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 </section>
 
+<!-- TODO: feed.tags -->
+
 <section id="reference.feed.docs">
 <?dbhtml filename="reference-feed-docs.html"?>
 <title>feed.docs</title>
@@ -3087,7 +3115,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title/>
 <para>A &url; pointing to the specification which this feed conforms to.</para>
 </abstract>
-<para>This element is rare.  The reasoning was that in 25 years, someone will stumble on an &rss; feed and not know what it is, so we should waste everyone's bandwidth until then.  Most publishers skip it, and all clients ignore it.</para>
+<para>This element is rare.  The reasoning was that in 25 years, someone will stumble on an &rss; feed and not know what it is, so we should waste everyone's bandwidth with useless links until then.  Most publishers skip it, and all clients ignore it.</para>
 &isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
@@ -3119,7 +3147,8 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/@xml:lang</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/@xml:lang</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/@xml:lang</literal></para></listitem>
 <listitem><para><literal>/rss/channel/language</literal></para></listitem>
 <listitem><para><literal>/rss/channel/dc:language</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/dc:language</literal></para></listitem>
@@ -3170,7 +3199,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item</literal></para></listitem>
 </itemizedlist>
@@ -3191,7 +3221,8 @@ xxx
 &containsrelativelinks;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:title</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:title</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:title</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/rdf:title</literal></para></listitem>
@@ -3212,7 +3243,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:title</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:title</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/title</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:title</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/rdf:title</literal></para></listitem>
@@ -3238,11 +3270,6 @@ xxx
 <para>The language of the entry title.</para>
 &language_details;
 </section>
-<section id="reference.entry.title_detail.mode">
-<title>entries[i].title_detail.mode</title>
-<para>The original escaping mode used to encode the entry title.</para>
-&mode_details;
-</section>
 <section id="reference.entry.title_detail.base">
 <title>entries[i].title_detail.base</title>
 <para>The original base &uri; for links within the entry title.</para>
@@ -3263,7 +3290,9 @@ xxx
 <para>In other words, <emphasis>you can always use <varname>d.entries[i].link</varname> to get the entry link</emphasis>, regardless of how the feed is actually structured.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:link[rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[not @rel]/@href</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:link[rel="alternate"]/@href</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/link</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/rdf:link</literal></para></listitem>
 </itemizedlist>
@@ -3282,7 +3311,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:link</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:link</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/link</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/rdf:link</literal></para></listitem>
 </itemizedlist>
@@ -3293,15 +3323,7 @@ xxx
 <section id="reference.entry.links.rel">
 <title>entries[i].links[j].rel</title>
 <para>The relationship of this entry link.</para>
-<para>Here is a partial list of common <sgmltag class="attribute">rel</sgmltag> values.  Other possible <sgmltag class="attribute">rel</sgmltag> values and their meanings are <ulink url="&url_linktagmeaning;">documented on the &atom; project site</ulink>.</para>
-<itemizedlist>
-<listitem><para><literal>alternate</literal></para></listitem>
-<listitem><para><literal>comments</literal></para></listitem>
-<listitem><para><literal>related</literal></para></listitem>
-<listitem><para><literal>via</literal></para></listitem>
-<listitem><para><literal>service.post</literal></para></listitem>
-<listitem><para><literal>service.edit</literal></para></listitem>
-</itemizedlist>
+&listofrelvalues;
 </section>
 <section id="reference.entry.links.type">
 <title>entries[i].links[j].type</title>
@@ -3330,7 +3352,8 @@ xxx
 <para>Some publishing systems auto-generate this value from the first few words or first paragraph of the entry.  Other publishing systems misuse it to include the full content.  In the latter cases, &feedparser; ought to detect it and put the value in <xref linkend="reference.entry.content"/> instead, but it doesn't.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:summary</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:summary</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:summary</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/description</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:description</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/rdf:description</literal></para></listitem>
@@ -3351,7 +3374,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:summary</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:summary</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:summary</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/description</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:description</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/rdf:description</literal></para></listitem>
@@ -3377,11 +3401,6 @@ xxx
 <para>The language of the entry summary.</para>
 &language_details;
 </section>
-<section id="reference.entry.summary_detail.mode">
-<title>entries[i].summary_detail.mode</title>
-<para>The original escaping mode used to encode the entry summary.</para>
-&mode_details;
-</section>
 <section id="reference.entry.summary_detail.base">
 <title>entries[i].summary_detail.base</title>
 <para>The original base &uri; for links within the entry summary.</para>
@@ -3399,7 +3418,8 @@ xxx
 <para>&atom; feeds may contain multiple <sgmltag>content</sgmltag> elements.  Clients should render as many of them as possible, based on the <sgmltag class="attribute">type</sgmltag> and the client's abilities.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:content</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:content</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:content</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/content:encoded</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/body</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/xhtml:body</literal></para></listitem>
@@ -3422,11 +3442,6 @@ xxx
 <para>The language of this piece of content.</para>
 &language_details;
 </section>
-<section id="reference.entry.content.mode">
-<title>entries[i].content[j].mode</title>
-<para>The original escaping mode used to encode this piece of content.</para>
-&mode_details;
-</section>
 <section id="reference.entry.content.base">
 <title>entries[i].content[j].base</title>
 <para>The original base &uri; for links within this piece of content.</para>
@@ -3439,12 +3454,13 @@ xxx
 <title>entries[i].issued</title>
 <abstract>
 <title/>
-<para>The date this entry was first issued (published), as a string in the same format as it was published in the original feed.</para>
+<para>The date this entry was first published, as a string in the same format as it was published in the original feed.</para>
 </abstract>
 <para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.issued_parsed"/>.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:issued</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:published</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:issued</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dcterms:issued</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dcterms:issued</literal></para></listitem>
 </itemizedlist>
@@ -3463,7 +3479,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:issued</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:published</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:issued</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dcterms:issued</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dcterms:issued</literal></para></listitem>
 </itemizedlist>
@@ -3483,7 +3500,7 @@ xxx
 <para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.created_parsed"/>.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:created</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:created</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dcterms:created</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dcterms:created</literal></para></listitem>
 </itemizedlist>
@@ -3502,7 +3519,7 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:created</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:created</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dcterms:created</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dcterms:created</literal></para></listitem>
 </itemizedlist>
@@ -3512,17 +3529,18 @@ xxx
 </itemizedlist>
 </section>
 
-<section id="reference.entry.modified">
-<?dbhtml filename="reference-entry-modified.html"?>
-<title>entries[i].modified</title>
+<section id="reference.entry.updated">
+<?dbhtml filename="reference-entry-updated.html"?>
+<title>entries[i].updated</title>
 <abstract>
 <title/>
-<para>The date this entry was last modified, as a string in the same format as it was published in the original feed).</para>
+<para>The date this entry was last updated, as a string in the same format as it was published in the original feed).</para>
 </abstract>
-<para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.modified_parsed"/>.</para>
+<para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.updated_parsed"/>.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:modified</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:updated</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:modified</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/pubDate</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:date</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dcterms:modified</literal></para></listitem>
@@ -3531,20 +3549,21 @@ xxx
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.entry.modified_parsed"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.updated_parsed"/></para></listitem>
 </itemizedlist>
 </section>
 
-<section id="reference.entry.modified_parsed">
-<?dbhtml filename="reference-entry-modified_parsed.html"?>
-<title>entries[i].modified_parsed</title>
+<section id="reference.entry.updated_parsed">
+<?dbhtml filename="reference-entry-updated_parsed.html"?>
+<title>entries[i].updated_parsed</title>
 <abstract>
 <title/>
-<para>The date this entry was last modified, as a standard &python; 9-tuple.</para>
+<para>The date this entry was last updated, as a standard &python; 9-tuple.</para>
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:modified</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:updated</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:modified</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/pubDate</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:date</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dcterms:modified</literal></para></listitem>
@@ -3553,7 +3572,7 @@ xxx
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
-<listitem><para><xref linkend="reference.entry.modified"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.updated"/></para></listitem>
 </itemizedlist>
 </section>
 
@@ -3565,7 +3584,7 @@ xxx
 <para>The date this entry is set to expire, as a string in the same format as it was published in the original feed).</para>
 </abstract>
 <para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.expired_parsed"/>.</para>
-<para>This element is rare.  It only existed in &rss; 0.93, and it was never widely implemented by publishers.  Most clients ignore it.</para>
+<para>This element is rare.  It only existed in &rss; 0.93, and it was never widely implemented by publishers.  Most clients ignore it in favor of user-defined expiration algorithms.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/item/expirationDate</literal></para></listitem>
@@ -3583,7 +3602,7 @@ xxx
 <title/>
 <para>The date this entry is set to expire, as a standard &python; 9-tuple.</para>
 </abstract>
-<para>This element is rare.  It only existed in &rss; 0.93, and it was never widely implemented by publishers.  Most clients ignore it.</para>
+<para>This element is rare.  It only existed in &rss; 0.93, and it was never widely implemented by publishers.  Most clients ignore it in favor of user-defined expiration algorithms.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/item/expirationDate</literal></para></listitem>
@@ -3604,7 +3623,8 @@ xxx
 &isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/id</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:id</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:id</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/guid</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/@rdf:about</literal></para></listitem>
 </itemizedlist>
@@ -3619,7 +3639,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:author</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:author</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:author</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:creator</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:author</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dc:creator</literal></para></listitem>
@@ -3640,7 +3661,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:author</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:author</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:author</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:creator</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:author</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dc:creator</literal></para></listitem>
@@ -3674,7 +3696,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/atom:contributor</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:contributor</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:contributor</literal></para></listitem>
 </itemizedlist>
 <section id="reference.entry.contributors.name">
 <title>entries[i].contributors[j].name</title>
@@ -3702,6 +3725,7 @@ xxx
 <para>The &rss; specification states that there can be at most one enclosure per item.  However, because some feeds break this rule, &feedparser; captures all of them and makes them available as a list.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[@rel="enclosure"]</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/enclosure</literal></para></listitem>
 </itemizedlist>
 <section id="reference.entry.enclosure.url">
@@ -3729,6 +3753,7 @@ xxx
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/item/dc:publisher</literal></para></listitem>
+<listitem><para><literal>/rss/item/itunes:owner</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dc:publisher</literal></para></listitem>
 </itemizedlist>
 <itemizedlist role="seealso">
@@ -3747,6 +3772,7 @@ xxx
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/rss/item/dc:publisher</literal></para></listitem>
+<listitem><para><literal>/rss/item/itunes:owner</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dc:publisher</literal></para></listitem>
 </itemizedlist>
 <itemizedlist role="seealso">
@@ -3777,7 +3803,8 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/dc:subject</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/category</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/category</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dc:subject</literal></para></listitem>
@@ -3798,7 +3825,8 @@ xxx
 <para>For historical reasons, the format of <varname>categories</varname> is a list of tuples, not a list of dictionaries.  See <xref linkend="example.categories"/> for an example.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom:feed/atom:entry/dc:subject</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/category</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/category</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/dc:subject</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/dc:subject</literal></para></listitem>
@@ -3809,6 +3837,8 @@ xxx
 </itemizedlist>
 </section>
 
+<!-- TODO: entries[i].tags -->
+
 <section id="reference.entry.source">
 <?dbhtml filename="reference-entry-source.html"?>
 <title>entries[i].source</title>
@@ -3818,8 +3848,9 @@ xxx
 </abstract>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/rss/channel/item/source</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:source</literal></para></listitem>
 </itemizedlist>
+<!-- TODO: this is entirely different now -->
 <section id="reference.entry.source.url">
 <title>entries[i].source.url</title>
 <para>The &url; of the entry source.  The &rss; specification states that this must be the &url; of an &rss; feed, not an &html; page or other feed format.</para>
@@ -4008,11 +4039,10 @@ xxx
 </tip>
 </section>
 </chapter>
-&gfdl;
+&gpl;
 </book>
 
 <!--
 TODO:
-- relative link handling
 - language handling
 -->

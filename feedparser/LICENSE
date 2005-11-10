@@ -1,4 +1,4 @@
-Universal Feed Parser is released under the same license as Python 2.1.1.
+Universal Feed Parser (feedparser.py), the testing harness (feedparsertest.py), and all of the feed parser unit tests (everything in the tests/ directory) are released under the same license as Python 2.1.1.
 
 This is the official license for the Python 2.1.1 release:
 

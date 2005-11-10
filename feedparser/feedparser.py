@@ -65,13 +65,13 @@ except:
 # Python 2.3 now has this functionality available in the standard socket library, so under
 # 2.3 you don't need to install anything.  But you probably should anyway, because the socket
 # module is buggy and timeoutsocket is better.
-#try:
-#    import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
-#    timeoutsocket.setDefaultSocketTimeout(60)
-#except ImportError:
-#    import socket
-#    if hasattr(socket, 'setdefaulttimeout'):
-#        socket.setdefaulttimeout(60)
+try:
+    import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
+    timeoutsocket.setDefaultSocketTimeout(60)
+except ImportError:
+    import socket
+    if hasattr(socket, 'setdefaulttimeout'):
+        socket.setdefaulttimeout(60)
 import urllib, urllib2
 
 _mxtidy = None
@@ -278,6 +278,7 @@ class _FeedParserMixin:
                   'http://xmlns.com/foaf/0.1/':                           'foaf',
                   'http://freshmeat.net/rss/fm/':                         'fm',
                   'http://purl.org/rss/1.0/modules/link/':                'l',
+                  'http://search.yahoo.com/mrss':                         'media',
                   'http://madskills.com/public/xml/rss/module/pingback/': 'pingback',
                   'http://prismstandard.org/namespaces/1.2/basic/':       'prism',
                   'http://www.w3.org/1999/02/22-rdf-syntax-ns#':          'rdf',
@@ -1120,6 +1121,7 @@ class _FeedParserMixin:
     def _start_title(self, attrsD):
         self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
+    _start_media_title = _start_title
 
     def _end_title(self):
         value = self.popContent('title')
@@ -1129,6 +1131,7 @@ class _FeedParserMixin:
         elif self.inimage:
             context['image']['title'] = value
     _end_dc_title = _end_title
+    _end_media_title = _end_title
 
     def _start_description(self, attrsD):
         self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)

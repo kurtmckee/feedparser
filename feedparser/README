@@ -1,8 +1,8 @@
 Universal Feed Parser
-Parse RSS and Atom feeds in Python.  2000 unit tests.  Open source.
+Parse RSS and Atom feeds in Python.  3000 unit tests.  Open source.
 
-Copyright 2002-4 by Mark Pilgrim
-Python-licensed
+Copyright (c) 2002-5 by Mark Pilgrim
+Python-licensed, see LICENSE file for details
 -----
 
 To install:

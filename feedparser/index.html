@@ -13,10 +13,9 @@
 <div id="mainInner">
 
 <h2 class="skip"><span>Getting started</span></h2>
-<p><em>Version 4.0 is under active development and already fully supports Atom 1.0 feeds and <a href="http://phobos.apple.com/static/iTunesRSS.html">Apple's iTunes extensions</a>.  It will also eventually support <a href="http://search.yahoo.com/mrss">Yahoo's Media RSS extensions</a> and <a href="http://opensearch.a9.com/spec/opensearchrss/1.0/">Amazon's OpenSearch extensions</a>.  If you are comfortable running undocumented pre-release software, you can <a href="http://cvs.sourceforge.net/viewcvs.py/*checkout*/feedparser/feedparser/feedparser.py?content-type=text%2Fplain">download feedparser.py CVS</a> and <a href="http://sourceforge.net/tracker/?func=browse&amp;group_id=112328&amp;atid=661937">report bugs</a>.</em></p>
 <div class="example">
 <pre class="screen"><samp class="prompt">>>> </samp><span class="userinput"><span class='pykeyword'>import</span> feedparser</span>
-<samp class="prompt">>>> </samp><span class="userinput">d = feedparser.parse(<span class='pystring'>"<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom.xml</a>"</span>)</span>
+<samp class="prompt">>>> </samp><span class="userinput">d = feedparser.parse(<span class='pystring'>"<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/examples/atom10.xml</a>"</span>)</span>
 <samp class="prompt">>>> </samp><span class="userinput">d['feed']['title']</span>             <span class="pycomment"># feed data is a dictionary</span>
 <span class="computeroutput">u'Sample Feed'</span>
 <samp class="prompt">>>> </samp><span class="userinput">d.feed.title</span>                   <span class="pycomment"># get values attr-style or dict-style</span>
@@ -62,7 +61,7 @@
 </div> <!-- example -->
 
 <hr style="clear:both">
-<div style="font-variant: small-caps;"><p>Like the parser?  <a title="also available in grey, white, green, and pink" href="http://www.cafepress.com/feedparser">Buy the t-shirt!</a></p><p><a style="border: 0 !important; text-decoration: none !important;" title="also available in grey, white, green, and pink" href="http://www.cafepress.com/feedparser"><img src="/img/feedparser.jpg" alt="[I support RFC 3023 t-shirt]" title="also available in grey, white, green, and pink" width="150" height="150"></a></p></div><div class="footer"><p class="copyright">Copyright &copy; 2004-5 Mark Pilgrim</p></div>
+<div style="font-variant: small-caps;"><p>Like the parser?  <a title="also available in grey, white, green, and pink" href="http://www.cafepress.com/feedparser">Buy the t-shirt!</a></p><p><a style="border: 0 !important; text-decoration: none !important;" title="also available in grey, white, green, and pink" href="http://www.cafepress.com/feedparser"><img src="/img/feedparser.jpg" alt="[I support RFC 3023 t-shirt]" title="also available in grey, white, green, and pink" width="150" height="150"></a></p></div><div class="footer"><p class="copyright">Copyright &copy; 2002-5 Mark Pilgrim</p></div>
 </div> <!-- mainInner -->
 </div> <!-- main -->
 

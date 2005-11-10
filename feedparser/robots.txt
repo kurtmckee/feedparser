@@ -1,3 +1,2 @@
 User-agent: *
-Disallow: /tests/illformed/
-Disallow: /tests/wellformed/
+Disallow: /tests/

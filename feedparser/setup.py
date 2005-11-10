@@ -10,14 +10,14 @@ if not hasattr(DistributionMetadata, 'download_url'):
     
 setup(
     name = 'feedparser',
-    version = '3.3',
+    version = '4.0',
     description = 'Universal feed parser, handles RSS 0.9x, RSS 1.0, '
-                  'RSS 2.0, CDF, Atom feeds',
+                  'RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
     long_description = """\
 Universal feed parser
 ---------------------
 
-Handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom feeds
+Handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, Atom 1.0 feeds
 
 Required: Python 2.1 or later
 Recommended: Python 2.3 or later

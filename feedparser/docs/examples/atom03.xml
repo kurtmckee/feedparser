@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <feed version="0.3" xmlns="http://purl.org/atom/ns#" xml:base="http://example.org/" xml:lang="en">
   <title type="text/plain" mode="escaped">Sample Feed</title>
   <tagline type="text/html" mode="escaped">For documentation &lt;em&gt;only&lt;/em&gt;</tagline>
   <link rel="alternate" type="text/html" href="/"/>
   <copyright type="text/html" mode="escaped">&lt;p>Copyright 2004, Mark Pilgrim&lt;/p>&lt;</copyright>
   <generator url="http://example.org/generator/" version="3.0">Sample Toolkit</generator>
-  <id>tag:feedparser.org,2004-04-20:/examples/examples/atom.xml</id>
+  <id>tag:feedparser.org,2004-04-20:/docs/examples/atom03.xml</id>
   <modified>2004-04-20T11:56:34Z</modified>
   <info type="application/xhtml+xml" mode="xml">
     <div xmlns="http://www.w3.org/1999/xhtml"><p>This is an Atom syndication feed.</p></div>
@@ -15,7 +15,7 @@
     <link rel="alternate" type="text/html" href="/entry/3"/>
     <link rel="service.edit" type="application/atom+xml" title="Atom API entrypoint to edit this entry" href="/api/edit/3"/>
     <link rel="service.post" type="application/atom+xml" title="Atom API entrypoint to add comments to this entry" href="/api/comment/3"/>
-    <id>tag:feedparser.org,2004-04-20:/examples/examples/atom.xml:3</id>
+    <id>tag:feedparser.org,2004-04-20:/docs/examples/atom03.xml:3</id>
     <created>2004-04-19T07:45:00Z</created>   <!-- initial creation date of this entry -->
     <issued>2004-04-20T00:23:47Z</issued>     <!-- date this entry was first published to the world -->
     <modified>2004-04-20T11:56:34Z</modified> <!-- last modification date of this entry -->

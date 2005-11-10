@@ -24,10 +24,10 @@
 <property name="text" value="${dist}/txt"/>
 <property name="images" value="images"/>
 <property name="xsltproc" value="xsltproc"/>
-<!--<property name="crimson" value="lib/crimson.jar"/>-->
-<!--<property name="saxon" value="lib/saxon.jar;${crimson}"/>-->
+<property name="crimson" value="lib/crimson.jar"/>
+<property name="saxon" value="lib/saxon.jar;${crimson}"/>
 <property name="encoding" value="utf-8"/>
-<!--<property name="standardargs" value=""/>-->
+<property name="standardargs" value=""/>
 <property name="python" value="python"/>
 
 <!-- administrative targets -->
@@ -98,10 +98,17 @@
 
 <!-- main targets -->
 <target name="html" depends="prepare,validate">
+  <java classname="com.icl.saxon.StyleSheet" fork="yes" failonerror="yes">
+    <arg line="${standardargs} ${xml}/${project}.xml ${xsl}/html.xsl"/>
+    <classpath>
+      <pathelement path="${saxon}"/>
+    </classpath>
+  </java>
+<!--
   <exec executable="${xsltproc}" failonerror="yes">
     <arg line="${xsl}/html.xsl ${xml}/${project}.xml"/>
   </exec>
-
+-->
   <antcall target="colorize">
     <param name="target" value="${html}"/>
     <param name="fonts" value="0"/>
@@ -117,136 +124,22 @@
     <param name="target" value="${htmldist}/images"/>
   </antcall>
 
+  <java classname="com.icl.saxon.StyleSheet" fork="yes" failonerror="yes">
+    <arg line="${standardargs} ${xml}/${project}.xml ${xsl}/htmldist.xsl"/>
+    <classpath>
+      <pathelement path="${saxon}"/>
+    </classpath>
+  </java>
+<!--
   <exec executable="${xsltproc}" failonerror="yes">
     <arg line="${xsl}/htmldist.xsl ${xml}/${project}.xml"/>
   </exec>
+-->
 
   <antcall target="colorize">
     <param name="target" value="${htmldist}"/>
     <param name="fonts" value="0"/>
   </antcall>
 </target>
-
-
-
-<!-- ============== nothing below this line works ============== -->
-
-
-
-<target name="htmlflat" depends="prepare,validate">
-  <antcall target="copycss">
-    <param name="target" value="${htmlflat}"/>
-  </antcall>
-
-  <antcall target="copyimages">
-    <param name="target" value="${htmlflat}/images"/>
-  </antcall>
-
-  <exec executable="${xsltproc}" failonerror="yes">
-    <arg line="-o ${htmlflat}/${project}${lang}.html ${xsl}/htmlsingle.xsl ${xml}/${project}.xml"/>
-  </exec>
-
-  <antcall target="colorize">
-    <param name="target" value="${htmlflat}"/>
-    <param name="fonts" value="0"/>
-  </antcall>
-</target>
-
-<target name="word" if="illegalmonopoly" depends="prepare,validate">
-  <antcall target="copyimages">
-    <param name="target" value="${word}/images"/>
-  </antcall>
-
-  <exec executable="${xsltproc}" failonerror="yes">
-    <arg line="-o ${word}/${project}.html ${xsl}/word2000.xsl ${xml}/${project}.xml"/>
-  </exec>
-
-  <exec executable="${python}" failonerror="yes">
-    <arg line="${py}/makerealworddoc.py ${word}/${project}.html ${word}/${project}${lang}.doc"/>
-  </exec>
-
-  <antcall target="colorize">
-    <param name="target" value="${html}"/>
-    <param name="fonts" value="1"/>
-  </antcall>
-</target>
-
-<target name="pdf" depends="prepare,validate">
-  <antcall target="copyimages">
-    <param name="target" value="${pdf}/images"/>
-  </antcall>
-
-  <exec executable="${xsltproc}" failonerror="yes">
-    <arg line="-o ${pdf}/${project}.html ${xsl}/pdf.xsl ${xml}/${project}.xml"/>
-  </exec>
-
-  <antcall target="colorize">
-    <param name="target" value="${pdf}"/>
-    <param name="fonts" value="1"/>
-  </antcall>
-
-  <exec executable="${htmldoc}" failonerror="no">
-    <arg line='-t pdf12 -f ${pdf}/${project}${lang}.pdf --book --toclevels 2 --no-numbered --toctitle "Table of Contents" --title --titleimage ${images}/atom-logo100px.gif --linkstyle plain --size Universal --left 0.50in --right 0.50in --top 0.50in --bottom 0.50in --header ... --footer t.1 --tocheader ... --tocfooter t.i --portrait --color --no-pscommands --compression=1 --jpeg=0 --fontsize 11.0 --fontspacing 1.2 --headingfont Helvetica --bodyfont Times --headfootsize 11.0 --headfootfont Helvetica --charset 8859-1 --pagemode outline --pagelayout single --firstpage c1 --pageeffect none --pageduration 10 --effectduration 1.0 --no-encryption --permissions all  --owner-password ""  --user-password "" --browserwidth 680 ${pdf}/${project}.html'/>
-  </exec>
-
-</target>
-
-<target name="text" depends="prepare,validate">
-  <exec executable="${xsltproc}" failonerror="yes">
-    <arg line="-o ${text}/${project}.html ${xsl}/text.xsl ${xml}/${project}.xml"/>
-  </exec>
-
-  <exec executable="w3m" output="${text}/${project}${lang}.txt" failonerror="yes">
-    <arg line="-dump ${text}/${project}.html"/>
-  </exec>
-</target>
-
-<target name="zipclean" depends="init">
-  <delete>
-    <fileset dir="${dist}"/>
-  </delete>
-</target>
-
-<target name="ziphtml" depends="prepare">
-  <zip zipfile="${dist}/${project}-html${lang}-${version}.zip">
-    <zipfileset dir="${html}" prefix="html"/>
-  </zip>
-</target>
-
-<target name="ziphtmlflat" depends="prepare">
-  <zip zipfile="${dist}/${project}-html-flat${lang}-${version}.zip">
-    <zipfileset dir="${htmlflat}" prefix="html"/>
-  </zip>
-</target>
-
-<target name="zipword" if="illegalmonopoly" depends="prepare">
-  <zip zipfile="${dist}/${project}-word${lang}-${version}.zip">
-    <zipfileset dir="${word}" includes="*.doc,images,images/*.*"/>
-  </zip>
-</target>
-
-<target name="zippdf" depends="prepare">
-  <zip zipfile="${dist}/${project}-pdf${lang}-${version}.zip">
-    <zipfileset dir="${pdf}" includes="*.pdf"/>
-  </zip>
-</target>
-
-<target name="ziptext" depends="prepare">
-  <zip zipfile="${dist}/${project}-text${lang}-${version}.zip">
-    <zipfileset dir="${text}" includes="*.txt"/>
-  </zip>
-</target>
-
-<target name="zipxml" depends="prepare">
-  <zip zipfile="${dist}/${project}-xml${lang}-${version}.zip">
-    <zipfileset dir="." includes="build.xml"/>
-    <zipfileset dir="." includes="make.*"/>
-    <zipfileset dir="${xml}" includes="*.xml" prefix="${xml}"/>
-  </zip>
-</target>
-
-<target name="zip" depends="zipclean,ziphtml,ziphtmlflat,zipword,zippdf,ziptext,zipxml"/>
-
-<target name="all" depends="init,clean,html,htmlflat,word,pdf,text,zip"/>
 
 </project>
