@@ -97,11 +97,11 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.subtitle</span>
 <span class="computeroutput">u'For documentation &lt;em&gt;only&lt;/em&gt;'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.updated</span>
-<span class="computeroutput">2004-04-20T11:56:34Z</span>
+<span class="computeroutput">u'2005-11-09T11:56:34Z'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.updated_parsed</span>
-<span class="computeroutput">(2004, 4, 20, 11, 56, 34, 1, 111, 0)</span>
+<span class="computeroutput">(2005, 11, 9, 11, 56, 34, 2, 313, 0)</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.id</span>
-<span class="computeroutput">u'tag:feedparser.org,2004-04-20:/docs/examples/atom10.xml'</span></pre></div>
+<span class="computeroutput">u'tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml'</span></pre></div>
                <p>Entries are available in <tt class="varname">d.entries</tt>, which is a list.  You access entries in the order in which they appear in the original feed, so the first entry is <tt class="varname">d.entries[0]</tt>.
                </p>
                <div class="example"><a name="example.atom.entry" class="skip" href="#example.atom.entry" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
@@ -112,22 +112,22 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].link</span>
 <span class="computeroutput">u'http://example.org/entry/3</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].id</span>
-<span class="computeroutput">u'tag:feedparser.org,2004-04-20:/docs/examples/atom10.xml:3'</span>
+<span class="computeroutput">u'tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml:3'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].published</span>
-<span class="computeroutput">u'2004-04-20T00:23:47Z'</span>
+<span class="computeroutput">u'2005-11-09T00:23:47Z'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].published_parsed</span>
-<span class="computeroutput">(2004, 4, 20, 0, 23, 47, 1, 111, 0)</span>
+<span class="computeroutput">(2005, 11, 9, 0, 23, 47, 2, 313, 0)</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].updated</span>
-<span class="computeroutput">u'2004-04-20T11:56:34Z'</span>
+<span class="computeroutput">u'2005-11-09T11:56:34Z'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].updated_parsed</span>
-<span class="computeroutput">(2004, 4, 20, 11, 56, 34, 1, 111, 0)</span>
+<span class="computeroutput">(2005, 11, 9, 11, 56, 34, 2, 313, 0)</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].summary</span>
 <span class="computeroutput">u'Watch out for nasty tricks'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].content</span>
 <span class="computeroutput">[{'type': u'application/xhtml+xml',
- 'base': u'http://example.org/',
- 'language': u'en',
- 'value': u'&lt;div&gt;Watch out for &lt;span&gt;nasty tricks&lt;/span&gt;&lt;/div&gt;'}]</span></pre></div><a name="d0e592"></a><table class="note" border="0" summary="">
+ 'base': u'http://example.org/entry/3',
+ 'language': u'en-US',
+ 'value': u'&lt;div&gt;Watch out for &lt;span&gt;nasty tricks&lt;/span&gt;&lt;/div&gt;'}]</span></pre></div><a name="d0e595"></a><table class="note" border="0" summary="">
                   <tr>
                      <td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td>
                   </tr>

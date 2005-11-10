@@ -42,6 +42,9 @@
                   <h3 class="title">Example:&nbsp;Accessing feed version</h3><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom10.xml">http://feedparser.org/docs/examples/atom10.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.version</span>
 <span class="computeroutput">'atom10'</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom03.xml">http://feedparser.org/docs/examples/atom03.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.version</span>
+<span class="computeroutput">'atom03'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/rss20.xml">http://feedparser.org/docs/examples/rss20.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.version</span>
 <span class="computeroutput">'rss20'</span>

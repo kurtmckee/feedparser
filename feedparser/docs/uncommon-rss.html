@@ -44,7 +44,7 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/rss20.xml">http://feedparser.org/docs/examples/rss20.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.image</span>
 <span class="computeroutput">{'title': u'Example banner',
- 'url': u'http://example.org/banner.png',
+ 'href': u'http://example.org/banner.png',
  'width': 80,
  'height': 15,
  'link': u'http://example.org/'}</span></pre></div>
@@ -57,7 +57,7 @@
 <span class="computeroutput">[(u'Syndic8', u'1024'),
  (u'dmoz', 'Top/Society/People/Personal_Homepages/P/')]</span></pre></div>
                <p>Each item in an <acronym title="Rich Site Summary">RSS</acronym> feed can have an &#8220;<span class="quote">enclosure</span>&#8221;, a delightful misnomer that is simply a link to an external file (usually a music or video file, but any type of file can
-                  be "enclosed").  Once rare, this element has recently gained popularity due to the rise of <a href="TODO">podcasting</a>.  Some clients may automatically download enclosures; others may simply render each enclosure as a link.
+                  be "enclosed").  Once rare, this element has recently gained popularity due to the rise of <a href="http://en.wikipedia.org/wiki/Podcasting">podcasting</a>.  Some clients (such as Apple's <span class="application">iTunes</span>) may automatically download enclosures; others (such as the web-based Bloglines) may simply render each enclosure as a link.
                </p>
                <p>The <acronym title="Rich Site Summary">RSS</acronym> specification states that there can be at most one enclosure per item.  However, Atom entries may contain more than one enclosure
                   per entry, so <span class="application">Universal Feed Parser</span> captures all of them and makes them available as a list.
@@ -71,7 +71,7 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.enclosures[0]</span>
 <span class="computeroutput">{'type': u'audio/mpeg',
  'length': u'1069871',
- 'url': u'http://example.org/audio/demo.mp3'}</span></pre></div>
+ 'href': u'http://example.org/audio/demo.mp3'}</span></pre></div>
                <p>No one is quite sure what a cloud is.</p>
                <div class="example"><a name="example.cloud" class="skip" href="#example.cloud" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
                   <h3 class="title">Example:&nbsp;Accessing feed cloud</h3><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
@@ -81,7 +81,7 @@
  'port': u'80',
  'path': u'/RPC2', 
  'registerprocedure': u'pingMe',
- 'protocol': u'soap'}</span></pre></div><a name="d0e891"></a><table class="note" border="0" summary="">
+ 'protocol': u'soap'}</span></pre></div><a name="d0e889"></a><table class="note" border="0" summary="">
                   <tr>
                      <td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td>
                   </tr>

@@ -46,11 +46,11 @@
 <span class="computeroutput">2</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.contributors[0]</span>
 <span class="computeroutput">{'name': u'Joe',
- 'url': u'http://example.org/joe/',
+ 'href': u'http://example.org/joe/',
  'email': u'joe@example.org'}</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.contributors[1]</span>
 <span class="computeroutput">{'name': u'Sam',
- 'url': u'http://example.org/sam/',
+ 'href': u'http://example.org/sam/',
  'email': u'sam@example.org'}</span></pre></div>
                <p>Besides an alternate link, each Atom feed or entry can have an arbitrary number of other links.  Each link is distinguished
                   by its <tt class="sgmltag-attribute">type</tt> attribute, which is a MIME-style content type, and its <tt class="sgmltag-attribute">rel</tt> attribute.
@@ -60,21 +60,24 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/atom10.xml">http://feedparser.org/docs/examples/atom10.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e = d.entries[0]</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">len(e.links)</span>
-<span class="computeroutput">3</span>
+<span class="computeroutput">4</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.links[0]</span>
 <span class="computeroutput">{'rel': u'alternate',
  'type': u'text/html',
  'href': u'http://example.org/entry/3'}</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.links[1]</span>
-<span class="computeroutput">{'rel': u'service.edit',
- 'type': u'application/atom+xml',
- 'href': u'http://example.org/entry/3',
- 'title': u'Atom API endpoint to edit this entry'}</span>
+<span class="computeroutput">{'rel': u'related',
+ 'type': u'text/html',
+ 'href': u'http://search.example.com/'}</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.links[2]</span>
-<span class="computeroutput">{'rel': u'service.post',
- 'type': u'application/atom+xml',
- 'href': u'http://example.org/api/comment/3',
- 'title': u'Atom API endpoint to add comments to this entry'}</span></pre></div><a name="d0e1023"></a><table class="note" border="0" summary="">
+<span class="computeroutput">{'rel': u'via',
+ 'type': u'text/html',
+ 'href': u'http://toby.example.com/examples/atom10'}</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">e.links[3]</span>
+<span class="computeroutput">{'rel': u'enclosure',
+ 'type': u'video/mpeg4',
+ 'href': u'http://www.example.com/movie.mp4',
+ 'length': u'42301'}</span></pre></div><a name="d0e1028"></a><table class="note" border="0" summary="">
                   <tr>
                      <td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td>
                   </tr>

@@ -38,7 +38,6 @@
     <enclosure url="http://example.org/audio/demo.mp3" length="1069871" type="audio/mpeg"/>
     <guid>http://example.org/guid/1</guid>
     <pubDate>Thu, 05 Sep 2002 00:00:01 GMT</pubDate>
-    <source url="http://other.example.org/rss.xml">Other RSS feed</source>
   </item>
 </channel>
 </rss>

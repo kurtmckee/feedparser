@@ -42,11 +42,11 @@
                   <ul>
                      <li><a href="reference-feed-updated.html" title="feed.updated">feed.updated</a> is parsed into <a href="reference-feed-updated_parsed.html" title="feed.updated_parsed">feed.updated_parsed</a>.
                      </li>
-                     <li><a href="reference-entry-issued.html" title="entries[i].issued">entries[i].issued</a> is parsed into <a href="reference-entry-issued_parsed.html" title="entries[i].issued_parsed">entries[i].issued_parsed</a>.
-                     </li>
-                     <li><a href="reference-entry-created.html" title="entries[i].created">entries[i].created</a> is parsed into <a href="reference-entry-created_parsed.html" title="entries[i].created_parsed">entries[i].created_parsed</a>.
+                     <li><a href="reference-entry-published.html" title="entries[i].published">entries[i].published</a> is parsed into <a href="reference-entry-published_parsed.html" title="entries[i].published_parsed">entries[i].published_parsed</a>.
                      </li>
                      <li><a href="reference-entry-updated.html" title="entries[i].updated">entries[i].updated</a> is parsed into <a href="reference-entry-updated_parsed.html" title="entries[i].updated_parsed">entries[i].updated_parsed</a>.
+                     </li>
+                     <li><a href="reference-entry-created.html" title="entries[i].created">entries[i].created</a> is parsed into <a href="reference-entry-created_parsed.html" title="entries[i].created_parsed">entries[i].created_parsed</a>.
                      </li>
                      <li><a href="reference-entry-expired.html" title="entries[i].expired">entries[i].expired</a> is parsed into <a href="reference-entry-expired_parsed.html" title="entries[i].expired_parsed">entries[i].expired_parsed</a>.
                      </li>
@@ -79,7 +79,9 @@
                         <li><acronym title="Rich Site Summary">RSS</acronym> 2.0 states, &#8220;<span class="quote">All date-times in <acronym title="Rich Site Summary">RSS</acronym> conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters
                               or four characters (four preferred).</span>&#8221;
                         </li>
-                        <li>Atom states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3CDTF</acronym></a>.
+                        <li>Atom 0.3 states that all date elements must conform to <a href="http://www.w3.org/TR/NOTE-datetime"><acronym title="W3C Date Time Format">W3CDTF</acronym></a>.
+                        </li>
+                        <li>Atom 1.0 states that all date elements "MUST conform to the date-time production in <a href="http://www.ietf.org/rfc/rfc3339.txt"><acronym title="Request For Comments">RFC</acronym> 3339</a>.  In addition, an uppercase <tt class="literal">T</tt> character MUST be used to separate date and time, and an uppercase <tt class="literal">Z</tt> character MUST be present in the absence of a numeric time zone offset."
                         </li>
                      </ul>
                   </div>
@@ -96,7 +98,7 @@
                   </div>
                   <p>Here is a representative list of the formats that <span class="application">Universal Feed Parser</span> can recognize in any date element:
                   </p>
-                  <div class="table"><a name="d0e1247" class="skip" href="#d0e1247" title="link to this table"><img src="images/permalink.gif" alt="[link]" title="link to this table" width="8" height="9"></a> 
+                  <div class="table"><a name="d0e1266" class="skip" href="#d0e1266" title="link to this table"><img src="images/permalink.gif" alt="[link]" title="link to this table" width="8" height="9"></a> 
                      <h3 class="title">Recognized Date Formats</h3>
                      <table summary="Recognized Date Formats" border="1">
                         <colgroup>
@@ -282,13 +284,13 @@ _my_date_pattern = re.compile( \
 
 feedparser.registerDateHandler(myDateHandler)
 d = feedparser.parse(...)</pre></div>
-                  <p>Your newly-registered date handler will be tried before all the other date handlers built into <span class="application">Universal Feed Parser</span>.  (More specifically, all date handlers are tried in LIFO order; the last handler to be registered is always the first one
-                     to be tried.)
+                  <p>Your newly-registered date handler will be tried before all the other date handlers built into <span class="application">Universal Feed Parser</span>.  (More specifically, all date handlers are tried in "last in, first out" order; i.e. the last handler to be registered is
+                     the first one tried, and so on in reverse order of registration.)
                   </p>
                   <p>If your date handler returns <tt class="constant">None</tt>, or anything other than a <span class="application">Python</span> 9-tuple date, or raises an exception of any kind, the error will be silently ignored and the other registered date handlers
-                     will be tried in order.  If no date handlers succeed, then the date is not parsed, but the original date string is still available
-                     in the appropriate element in the results dictionary.
-                  </p><a name="d0e1562"></a><table class="tip" border="0" summary="">
+                     will be tried in order.  If no date handlers succeed, then the date is not parsed, and the <tt class="sgmltag-element">*_parsed</tt> value will not be present in the results dictionary.  The original date string will still be available in the appropriate
+                     element in the results dictionary.
+                  </p><a name="d0e1584"></a><table class="tip" border="0" summary="">
                      <tr>
                         <td rowspan="2" align="center" valign="top" width="1%"><img src="images/tip.png" alt="Tip" title="" width="24" height="24"></td>
                      </tr>

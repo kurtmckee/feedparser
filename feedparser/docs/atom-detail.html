@@ -31,7 +31,7 @@
                   <div></div>
                </div>
                <div class="abstract">
-                  <p>Several Atom elements share the Atom content model: <tt class="sgmltag-element">title</tt>, <tt class="sgmltag-element">subtitle</tt>, <tt class="sgmltag-element">info</tt>, <tt class="sgmltag-element">copyright</tt>, <tt class="sgmltag-element">summary</tt>, and of course <tt class="sgmltag-element">content</tt>.  <span class="application">Universal Feed Parser</span> captures all relevant metadata about these elements, most importantly the content type and the value.
+                  <p>Several Atom elements share the Atom content model: <tt class="sgmltag-element">title</tt>, <tt class="sgmltag-element">subtitle</tt>, <tt class="sgmltag-element">rights</tt>, <tt class="sgmltag-element">summary</tt>, and of course <tt class="sgmltag-element">content</tt>.  (Atom 0.3 also had an <tt class="sgmltag-element">info</tt> element which shared this content model.)  <span class="application">Universal Feed Parser</span> captures all relevant metadata about these elements, most importantly the content type and the value itself.
                   </p>
                </div>
                <div class="example"><a name="example.feed.detail" class="skip" href="#example.feed.detail" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
@@ -47,12 +47,7 @@
  'base': u'http://example.org/',
  'language': u'en',
  'value': u'For documentation &lt;em&gt;only&lt;/em&gt;'}</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.info_detail</span>
-<span class="computeroutput">{'type': u'application/xhtml+xml', 
- 'base': u'http://example.org/', 
- 'language': u'en',
- 'value': u'&lt;div&gt;&lt;p&gt;This is an Atom syndication feed.&lt;/p&gt;&lt;/div&gt;'}</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.copyright_detail</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.rights_detail</span>
 <span class="computeroutput">{'type': u'text/html',
  'base': u'http://example.org/',
  'language': u'en',
@@ -73,7 +68,7 @@
 <span class="computeroutput">{'type': u'application/xhtml+xml',
  'base': u'http://example.org/entry/3',
  'language': u'en-US'
- 'value': u'&lt;div&gt;Watch out for &lt;span&gt;nasty tricks&lt;/span&gt;&lt;/div&gt;'}</span></pre></div>
+ 'value': u'&lt;div&gt;Watch out for &lt;span&gt; nasty tricks&lt;/span&gt;&lt;/div&gt;'}</span></pre></div>
             </div>
             <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="common-atom-elements.html">Common Atom Elements</a></div>
             <div style="text-align: right"><a class="NavigationArrow" href="uncommon-rss.html">Uncommon RSS Elements</a>&nbsp;&#8594;

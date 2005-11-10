@@ -31,7 +31,7 @@
                   <div></div>
                </div>
                <div class="abstract">
-                  <p>By default, <span class="application">Universal Feed Parser</span> sanitizes <acronym title="HyperText Markup Language">HTML</acronym> markup in several elements, removing <acronym title="HyperText Markup Language">HTML</acronym> tags and attributes that could introduce Javascript or other security risks.
+                  <p>Many feed elements may contain <acronym title="HyperText Markup Language">HTML</acronym> markup, and many feed aggregators use a web browser (or browser component) to display content.  By default, <span class="application">Universal Feed Parser</span> sanitizes <acronym title="HyperText Markup Language">HTML</acronym> markup in several elements, removing <acronym title="HyperText Markup Language">HTML</acronym> tags and attributes that could introduce Javascript or other security risks.
                   </p>
                </div>
                <p>These elements are sanitized by default:</p>
@@ -40,7 +40,7 @@
                      <li><a href="reference-feed-title.html" title="feed.title">feed.title</a></li>
                      <li><a href="reference-feed-subtitle.html" title="feed.subtitle">feed.subtitle</a></li>
                      <li><a href="reference-feed-info.html" title="feed.info">feed.info</a></li>
-                     <li><a href="reference-feed-copyright.html" title="feed.copyright">feed.copyright</a></li>
+                     <li><a href="reference-feed-rights.html" title="feed.rights">feed.rights</a></li>
                      <li><a href="reference-entry-title.html" title="entries[i].title">entries[i].title</a></li>
                      <li><a href="reference-entry-summary.html" title="entries[i].summary">entries[i].summary</a></li>
                      <li><a href="reference-entry-content.html" title="entries[i].content">entries[i].content</a></li>
@@ -53,7 +53,7 @@
                <p>The following <acronym title="HyperText Markup Language">HTML</acronym> attributes are allowed by default (all others are stripped):
                   <span class="simplelist"><tt class="sgmltag-attribute">abbr</tt>, <tt class="sgmltag-attribute">accept</tt>, <tt class="sgmltag-attribute">accept-charset</tt>, <tt class="sgmltag-attribute">accesskey</tt>, <tt class="sgmltag-attribute">action</tt>, <tt class="sgmltag-attribute">align</tt>, <tt class="sgmltag-attribute">alt</tt>, <tt class="sgmltag-attribute">axis</tt>, <tt class="sgmltag-attribute">border</tt>, <tt class="sgmltag-attribute">cellpadding</tt>, <tt class="sgmltag-attribute">cellspacing</tt>, <tt class="sgmltag-attribute">char</tt>, <tt class="sgmltag-attribute">charoff</tt>, <tt class="sgmltag-attribute">charset</tt>, <tt class="sgmltag-attribute">checked</tt>, <tt class="sgmltag-attribute">cite</tt>, <tt class="sgmltag-attribute">class</tt>, <tt class="sgmltag-attribute">clear</tt>, <tt class="sgmltag-attribute">cols</tt>, <tt class="sgmltag-attribute">colspan</tt>, <tt class="sgmltag-attribute">color</tt>, <tt class="sgmltag-attribute">compact</tt>, <tt class="sgmltag-attribute">coords</tt>, <tt class="sgmltag-attribute">datetime</tt>, <tt class="sgmltag-attribute">dir</tt>, <tt class="sgmltag-attribute">disabled</tt>, <tt class="sgmltag-attribute">enctype</tt>, <tt class="sgmltag-attribute">for</tt>, <tt class="sgmltag-attribute">frame</tt>, <tt class="sgmltag-attribute">headers</tt>, <tt class="sgmltag-attribute">height</tt>, <tt class="sgmltag-attribute">href</tt>, <tt class="sgmltag-attribute">hreflang</tt>, <tt class="sgmltag-attribute">hspace</tt>, <tt class="sgmltag-attribute">id</tt>, <tt class="sgmltag-attribute">ismap</tt>, <tt class="sgmltag-attribute">label</tt>, <tt class="sgmltag-attribute">lang</tt>, <tt class="sgmltag-attribute">longdesc</tt>, <tt class="sgmltag-attribute">maxlength</tt>, <tt class="sgmltag-attribute">media</tt>, <tt class="sgmltag-attribute">method</tt>, <tt class="sgmltag-attribute">multiple</tt>, <tt class="sgmltag-attribute">name</tt>, <tt class="sgmltag-attribute">nohref</tt>, <tt class="sgmltag-attribute">noshade</tt>, <tt class="sgmltag-attribute">nowrap</tt>, <tt class="sgmltag-attribute">prompt</tt>, <tt class="sgmltag-attribute">readonly</tt>, <tt class="sgmltag-attribute">rel</tt>, <tt class="sgmltag-attribute">rev</tt>, <tt class="sgmltag-attribute">rows</tt>, <tt class="sgmltag-attribute">rowspan</tt>, <tt class="sgmltag-attribute">rules</tt>, <tt class="sgmltag-attribute">scope</tt>, <tt class="sgmltag-attribute">selected</tt>, <tt class="sgmltag-attribute">shape</tt>, <tt class="sgmltag-attribute">size</tt>, <tt class="sgmltag-attribute">span</tt>, <tt class="sgmltag-attribute">src</tt>, <tt class="sgmltag-attribute">start</tt>, <tt class="sgmltag-attribute">summary</tt>, <tt class="sgmltag-attribute">tabindex</tt>, <tt class="sgmltag-attribute">target</tt>, <tt class="sgmltag-attribute">title</tt>, <tt class="sgmltag-attribute">type</tt>, <tt class="sgmltag-attribute">usemap</tt>, <tt class="sgmltag-attribute">valign</tt>, <tt class="sgmltag-attribute">value</tt>, <tt class="sgmltag-attribute">vspace</tt>, <tt class="sgmltag-attribute">width</tt></span>
                   
-               </p><a name="d0e2055"></a><table class="note" border="0" summary="">
+               </p><a name="d0e2080"></a><table class="note" border="0" summary="">
                   <tr>
                      <td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td>
                   </tr>
@@ -62,6 +62,8 @@
                      </td>
                   </tr>
                </table>
+               <p>One emerging technology that affects feed parsing is the inclusion of <a href="http://microformats.org/">microformats</a> within syndicated content.  Briefly, publishers can add additional semantics to their <acronym title="HyperText Markup Language">HTML</acronym> content using <tt class="sgmltag-attribute">rel</tt> and <tt class="sgmltag-attribute">class</tt> attributes.  <span class="application">Universal Feed Parser</span> does not currently parse microformat content within embedded <acronym title="HyperText Markup Language">HTML</acronym> markup, but it doesn't destroy it either.  Both the <tt class="sgmltag-attribute">rel</tt> and <tt class="sgmltag-attribute">class</tt> attributes survive <acronym title="HyperText Markup Language">HTML</acronym> sanitizing, so applications built on <span class="application">Universal Feed Parser</span> that wish to parse microformat content are free to do so.
+               </p>
                <div class="section" lang="en">
                   <div class="titlepage">
                      <div>
@@ -120,10 +122,16 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description&gt;</pre><p>Internet Explorer 
                   </div>
                   <p>The more I investigate, the more cases I find where Internet Explorer for Windows will treat seemingly innocuous markup as
                      code and blithely execute it.  This is why <span class="application">Universal Feed Parser</span> uses a whitelist and not a blacklist.   I am reasonably confident that none of the elements or attributes on the whitelist
-                     are security risks.  I am not at all confident about tags or attributes that I have not explicitly investigated.  And I have
-                     no confidence at all in my ability to detect strings within attribute values that Internet Explorer for Windows will treat
-                     as executable code.  I will not attempt to preserve &#8220;<span class="quote">just the good styles</span>&#8221;.  All styles are stripped.
+                     are security risks.  I am not at all confident about elements or attributes that I have not explicitly investigated.  And
+                     I have no confidence at all in my ability to detect strings within attribute values that Internet Explorer for Windows will
+                     treat as executable code.  I will not attempt to preserve &#8220;<span class="quote">just the good styles</span>&#8221;.  All styles are stripped.
                   </p>
+                  <div class="furtherreading">
+                     <h3>Elsewhere</h3>
+                     <ul>
+                        <li><a href="TODO">How to consume RSS safely</a></li>
+                     </ul>
+                  </div>
                </div>
             </div>
             <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="date-parsing.html">Date Parsing</a></div>

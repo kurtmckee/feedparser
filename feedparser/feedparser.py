@@ -61,17 +61,9 @@ try:
 except:
     zlib = None
     
-# timeoutsocket allows feedparser to time out rather than hang forever on ultra-slow servers.
-# Python 2.3 now has this functionality available in the standard socket library, so under
-# 2.3 you don't need to install anything.  But you probably should anyway, because the socket
-# module is buggy and timeoutsocket is better.
-try:
-    import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
-    timeoutsocket.setDefaultSocketTimeout(60)
-except ImportError:
-    import socket
-    if hasattr(socket, 'setdefaulttimeout'):
-        socket.setdefaulttimeout(60)
+import socket
+if hasattr(socket, 'setdefaulttimeout'):
+    socket.setdefaulttimeout(20)
 import urllib, urllib2
 
 _mxtidy = None
@@ -1091,7 +1083,7 @@ class _FeedParserMixin:
             self._start_enclosure(attrsD)
         if attrsD.has_key('href'):
             expectingText = 0
-            if self.mapContentType(attrsD.get('type', '')) in self.html_types:
+            if (attrsD.get('rel') == 'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
                 context['link'] = attrsD['href']
         else:
             self.push('link', expectingText)
