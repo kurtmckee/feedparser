@@ -1,7 +1,0 @@
-<!--
-Description: feed tagline type='text/plain'
-Expect:      not bozo and feed['tagline_detail']['type'] == 'text/plain'
--->
-<feed xmlns="http://www.w3.org/2005/Atom">
-  <tagline type="text">Example Atom</tagline>
-</feed>
