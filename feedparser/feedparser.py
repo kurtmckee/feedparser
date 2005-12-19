@@ -12,14 +12,34 @@ Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
 __version__ = "pre-4.0-" + "$Revision$"[11:15] + "-cvs"
-__license__ = "Python"
-__copyright__ = "Copyright 2002-4, Mark Pilgrim"
+__license__ = "Copyright (c) 2002-2005, Mark Pilgrim, All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+* Redistributions of source code must retain the above copyright notice,
+  this list of conditions and the following disclaimer.
+* Redistributions in binary form must reproduce the above copyright notice,
+  this list of conditions and the following disclaimer in the documentation
+  and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE."""
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
-                    "Aaron Swartz <http://aaronsw.com>"]
-_debug = 1
+                    "Aaron Swartz <http://aaronsw.com/>"]
+_debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -279,6 +299,7 @@ class _FeedParserMixin:
                   'http://purl.org/rss/1.0/modules/richequiv/':           'reqv',
                   'http://purl.org/rss/1.0/modules/search/':              'search',
                   'http://purl.org/rss/1.0/modules/slash/':               'slash',
+                  'http://schemas.xmlsoap.org/soap/envelope/':            'soap',
                   'http://purl.org/rss/1.0/modules/servicestatus/':       'ss',
                   'http://hacks.benhammersley.com/rss/streaming/':        'str',
                   'http://purl.org/rss/1.0/modules/subscription/':        'sub',
@@ -289,7 +310,6 @@ class _FeedParserMixin:
                   'http://madskills.com/public/xml/rss/module/trackback/':'trackback',
                   'http://wellformedweb.org/commentapi/':                 'wfw',
                   'http://purl.org/rss/1.0/modules/wiki/':                'wiki',
-                  'http://schemas.xmlsoap.org/soap/envelope/':            'soap',
                   'http://www.w3.org/1999/xhtml':                         'xhtml',
                   'http://www.w3.org/xml/1998/namespace':                 'xml'
 }
@@ -2644,6 +2664,6 @@ if __name__ == '__main__':
 #  support for HTTP 303 redirects
 #4.0 - MAP - support for relative URIs in xml:base attribute; fixed
 #  encoding issue with mxTidy (phopkins); preliminary support for RFC 3229;
-#  support for Atom 1.0; changed categories to array of dict
-#  {'term': term, 'scheme': scheme, 'label': label} to match Atom 1.0
+#  support for Atom 1.0; new tags for categories/keywords/etc. as array of
+#  dict {'term': term, 'scheme': scheme, 'label': label} to match Atom 1.0
 #  terminology; 

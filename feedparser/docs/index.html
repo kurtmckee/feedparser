@@ -22,7 +22,7 @@
                <div class="titlepage">
                   <div>
                      <div>
-                        <p class="pubdate">2005-11-09</p>
+                        <p class="pubdate">2005-12-19</p>
                      </div>
                      <div>
                         <div class="abstract">
@@ -38,10 +38,8 @@
                      </div>
                      <div>
                         <div class="legalnotice">
-                           <p>This documentation and sample code are free software. You can redistribute them and/or modify them under the terms of the
-                              GNU General Public License as published by the Free Software Foundation, either version 2 of the License or (at your option)
-                              any later version. This documentation and sample code are distributed in the hope that they will be useful, but WITHOUT ANY
-                              WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the <a href="gpl.html" title="GNU General Public License">GNU General Public License</a> for more details.
+                           <p>This documentation is provided by the author &#8220;<span class="quote">as is</span>&#8221; and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness
+                              for a particular purpose are disclaimed.  See <a href="license.html" title="Terms of use">Terms of use</a> for more details.
                            </p>
                         </div>
                      </div>
@@ -185,7 +183,7 @@
                                  <li><span class="section"><a href="reference-feed-textinput.html#reference.feed.textinput.link">feed.textinput.link</a></span></li>
                                  <li><span class="section"><a href="reference-feed-textinput.html#reference.feed.textinput.name">feed.textinput.name</a></span></li>
                                  <li><span class="section"><a href="reference-feed-textinput.html#reference.feed.textinput.description">feed.textinput.description</a></span></li>
-                                 <li><span class="section"><a href="reference-feed-textinput.html#d0e7291">Annotated example</a></span></li>
+                                 <li><span class="section"><a href="reference-feed-textinput.html#d0e7466">Annotated example</a></span></li>
                               </ul>
                            </li>
                            <li><span class="section"><a href="reference-feed-cloud.html">feed.cloud</a></span><ul>
@@ -203,8 +201,12 @@
                                  <li><span class="section"><a href="reference-feed-publisher_detail.html#reference.feed.publisher_detail.email">feed.publisher_detail.email</a></span></li>
                               </ul>
                            </li>
-                           <li><span class="section"><a href="reference-feed-category.html">feed.category</a></span></li>
-                           <li><span class="section"><a href="reference-feed-categories.html">feed.categories</a></span></li>
+                           <li><span class="section"><a href="reference-feed-tags.html">feed.tags</a></span><ul>
+                                 <li><span class="section"><a href="reference-feed-tags.html#reference.feed.tags.term">feed.tags[i].term</a></span></li>
+                                 <li><span class="section"><a href="reference-feed-tags.html#reference.feed.tags.scheme">feed.tags[i].scheme</a></span></li>
+                                 <li><span class="section"><a href="reference-feed-tags.html#reference.feed.tags.label">feed.tags[i].label</a></span></li>
+                              </ul>
+                           </li>
                            <li><span class="section"><a href="reference-feed-docs.html">feed.docs</a></span></li>
                            <li><span class="section"><a href="reference-feed-ttl.html">feed.ttl</a></span></li>
                            <li><span class="section"><a href="reference-feed-language.html">feed.language</a></span></li>
@@ -264,10 +266,10 @@
                                  <li><span class="section"><a href="reference-entry-contributors.html#reference.entry.contributors.email">entries[i].contributors[j].email</a></span></li>
                               </ul>
                            </li>
-                           <li><span class="section"><a href="reference-entry-enclosure.html">entries[i].enclosures</a></span><ul>
-                                 <li><span class="section"><a href="reference-entry-enclosure.html#reference.entry.enclosure.href">entries[i].enclosures[j].href</a></span></li>
-                                 <li><span class="section"><a href="reference-entry-enclosure.html#reference.entry.enclosure.length">entries[i].enclosures[j].length</a></span></li>
-                                 <li><span class="section"><a href="reference-entry-enclosure.html#reference.entry.enclosure.type">entries[i].enclosures[j].type</a></span></li>
+                           <li><span class="section"><a href="reference-entry-enclosures.html">entries[i].enclosures</a></span><ul>
+                                 <li><span class="section"><a href="reference-entry-enclosures.html#reference.entry.enclosures.href">entries[i].enclosures[j].href</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-enclosures.html#reference.entry.enclosures.length">entries[i].enclosures[j].length</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-enclosures.html#reference.entry.enclosures.type">entries[i].enclosures[j].type</a></span></li>
                               </ul>
                            </li>
                            <li><span class="section"><a href="reference-entry-publisher.html">entries[i].publisher</a></span></li>
@@ -277,11 +279,22 @@
                                  <li><span class="section"><a href="reference-entry-publisher_detail.html#reference.entry.publisher_detail.email">entries[i].publisher_detail.email</a></span></li>
                               </ul>
                            </li>
-                           <li><span class="section"><a href="reference-entry-category.html">entries[i].category</a></span></li>
-                           <li><span class="section"><a href="reference-entry-categories.html">entries[i].categories</a></span></li>
+                           <li><span class="section"><a href="reference-entries-tags.html">entries[i].tags</a></span><ul>
+                                 <li><span class="section"><a href="reference-entries-tags.html#reference.entry.tags.term">entries[i].tags[j].term</a></span></li>
+                                 <li><span class="section"><a href="reference-entries-tags.html#reference.entry.tags.scheme">entries[i].tags[j].scheme</a></span></li>
+                                 <li><span class="section"><a href="reference-entries-tags.html#reference.entry.tags.label">entries[i].tags[j].label</a></span></li>
+                              </ul>
+                           </li>
                            <li><span class="section"><a href="reference-entry-source.html">entries[i].source</a></span><ul>
-                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.href">entries[i].source.href</a></span></li>
-                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.value">entries[i].source.value</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.author">entries[i].source.author</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.author_detail">entries[i].source.author_detail</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.contributors">entries[i].source.contributors</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.icon">entries[i].source.icon</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.id">entries[i].source.id</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.link">entries[i].source.link</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.links">entries[i].source.links</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.logo">entries[i].source.logo</a></span></li>
+                                 <li><span class="section"><a href="reference-entry-source.html#reference.entry.source.rights">entries[i].source.rights</a></span></li>
                               </ul>
                            </li>
                            <li><span class="section"><a href="reference-entry-comments.html">entries[i].comments</a></span></li>
@@ -297,13 +310,7 @@
                            <li><span class="section"><a href="reference-bozo_exception.html">bozo_exception</a></span></li>
                         </ul>
                      </li>
-                     <li><span class="appendix"><a href="gpl.html">GNU General Public License</a></span><ul>
-                           <li><span class="section"><a href="gpl-preamble.html">Preamble</a></span></li>
-                           <li><span class="section"><a href="gpl-terms-and-conditions.html">Terms and conditions for copying, distribution, and modification</a></span></li>
-                           <li><span class="section"><a href="gpl-how-to-apply.html">How to apply these terms to your new programs
-                                        </a></span></li>
-                        </ul>
-                     </li>
+                     <li><span class="appendix"><a href="license.html">Terms of use</a></span></li>
                   </ul>
                </div>
             </div>

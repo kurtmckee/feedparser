@@ -12,7 +12,7 @@
       <meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
       <link rel="start" href="index.html" title="Documentation">
       <link rel="up" href="reference.html" title="Reference">
-      <link rel="prev" href="reference-entry-categories.html" title="entries[i].categories">
+      <link rel="prev" href="reference-entries-tags.html" title="entries[i].tags">
       <link rel="next" href="reference-entry-comments.html" title="entries[i].comments">
    </head>
    <body id="feedparser-org" class="docs">
@@ -43,13 +43,128 @@
                   <div class="titlepage">
                      <div>
                         <div>
-                           <h3 class="title"><a name="reference.entry.source.href" class="skip" href="#reference.entry.source.href" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.href
+                           <h3 class="title"><a name="reference.entry.source.author" class="skip" href="#reference.entry.source.author" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.author
                            </h3>
                         </div>
                      </div>
                      <div></div>
                   </div>
-                  <p>The <acronym title="Uniform Resource Locator">URL</acronym> of the entry source.  The <acronym title="Rich Site Summary">RSS</acronym> specification states that this must be the <acronym title="Uniform Resource Locator">URL</acronym> of an <acronym title="Rich Site Summary">RSS</acronym> feed, not an <acronym title="HyperText Markup Language">HTML</acronym> page or other feed format.
+                  <p>The author of the source of this entry.</p>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.author_detail" class="skip" href="#reference.entry.source.author_detail" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.author_detail
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>A dictionary containing details about the author of the source of this entry.</p>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.author_detail.name" class="skip" href="#reference.entry.source.author_detail.name" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.author_detail.name
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The name of the author of the source of this entry.</p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.author_detail.href" class="skip" href="#reference.entry.source.author_detail.href" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.author_detail.href
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The <acronym title="Uniform Resource Locator">URL</acronym> of the author of the source of this entry.  This can be the author's home page, or a contact page with a webmail form.
+                     </p>
+                     <p>If this is a relative <acronym title="Uniform Resource Identifier">URI</acronym>, it is <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.author_detail.email" class="skip" href="#reference.entry.source.author_detail.email" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.author_detail.email
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The email address of the author of the source of this entry.</p>
+                  </div>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.contributors" class="skip" href="#reference.entry.source.contributors" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.contributors
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>A list of contributors to the source of this entry.</p>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.contributors.name" class="skip" href="#reference.entry.source.contributors.name" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.contributors[j].name
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The name of a contributor to the source of this entry.</p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.contributors.href" class="skip" href="#reference.entry.source.contributors.href" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.contributors[j].href
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The <acronym title="Uniform Resource Locator">URL</acronym> of a contributor to the source of this entry.  This can be the contributor's home page, or a contact page with a webmail
+                        form.
+                     </p>
+                     <p>If this is a relative <acronym title="Uniform Resource Identifier">URI</acronym>, it is <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.contributors.email" class="skip" href="#reference.entry.source.contributors.email" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.contributors[j].email
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The email address of a contributor to the source of this entry.</p>
+                  </div>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.icon" class="skip" href="#reference.entry.source.icon" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.icon
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>The <acronym title="Uniform Resource Locator">URL</acronym> of an icon representing the source of this entry.
                   </p>
                   <p>If this is a relative <acronym title="Uniform Resource Identifier">URI</acronym>, it is <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
                   </p>
@@ -58,17 +173,130 @@
                   <div class="titlepage">
                      <div>
                         <div>
-                           <h3 class="title"><a name="reference.entry.source.value" class="skip" href="#reference.entry.source.value" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.value
+                           <h3 class="title"><a name="reference.entry.source.id" class="skip" href="#reference.entry.source.id" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.id
                            </h3>
                         </div>
                      </div>
                      <div></div>
                   </div>
-                  <p>The name of the entry source.  The <acronym title="Rich Site Summary">RSS</acronym> specification states that this should be the title of the <acronym title="Rich Site Summary">RSS</acronym> feed where this entry came from, not an entry title or page title.
+                  <p>A globally unique identifier for the source of this entry.</p>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.link" class="skip" href="#reference.entry.source.link" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.link
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>The primary permanent link of the source of this entry</p>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.links" class="skip" href="#reference.entry.source.links" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.links
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>A list of all links defined by the source of this entry.</p>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.links.rel" class="skip" href="#reference.entry.source.links.rel" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.links[j].rel
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The relationship of a link defined by the source of this entry.</p>
+                     <p>Atom 1.0 defines five standard link relationships and describes the process for registering others.  Here are the five standard
+                        <tt class="sgmltag-attribute">rel</tt> values:
+                     </p>
+                     <div class="itemizedlist">
+                        <ul>
+                           <li><tt class="literal">alternate</tt></li>
+                           <li><tt class="literal">self</tt></li>
+                           <li><tt class="literal">related</tt></li>
+                           <li><tt class="literal">via</tt></li>
+                           <li><tt class="literal">enclosure</tt></li>
+                        </ul>
+                     </div>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.links.type" class="skip" href="#reference.entry.source.links.type" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.links[j].type
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The content type of the page pointed to by a link defined by the source of this entry.</p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.links.href" class="skip" href="#reference.entry.source.links.href" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.links[j].href
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The <acronym title="Uniform Resource Locator">URL</acronym> of the page pointed to by a link defined by the source of this entry.
+                     </p>
+                     <p>If this is a relative <acronym title="Uniform Resource Identifier">URI</acronym>, it is <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.links.title" class="skip" href="#reference.entry.source.links.title" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.links[j].title
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The title of a link defined by the source of this entry.</p>
+                  </div>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.logo" class="skip" href="#reference.entry.source.logo" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.logo
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>The <acronym title="Uniform Resource Locator">URL</acronym> of a logo representing the source of this entry.
+                  </p>
+                  <p>If this is a relative <acronym title="Uniform Resource Identifier">URI</acronym>, it is <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
                   </p>
                </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.rights" class="skip" href="#reference.entry.source.rights" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.rights
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>TODO</p>
+               </div>
             </div>
-            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="reference-entry-categories.html">entries[i].categories</a></div>
+            <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="reference-entries-tags.html">entries[i].tags</a></div>
             <div style="text-align: right"><a class="NavigationArrow" href="reference-entry-comments.html">entries[i].comments</a>&nbsp;&#8594;
             </div>
             <hr style="clear:both">
