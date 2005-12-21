@@ -38,7 +38,7 @@
                   </div>
                   <div></div>
                </div>
-               <p>When a feed has temporarily moved to a new location, the web server will return a <tt class="literal">302</tt> status code.  <span class="application">Universal Feed Parser</span> makes this available in <tt class="varname">d.status</tt>.
+               <p>When a feed has temporarily moved to a new location, the web server will return a <tt class="constant">302</tt> status code.  <span class="application">Universal Feed Parser</span> makes this available in <tt class="varname">d.status</tt>.
                </p>
                <p>There is nothing special you need to do with temporary redirects; by the time you learn about it, <span class="application">Universal Feed Parser</span> has already followed the redirect to the new location (available in <tt class="varname">d.url</tt>), downloaded the feed, and parsed it.  Since the redirect is temporary, you should continue requesting the original <acronym title="Uniform Resource Locator">URL</acronym> the next time you want to parse the feed.
                </p>
@@ -51,7 +51,7 @@
 <span class="computeroutput">'http://feedparser.org/docs/examples/atom10.xml'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title</span>
 <span class="computeroutput">u'Sample Feed'</span></pre></div>
-               <p>When a feed has permanently moved to a new location, the web server will return a <tt class="literal">301</tt> status code.  Again, <span class="application">Universal Feed Parser</span> makes this available in <tt class="varname">d.status</tt>.
+               <p>When a feed has permanently moved to a new location, the web server will return a <tt class="constant">301</tt> status code.  Again, <span class="application">Universal Feed Parser</span> makes this available in <tt class="varname">d.status</tt>.
                </p>
                <p>If you are polling a feed on a regular basis, it is very important to check the status code (<tt class="varname">d.status</tt>) every time you download.  If the feed has been permanently redirected, you should update your database or configuration
                   file with the new address (<tt class="varname">d.url</tt>).  Repeatedly requesting the original address of a feed that has been permanently redirected is very rude, and may get you
@@ -66,7 +66,7 @@
 <span class="computeroutput">'http://feedparser.org/docs/examples/atom10.xml'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title</span>
 <span class="computeroutput">u'Sample Feed'</span></pre></div>
-               <p>When a feed has been permanently deleted, the web server will return a <tt class="literal">410</tt> status code.  If you ever receive a <tt class="literal">410</tt>, you should stop polling the feed and inform the end user that the feed is gone for good.
+               <p>When a feed has been permanently deleted, the web server will return a <tt class="constant">410</tt> status code.  If you ever receive a <tt class="constant">410</tt>, you should stop polling the feed and inform the end user that the feed is gone for good.
                </p>
                <p>Repeatedly requesting a feed that has been marked as &#8220;<span class="quote">gone</span>&#8221; is very rude, and may get you banned from the server.
                </p>

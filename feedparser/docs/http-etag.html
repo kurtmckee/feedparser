@@ -39,7 +39,7 @@
                   <div></div>
                </div>
                <p>The basic concept is that a feed publisher may provide a special <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, called an ETag, when it publishes a feed.  You should send this ETag back to the server on subsequent requests. 
-                  If the feed has not changed since the last time you requested it, the server will return a special <acronym title="Hypertext Transfer Protocol">HTTP</acronym> status code (<tt class="literal">304</tt>) and no feed data.
+                  If the feed has not changed since the last time you requested it, the server will return a special <acronym title="Hypertext Transfer Protocol">HTTP</acronym> status code (<tt class="constant">304</tt>) and no feed data.
                </p>
                <div class="example"><a name="example.etags" class="skip" href="#example.etags" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
                   <h3 class="title">Example:&nbsp;Using ETags to reduce bandwidth</h3><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
@@ -58,7 +58,7 @@
 the server sent no data.  This is a feature, not a bug!'</span></pre></div>
                <p>There is a related concept which accomplishes the same thing, but slightly differently.  In this case, the server publishes
                   the last-modified date of the feed in the <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  You can send this back to the server on subsequent requests, and if the feed has not changed, the server will return
-                  <acronym title="Hypertext Transfer Protocol">HTTP</acronym> status code <tt class="literal">304</tt> and no feed data.
+                  <acronym title="Hypertext Transfer Protocol">HTTP</acronym> status code <tt class="constant">304</tt> and no feed data.
                </p>
                <div class="example"><a name="example.lastmodified" class="skip" href="#example.lastmodified" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
                   <h3 class="title">Example:&nbsp;Using Last-Modified headers to reduce bandwidth</h3><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>

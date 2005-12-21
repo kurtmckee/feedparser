@@ -46,6 +46,10 @@
 <!ENTITY javascript "Javascript">
 <!ENTITY xmlbaseattr "<sgmltag class='attribute'>xml:base</sgmltag>">
 <!ENTITY itunes "<application>iTunes</application>">
+<!ENTITY one "<constant>1</constant>">
+<!ENTITY zero "<constant>0</constant>">
+<!ENTITY contenttype "<literal>Content-Type</literal>">
+<!ENTITY contentlocation "<literal>Content-Location</literal>">
 <!ENTITY url_time "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_atomwiki "http://www.intertwingly.net/wiki/pie/">
 <!ENTITY url_rss090 "http://www.purplepages.ie/RSS/netscape/rss0.90.html">
@@ -119,9 +123,9 @@
 
 <!ENTITY type_details "<para>Most likely values for <varname>type</varname>:</para>
 <itemizedlist>
-<listitem><para><literal>text/plain</literal></para></listitem>
-<listitem><para><literal>text/html</literal></para></listitem>
-<listitem><para><literal>application/xhtml+xml</literal></para></listitem>
+<listitem><para><constant>text/plain</constant></para></listitem>
+<listitem><para><constant>text/html</constant></para></listitem>
+<listitem><para><constant>application/xhtml+xml</constant></para></listitem>
 </itemizedlist>
 <para>For &atom; feeds, the content type is taken from the <sgmltag class='attribute'>type</sgmltag> attribute, which defaults to <constant>text/plain</constant> if not specified.  For &rss; feeds, the content type is auto-determined by inspecting the content, and defaults to <constant>text/html</constant>.  Note that this may cause silent data loss if the value contains plain text with angle brackets.  There is nothing I can do about this problem; it is a limitation of &rss;.</para>
 <para>Future enhancement: some versions of &rss; clearly specify that certain values default to <constant>text/plain</constant>, and &feedparser; should respect this, but it doesn't yet.</para>">
@@ -134,67 +138,67 @@
 <!ENTITY all_versions "<para>Here is the complete list of known feed types and versions that may be returned in <varname>version</varname>:</para>
 <variablelist>
 <varlistentry>
-<term><literal>rss090</literal></term>
+<term><constant>rss090</constant></term>
 <listitem><para><ulink url='&url_rss090;'>&rss; 0.90</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss091n</literal></term>
+<term><constant>rss091n</constant></term>
 <listitem><para><ulink url='&url_rss091n;'>Netscape &rss; 0.91</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss091u</literal></term>
+<term><constant>rss091u</constant></term>
 <listitem><para><ulink url='&url_rss091u;'>Userland &rss; 0.91</ulink> (<ulink url='&url_rss091differences;'>differences from Netscape &rss; 0.91</ulink>)</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss10</literal></term>
+<term><constant>rss10</constant></term>
 <listitem><para><ulink url='&url_rss10;'>&rss; 1.0</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss092</literal></term>
+<term><constant>rss092</constant></term>
 <listitem><para><ulink url='&url_rss092;'>&rss; 0.92</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss093</literal></term>
+<term><constant>rss093</constant></term>
 <listitem><para><ulink url='&url_rss093;'>&rss; 0.93</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss094</literal></term>
+<term><constant>rss094</constant></term>
 <listitem><para>&rss; 0.94 (no accurate specification is known to exist)</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss20</literal></term>
+<term><constant>rss20</constant></term>
 <listitem><para><ulink url='&url_rss20;'>&rss; 2.0</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>rss</literal></term>
+<term><constant>rss</constant></term>
 <listitem><para>&rss; (unknown or unrecognized version)</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>atom01</literal></term>
+<term><constant>atom01</constant></term>
 <listitem><para><ulink url='&url_atom01;'>&atom; 0.1</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>atom02</literal></term>
+<term><constant>atom02</constant></term>
 <listitem><para><ulink url='&url_atom02;'>&atom; 0.2</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>atom03</literal></term>
+<term><constant>atom03</constant></term>
 <listitem><para><ulink url='&url_atom03;'>&atom; 0.3</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>atom10</literal></term>
+<term><constant>atom10</constant></term>
 <listitem><para><ulink url='&url_atom10;'>&atom; 1.0</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>atom</literal></term>
+<term><constant>atom</constant></term>
 <listitem><para>&atom; (unknown or unrecognized version)</para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>cdf</literal></term>
+<term><constant>cdf</constant></term>
 <listitem><para><ulink url='&url_cdf;'>&cdf;</ulink></para></listitem>
 </varlistentry>
 <varlistentry>
-<term><literal>hotrss</literal></term>
+<term><constant>hotrss</constant></term>
 <listitem><para><ulink url='&url_hotrss;'>&hotrss;</ulink></para></listitem>
 </varlistentry>
 </variablelist>
@@ -210,11 +214,11 @@
 
 <!ENTITY listofrelvalues "<para>&atom; 1.0 defines five standard link relationships and describes the process for registering others.  Here are the five standard <sgmltag class='attribute'>rel</sgmltag> values:</para>
 <itemizedlist>
-<listitem><para><literal>alternate</literal></para></listitem>
-<listitem><para><literal>self</literal></para></listitem>
-<listitem><para><literal>related</literal></para></listitem>
-<listitem><para><literal>via</literal></para></listitem>
-<listitem><para><literal>enclosure</literal></para></listitem>
+<listitem><para><constant>alternate</constant></para></listitem>
+<listitem><para><constant>self</constant></para></listitem>
+<listitem><para><constant>related</constant></para></listitem>
+<listitem><para><constant>via</constant></para></listitem>
+<listitem><para><constant>enclosure</constant></para></listitem>
 </itemizedlist>">
 
 ]>
@@ -251,7 +255,7 @@
 <keyword>Python</keyword>
 </keywordset>
 <legalnotice>
-<para>This documentation is provided by the author <quote>as is</quote> and any express or implied warranties, including, but not limited to, the implied warranties of merchantability and fitness for a particular purpose are disclaimed.  See <xref linkend="license"/> for more details.</para>
+<para>This documentation is provided by the author <quote>as is</quote> without any express or implied warranties.  See <xref linkend="license"/> for more details.</para>
 </legalnotice>
 </bookinfo>
 <chapter id="basic">
@@ -265,7 +269,7 @@
 <para>&feedparser; is a &python; module for downloading and parsing syndicated feeds.  It can handle &rss; 0.90, Netscape &rss; 0.91, Userland &rss; 0.91, &rss; 0.92, &rss; 0.93, &rss; 0.94, &rss; 1.0, &rss; 2.0, &atom; 0.3, &atom; 1.0, and &cdf; feeds.  It also parses several popular extension modules, including Dublin Core and Apple's &itunes; extensions.</para>
 </abstract>
 <para>To use &feedparser;, you will need &python; 2.1 or later.  &feedparser; is not meant to run standalone; it is a module for you to use as part of a larger &python; program.</para>
-<para>&feedparser; is easy to use; the module is self-contained in a single file, &feedparser_filename;, and it has only one public function, &parse;.  &parse; takes a number of arguments, but only one is required, and it can be a &url;, a local filename, or a raw string containing feed data in any format.</para>
+<para>&feedparser; is easy to use; the module is self-contained in a single file, &feedparser_filename;, and it has one primary public function, &parse;.  &parse; takes a number of arguments, but only one is required, and it can be a &url;, a local filename, or a raw string containing feed data in any format.</para>
 <example id="example.parse.remote">
 <title>Parsing a feed from a remote &url;</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
@@ -878,11 +882,11 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <para>&feedparser; recognizes all character-based timezone abbreviations defined in &rfc822;.  In addition, &feedparser; recognizes the following invalid timezones:</para>
 
 <itemizedlist>
-<listitem><para><literal>AT</literal> is treated as <literal>AST</literal></para></listitem>
-<listitem><para><literal>ET</literal> is treated as <literal>EST</literal></para></listitem>
-<listitem><para><literal>CT</literal> is treated as <literal>CST</literal></para></listitem>
-<listitem><para><literal>MT</literal> is treated as <literal>MST</literal></para></listitem>
-<listitem><para><literal>PT</literal> is treated as <literal>PST</literal></para></listitem>
+<listitem><para><constant>AT</constant> is treated as <constant>AST</constant></para></listitem>
+<listitem><para><constant>ET</constant> is treated as <constant>EST</constant></para></listitem>
+<listitem><para><constant>CT</constant> is treated as <constant>CST</constant></para></listitem>
+<listitem><para><constant>MT</constant> is treated as <constant>MST</constant></para></listitem>
+<listitem><para><constant>PT</constant> is treated as <constant>PST</constant></para></listitem>
 </itemizedlist>
 </section>
 
@@ -1546,9 +1550,9 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <title>How Relative &uri;s Are Resolved</title>
 <para>&feedparser; resolves relative &uri;s according to the <ulink url="&url_xmlbase;">&xmlbase;</ulink> specification.  This defines a hierarchical inheritance system, where one element can define the base &uri; for itself and all of its child elements, using an <sgmltag class="attribute">xml:base</sgmltag> attribute.  A child element can then override its parent's base &uri; by redeclaring <sgmltag class="attribute">xml:base</sgmltag> to a different value.</para>
 
-<para>If no <sgmltag class="attribute">xml:base</sgmltag> is specified, the feed has a default base &uri; defined in the <literal>Content-Location</literal> &http; header.</para>
+<para>If no <sgmltag class="attribute">xml:base</sgmltag> is specified, the feed has a default base &uri; defined in the &contentlocation; &http; header.</para>
 
-<para>If no <literal>Content-Location</literal> &http; header is present, the &url; used to retrieve the feed itself is the default base &uri; for all relative links within the feed.  If the feed was retrieved via an &http; redirect (any &http; 3xx status code), then the final &url; of the feed is the default base &uri;.</para>
+<para>If no &contentlocation; &http; header is present, the &url; used to retrieve the feed itself is the default base &uri; for all relative links within the feed.  If the feed was retrieved via an &http; redirect (any &http; 3xx status code), then the final &url; of the feed is the default base &uri;.</para>
 
 <para>For example, an &xmlbaseattr; on the root-level element sets the base &uri; for all &uri;s in the feed.</para>
 
@@ -1598,10 +1602,10 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <computeroutput>u'http://example.com/api/client/37'</computeroutput></screen>
 </example>
 
-<para>If no &xmlbaseattr; is specified on the root-level element, the default base &uri; is given in the <literal>Content-Location</literal> &http; header.  This can still be overridden by any child element that declares an &xmlbaseattr; attribute.</para>
+<para>If no &xmlbaseattr; is specified on the root-level element, the default base &uri; is given in the &contentlocation; &http; header.  This can still be overridden by any child element that declares an &xmlbaseattr; attribute.</para>
 
 <example>
-<title><literal>Content-Location</literal> &http; header</title>
+<title>&contentlocation; &http; header</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &prompt;<userinput>d = feedparser.parse("<ulink url="&url_example_http_base;">&url_example_http_base;</ulink>")</userinput>
 &prompt;<userinput>d.feed.link</userinput>
@@ -1610,7 +1614,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <computeroutput>u'http://example.org/archives/000001.html'</computeroutput></screen>
 </example>
 
-<para>Finally, if no root-level &xmlbaseattr; is declared, and no <literal>Content-Location</literal> &http; header is present, the &url; of the feed itself is the default base &uri;.  Again, this can still be overridden by any element that declares an &xmlbaseattr; attribute.</para>
+<para>Finally, if no root-level &xmlbaseattr; is declared, and no &contentlocation; &http; header is present, the &url; of the feed itself is the default base &uri;.  Again, this can still be overridden by any element that declares an &xmlbaseattr; attribute.</para>
 
 <example>
 <title>Feed &url; as default base &uri;</title>
@@ -1695,7 +1699,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 
 <para>If no encoding is specified and no Byte Order Mark is present, &xml; defaults to UTF-8.</para>
 
-<para>&http; uses &mime; to define a method of specifying the character encoding, as part of the <literal>Content-Type</literal> &http; header, which looks like this:</para>
+<para>&http; uses &mime; to define a method of specifying the character encoding, as part of the &contenttype; &http; header, which looks like this:</para>
 
 <informalexample>
 <programlisting>Content-Type: text/html; charset="utf-8"</programlisting>
@@ -1703,18 +1707,18 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 
 <para>If no charset is specified, &http; defaults to <literal>iso-8859-1</literal>, but only for <literal>text/*</literal> media types. For other media types, the default encoding is undefined, which is where &rfc; 3023 comes in.</para>
 
-<para>According to &rfc; 3023, if the media type given in the <literal>Content-Type</literal> &http; header is <literal>application/xml</literal>, <literal>application/xml-dtd</literal>, <literal>application/xml-external-parsed-entity</literal>, or any one of the subtypes of <literal>application/xml</literal> such as <literal>application/atom+xml</literal> or <literal>application/rss+xml</literal> or even <literal>application/rdf+xml</literal>, then the encoding is</para>
+<para>According to &rfc; 3023, if the media type given in the &contenttype; &http; header is <literal>application/xml</literal>, <literal>application/xml-dtd</literal>, <literal>application/xml-external-parsed-entity</literal>, or any one of the subtypes of <literal>application/xml</literal> such as <literal>application/atom+xml</literal> or <literal>application/rss+xml</literal> or even <literal>application/rdf+xml</literal>, then the encoding is</para>
 
 <orderedlist>
-<listitem><para>the encoding given in the <varname>charset</varname> parameter of the <literal>Content-Type</literal> &http; header, or</para></listitem>
+<listitem><para>the encoding given in the <varname>charset</varname> parameter of the &contenttype; &http; header, or</para></listitem>
 <listitem><para>the encoding given in the <sgmltag class="attribute">encoding</sgmltag> attribute of the &xml; declaration within the document, or</para></listitem>
 <listitem><para><literal>utf-8</literal>.</para></listitem>
 </orderedlist>
 
-<para>On the other hand, if the media type given in the <literal>Content-Type</literal> &http; header is <literal>text/xml</literal>, <literal>text/xml-external-parsed-entity</literal>, or a subtype like <literal>text/AnythingAtAll+xml</literal>, then the encoding attribute of the &xml; declaration within the document is ignored completely, and the encoding is</para>
+<para>On the other hand, if the media type given in the &contenttype; &http; header is <literal>text/xml</literal>, <literal>text/xml-external-parsed-entity</literal>, or a subtype like <literal>text/AnythingAtAll+xml</literal>, then the encoding attribute of the &xml; declaration within the document is ignored completely, and the encoding is</para>
 
 <orderedlist>
-<listitem><para>the encoding given in the charset parameter of the <literal>Content-Type</literal> &http; header, or</para></listitem>
+<listitem><para>the encoding given in the charset parameter of the &contenttype; &http; header, or</para></listitem>
 <listitem><para><literal>us-ascii</literal>.</para></listitem>
 </orderedlist>
 </section>
@@ -1722,7 +1726,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <section id="advanced.encoding.override">
 <title>Handling Incorrectly-Declared Encodings</title>
 
-<para>&feedparser; initially uses the rules specified in &rfc; 3023 to determine the character encoding of the feed.  If parsing succeeds, then that's that.  If parsing fails, &feedparser; sets the <varname>bozo</varname> bit to <literal>1</literal> and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingOverride</constant>.  Then it tries to reparse the feed with the following character encodings:</para>
+<para>&feedparser; initially uses the rules specified in &rfc; 3023 to determine the character encoding of the feed.  If parsing succeeds, then that's that.  If parsing fails, &feedparser; sets the <varname>bozo</varname> bit to &one; and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingOverride</constant>.  Then it tries to reparse the feed with the following character encodings:</para>
 
 <orderedlist>
 <listitem><para>the encoding specified in the &xml; declaration</para></listitem>
@@ -1731,15 +1735,15 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <listitem><para><literal>windows-1252</literal></para></listitem>
 </orderedlist>
 
-<para>If the character encoding can not be determined, &feedparser; sets the <varname>bozo</varname> bit to <literal>1</literal> and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingUnknown</constant>.  In this case, parsed values will be strings, not Unicode strings.</para>
+<para>If the character encoding can not be determined, &feedparser; sets the <varname>bozo</varname> bit to &one; and sets <varname>bozo_exception</varname> to <constant>feedparser.CharacterEncodingUnknown</constant>.  In this case, parsed values will be strings, not Unicode strings.</para>
 </section>
 
 <section id="advanced.encoding.nonxml">
 <title>Handling Incorrectly-Declared Media Types</title>
 
-<para>&rfc; 3023 only applies when the feed is served over &http; with a <literal>Content-Type</literal> that declares the feed to be some kind of &xml;.  However, some web servers are severely misconfigured and serve feeds with a <literal>Content-Type</literal> of <literal>text/plain</literal>, <literal>application/octet-stream</literal>, or some completely bogus media type.</para>
+<para>&rfc; 3023 only applies when the feed is served over &http; with a &contenttype; that declares the feed to be some kind of &xml;.  However, some web servers are severely misconfigured and serve feeds with a &contenttype; of <literal>text/plain</literal>, <literal>application/octet-stream</literal>, or some completely bogus media type.</para>
 
-<para>&feedparser; will attempt to parse such feeds, but it will set the <varname>bozo</varname> bit to <literal>1</literal> and set <varname>bozo_exception</varname> to <constant>feedparser.NonXMLContentType</constant>.</para>
+<para>&feedparser; will attempt to parse such feeds, but it will set the <varname>bozo</varname> bit to &one; and set <varname>bozo_exception</varname> to <constant>feedparser.NonXMLContentType</constant>.</para>
 
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
@@ -1797,7 +1801,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 </abstract>
 </sectioninfo>
 <title>&etag; and &lastmodified; Headers</title>
-<para>The basic concept is that a feed publisher may provide a special &http; header, called an &etag;, when it publishes a feed.  You should send this &etag; back to the server on subsequent requests.  If the feed has not changed since the last time you requested it, the server will return a special &http; status code (<literal>304</literal>) and no feed data.</para>
+<para>The basic concept is that a feed publisher may provide a special &http; header, called an &etag;, when it publishes a feed.  You should send this &etag; back to the server on subsequent requests.  If the feed has not changed since the last time you requested it, the server will return a special &http; status code (<constant>304</constant>) and no feed data.</para>
 <example id="example.etags">
 <title>Using ETags to reduce bandwidth</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
@@ -1816,7 +1820,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 the server sent no data.  This is a feature, not a bug!'</computeroutput></screen>
 </example>
 
-<para>There is a related concept which accomplishes the same thing, but slightly differently.  In this case, the server publishes the last-modified date of the feed in the &http; header.  You can send this back to the server on subsequent requests, and if the feed has not changed, the server will return &http; status code <literal>304</literal> and no feed data.</para>
+<para>There is a related concept which accomplishes the same thing, but slightly differently.  In this case, the server publishes the last-modified date of the feed in the &http; header.  You can send this back to the server on subsequent requests, and if the feed has not changed, the server will return &http; status code <constant>304</constant> and no feed data.</para>
 
 <example id="example.lastmodified">
 <title>Using Last-Modified headers to reduce bandwidth</title>
@@ -1903,7 +1907,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 </abstract>
 </sectioninfo>
 <title>&http; Redirects</title>
-<para>When a feed has temporarily moved to a new location, the web server will return a <literal>302</literal> status code.  &feedparser; makes this available in <varname>d.status</varname>.</para>
+<para>When a feed has temporarily moved to a new location, the web server will return a <constant>302</constant> status code.  &feedparser; makes this available in <varname>d.status</varname>.</para>
 <para>There is nothing special you need to do with temporary redirects; by the time you learn about it, &feedparser; has already followed the redirect to the new location (available in <varname>d.url</varname>), downloaded the feed, and parsed it.  Since the redirect is temporary, you should continue requesting the original &url; the next time you want to parse the feed.</para>
 
 <example id="example.redirect.temporary">
@@ -1918,7 +1922,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
 
-<para>When a feed has permanently moved to a new location, the web server will return a <literal>301</literal> status code.  Again, &feedparser; makes this available in <varname>d.status</varname>.</para>
+<para>When a feed has permanently moved to a new location, the web server will return a <constant>301</constant> status code.  Again, &feedparser; makes this available in <varname>d.status</varname>.</para>
 
 <para>If you are polling a feed on a regular basis, it is very important to check the status code (<varname>d.status</varname>) every time you download.  If the feed has been permanently redirected, you should update your database or configuration file with the new address (<varname>d.url</varname>).  Repeatedly requesting the original address of a feed that has been permanently redirected is very rude, and may get you banned from the server.</para>
 
@@ -1934,7 +1938,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
 
-<para>When a feed has been permanently deleted, the web server will return a <literal>410</literal> status code.  If you ever receive a <literal>410</literal>, you should stop polling the feed and inform the end user that the feed is gone for good.</para>
+<para>When a feed has been permanently deleted, the web server will return a <constant>410</constant> status code.  If you ever receive a <constant>410</constant>, you should stop polling the feed and inform the end user that the feed is gone for good.</para>
 
 <para>Repeatedly requesting a feed that has been marked as <quote>gone</quote> is very rude, and may get you banned from the server.</para>
 
@@ -2008,9 +2012,9 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 
 <para>The examples so far have assumed that you know in advance that the feed is password-protected.  But what if you don't know?</para>
 
-<para>If you try to download a password-protected feed without sending all the proper password information, the server will return an &http; status code <literal>401</literal>.  &feedparser; makes this status code available in <varname>d.status</varname>.</para>
+<para>If you try to download a password-protected feed without sending all the proper password information, the server will return an &http; status code <constant>401</constant>.  &feedparser; makes this status code available in <varname>d.status</varname>.</para>
 
-<para>Details on the authentication scheme are in <varname>d.headers['www-authenticate']</varname>.  &feedparser; does not do any further parsing on this field; you will need to parse it yourself.  Everything before the first space is the type of authentication (probably <literal>Basic</literal> or <literal>Digest</literal>), which controls which type of handler you'll need to construct.  The realm name is given as <literal>realm="foo"</literal> -- so <literal>foo</literal> would be your first argument to <methodname>auth.add_password</methodname>.  Other information in the <literal>www-authenticate</literal> header is probably safe to ignore; the &urllib2; module will handle it for you.</para>
+<para>Details on the authentication scheme are in <varname>d.headers['www-authenticate']</varname>.  &feedparser; does not do any further parsing on this field; you will need to parse it yourself.  Everything before the first space is the type of authentication (probably <constant>Basic</constant> or <constant>Digest</constant>), which controls which type of handler you'll need to construct.  The realm name is given as <literal>realm="foo"</literal> -- so <literal>foo</literal> would be your first argument to <methodname>auth.add_password</methodname>.  Other information in the <literal>www-authenticate</literal> header is probably safe to ignore; the &urllib2; module will handle it for you.</para>
 
 <example id="example.auth.required">
 <title>Determining that a feed is password-protected</title>
@@ -3020,9 +3024,33 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 
 </section>
 
-<!-- TODO: feed.icon -->
+<section id="reference.feed.icon">
+<?dbhtml filename="reference-feed-icon.html"?>
+<title>feed.icon</title>
+<abstract>
+<title/>
+<para>A URL to a small icon representing the feed.</para>
+</abstract>
+&isrelativelink;
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom10:feed/atom10:icon</literal></para></listitem>
+</itemizedlist>
+</section>
 
-<!-- TODO: feed.logo -->
+<section id="reference.feed.logo">
+<?dbhtml filename="reference-feed-logo.html"?>
+<title>feed.icon</title>
+<abstract>
+<title/>
+<para>A URL to a graphic representing a logo for the feed.</para>
+</abstract>
+&isrelativelink;
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom10:feed/atom10:logo</literal></para></listitem>
+</itemizedlist>
+</section>
 
 <section id="reference.feed.textinput">
 <?dbhtml filename="reference-feed-textinput.html"?>
@@ -4009,10 +4037,104 @@ xxx
 </section>
 <section id="reference.entry.source.rights">
 <title>entries[i].source.rights</title>
-<para>TODO</para>
-<!-- TODO: rights_detail -->
+<para>A human-readable copyright statement for the source of this entry.</para>
 </section>
-<!-- TODO: subtitle, subtitle_detail, title, title_detail, updated, updated_parsed -->
+<section id="reference.entry.source.rights_detail">
+<title>entries[i].source.rights_detail</title>
+<para>A dictionary containing details about the copyright statement for the source of this entry.</para>
+<section id="reference.entry.source.rights_detail.value">
+<title>entries[i].source.rights_detail.value</title>
+<para>Same as <xref linkend="reference.entry.source.rights"/>.</para>
+&sanitized;
+&containsrelativelinks;
+</section>
+<section id="reference.entry.source.rights_detail.type">
+<title>entries[i].source.rights_detail.type</title>
+<para>The content type of the copyright statement for the source of this entry.</para>
+&type_details;
+</section>
+<section id="reference.entry.source.rights_detail.language">
+<title>entries[i].source.rights_detail.language</title>
+<para>The language of the copyright statement for the source of this entry.</para>
+&language_details;
+</section>
+<section id="reference.entry.source.rights_detail.base">
+<title>entries[i].source.rights_detail.base</title>
+<para>The original base &uri; for links within the copyright statement for the source of this entry.</para>
+&base_details;
+</section>
+</section>
+<section id="reference.entry.source.subtitle">
+<title>entries[i].source.subtitle</title>
+<para>A subtitle, tagline, slogan, or other short description of the source of this entry.</para>
+&sanitized;
+&containsrelativelinks;
+</section>
+<section id="reference.entry.source.subtitle_details">
+<title>entries[i].source.subtitle_detail</title>
+<para>A dictionary containing details about the subtitle for the source of this entry.</para>
+<section id="reference.entry.source.subtitle_detail.value">
+<title>entries[i].source.subtitle_detail.value</title>
+<para>Same as <xref linkend="reference.entry.source.subtitle"/>.</para>
+&sanitized;
+&containsrelativelinks;
+</section>
+<section id="reference.entry.source.subtitle_detail.type">
+<title>entries[i].source.subtitle_detail.type</title>
+<para>The content type of the subtitle of the source of this entry.</para>
+&type_details;
+</section>
+<section id="reference.entry.source.subtitle_detail.language">
+<title>entries[i].source.subtitle_detail.language</title>
+<para>The language of the subtitle of the source of this entry.</para>
+&language_details;
+</section>
+<section id="reference.entry.source.subtitle_detail.base">
+<title>entries[i].source.subtitle_detail.base</title>
+<para>The original base &uri; for links within the subtitle of the source of this entry.</para>
+&base_details;
+</section>
+</section>
+<section id="reference.entry.source.title">
+<title>entries[i].source.title</title>
+<para>The title of the source of this entry.</para>
+&sanitized;
+&containsrelativelinks;
+</section>
+<section id="reference.entry.source.title_details">
+<title>entries[i].source.title_detail</title>
+<para>A dictionary containing details about the title for the source of this entry.</para>
+<section id="reference.entry.source.title_detail.value">
+<title>entries[i].source.title_detail.value</title>
+<para>Same as <xref linkend="reference.entry.source.title"/>.</para>
+&sanitized;
+&containsrelativelinks;
+</section>
+<section id="reference.entry.source.title_detail.type">
+<title>entries[i].source.title_detail.type</title>
+<para>The content type of the title of the source of this entry.</para>
+&type_details;
+</section>
+<section id="reference.entry.source.title_detail.language">
+<title>entries[i].source.title_detail.language</title>
+<para>The language of the title of the source of this entry.</para>
+&language_details;
+</section>
+<section id="reference.entry.source.title_detail.base">
+<title>entries[i].source.title_detail.base</title>
+<para>The original base &uri; for links within the title of the source of this entry.</para>
+&base_details;
+</section>
+</section>
+<section id="reference.entry.source.updated">
+<title>entries[i].source.updated</title>
+<para>The date the source of this entry was last updated, as a string in the same format as it was published in the original feed.</para>
+<para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.source.updated_parsed"/>.</para>
+</section>
+<section id="reference.entry.source.updated_parsed">
+<title>entries[i].source.updated_parsed</title>
+<para>The date this entry was last updated, as a standard &python; 9-tuple.</para>
+</section>
 </section>
 
 <section id="reference.entry.comments">
@@ -4089,8 +4211,8 @@ xxx
 </sectioninfo>
 <title>status</title>
 <para>If the feed was redirected from its original &url;, <varname>status</varname> will contain the redirect status code, not the final status code.</para>
-<para>If <varname>status</varname> is <literal>301</literal>, the feed was permanently redirected to a new &url;.  Clients should update their address book to request the new &url; from now on.</para>
-<para>If <varname>status</varname> is <literal>410</literal>, the feed is gone.  Clients should stop polling the feed.</para>
+<para>If <varname>status</varname> is <constant>301</constant>, the feed was permanently redirected to a new &url;.  Clients should update their address book to request the new &url; from now on.</para>
+<para>If <varname>status</varname> is <constant>410</constant>, the feed is gone.  Clients should stop polling the feed.</para>
 <tip>
 <title/>
 <para><varname>status</varname> will only be present if the feed was retrieved from a web server.  If the feed was parsed from a local file or from a string in memory, <varname>status</varname> will not be present.</para>
@@ -4165,7 +4287,7 @@ xxx
 <sectioninfo>
 <abstract>
 <title/>
-<para>An integer, either <literal>1</literal> or <literal>0</literal>.  Set to <literal>1</literal> if the feed is not well-formed &xml;, and <literal>0</literal> otherwise.</para>
+<para>An integer, either &one; or &zero;.  Set to &one; if the feed is not well-formed &xml;, and &zero; otherwise.</para>
 </abstract>
 </sectioninfo>
 <title>bozo</title>
@@ -4188,7 +4310,7 @@ xxx
 <para>See <xref linkend="advanced.bozo"/> for more details.</para>
 <tip>
 <title/>
-<para><varname>bozo_exception</varname> will only be present if <varname>bozo</varname> is <literal>1</literal>.</para>
+<para><varname>bozo_exception</varname> will only be present if <varname>bozo</varname> is &one;.</para>
 </tip>
 </section>
 </chapter>

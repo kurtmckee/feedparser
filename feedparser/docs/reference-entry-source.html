@@ -220,11 +220,11 @@
                      </p>
                      <div class="itemizedlist">
                         <ul>
-                           <li><tt class="literal">alternate</tt></li>
-                           <li><tt class="literal">self</tt></li>
-                           <li><tt class="literal">related</tt></li>
-                           <li><tt class="literal">via</tt></li>
-                           <li><tt class="literal">enclosure</tt></li>
+                           <li><tt class="constant">alternate</tt></li>
+                           <li><tt class="constant">self</tt></li>
+                           <li><tt class="constant">related</tt></li>
+                           <li><tt class="constant">via</tt></li>
+                           <li><tt class="constant">enclosure</tt></li>
                         </ul>
                      </div>
                   </div>
@@ -293,7 +293,321 @@
                      </div>
                      <div></div>
                   </div>
-                  <p>TODO</p>
+                  <p>A human-readable copyright statement for the source of this entry.</p>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.rights_detail" class="skip" href="#reference.entry.source.rights_detail" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.rights_detail
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>A dictionary containing details about the copyright statement for the source of this entry.</p>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.rights_detail.value" class="skip" href="#reference.entry.source.rights_detail.value" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.rights_detail.value
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>Same as <a href="reference-entry-source.html#reference.entry.source.rights" title="entries[i].source.rights">entries[i].source.rights</a>.
+                     </p>
+                     <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, it is <a href="html-sanitization.html" title="HTML Sanitization">sanitized</a> by default.
+                     </p>
+                     <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, certain (X)HTML elements within this value may contain relative <acronym title="Uniform Resource Identifier">URI</acronym>s.  If so, they are <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.rights_detail.type" class="skip" href="#reference.entry.source.rights_detail.type" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.rights_detail.type
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The content type of the copyright statement for the source of this entry.</p>
+                     <p>Most likely values for <tt class="varname">type</tt>:
+                     </p>
+                     <div class="itemizedlist">
+                        <ul>
+                           <li><tt class="constant">text/plain</tt></li>
+                           <li><tt class="constant">text/html</tt></li>
+                           <li><tt class="constant">application/xhtml+xml</tt></li>
+                        </ul>
+                     </div>
+                     <p>For Atom feeds, the content type is taken from the <tt class="sgmltag-attribute">type</tt> attribute, which defaults to <tt class="constant">text/plain</tt> if not specified.  For <acronym title="Rich Site Summary">RSS</acronym> feeds, the content type is auto-determined by inspecting the content, and defaults to <tt class="constant">text/html</tt>.  Note that this may cause silent data loss if the value contains plain text with angle brackets.  There is nothing I can
+                        do about this problem; it is a limitation of <acronym title="Rich Site Summary">RSS</acronym>.
+                     </p>
+                     <p>Future enhancement: some versions of <acronym title="Rich Site Summary">RSS</acronym> clearly specify that certain values default to <tt class="constant">text/plain</tt>, and <span class="application">Universal Feed Parser</span> should respect this, but it doesn't yet.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.rights_detail.language" class="skip" href="#reference.entry.source.rights_detail.language" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.rights_detail.language
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The language of the copyright statement for the source of this entry.</p>
+                     <p><tt class="varname">language</tt> is supposed to be a language code, as specified by <a href="http://www.ietf.org/rfc/rfc3066.txt"><acronym title="Request For Comments">RFC</acronym> 3066</a>, but publishers have been known to publish random values like &#8220;<span class="quote">English</span>&#8221; or &#8220;<span class="quote">German</span>&#8221;.  <span class="application">Universal Feed Parser</span> does not do any parsing or normalization of language codes.
+                     </p>
+                     <p><tt class="varname">language</tt> may come from the element's <tt class="sgmltag-attribute">xml:lang</tt> attribute, or it may inherit from a parent element's <tt class="sgmltag-attribute">xml:lang</tt>, or the <tt class="literal">Content-Language</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  If the feed does not specify a language, <tt class="varname">language</tt> will be <tt class="constant">None</tt>, the <span class="application">Python</span> null value.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.rights_detail.base" class="skip" href="#reference.entry.source.rights_detail.base" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.rights_detail.base
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The original base <acronym title="Uniform Resource Identifier">URI</acronym> for links within the copyright statement for the source of this entry.
+                     </p>
+                     <p><tt class="varname">base</tt> is only useful in rare situations and can usually be ignored.  It is the original base <acronym title="Uniform Resource Identifier">URI</acronym> for this value, as specified by the element's <tt class="sgmltag-attribute">xml:base</tt> attribute, or a parent element's <tt class="sgmltag-attribute">xml:base</tt>, or the appropriate <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, or the <acronym title="Uniform Resource Identifier">URI</acronym> of the feed.  (See <a href="resolving-relative-links.html" title="Relative Link Resolution">Relative Link Resolution</a> for more details.)  By the time you see it, <span class="application">Universal Feed Parser</span> has already resolved relative links in all values where it makes sense to do so.  <span class="emphasis"><em>Clients should never need to manually resolve relative links.</em></span></p>
+                  </div>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.subtitle" class="skip" href="#reference.entry.source.subtitle" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.subtitle
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>A subtitle, tagline, slogan, or other short description of the source of this entry.</p>
+                  <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, it is <a href="html-sanitization.html" title="HTML Sanitization">sanitized</a> by default.
+                  </p>
+                  <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, certain (X)HTML elements within this value may contain relative <acronym title="Uniform Resource Identifier">URI</acronym>s.  If so, they are <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                  </p>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.subtitle_details" class="skip" href="#reference.entry.source.subtitle_details" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.subtitle_detail
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>A dictionary containing details about the subtitle for the source of this entry.</p>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.subtitle_detail.value" class="skip" href="#reference.entry.source.subtitle_detail.value" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.subtitle_detail.value
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>Same as <a href="reference-entry-source.html#reference.entry.source.subtitle" title="entries[i].source.subtitle">entries[i].source.subtitle</a>.
+                     </p>
+                     <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, it is <a href="html-sanitization.html" title="HTML Sanitization">sanitized</a> by default.
+                     </p>
+                     <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, certain (X)HTML elements within this value may contain relative <acronym title="Uniform Resource Identifier">URI</acronym>s.  If so, they are <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.subtitle_detail.type" class="skip" href="#reference.entry.source.subtitle_detail.type" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.subtitle_detail.type
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The content type of the subtitle of the source of this entry.</p>
+                     <p>Most likely values for <tt class="varname">type</tt>:
+                     </p>
+                     <div class="itemizedlist">
+                        <ul>
+                           <li><tt class="constant">text/plain</tt></li>
+                           <li><tt class="constant">text/html</tt></li>
+                           <li><tt class="constant">application/xhtml+xml</tt></li>
+                        </ul>
+                     </div>
+                     <p>For Atom feeds, the content type is taken from the <tt class="sgmltag-attribute">type</tt> attribute, which defaults to <tt class="constant">text/plain</tt> if not specified.  For <acronym title="Rich Site Summary">RSS</acronym> feeds, the content type is auto-determined by inspecting the content, and defaults to <tt class="constant">text/html</tt>.  Note that this may cause silent data loss if the value contains plain text with angle brackets.  There is nothing I can
+                        do about this problem; it is a limitation of <acronym title="Rich Site Summary">RSS</acronym>.
+                     </p>
+                     <p>Future enhancement: some versions of <acronym title="Rich Site Summary">RSS</acronym> clearly specify that certain values default to <tt class="constant">text/plain</tt>, and <span class="application">Universal Feed Parser</span> should respect this, but it doesn't yet.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.subtitle_detail.language" class="skip" href="#reference.entry.source.subtitle_detail.language" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.subtitle_detail.language
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The language of the subtitle of the source of this entry.</p>
+                     <p><tt class="varname">language</tt> is supposed to be a language code, as specified by <a href="http://www.ietf.org/rfc/rfc3066.txt"><acronym title="Request For Comments">RFC</acronym> 3066</a>, but publishers have been known to publish random values like &#8220;<span class="quote">English</span>&#8221; or &#8220;<span class="quote">German</span>&#8221;.  <span class="application">Universal Feed Parser</span> does not do any parsing or normalization of language codes.
+                     </p>
+                     <p><tt class="varname">language</tt> may come from the element's <tt class="sgmltag-attribute">xml:lang</tt> attribute, or it may inherit from a parent element's <tt class="sgmltag-attribute">xml:lang</tt>, or the <tt class="literal">Content-Language</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  If the feed does not specify a language, <tt class="varname">language</tt> will be <tt class="constant">None</tt>, the <span class="application">Python</span> null value.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.subtitle_detail.base" class="skip" href="#reference.entry.source.subtitle_detail.base" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.subtitle_detail.base
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The original base <acronym title="Uniform Resource Identifier">URI</acronym> for links within the subtitle of the source of this entry.
+                     </p>
+                     <p><tt class="varname">base</tt> is only useful in rare situations and can usually be ignored.  It is the original base <acronym title="Uniform Resource Identifier">URI</acronym> for this value, as specified by the element's <tt class="sgmltag-attribute">xml:base</tt> attribute, or a parent element's <tt class="sgmltag-attribute">xml:base</tt>, or the appropriate <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, or the <acronym title="Uniform Resource Identifier">URI</acronym> of the feed.  (See <a href="resolving-relative-links.html" title="Relative Link Resolution">Relative Link Resolution</a> for more details.)  By the time you see it, <span class="application">Universal Feed Parser</span> has already resolved relative links in all values where it makes sense to do so.  <span class="emphasis"><em>Clients should never need to manually resolve relative links.</em></span></p>
+                  </div>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.title" class="skip" href="#reference.entry.source.title" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.title
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>The title of the source of this entry.</p>
+                  <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, it is <a href="html-sanitization.html" title="HTML Sanitization">sanitized</a> by default.
+                  </p>
+                  <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, certain (X)HTML elements within this value may contain relative <acronym title="Uniform Resource Identifier">URI</acronym>s.  If so, they are <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                  </p>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.title_details" class="skip" href="#reference.entry.source.title_details" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.title_detail
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>A dictionary containing details about the title for the source of this entry.</p>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.title_detail.value" class="skip" href="#reference.entry.source.title_detail.value" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.title_detail.value
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>Same as <a href="reference-entry-source.html#reference.entry.source.title" title="entries[i].source.title">entries[i].source.title</a>.
+                     </p>
+                     <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, it is <a href="html-sanitization.html" title="HTML Sanitization">sanitized</a> by default.
+                     </p>
+                     <p>If this contains <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, certain (X)HTML elements within this value may contain relative <acronym title="Uniform Resource Identifier">URI</acronym>s.  If so, they are <a href="resolving-relative-links.html" title="Relative Link Resolution">resolved according to a set of rules</a>.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.title_detail.type" class="skip" href="#reference.entry.source.title_detail.type" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.title_detail.type
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The content type of the title of the source of this entry.</p>
+                     <p>Most likely values for <tt class="varname">type</tt>:
+                     </p>
+                     <div class="itemizedlist">
+                        <ul>
+                           <li><tt class="constant">text/plain</tt></li>
+                           <li><tt class="constant">text/html</tt></li>
+                           <li><tt class="constant">application/xhtml+xml</tt></li>
+                        </ul>
+                     </div>
+                     <p>For Atom feeds, the content type is taken from the <tt class="sgmltag-attribute">type</tt> attribute, which defaults to <tt class="constant">text/plain</tt> if not specified.  For <acronym title="Rich Site Summary">RSS</acronym> feeds, the content type is auto-determined by inspecting the content, and defaults to <tt class="constant">text/html</tt>.  Note that this may cause silent data loss if the value contains plain text with angle brackets.  There is nothing I can
+                        do about this problem; it is a limitation of <acronym title="Rich Site Summary">RSS</acronym>.
+                     </p>
+                     <p>Future enhancement: some versions of <acronym title="Rich Site Summary">RSS</acronym> clearly specify that certain values default to <tt class="constant">text/plain</tt>, and <span class="application">Universal Feed Parser</span> should respect this, but it doesn't yet.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.title_detail.language" class="skip" href="#reference.entry.source.title_detail.language" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.title_detail.language
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The language of the title of the source of this entry.</p>
+                     <p><tt class="varname">language</tt> is supposed to be a language code, as specified by <a href="http://www.ietf.org/rfc/rfc3066.txt"><acronym title="Request For Comments">RFC</acronym> 3066</a>, but publishers have been known to publish random values like &#8220;<span class="quote">English</span>&#8221; or &#8220;<span class="quote">German</span>&#8221;.  <span class="application">Universal Feed Parser</span> does not do any parsing or normalization of language codes.
+                     </p>
+                     <p><tt class="varname">language</tt> may come from the element's <tt class="sgmltag-attribute">xml:lang</tt> attribute, or it may inherit from a parent element's <tt class="sgmltag-attribute">xml:lang</tt>, or the <tt class="literal">Content-Language</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  If the feed does not specify a language, <tt class="varname">language</tt> will be <tt class="constant">None</tt>, the <span class="application">Python</span> null value.
+                     </p>
+                  </div>
+                  <div class="section" lang="en">
+                     <div class="titlepage">
+                        <div>
+                           <div>
+                              <h4 class="title"><a name="reference.entry.source.title_detail.base" class="skip" href="#reference.entry.source.title_detail.base" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.title_detail.base
+                              </h4>
+                           </div>
+                        </div>
+                        <div></div>
+                     </div>
+                     <p>The original base <acronym title="Uniform Resource Identifier">URI</acronym> for links within the title of the source of this entry.
+                     </p>
+                     <p><tt class="varname">base</tt> is only useful in rare situations and can usually be ignored.  It is the original base <acronym title="Uniform Resource Identifier">URI</acronym> for this value, as specified by the element's <tt class="sgmltag-attribute">xml:base</tt> attribute, or a parent element's <tt class="sgmltag-attribute">xml:base</tt>, or the appropriate <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, or the <acronym title="Uniform Resource Identifier">URI</acronym> of the feed.  (See <a href="resolving-relative-links.html" title="Relative Link Resolution">Relative Link Resolution</a> for more details.)  By the time you see it, <span class="application">Universal Feed Parser</span> has already resolved relative links in all values where it makes sense to do so.  <span class="emphasis"><em>Clients should never need to manually resolve relative links.</em></span></p>
+                  </div>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.updated" class="skip" href="#reference.entry.source.updated" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.updated
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>The date the source of this entry was last updated, as a string in the same format as it was published in the original feed.</p>
+                  <p>This element is <a href="date-parsing.html" title="Date Parsing">parsed as a date</a> and stored in <a href="reference-entry-source.html#reference.entry.source.updated_parsed" title="entries[i].source.updated_parsed">entries[i].source.updated_parsed</a>.
+                  </p>
+               </div>
+               <div class="section" lang="en">
+                  <div class="titlepage">
+                     <div>
+                        <div>
+                           <h3 class="title"><a name="reference.entry.source.updated_parsed" class="skip" href="#reference.entry.source.updated_parsed" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> entries[i].source.updated_parsed
+                           </h3>
+                        </div>
+                     </div>
+                     <div></div>
+                  </div>
+                  <p>The date this entry was last updated, as a standard <span class="application">Python</span> 9-tuple.
+                  </p>
                </div>
             </div>
             <div style="float: left">&#8592;&nbsp;<a class="NavigationArrow" href="reference-entries-tags.html">entries[i].tags</a></div>

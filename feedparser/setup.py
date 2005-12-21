@@ -27,7 +27,7 @@ Recommended: libxml2 <http://xmlsoft.org/python.html>
     author_email = 'mark@diveintomark.org',
     url = 'http://feedparser.org/',
     download_url = 'http://sourceforge.net/projects/feedparser/',
-    license = "Python",
+    license = "BSD",
     platforms = ['POSIX', 'Windows'],
     keywords = ['feed parser', 'feeds', 'rss', 'atom', 'cdf'],
     classifiers = [

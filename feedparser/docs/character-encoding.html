@@ -101,7 +101,7 @@
                      </div>
                      <div></div>
                   </div>
-                  <p><span class="application">Universal Feed Parser</span> initially uses the rules specified in <acronym title="Request For Comments">RFC</acronym> 3023 to determine the character encoding of the feed.  If parsing succeeds, then that's that.  If parsing fails, <span class="application">Universal Feed Parser</span> sets the <tt class="varname">bozo</tt> bit to <tt class="literal">1</tt> and sets <tt class="varname">bozo_exception</tt> to <tt class="constant">feedparser.CharacterEncodingOverride</tt>.  Then it tries to reparse the feed with the following character encodings:
+                  <p><span class="application">Universal Feed Parser</span> initially uses the rules specified in <acronym title="Request For Comments">RFC</acronym> 3023 to determine the character encoding of the feed.  If parsing succeeds, then that's that.  If parsing fails, <span class="application">Universal Feed Parser</span> sets the <tt class="varname">bozo</tt> bit to <tt class="constant">1</tt> and sets <tt class="varname">bozo_exception</tt> to <tt class="constant">feedparser.CharacterEncodingOverride</tt>.  Then it tries to reparse the feed with the following character encodings:
                   </p>
                   <div class="orderedlist">
                      <ol type="1">
@@ -113,7 +113,7 @@
                         <li><tt class="literal">windows-1252</tt></li>
                      </ol>
                   </div>
-                  <p>If the character encoding can not be determined, <span class="application">Universal Feed Parser</span> sets the <tt class="varname">bozo</tt> bit to <tt class="literal">1</tt> and sets <tt class="varname">bozo_exception</tt> to <tt class="constant">feedparser.CharacterEncodingUnknown</tt>.  In this case, parsed values will be strings, not Unicode strings.
+                  <p>If the character encoding can not be determined, <span class="application">Universal Feed Parser</span> sets the <tt class="varname">bozo</tt> bit to <tt class="constant">1</tt> and sets <tt class="varname">bozo_exception</tt> to <tt class="constant">feedparser.CharacterEncodingUnknown</tt>.  In this case, parsed values will be strings, not Unicode strings.
                   </p>
                </div>
                <div class="section" lang="en">
@@ -128,7 +128,7 @@
                   </div>
                   <p><acronym title="Request For Comments">RFC</acronym> 3023 only applies when the feed is served over <acronym title="Hypertext Transfer Protocol">HTTP</acronym> with a <tt class="literal">Content-Type</tt> that declares the feed to be some kind of <acronym title="Extensible Markup Language">XML</acronym>.  However, some web servers are severely misconfigured and serve feeds with a <tt class="literal">Content-Type</tt> of <tt class="literal">text/plain</tt>, <tt class="literal">application/octet-stream</tt>, or some completely bogus media type.
                   </p>
-                  <p><span class="application">Universal Feed Parser</span> will attempt to parse such feeds, but it will set the <tt class="varname">bozo</tt> bit to <tt class="literal">1</tt> and set <tt class="varname">bozo_exception</tt> to <tt class="constant">feedparser.NonXMLContentType</tt>.
+                  <p><span class="application">Universal Feed Parser</span> will attempt to parse such feeds, but it will set the <tt class="varname">bozo</tt> bit to <tt class="constant">1</tt> and set <tt class="varname">bozo_exception</tt> to <tt class="constant">feedparser.NonXMLContentType</tt>.
                   </p>
                   <div class="furtherreading">
                      <h3>Elsewhere</h3>
