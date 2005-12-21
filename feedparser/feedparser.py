@@ -253,6 +253,11 @@ def _ebcdic_to_ascii(s):
             ''.join(map(chr, range(256))), ''.join(map(chr, emap)))
     return s.translate(_ebcdic_to_ascii_map)
 
+_urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
+def _urljoin(base, uri):
+    uri = _urifixer.sub(r'\1\3', uri)
+    return urlparse.urljoin(base, uri)
+
 class _FeedParserMixin:
     # These are *NOT* the official namespaces of these formats and extensions!
     # All namespaces listed here are lowercase because iTunes treats them as case-insensitive
@@ -363,7 +368,7 @@ class _FeedParserMixin:
         # track xml:base and xml:lang
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
-        self.baseuri = urlparse.urljoin(self.baseuri, baseuri)
+        self.baseuri = _urljoin(self.baseuri, baseuri)
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang == '':
             # xml:lang could be explicitly set to '', we need to capture that
@@ -553,7 +558,7 @@ class _FeedParserMixin:
             self.namespacemap[prefix] = self.namespaces[uri]
 
     def resolveURI(self, uri):
-        return urlparse.urljoin(self.baseuri or '', uri)
+        return _urljoin(self.baseuri or '', uri)
     
     def decodeEntities(self, element, data):
         return data
@@ -1500,7 +1505,7 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
         self.baseuri = baseuri
 
     def resolveURI(self, uri):
-        return urlparse.urljoin(self.baseuri, uri)
+        return _urljoin(self.baseuri, uri)
     
     def unknown_starttag(self, tag, attrs):
         attrs = self.normalize_attrs(attrs)
