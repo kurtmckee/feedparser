@@ -1360,7 +1360,6 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <entry><literal>http://rssnamespace.org/feedburner/ext/1.0</literal></entry>
 </row>
 <row>
-<row>
 <entry><literal>foaf</literal></entry>
 <entry><literal>http://xmlns.com/foaf/0.1/</literal></entry>
 </row>
@@ -1368,7 +1367,6 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <entry><literal>fm</literal></entry>
 <entry><literal>http://freshmeat.net/rss/fm/</literal></entry>
 </row>
-<row>
 <row>
 <entry><literal>geo</literal></entry>
 <entry><literal>http://www.w3.org/2003/01/geo/wgs84_pos#</literal></entry>
