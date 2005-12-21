@@ -17,6 +17,7 @@ RewriteCond %{REMOTE_ADDR} ^72.14.192.
 RewriteRule ^.*$ - [F]
 
 Redirect permanent /docs/annotated-atom.html http://feedparser.org/docs/annotated-atom03.html
+Redirect permanent /docs/gpl.html http://feedparser.org/docs/license.html
 Redirect permanent /docs/gpl-how-to-apply.html http://feedparser.org/docs/license.html
 Redirect permanent /docs/gpl-preamble.html http://feedparser.org/docs/license.html
 Redirect permanent /docs/gpl-terms-and-conditions.html http://feedparser.org/docs/license.html
