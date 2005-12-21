@@ -763,6 +763,16 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <entry><literal>(2004, 1, 1, 19, 48, 21, 3, 1, 0)</literal></entry>
 </row>
 <row>
+<entry>invalid RFC 822 (no time)</entry>
+<entry><literal>01 Jan 2004</literal></entry>
+<entry><literal>(2004, 1, 1, 0, 0, 0, 3, 1, 0)</literal></entry>
+</row>
+<row>
+<entry>invalid RFC 822 (no seconds)</entry>
+<entry><literal>01 Jan 2004 00:00 GMT</literal></entry>
+<entry><literal>(2004, 1, 1, 0, 0, 0, 3, 1, 0)</literal></entry>
+</row>
+<row>
 <entry>valid W3CDTF (numeric timezone)</entry>
 <entry><literal>2003-12-31T10:14:55-08:00</literal></entry>
 <entry><literal>(2003, 12, 31, 18, 14, 55, 2, 365, 0)</literal></entry>
