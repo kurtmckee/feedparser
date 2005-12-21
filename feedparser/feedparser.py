@@ -1508,7 +1508,7 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
         _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
         
 def _resolveRelativeURIs(htmlSource, baseURI, encoding):
-    if 1: sys.stderr.write('entering _resolveRelativeURIs\n') #print
+    if _debug: sys.stderr.write('entering _resolveRelativeURIs\n')
     p = _RelativeURIResolver(baseURI, encoding)
     p.feed(htmlSource)
     return p.output()
