@@ -2970,6 +2970,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>Comes from</title>
 <listitem><para><literal>/atom10:feed/atom10:contributor</literal></para></listitem>
 <listitem><para><literal>/atom03:feed/atom03:contributor</literal></para></listitem>
+<listitem><para><literal>/rss/channel/dc:contributor</literal></para></listitem>
 </itemizedlist>
 <section id="reference.feed.contributors.name">
 <title>feed.contributors[i].name</title>
@@ -3838,6 +3839,7 @@ xxx
 <title>Comes from</title>
 <listitem><para><literal>/atom10:feed/atom10:entry/atom10:contributor</literal></para></listitem>
 <listitem><para><literal>/atom03:feed/atom03:entry/atom03:contributor</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/dc:contributor</literal></para></listitem>
 </itemizedlist>
 <section id="reference.entry.contributors.name">
 <title>entries[i].contributors[j].name</title>

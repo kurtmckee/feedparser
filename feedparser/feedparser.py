@@ -819,7 +819,18 @@ class _FeedParserMixin:
     def _end_contributor(self):
         self.pop('contributor')
         self.incontributor = 0
-        
+
+    def _start_dc_contributor(self, attrsD):
+        self.incontributor = 1
+        context = self._getContext()
+        context.setdefault('contributors', [])
+        context['contributors'].append(FeedParserDict())
+        self.push('name', 0)
+
+    def _end_dc_contributor(self):
+        self._end_name()
+        self.incontributor = 0
+
     def _start_name(self, attrsD):
         self.push('name', 0)
     _start_itunes_name = _start_name
