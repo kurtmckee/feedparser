@@ -12,7 +12,7 @@ Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
 __version__ = "pre-4.0-" + "$Revision$"[11:15] + "-cvs"
-__license__ = "Copyright (c) 2002-2005, Mark Pilgrim, All rights reserved.
+__license__ = """Copyright (c) 2002-2005, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -38,7 +38,8 @@ __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
-                    "Aaron Swartz <http://aaronsw.com/>"]
+                    "Aaron Swartz <http://aaronsw.com/>",
+                    "Kevin Marks <http://epeus.blogspot.com/>"]
 _debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
@@ -198,7 +199,10 @@ class FeedParserDict(UserDict):
         return UserDict.__getitem__(self, realkey)
 
     def has_key(self, key):
-        return hasattr(self, key) or UserDict.has_key(self, key)
+        try:
+            return hasattr(self, key) or UserDict.has_key(self, key)
+        except AttributeError:
+            return False
         
     def __getattr__(self, key):
         try:
@@ -287,8 +291,10 @@ class _FeedParserMixin:
                   'http://purl.org/rss/1.0/modules/image/':               'image',
                   'http://www.itunes.com/dtds/podcast-1.0.dtd':           'itunes',
                   'http://example.com/dtds/podcast-1.0.dtd':              'itunes',
+                  'http://rssnamespace.org/feedburner/ext/1.0':           'feedburner',
                   'http://xmlns.com/foaf/0.1/':                           'foaf',
                   'http://freshmeat.net/rss/fm/':                         'fm',
+                  'http://www.w3.org/2003/01/geo/wgs84_pos#':             'geo',
                   'http://purl.org/rss/1.0/modules/link/':                'l',
                   'http://search.yahoo.com/mrss':                         'media',
                   'http://madskills.com/public/xml/rss/module/pingback/': 'pingback',
@@ -558,7 +564,7 @@ class _FeedParserMixin:
     def pop(self, element, stripWhitespace=1):
         if not self.elementstack: return
         if self.elementstack[-1][0] != element: return
-
+        
         element, expectingText, pieces = self.elementstack.pop()
         output = ''.join(pieces)
         if stripWhitespace:
@@ -1162,9 +1168,11 @@ class _FeedParserMixin:
 
     def _start_info(self, attrsD):
         self.pushContent('info', attrsD, 'text/plain', 1)
+    _start_feedburner_browserfriendly = _start_info
 
     def _end_info(self):
         self.popContent('info')
+    _end_feedburner_browserfriendly = _end_info
 
     def _start_generator(self, attrsD):
         if attrsD:
@@ -1362,7 +1370,13 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # attrs is a list of (attr, value) tuples
         # e.g. for <pre class='screen'>, tag='pre', attrs=[('class', 'screen')]
         if _debug: sys.stderr.write('_BaseHTMLProcessor, unknown_starttag, tag=%s\n' % tag)
-        strattrs = ''.join([' %s="%s"' % (key, value) for key, value in attrs])
+        uattrs = []
+        # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
+        for key, value in attrs:
+            if type(value) != type(u''):
+                value = unicode(value,self.encoding)
+            uattrs.append((unicode(key,self.encoding),value))
+        strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs]).encode(self.encoding)
         if tag in self.elements_no_end_tag:
             self.pieces.append('<%(tag)s%(strattrs)s />' % locals())
         else:
@@ -1494,7 +1508,7 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
         _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
         
 def _resolveRelativeURIs(htmlSource, baseURI, encoding):
-    if _debug: sys.stderr.write('entering _resolveRelativeURIs\n')
+    if 1: sys.stderr.write('entering _resolveRelativeURIs\n') #print
     p = _RelativeURIResolver(baseURI, encoding)
     p.feed(htmlSource)
     return p.output()

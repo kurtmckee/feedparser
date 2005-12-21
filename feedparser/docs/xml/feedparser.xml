@@ -221,6 +221,8 @@
 <listitem><para><constant>enclosure</constant></para></listitem>
 </itemizedlist>">
 
+<!ENTITY tagshistory "<para>Prior to version 4.0, &feedparser; exposed categories in <varname>feed.category</varname> (the primary category) and <varname>feed.categories</varname> (a list of tuples containing the domain and term of each category).  These uses are still supported for backward compatibility, but you will not see them in the parsed results unless you explicitly ask for them.</para>">
+
 ]>
 
 <book lang="en">
@@ -1344,12 +1346,22 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <entry><literal>http://www.itunes.com/DTDs/PodCast-1.0.dtd</literal></entry>
 </row>
 <row>
+<entry><literal>feedburner</literal></entry>
+<entry><literal>http://rssnamespace.org/feedburner/ext/1.0</literal></entry>
+</row>
+<row>
+<row>
 <entry><literal>foaf</literal></entry>
 <entry><literal>http://xmlns.com/foaf/0.1/</literal></entry>
 </row>
 <row>
 <entry><literal>fm</literal></entry>
 <entry><literal>http://freshmeat.net/rss/fm/</literal></entry>
+</row>
+<row>
+<row>
+<entry><literal>geo</literal></entry>
+<entry><literal>http://www.w3.org/2003/01/geo/wgs84_pos#</literal></entry>
 </row>
 <row>
 <entry><literal>l</literal></entry>
@@ -2770,6 +2782,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <itemizedlist role="reference-from">
 <title>Comes from</title>
 <listitem><para><literal>/atom03:feed/atom03:info</literal></para></listitem>
+<listitem><para><literal>/rss/channel/feedburner:browserFriendly</literal></para></listitem>
 </itemizedlist>
 <itemizedlist role="seealso">
 <title>See also</title>
@@ -3207,7 +3220,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </itemizedlist>
 <note>
 <title/>
-<para>Prior to version 4.0, &feedparser; exposed categories in <varname>feed.category</varname> (the primary category) and <varname>feed.categories</varname> (a list of tuples containing the domain and term of each category).  These uses are still supported for backward compatibility, but you will not see them in the parsed results unless you explicitly ask for them.</para>
+&tagshistory;
 </note>
 <section id="reference.feed.tags.term">
 <title>feed.tags[i].term</title>
@@ -3605,45 +3618,6 @@ xxx
 </itemizedlist>
 </section>
 
-<section id="reference.entry.created">
-<?dbhtml filename="reference-entry-created.html"?>
-<title>entries[i].created</title>
-<abstract>
-<title/>
-<para>The date this entry was first created (drafted), as a string in the same format as it was published in the original feed).</para>
-</abstract>
-<para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.created_parsed"/>.</para>
-<itemizedlist role="reference-from">
-<title>Comes from</title>
-<listitem><para><literal>/atom03:feed/atom03:entry/atom03:created</literal></para></listitem>
-<listitem><para><literal>/rss/channel/item/dcterms:created</literal></para></listitem>
-<listitem><para><literal>/rdf:RDF/rdf:item/dcterms:created</literal></para></listitem>
-</itemizedlist>
-<itemizedlist role="seealso">
-<title>See also</title>
-<listitem><para><xref linkend="reference.entry.created_parsed"/></para></listitem>
-</itemizedlist>
-</section>
-
-<section id="reference.entry.created_parsed">
-<?dbhtml filename="reference-entry-created_parsed.html"?>
-<title>entries[i].created_parsed</title>
-<abstract>
-<title/>
-<para>The date this entry was first created (drafted), as a standard &python; 9-tuple.</para>
-</abstract>
-<itemizedlist role="reference-from">
-<title>Comes from</title>
-<listitem><para><literal>/atom03:feed/atom03:entry/atom03:created</literal></para></listitem>
-<listitem><para><literal>/rss/channel/item/dcterms:created</literal></para></listitem>
-<listitem><para><literal>/rdf:RDF/rdf:item/dcterms:created</literal></para></listitem>
-</itemizedlist>
-<itemizedlist role="seealso">
-<title>See also</title>
-<listitem><para><xref linkend="reference.entry.created"/></para></listitem>
-</itemizedlist>
-</section>
-
 <section id="reference.entry.updated">
 <?dbhtml filename="reference-entry-updated.html"?>
 <title>entries[i].updated</title>
@@ -3688,6 +3662,45 @@ xxx
 <itemizedlist role="seealso">
 <title>See also</title>
 <listitem><para><xref linkend="reference.entry.updated"/></para></listitem>
+</itemizedlist>
+</section>
+
+<section id="reference.entry.created">
+<?dbhtml filename="reference-entry-created.html"?>
+<title>entries[i].created</title>
+<abstract>
+<title/>
+<para>The date this entry was first created (drafted), as a string in the same format as it was published in the original feed).</para>
+</abstract>
+<para>This element is &parsedasadate; and stored in <xref linkend="reference.entry.created_parsed"/>.</para>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:created</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/dcterms:created</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/dcterms:created</literal></para></listitem>
+</itemizedlist>
+<itemizedlist role="seealso">
+<title>See also</title>
+<listitem><para><xref linkend="reference.entry.created_parsed"/></para></listitem>
+</itemizedlist>
+</section>
+
+<section id="reference.entry.created_parsed">
+<?dbhtml filename="reference-entry-created_parsed.html"?>
+<title>entries[i].created_parsed</title>
+<abstract>
+<title/>
+<para>The date this entry was first created (drafted), as a standard &python; 9-tuple.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:created</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/dcterms:created</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/dcterms:created</literal></para></listitem>
+</itemizedlist>
+<itemizedlist role="seealso">
+<title>See also</title>
+<listitem><para><xref linkend="reference.entry.created"/></para></listitem>
 </itemizedlist>
 </section>
 
@@ -3912,7 +3925,7 @@ xxx
 </section>
 
 <section id="reference.entry.tags">
-<?dbhtml filename="reference-entries-tags.html"?>
+<?dbhtml filename="reference-entry-tags.html"?>
 <title>entries[i].tags</title>
 <abstract>
 <title/>
@@ -3930,7 +3943,7 @@ xxx
 </itemizedlist>
 <note>
 <title/>
-<para>Prior to version 4.0, &feedparser; exposed categories in <varname>entry.category</varname> (the primary category) and <varname>entry.categories</varname> (a list of tuples containing the domain and term of each category).  These uses are still supported for backward compatibility, but you will not see them in the parsed results unless you explicitly ask for them.</para>
+&tagshistory;
 </note>
 <section id="reference.entry.tags.term">
 <title>entries[i].tags[j].term</title>
