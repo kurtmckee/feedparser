@@ -2073,7 +2073,7 @@ registerDateHandler(_parse_date_w3dtf)
 def _parse_date_rfc822(dateString):
     '''Parse an RFC822, RFC1123, RFC2822, or asctime-style date'''
     data = dateString.split()
-    if data[0][-1] in (',', '.') or data[0].lower() in _daynames:
+    if data[0][-1] in (',', '.') or data[0].lower() in rfc822._daynames:
         del data[0]
     if len(data) == 4:
         s = data[3]
@@ -2082,9 +2082,9 @@ def _parse_date_rfc822(dateString):
             data[3:] = [s[:i], s[i+1:]]
         else:
             data.append('')
+        dateString = " ".join(data)
     if len(data) < 5:
         dateString += ' 00:00:00 GMT'
-    print dateString
     tm = rfc822.parsedate_tz(dateString)
     if tm:
         return time.gmtime(rfc822.mktime_tz(tm))
