@@ -1375,7 +1375,13 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
 
     def feed(self, data):
         data = re.compile(r'<!((?!DOCTYPE|--|\[))', re.IGNORECASE).sub(r'&lt;!\1', data)
-        data = re.sub(r'<(\S+)/>', r'<\1></\1>', data)
+        def shorttag_replace(match):
+            tag = match.group(1)
+            if tag in self.elements_no_end_tag:
+                return '<' + tag + ' />'
+            else:
+                return '<' + tag + '></' + tag + '>'
+        data = re.sub(r'<(\S+?)\s*?/>', shorttag_replace, data)
         data = data.replace('&#39;', "'")
         data = data.replace('&#34;', '"')
         if self.encoding and (type(data) == types.UnicodeType):
