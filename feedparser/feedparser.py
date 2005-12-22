@@ -57,11 +57,13 @@ ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,ap
 PREFERRED_XML_PARSERS = ["drv_libxml2"]
 
 # If you want feedparser to automatically run HTML markup through HTML Tidy, set
-# this to 1.  This is off by default because of reports of crashing on some
-# platforms.  If it crashes for you, please submit a bug report with your OS
-# platform, Python version, and the URL of the feed you were attempting to parse.
-# Requires mxTidy <http://www.egenix.com/files/python/mxTidy.html>
+# this to 1.  Requires mxTidy <http://www.egenix.com/files/python/mxTidy.html>
+# or utidylib <http://utidylib.berlios.de/>.
 TIDY_MARKUP = 0
+
+# List of Python interfaces for HTML Tidy, in order of preference.  Only useful
+# if TIDY_MARKUP = 1
+PREFERRED_TIDY_INTERFACES = ["uTidy", "mxTidy"]
 
 # ---------- required modules (should come with any Python distribution) ----------
 import sgmllib, re, sys, copy, urlparse, time, rfc822, types, cgi
@@ -81,18 +83,42 @@ try:
     import zlib
 except:
     zlib = None
-    
+
+# timeoutsocket allows feedparser to time out rather than hang forever on ultra-slow servers.
+# Python 2.3 now has this functionality available in the standard socket library, so under
+# 2.3 or later you don't need to install anything.  In fact, under Python 2.4, timeoutsocket
+# write all sorts of crazy errors to stderr while running my unit tests, so it's probably
+# outlived its usefulness.
 import socket
 if hasattr(socket, 'setdefaulttimeout'):
     socket.setdefaulttimeout(20)
+else:
+    try:
+        import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
+        timeoutsocket.setDefaultSocketTimeout(20)
+    except ImportError:
+        pass
 import urllib, urllib2
 
-_mxtidy = None
+# loop through list of preferred Tidy interfaces looking for one that's installed,
+# then set up a common _tidy function to wrap the interface-specific API.
+_tidy = None
 if TIDY_MARKUP:
-    try:
-        from mx.Tidy import Tidy as _mxtidy
-    except:
-        pass
+    for tidy_interface in PREFERRED_TIDY_INTERFACES:
+        try:
+            if tidy_interface == "uTidy":
+                from tidy import parseString as _utidy
+                def _tidy(data, **kwargs):
+                    return str(_utidy(data, **kwargs))
+                break
+            elif tidy_interface == "mxTidy":
+                from mx.Tidy import Tidy as _mxtidy
+                def _tidy(data, **kwargs):
+                    nerrors, nwarnings, data, errordata = _mxtidy.tidy(data, **kwargs)
+                    return data
+                break
+        except:
+            pass
 
 # If a real XML parser is available, feedparser will attempt to use it.  feedparser has
 # been tested with the built-in SAX parser, PyXML, and libxml2.  On platforms where the
@@ -1602,8 +1628,13 @@ def _sanitizeHTML(htmlSource, encoding):
     p = _HTMLSanitizer(encoding)
     p.feed(htmlSource)
     data = p.output()
-    if _mxtidy and TIDY_MARKUP:
-        nerrors, nwarnings, data, errordata = _mxtidy.tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding='utf8')
+    if _tidy and TIDY_MARKUP:
+        utf8 = isinstance(data, unicode)
+        if utf8:
+            data = data.encode('utf-8')
+        data = _tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding="utf8")
+        if utf8:
+            data = unicode(data, 'utf-8')
         if data.count('<body'):
             data = data.split('<body', 1)[1]
             if data.count('>'):
