@@ -259,11 +259,6 @@ def _urljoin(base, uri):
     return urlparse.urljoin(base, uri)
 
 class _FeedParserMixin:
-    # These are *NOT* the official namespaces of these formats and extensions!
-    # All namespaces listed here are lowercase because iTunes treats them as case-insensitive
-    # so we need to lowercase them manually before mapping them to prefixes.
-    # Do *NOT* copy these namespaces into your own feeds verbatim!  Many are
-    # supposed to include certain uppercase characters (such as the Atom 1.0 namespace).
     namespaces = {'': '',
                   'http://backend.userland.com/rss': '',
                   'http://blogs.law.harvard.edu/tech/rss': '',
@@ -275,16 +270,16 @@ class _FeedParserMixin:
                   'uri/of/echo/namespace#': '',
                   'http://purl.org/pie/': '',
                   'http://purl.org/atom/ns#': '',
-                  'http://www.w3.org/2005/atom': '',
+                  'http://www.w3.org/2005/Atom': '',
                   'http://purl.org/rss/1.0/modules/rss091#': '',
                   
                   'http://webns.net/mvcb/':                               'admin',
                   'http://purl.org/rss/1.0/modules/aggregation/':         'ag',
                   'http://purl.org/rss/1.0/modules/annotate/':            'annotate',
                   'http://media.tangent.org/rss/1.0/':                    'audio',
-                  'http://backend.userland.com/blogchannelmodule':        'blogChannel',
+                  'http://backend.userland.com/blogChannelModule':        'blogChannel',
                   'http://web.resource.org/cc/':                          'cc',
-                  'http://backend.userland.com/creativecommonsrssmodule': 'creativeCommons',
+                  'http://backend.userland.com/creativeCommonsRssModule': 'creativeCommons',
                   'http://purl.org/rss/1.0/modules/company':              'co',
                   'http://purl.org/rss/1.0/modules/content/':             'content',
                   'http://my.theinfo.org/changed/1.0/rss/':               'cp',
@@ -292,14 +287,14 @@ class _FeedParserMixin:
                   'http://purl.org/dc/terms/':                            'dcterms',
                   'http://purl.org/rss/1.0/modules/email/':               'email',
                   'http://purl.org/rss/1.0/modules/event/':               'ev',
+                  'http://rssnamespace.org/feedburner/ext/1.0':           'feedburner',
+                  'http://freshmeat.net/rss/fm/':                         'fm',
+                  'http://xmlns.com/foaf/0.1/':                           'foaf',
+                  'http://www.w3.org/2003/01/geo/wgs84_pos#':             'geo',
                   'http://postneo.com/icbm/':                             'icbm',
                   'http://purl.org/rss/1.0/modules/image/':               'image',
-                  'http://www.itunes.com/dtds/podcast-1.0.dtd':           'itunes',
-                  'http://example.com/dtds/podcast-1.0.dtd':              'itunes',
-                  'http://rssnamespace.org/feedburner/ext/1.0':           'feedburner',
-                  'http://xmlns.com/foaf/0.1/':                           'foaf',
-                  'http://freshmeat.net/rss/fm/':                         'fm',
-                  'http://www.w3.org/2003/01/geo/wgs84_pos#':             'geo',
+                  'http://www.itunes.com/DTDs/PodCast-1.0.dtd':           'itunes',
+                  'http://example.com/DTDs/PodCast-1.0.dtd':              'itunes',
                   'http://purl.org/rss/1.0/modules/link/':                'l',
                   'http://search.yahoo.com/mrss':                         'media',
                   'http://madskills.com/public/xml/rss/module/pingback/': 'pingback',
@@ -319,11 +314,12 @@ class _FeedParserMixin:
                   'http://purl.org/rss/1.0/modules/threading/':           'thr',
                   'http://purl.org/rss/1.0/modules/textinput/':           'ti',
                   'http://madskills.com/public/xml/rss/module/trackback/':'trackback',
-                  'http://wellformedweb.org/commentapi/':                 'wfw',
+                  'http://wellformedweb.org/commentAPI/':                 'wfw',
                   'http://purl.org/rss/1.0/modules/wiki/':                'wiki',
                   'http://www.w3.org/1999/xhtml':                         'xhtml',
-                  'http://www.w3.org/xml/1998/namespace':                 'xml'
+                  'http://www.w3.org/XML/1998/namespace':                 'xml'
 }
+    _matchnamespaces = {}
 
     can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'href', 'comments', 'license', 'icon', 'logo']
     can_contain_relative_uris = ['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description']
@@ -332,10 +328,14 @@ class _FeedParserMixin:
     
     def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
         if _debug: sys.stderr.write('initializing FeedParser\n')
+        if not self._matchnamespaces:
+            for k, v in self.namespaces.items():
+                self._matchnamespaces[k.lower()] = v
         self.feeddata = FeedParserDict() # feed-level data
         self.encoding = encoding # character encoding
         self.entries = [] # list of entry-level data
         self.version = '' # feed type/version, see SUPPORTED_VERSIONS
+        self.namespacesInUse = {} # dictionary of namespaces defined by the feed
 
         # the following are used internally to track state;
         # this is really out of control and should be refactored
@@ -543,19 +543,22 @@ class _FeedParserMixin:
         return contentType
     
     def trackNamespace(self, prefix, uri):
-        uri = uri.lower()
-        if (prefix, uri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
+        loweruri = uri.lower()
+        if (prefix, loweruri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
             self.version = 'rss090'
-        if uri == 'http://purl.org/rss/1.0/' and not self.version:
+        if loweruri == 'http://purl.org/rss/1.0/' and not self.version:
             self.version = 'rss10'
-        if uri == 'http://www.w3.org/2005/atom' and not self.version:
+        if loweruri == 'http://www.w3.org/2005/atom' and not self.version:
             self.version = 'atom10'
-        if not prefix: return
-        if uri.find('backend.userland.com/rss') <> -1:
+        if loweruri.find('backend.userland.com/rss') <> -1:
             # match any backend.userland.com namespace
             uri = 'http://backend.userland.com/rss'
-        if self.namespaces.has_key(uri):
-            self.namespacemap[prefix] = self.namespaces[uri]
+            loweruri = uri
+        if self._matchnamespaces.has_key(loweruri):
+            self.namespacemap[prefix] = self._matchnamespaces[loweruri]
+            self.namespacesInUse[self._matchnamespaces[loweruri]] = uri
+        else:
+            self.namespacesInUse[prefix or ''] = uri
 
     def resolveURI(self, uri):
         return _urljoin(self.baseuri or '', uri)
@@ -1300,11 +1303,16 @@ if _XML_AVAILABLE:
         
         def startElementNS(self, name, qname, attrs):
             namespace, localname = name
-            namespace = str(namespace or '').lower()
-            if namespace.find('backend.userland.com/rss') <> -1:
+            lowernamespace = str(namespace or '').lower()
+            if lowernamespace.find('backend.userland.com/rss') <> -1:
                 # match any backend.userland.com namespace
                 namespace = 'http://backend.userland.com/rss'
-            prefix = self.namespaces.get(namespace, 'unknown')
+                lowernamespace = namespace
+            if qname.find(':') > 0:
+                givenprefix = qname.split(':')[0]
+            else:
+                givenprefix = ''
+            prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
             if prefix:
                 localname = prefix + ':' + localname
             localname = str(localname).lower()
@@ -1318,8 +1326,8 @@ if _XML_AVAILABLE:
             # tirelessly telling me that it didn't work yet.
             attrsD = {}
             for (namespace, attrlocalname), attrvalue in attrs._attrs.items():
-                namespace = (namespace or '').lower()
-                prefix = self.namespaces.get(namespace, '')
+                lowernamespace = (namespace or '').lower()
+                prefix = self._matchnamespaces.get(lowernamespace, '')
                 if prefix:
                     attrlocalname = prefix + ':' + attrlocalname
                 attrsD[str(attrlocalname).lower()] = attrvalue
@@ -1327,16 +1335,17 @@ if _XML_AVAILABLE:
                 attrsD[str(qname).lower()] = attrs.getValueByQName(qname)
             self.unknown_starttag(localname, attrsD.items())
 
-#        def resolveEntity(self, publicId, systemId):
-#            return _StringIO()
-
         def characters(self, text):
             self.handle_data(text)
 
         def endElementNS(self, name, qname):
             namespace, localname = name
-            namespace = str(namespace).lower()
-            prefix = self.namespaces.get(namespace, '')
+            lowernamespace = str(namespace or '').lower()
+            if qname.find(':') > 0:
+                givenprefix = qname.split(':')[0]
+            else:
+                givenprefix = ''
+            prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
             if prefix:
                 localname = prefix + ':' + localname
             localname = str(localname).lower()
@@ -2482,6 +2491,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
     result['version'] = result['version'] or feedparser.version
+    result['namespaces'] = feedparser.namespacesInUse
     return result
 
 if __name__ == '__main__':

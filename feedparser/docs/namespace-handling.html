@@ -41,13 +41,20 @@
                </p>
                <p>Other namespaced elements are available as <tt class="varname"><i class="replaceable"><tt>prefix</tt></i>_<i class="replaceable"><tt>element</tt></i></tt>.
                </p>
+               <p>The namespaces defined in the feed are available in the parsed results as <tt class="varname">namespaces</tt>, a dictionary of <tt class="literal">{prefix: namespaceURI}</tt>.  If the feed defines a default namespace, it is listed as <tt class="varname">namespaces['']</tt>.
+               </p>
                <div class="example"><a name="example.namespace" class="skip" href="#example.namespace" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
                   <h3 class="title">Example:&nbsp;Accessing namespaced elements</h3><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/prism.rdf">http://feedparser.org/docs/examples/prism.rdf</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.prism_issn</span>
-<span class="computeroutput">u'0028-0836'</span></pre></div>
+<span class="computeroutput">u'0028-0836'</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.namespaces</span>
+<span class="computeroutput">{'': u'http://purl.org/rss/1.0/',
+ 'prism': u'http://prismstandard.org/namespaces/1.2/basic/',
+ 'rdf': u'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}</span></pre></div>
                <p>The prefix used to construct the variable name is not guaranteed to be the same as the prefix of the namespaced element in
-                  the original feed.  If <span class="application">Universal Feed Parser</span> recognizes the namespace, it will use the namespace's preferred prefix to construct the variable name.
+                  the original feed.  If <span class="application">Universal Feed Parser</span> recognizes the namespace, it will use the namespace's preferred prefix to construct the variable name.  It will also list
+                  the namespace in the <tt class="varname">namespaces</tt> dictionary using the namespace's preferred prefix.
                </p>
                <p>In the previous example, the namespace (<tt class="literal">http://prismstandard.org/namespaces/1.2/basic/</tt>) was defined with the namespace's preferred prefix (<tt class="literal">prism</tt>), so the <tt class="sgmltag-element">prism:issn</tt> element was accessible as the variable <tt class="varname">d.feed.prism_issn</tt>.  However, if the namespace is defined with a non-standard prefix, <span class="application">Universal Feed Parser</span> will still construct the variable name using the preferred prefix, <span class="emphasis"><em>not</em></span> the actual prefix that is used in the feed.
                </p>
@@ -62,10 +69,14 @@
   File "&lt;stdin&gt;", line 1, in ?
   File "feedparser.py", line 158, in __getattr__
     raise AttributeError, "object has no attribute '%s'" % key
-AttributeError: object has no attribute 'foo_issn'</span></pre></div>
+AttributeError: object has no attribute 'foo_issn'</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.namespaces</span>
+<span class="computeroutput">{'': u'http://purl.org/rss/1.0/',
+ 'prism': u'http://prismstandard.org/namespaces/1.2/basic/',
+ 'rdf': u'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}</span></pre></div>
                <p>This is the complete list of namespaces that <span class="application">Universal Feed Parser</span> recognizes and uses to construct the variable names for data in these namespaces:
                </p>
-               <div class="table"><a name="d0e2587" class="skip" href="#d0e2587" title="link to this table"><img src="images/permalink.gif" alt="[link]" title="link to this table" width="8" height="9"></a> 
+               <div class="table"><a name="d0e2617" class="skip" href="#d0e2617" title="link to this table"><img src="images/permalink.gif" alt="[link]" title="link to this table" width="8" height="9"></a> 
                   <h3 class="title">Recognized Namespaces</h3>
                   <table summary="Recognized Namespaces" border="1">
                      <colgroup>
@@ -146,6 +157,10 @@ AttributeError: object has no attribute 'foo_issn'</span></pre></div>
                         <tr>
                            <td><tt class="literal">itunes</tt></td>
                            <td><tt class="literal">http://www.itunes.com/DTDs/PodCast-1.0.dtd</tt></td>
+                        </tr>
+                        <tr>
+                           <td><tt class="literal">itunes</tt></td>
+                           <td><tt class="literal">http://example.com/DTDs/PodCast-1.0.dtd</tt></td>
                         </tr>
                         <tr>
                            <td><tt class="literal">feedburner</tt></td>
@@ -258,7 +273,7 @@ AttributeError: object has no attribute 'foo_issn'</span></pre></div>
                      </tbody>
                   </table>
                </div>
-               <p></p><a name="d0e2907"></a><table class="note" border="0" summary="">
+               <p></p><a name="d0e2944"></a><table class="note" border="0" summary="">
                   <tr>
                      <td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td>
                   </tr>
@@ -266,7 +281,7 @@ AttributeError: object has no attribute 'foo_issn'</span></pre></div>
                      <td colspan="2" align="left" valign="top" width="99%"><span class="application">Universal Feed Parser</span> treats namespaces as case-insensitive to match the behavior of certain versions of <span class="application">iTunes</span>.
                      </td>
                   </tr>
-               </table><a name="d0e2916"></a><table class="caution" border="0" summary="">
+               </table><a name="d0e2953"></a><table class="caution" border="0" summary="">
                   <tr>
                      <td rowspan="2" align="center" valign="top" width="1%"><img src="images/caution.png" alt="Caution" title="" width="24" height="24"></td>
                   </tr>

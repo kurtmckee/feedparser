@@ -1246,16 +1246,21 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <title>Namespace Handling</title>
 <para>Some common namespaced elements are mapped to core elements.  For further information about these mappings, see <xref linkend="reference"/>.</para>
 <para>Other namespaced elements are available as <varname><replaceable>prefix</replaceable>_<replaceable>element</replaceable></varname>.</para>
+<para>The namespaces defined in the feed are available in the parsed results as <varname>namespaces</varname>, a dictionary of <literal>{prefix: namespaceURI}</literal>.  If the feed defines a default namespace, it is listed as <varname>namespaces['']</varname>.</para>
 
 <example id="example.namespace">
 <title>Accessing namespaced elements</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_prism;">&url_example_prism;</ulink>')</userinput>
 &prompt;<userinput>d.feed.prism_issn</userinput>
-<computeroutput>u'0028-0836'</computeroutput></screen>
+<computeroutput>u'0028-0836'</computeroutput>
+&prompt;<userinput>d.namespaces</userinput>
+<computeroutput>{'': u'http://purl.org/rss/1.0/',
+ 'prism': u'http://prismstandard.org/namespaces/1.2/basic/',
+ 'rdf': u'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}</computeroutput></screen>
 </example>
 
-<para>The prefix used to construct the variable name is not guaranteed to be the same as the prefix of the namespaced element in the original feed.  If &feedparser; recognizes the namespace, it will use the namespace's preferred prefix to construct the variable name.</para>
+<para>The prefix used to construct the variable name is not guaranteed to be the same as the prefix of the namespaced element in the original feed.  If &feedparser; recognizes the namespace, it will use the namespace's preferred prefix to construct the variable name.  It will also list the namespace in the <varname>namespaces</varname> dictionary using the namespace's preferred prefix.</para>
 
 <para>In the previous example, the namespace (<literal>http://prismstandard.org/namespaces/1.2/basic/</literal>) was defined with the namespace's preferred prefix (<literal>prism</literal>), so the <sgmltag>prism:issn</sgmltag> element was accessible as the variable <varname>d.feed.prism_issn</varname>.  However, if the namespace is defined with a non-standard prefix, &feedparser; will still construct the variable name using the preferred prefix, <emphasis>not</emphasis> the actual prefix that is used in the feed.</para>
 
@@ -1272,7 +1277,11 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
   File "&lt;stdin>", line 1, in ?
   File "feedparser.py", line 158, in __getattr__
     raise AttributeError, "object has no attribute '%s'" % key
-AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
+AttributeError: object has no attribute 'foo_issn'</computeroutput>
+&prompt;<userinput>d.namespaces</userinput>
+<computeroutput>{'': u'http://purl.org/rss/1.0/',
+ 'prism': u'http://prismstandard.org/namespaces/1.2/basic/',
+ 'rdf': u'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}</computeroutput></screen>
 </example>
 
 <para>This is the complete list of namespaces that &feedparser; recognizes and uses to construct the variable names for data in these namespaces:</para>
@@ -1344,6 +1353,22 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <entry><literal>http://purl.org/rss/1.0/modules/event/</literal></entry>
 </row>
 <row>
+<entry><literal>feedburner</literal></entry>
+<entry><literal>http://rssnamespace.org/feedburner/ext/1.0</literal></entry>
+</row>
+<row>
+<entry><literal>fm</literal></entry>
+<entry><literal>http://freshmeat.net/rss/fm/</literal></entry>
+</row>
+<row>
+<entry><literal>foaf</literal></entry>
+<entry><literal>http://xmlns.com/foaf/0.1/</literal></entry>
+</row>
+<row>
+<entry><literal>geo</literal></entry>
+<entry><literal>http://www.w3.org/2003/01/geo/wgs84_pos#</literal></entry>
+</row>
+<row>
 <entry><literal>icbm</literal></entry>
 <entry><literal>http://postneo.com/icbm/</literal></entry>
 </row>
@@ -1356,20 +1381,8 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput></screen>
 <entry><literal>http://www.itunes.com/DTDs/PodCast-1.0.dtd</literal></entry>
 </row>
 <row>
-<entry><literal>feedburner</literal></entry>
-<entry><literal>http://rssnamespace.org/feedburner/ext/1.0</literal></entry>
-</row>
-<row>
-<entry><literal>foaf</literal></entry>
-<entry><literal>http://xmlns.com/foaf/0.1/</literal></entry>
-</row>
-<row>
-<entry><literal>fm</literal></entry>
-<entry><literal>http://freshmeat.net/rss/fm/</literal></entry>
-</row>
-<row>
-<entry><literal>geo</literal></entry>
-<entry><literal>http://www.w3.org/2003/01/geo/wgs84_pos#</literal></entry>
+<entry><literal>itunes</literal></entry>
+<entry><literal>http://example.com/DTDs/PodCast-1.0.dtd</literal></entry>
 </row>
 <row>
 <entry><literal>l</literal></entry>
@@ -4202,6 +4215,25 @@ xxx
 <tip>
 <title/>
 <para>This element always exists, although it may be an empty string if the version can not be determined.</para>
+</tip>
+</section>
+
+<section id="reference.namespaces">
+<?dbhtml filename="reference-namespaces.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>A dictionary of all XML namespaces defined in the feed, as <literal>{prefix: namespaceURI}</literal>.</para>
+</abstract>
+</sectioninfo>
+<title>namespaces</title>
+<note>
+<title/>
+<para>The prefixes listed in the <varname>namespaces</varname> dictionary may not match the prefixes defined in the original feed.  See <xref linkend="advanced.namespaces"/> for more details.</para>
+</note>
+<tip>
+<title/>
+<para>This element always exists, although it may be an empty dictionary if the feed does not define any namespaces (such as an RSS 2.0 feed with no extensions).</para>
 </tip>
 </section>
 
