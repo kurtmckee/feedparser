@@ -235,6 +235,11 @@
                               <td><tt class="literal">(2004, 7, 8, 14, 56, 58, 3, 190, 0)</tt></td>
                            </tr>
                            <tr>
+                              <td>bogus (MSSQL-ish, without fractional second)</td>
+                              <td><tt class="literal">2004-07-08 23:56:58</tt></td>
+                              <td><tt class="literal">(2004, 7, 8, 14, 56, 58, 3, 190, 0)</tt></td>
+                           </tr>
+                           <tr>
                               <td>bogus (Korean)</td>
                               <td><tt class="literal">2004-05-25 &#50724; 11:23:17</tt></td>
                               <td><tt class="literal">(2004, 5, 25, 14, 23, 17, 1, 146, 0)</tt></td>
@@ -300,7 +305,7 @@ d = feedparser.parse(...)</pre></div>
                   <p>If your date handler returns <tt class="constant">None</tt>, or anything other than a <span class="application">Python</span> 9-tuple date, or raises an exception of any kind, the error will be silently ignored and the other registered date handlers
                      will be tried in order.  If no date handlers succeed, then the date is not parsed, and the <tt class="sgmltag-element">*_parsed</tt> value will not be present in the results dictionary.  The original date string will still be available in the appropriate
                      element in the results dictionary.
-                  </p><a name="d0e1605"></a><table class="tip" border="0" summary="">
+                  </p><a name="d0e1614"></a><table class="tip" border="0" summary="">
                      <tr>
                         <td rowspan="2" align="center" valign="top" width="1%"><img src="images/tip.png" alt="Tip" title="" width="24" height="24"></td>
                      </tr>

@@ -874,6 +874,11 @@ tricks&amp;lt;/span&amp;gt;&lt;/description>
 <entry><literal>(2004, 7, 8, 14, 56, 58, 3, 190, 0)</literal></entry>
 </row>
 <row>
+<entry>bogus (MSSQL-ish, without fractional second)</entry>
+<entry><literal>2004-07-08 23:56:58</literal></entry>
+<entry><literal>(2004, 7, 8, 14, 56, 58, 3, 190, 0)</literal></entry>
+</row>
+<row>
 <entry>bogus (Korean)</entry>
 <entry><literal>2004-05-25 &#xc624; 11:23:17</literal></entry>
 <entry><literal>(2004, 5, 25, 14, 23, 17, 1, 146, 0)</literal></entry>

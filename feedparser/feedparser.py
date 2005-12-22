@@ -1910,7 +1910,7 @@ def _parse_date_nate(dateString):
 registerDateHandler(_parse_date_nate)
 
 _mssql_date_re = \
-    re.compile('(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})\.\d+')
+    re.compile('(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})(\.\d+)?')
 def _parse_date_mssql(dateString):
     '''Parse a string according to the MS SQL date format'''
     m = _mssql_date_re.match(dateString)
