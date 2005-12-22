@@ -93,9 +93,10 @@
 <!ENTITY url_example_temporary "&url_example;temporary.xml">
 <!ENTITY url_example_permanent "&url_example;permanent.xml">
 <!ENTITY url_example_gone "&url_example;gone.xml">
-<!ENTITY url_example_basic_auth_inline "http://test:basic@feedparser.org/docs/examples/basic_auth.xml">
 <!ENTITY url_example_basic_auth "&url_example;basic_auth.xml">
 <!ENTITY url_example_digest_auth "&url_example;digest_auth.xml">
+<!ENTITY url_example_basic_auth_inline "http://test:basic@feedparser.org/docs/examples/basic_auth.xml">
+<!ENTITY url_example_digest_auth_inline "http://test:digest@feedparser.org/docs/examples/digest_auth.xml">
 <!ENTITY url_example_base "&url_example;base.xml">
 <!ENTITY url_example_http_base "&url_example;http_base.xml">
 <!ENTITY url_example_no_base "&url_example;no_base.xml">
@@ -1994,16 +1995,25 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 </abstract>
 </sectioninfo>
 <title>Password-Protected Feeds</title>
-<para>For basic authentication, the easiest way is to embed the username and password in the feed &url; itself.</para>
+<para>The easiest way is to embed the username and password in the feed &url; itself.</para>
 <example id="example.auth.inline">
-<title>Downloading a feed protected by &http; basic authentication (the easy way)</title>
+<title>Downloading a feed protected by basic authentication (the easy way)</title>
 <para>In this example, the username is <literal>test</literal> and the password is <literal>basic</literal>.</para>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_basic_auth_inline;">&url_example_basic_auth_inline;</ulink>')</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_basic_auth;">&url_example_basic_auth_inline;</ulink>')</userinput>
 &prompt;<userinput>d.feed.title</userinput>
-<computeroutput>u'Sample Feed'</computeroutput>
-</screen>
+<computeroutput>u'Sample Feed'</computeroutput></screen>
 </example>
+<para>The same technique works for digest authentication.  (Technically, &feedparser; will attempt basic authentication first, but if that fails and the server indicates that it requires digest authentication, &feedparser; will automatically re-request the feed with the appropriate digest authentication headers.  <emphasis>This means that this technique will send your password to the server in an easily decryptable form.</emphasis>)</para>
+<example id="example.auth.inline.digest">
+<title>Downloading a feed protected by digest authentication (the easy but horribly insecure way)</title>
+<para>In this example, the username is <literal>test</literal> and the password is <literal>digest</literal>.</para>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest_auth_inline;</ulink>')</userinput>
+&prompt;<userinput>d.feed.title</userinput>
+<computeroutput>u'Sample Feed'</computeroutput></screen>
+</example>
+
 <para>You can also construct a <classname>HTTPBasicAuthHandler</classname> that contains the password information, then pass that as a handler to the <function>parse</function> function.  <classname>HTTPBasicAuthHandler</classname> is part of the standard <ulink url="&url_urllib2;">&urllib2;</ulink> module.</para>
 <example id="example.auth.basic">
 <title>Downloading a feed protected by &http; basic authentication (the hard way)</title>
@@ -2026,10 +2036,10 @@ d = feedparser.parse('<ulink url="&url_example_basic_auth;">&url_example_basic_a
                      handlers=[auth])</programlisting>
 </example>
 
-<para>Digest authentication is handled in much the same way, by constructing an <classname>HTTPDigestAuthHandler</classname> and populating it with the necessary realm, host, user, and password information.  Note that there is no shortcut like stuffing the information into the &url;.  You need to do it this way:</para>
+<para>Digest authentication is handled in much the same way, by constructing an <classname>HTTPDigestAuthHandler</classname> and populating it with the necessary realm, host, user, and password information.  This is more secure than <link linkend="example.auth.inline.digest">stuffing the username and password in the URL</link>, since the password will be encrypted before being sent to the server.</para>
 
 <example id="example.auth.digest">
-<title>Downloading a feed protected by &http; digest authentication (the only way)</title>
+<title>Downloading a feed protected by &http; digest authentication (the secure way)</title>
 <programlisting language="python">import urllib2, feedparser
 
 auth = urllib2.HTTPDigestAuthHandler()
@@ -2040,7 +2050,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 
 <caution id="caution.urllib2.buggy.as.all.hell">
 <title/>
-<para>Prior to &python; 2.3.3, &urllib2; did not properly support digest authentication.  These examples have been verified on &python; 2.3.3 on Windows and &python; 2.3.4 on Debian GNU/Linux.  Mac OS X 10.3 ships with &python; 2.3.  Users of previous versions of Mac OS X will need to upgrade to the latest version of &python; in order to use digest authentication.</para>
+<para>Prior to &python; 2.3.3, &urllib2; did not properly support digest authentication.  Mac OS X 10.3 <quote>Panther</quote> ships with &python; 2.3.  Users of previous versions of Mac OS X will need to upgrade to the latest version of &python; in order to use digest authentication.</para>
 </caution>
 
 <para>The examples so far have assumed that you know in advance that the feed is password-protected.  But what if you don't know?</para>

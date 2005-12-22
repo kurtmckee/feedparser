@@ -37,17 +37,25 @@
                   </div>
                   <div></div>
                </div>
-               <p>For basic authentication, the easiest way is to embed the username and password in the feed <acronym title="Uniform Resource Locator">URL</acronym> itself.
+               <p>The easiest way is to embed the username and password in the feed <acronym title="Uniform Resource Locator">URL</acronym> itself.
                </p>
                <div class="example"><a name="example.auth.inline" class="skip" href="#example.auth.inline" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
-                  <h3 class="title">Example:&nbsp;Downloading a feed protected by <acronym title="Hypertext Transfer Protocol">HTTP</acronym> basic authentication (the easy way)
-                  </h3>
+                  <h3 class="title">Example:&nbsp;Downloading a feed protected by basic authentication (the easy way)</h3>
                   <p>In this example, the username is <tt class="literal">test</tt> and the password is <tt class="literal">basic</tt>.
                   </p><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://test:basic@feedparser.org/docs/examples/basic_auth.xml">http://test:basic@feedparser.org/docs/examples/basic_auth.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/basic_auth.xml">http://test:basic@feedparser.org/docs/examples/basic_auth.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title</span>
-<span class="computeroutput">u'Sample Feed'</span>
-</pre></div>
+<span class="computeroutput">u'Sample Feed'</span></pre></div>
+               <p>The same technique works for digest authentication.  (Technically, <span class="application">Universal Feed Parser</span> will attempt basic authentication first, but if that fails and the server indicates that it requires digest authentication,
+                  <span class="application">Universal Feed Parser</span> will automatically re-request the feed with the appropriate digest authentication headers.  <span class="emphasis"><em>This means that this technique will send your password to the server in an easily decryptable form.</em></span>)
+               </p>
+               <div class="example"><a name="example.auth.inline.digest" class="skip" href="#example.auth.inline.digest" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
+                  <h3 class="title">Example:&nbsp;Downloading a feed protected by digest authentication (the easy but horribly insecure way)</h3>
+                  <p>In this example, the username is <tt class="literal">test</tt> and the password is <tt class="literal">digest</tt>.
+                  </p><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/digest_auth.xml">http://test:digest@feedparser.org/docs/examples/digest_auth.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title</span>
+<span class="computeroutput">u'Sample Feed'</span></pre></div>
                <p>You can also construct a <tt class="classname">HTTPBasicAuthHandler</tt> that contains the password information, then pass that as a handler to the <tt class="function">parse</tt> function.  <tt class="classname">HTTPBasicAuthHandler</tt> is part of the standard <a href="http://docs.python.org/lib/module-urllib2.html"><tt class="filename">urllib2</tt></a> module.
                </p>
                <div class="example"><a name="example.auth.basic" class="skip" href="#example.auth.basic" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
@@ -69,11 +77,10 @@ auth.add_password(<font color='olive'>'BasicTest'</font>, <font color='olive'>'f
 <font color='green'><i># and you can build your own)</i></font>
 d = feedparser.parse('<a href="http://feedparser.org/docs/examples/basic_auth.xml">http://feedparser.org/docs/examples/basic_auth.xml</a>', \
                      handlers=[auth])</pre></div>
-               <p>Digest authentication is handled in much the same way, by constructing an <tt class="classname">HTTPDigestAuthHandler</tt> and populating it with the necessary realm, host, user, and password information.  Note that there is no shortcut like stuffing
-                  the information into the <acronym title="Uniform Resource Locator">URL</acronym>.  You need to do it this way:
+               <p>Digest authentication is handled in much the same way, by constructing an <tt class="classname">HTTPDigestAuthHandler</tt> and populating it with the necessary realm, host, user, and password information.  This is more secure than <a href="http-authentication.html#example.auth.inline.digest" title="Example:&nbsp;Downloading a feed protected by digest authentication (the easy but horribly insecure way)">stuffing the username and password in the URL</a>, since the password will be encrypted before being sent to the server.
                </p>
                <div class="example"><a name="example.auth.digest" class="skip" href="#example.auth.digest" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
-                  <h3 class="title">Example:&nbsp;Downloading a feed protected by <acronym title="Hypertext Transfer Protocol">HTTP</acronym> digest authentication (the only way)
+                  <h3 class="title">Example:&nbsp;Downloading a feed protected by <acronym title="Hypertext Transfer Protocol">HTTP</acronym> digest authentication (the secure way)
                   </h3><pre class="programlisting python"><font color='navy'><b>import</b></font> urllib2, feedparser
 
 auth = urllib2.HTTPDigestAuthHandler()
@@ -84,7 +91,7 @@ d = feedparser.parse('<a href="http://feedparser.org/docs/examples/digest_auth.x
                      <td rowspan="2" align="center" valign="top" width="1%"><img src="images/caution.png" alt="Caution" title="" width="24" height="24"></td>
                   </tr>
                   <tr>
-                     <td colspan="2" align="left" valign="top" width="99%">Prior to <span class="application">Python</span> 2.3.3, <tt class="filename">urllib2</tt> did not properly support digest authentication.  These examples have been verified on <span class="application">Python</span> 2.3.3 on Windows and <span class="application">Python</span> 2.3.4 on Debian GNU/Linux.  Mac OS X 10.3 ships with <span class="application">Python</span> 2.3.  Users of previous versions of Mac OS X will need to upgrade to the latest version of <span class="application">Python</span> in order to use digest authentication.
+                     <td colspan="2" align="left" valign="top" width="99%">Prior to <span class="application">Python</span> 2.3.3, <tt class="filename">urllib2</tt> did not properly support digest authentication.  Mac OS X 10.3 &#8220;<span class="quote">Panther</span>&#8221; ships with <span class="application">Python</span> 2.3.  Users of previous versions of Mac OS X will need to upgrade to the latest version of <span class="application">Python</span> in order to use digest authentication.
                      </td>
                   </tr>
                </table>

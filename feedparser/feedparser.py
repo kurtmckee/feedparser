@@ -1606,7 +1606,7 @@ def _sanitizeHTML(htmlSource, encoding):
     data = data.strip().replace('\r\n', '\n')
     return data
 
-class _FeedURLHandler(urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandler):
+class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandler):
     def http_error_default(self, req, fp, code, msg, headers):
         if ((code / 100) == 3) and (code != 304):
             return self.http_error_302(req, fp, code, msg, headers)
@@ -1636,6 +1636,30 @@ class _FeedURLHandler(urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandl
     http_error_303 = http_error_302
     http_error_307 = http_error_302
         
+    def http_error_401(self, req, fp, code, msg, headers):
+        # Check if
+        # - server requires digest auth, AND
+        # - we tried (unsuccessfully) with basic auth, AND
+        # - we're using Python 2.3.3 or later (digest auth is irreparably broken in earlier versions)
+        # If all conditions hold, parse authentication information
+        # out of the Authorization header we sent the first time
+        # (for the username and password) and the WWW-Authenticate
+        # header the server sent back (for the realm) and retry
+        # the request with the appropriate digest auth headers instead.
+        # This evil genius hack has been brought to you by Aaron Swartz.
+        host = urlparse.urlparse(req.get_full_url())[1]
+        try:
+            assert sys.version.split()[0] >= '2.3.3'
+            assert base64 != None
+            user, passw = base64.decodestring(req.headers['Authorization'].split(' ')[1]).split(':')
+            realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
+            self.add_password(realm, host, user, passw)
+            retry = self.http_error_auth_reqed('www-authenticate', host, req, headers)
+            self.reset_retry_count()
+            return retry
+        except:
+            return self.http_error_default(req, fp, code, msg, headers)
+
 def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers):
     """URL, filename, or string --> stream
 
