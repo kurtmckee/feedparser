@@ -210,6 +210,7 @@ class FeedParserDict(UserDict):
         except KeyError:
             pass
         try:
+            assert not key.startswith('_')
             return self.__getitem__(key)
         except:
             raise AttributeError, "object has no attribute '%s'" % key
