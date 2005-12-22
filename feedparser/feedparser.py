@@ -40,7 +40,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com/>",
                     "Kevin Marks <http://epeus.blogspot.com/>"]
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -643,7 +643,7 @@ class _FeedParserMixin:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding)
 
-        if self.encoding and (type(output) == types.StringType):
+        if self.encoding and not isinstance(output, unicode):
             try:
                 output = unicode(output, self.encoding)
             except:
@@ -1410,16 +1410,13 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         data = re.sub(r'<(\S+?)\s*?/>', shorttag_replace, data)
         data = data.replace('&#39;', "'")
         data = data.replace('&#34;', '"')
-        if self.encoding and (type(data) == types.UnicodeType):
+        if self.encoding and isinstance(data, unicode):
             data = data.encode(self.encoding)
         sgmllib.SGMLParser.feed(self, data)
 
     def normalize_attrs(self, attrs):
         # utility method to be called by descendants
         attrs = [(k.lower(), v) for k, v in attrs]
-#        if self.encoding:
-#            if _debug: sys.stderr.write('normalize_attrs, encoding=%s\n' % self.encoding)
-#            attrs = [(k, v.encode(self.encoding)) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
         return attrs
 
@@ -1431,20 +1428,20 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         uattrs = []
         # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
         for key, value in attrs:
-            if type(value) != type(u''):
-                value = unicode(value,self.encoding)
-            uattrs.append((unicode(key,self.encoding),value))
+            if not isinstance(value, unicode):
+                value = unicode(value, self.encoding)
+            uattrs.append((unicode(key, self.encoding), value))
         strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs]).encode(self.encoding)
         if tag in self.elements_no_end_tag:
             self.pieces.append('<%(tag)s%(strattrs)s />' % locals())
         else:
             self.pieces.append('<%(tag)s%(strattrs)s>' % locals())
-        
+
     def unknown_endtag(self, tag):
         # called for each end tag, e.g. for </pre>, tag will be 'pre'
         # Reconstruct the original end tag.
         if tag not in self.elements_no_end_tag:
-            self.pieces.append('</%(tag)s>' % locals())
+            self.pieces.append("</%(tag)s>" % locals())
 
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
