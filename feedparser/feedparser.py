@@ -11,7 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "pre-4.0-" + "$Revision$"[11:15] + "-cvs"
+__version__ = "4.0"# + "$Revision$"[11:15] + "-cvs"
 __license__ = """Copyright (c) 2002-2005, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -1272,7 +1272,6 @@ class _FeedParserMixin:
         else:
             self._summaryKey = 'summary'
             self.pushContent(self._summaryKey, attrsD, 'text/plain', 1)
-#        self.pushContent('summary', attrsD, 'text/plain', 1)
     _start_itunes_summary = _start_summary
 
     def _end_summary(self):
@@ -2821,6 +2820,8 @@ if __name__ == '__main__':
 #  support for HTTP 303 redirects
 #4.0 - MAP - support for relative URIs in xml:base attribute; fixed
 #  encoding issue with mxTidy (phopkins); preliminary support for RFC 3229;
-#  support for Atom 1.0; new tags for categories/keywords/etc. as array of
-#  dict {'term': term, 'scheme': scheme, 'label': label} to match Atom 1.0
-#  terminology; parse RFC 822-style dates with no time
+#  support for Atom 1.0; support for iTunes extensions; new 'tags' for
+#  categories/keywords/etc. as array of dict
+#  {'term': term, 'scheme': scheme, 'label': label} to match Atom 1.0
+#  terminology; parse RFC 822-style dates with no time; lots of other
+#  bug fixes
