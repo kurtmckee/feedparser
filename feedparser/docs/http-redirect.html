@@ -40,21 +40,21 @@
                </div>
                <p>When a feed has temporarily moved to a new location, the web server will return a <tt class="constant">302</tt> status code.  <span class="application">Universal Feed Parser</span> makes this available in <tt class="varname">d.status</tt>.
                </p>
-               <p>There is nothing special you need to do with temporary redirects; by the time you learn about it, <span class="application">Universal Feed Parser</span> has already followed the redirect to the new location (available in <tt class="varname">d.url</tt>), downloaded the feed, and parsed it.  Since the redirect is temporary, you should continue requesting the original <acronym title="Uniform Resource Locator">URL</acronym> the next time you want to parse the feed.
+               <p>There is nothing special you need to do with temporary redirects; by the time you learn about it, <span class="application">Universal Feed Parser</span> has already followed the redirect to the new location (available in <tt class="varname">d.href</tt>), downloaded the feed, and parsed it.  Since the redirect is temporary, you should continue requesting the original <acronym title="Uniform Resource Locator">URL</acronym> the next time you want to parse the feed.
                </p>
                <div class="example"><a name="example.redirect.temporary" class="skip" href="#example.redirect.temporary" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
                   <h3 class="title">Example:&nbsp;Noticing temporary redirects</h3><pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/temporary.xml">http://feedparser.org/docs/examples/temporary.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.status</span>
 <span class="computeroutput">302</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.url</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.href</span>
 <span class="computeroutput">'http://feedparser.org/docs/examples/atom10.xml'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title</span>
 <span class="computeroutput">u'Sample Feed'</span></pre></div>
                <p>When a feed has permanently moved to a new location, the web server will return a <tt class="constant">301</tt> status code.  Again, <span class="application">Universal Feed Parser</span> makes this available in <tt class="varname">d.status</tt>.
                </p>
                <p>If you are polling a feed on a regular basis, it is very important to check the status code (<tt class="varname">d.status</tt>) every time you download.  If the feed has been permanently redirected, you should update your database or configuration
-                  file with the new address (<tt class="varname">d.url</tt>).  Repeatedly requesting the original address of a feed that has been permanently redirected is very rude, and may get you
+                  file with the new address (<tt class="varname">d.href</tt>).  Repeatedly requesting the original address of a feed that has been permanently redirected is very rude, and may get you
                   banned from the server.
                </p>
                <div class="example"><a name="example.redirect.permanent" class="skip" href="#example.redirect.permanent" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> 
@@ -62,7 +62,7 @@
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/permanent.xml">http://feedparser.org/docs/examples/permanent.xml</a>')</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.status</span>
 <span class="computeroutput">301</span>
-<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.url</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.href</span>
 <span class="computeroutput">'http://feedparser.org/docs/examples/atom10.xml'</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.title</span>
 <span class="computeroutput">u'Sample Feed'</span></pre></div>

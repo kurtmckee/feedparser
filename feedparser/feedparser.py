@@ -40,7 +40,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com/>",
                     "Kevin Marks <http://epeus.blogspot.com/>"]
-_debug = 1
+_debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -99,26 +99,6 @@ else:
     except ImportError:
         pass
 import urllib, urllib2
-
-# loop through list of preferred Tidy interfaces looking for one that's installed,
-# then set up a common _tidy function to wrap the interface-specific API.
-_tidy = None
-if TIDY_MARKUP:
-    for tidy_interface in PREFERRED_TIDY_INTERFACES:
-        try:
-            if tidy_interface == "uTidy":
-                from tidy import parseString as _utidy
-                def _tidy(data, **kwargs):
-                    return str(_utidy(data, **kwargs))
-                break
-            elif tidy_interface == "mxTidy":
-                from mx.Tidy import Tidy as _mxtidy
-                def _tidy(data, **kwargs):
-                    nerrors, nwarnings, data, errordata = _mxtidy.tidy(data, **kwargs)
-                    return data
-                break
-        except:
-            pass
 
 # If a real XML parser is available, feedparser will attempt to use it.  feedparser has
 # been tested with the built-in SAX parser, PyXML, and libxml2.  On platforms where the
@@ -195,27 +175,27 @@ except NameError:
         return rc
 
 class FeedParserDict(UserDict):
+    keymap = {'channel': 'feed',
+              'items': 'entries',
+              'guid': 'id',
+              'date': 'updated',
+              'date_parsed': 'updated_parsed',
+              'description': ['subtitle', 'summary'],
+              'url': ['href'],
+              'modified': 'updated',
+              'modified_parsed': 'updated_parsed',
+              'issued': 'published',
+              'issued_parsed': 'published_parsed',
+              'copyright': 'rights',
+              'copyright_detail': 'rights_detail',
+              'tagline': 'subtitle',
+              'tagline_detail': 'subtitle_detail'}
     def __getitem__(self, key):
-        keymap = {'channel': 'feed',
-                  'items': 'entries',
-                  'guid': 'id',
-                  'date': 'updated',
-                  'date_parsed': 'updated_parsed',
-                  'description': ['subtitle', 'summary'],
-                  'url': ['href'],
-                  'modified': 'updated',
-                  'modified_parsed': 'updated_parsed',
-                  'issued': 'published',
-                  'issued_parsed': 'published_parsed',
-                  'copyright': 'rights',
-                  'copyright_detail': 'rights_detail',
-                  'tagline': 'subtitle',
-                  'tagline_detail': 'subtitle_detail'}
         if key == 'category':
             return UserDict.__getitem__(self, 'tags')[0]['term']
         if key == 'categories':
             return [(tag['scheme'], tag['term']) for tag in UserDict.__getitem__(self, 'tags')]
-        realkey = keymap.get(key, key)
+        realkey = self.keymap.get(key, key)
         if type(realkey) == types.ListType:
             for k in realkey:
                 if UserDict.has_key(self, k):
@@ -224,6 +204,25 @@ class FeedParserDict(UserDict):
             return UserDict.__getitem__(self, key)
         return UserDict.__getitem__(self, realkey)
 
+    def __setitem__(self, key, value):
+        for k in self.keymap.keys():
+            if key == k:
+                key = self.keymap[k]
+                if type(key) == types.ListType:
+                    key = key[0]
+        return UserDict.__setitem__(self, key, value)
+
+    def get(self, key, default=None):
+        if self.has_key(key):
+            return self[key]
+        else:
+            return default
+
+    def setdefault(self, key, value):
+        if not self.has_key(key):
+            self[key] = value
+        return self[key]
+        
     def has_key(self, key):
         try:
             return hasattr(self, key) or UserDict.has_key(self, key)
@@ -240,6 +239,12 @@ class FeedParserDict(UserDict):
             return self.__getitem__(key)
         except:
             raise AttributeError, "object has no attribute '%s'" % key
+
+    def __setattr__(self, key, value):
+        if key.startswith('_'):
+            return UserDict.__setattr__(self, key, value)
+        else:
+            return self.__setitem__(key, value)
 
     def __contains__(self, key):
         return self.has_key(key)
@@ -377,6 +382,7 @@ class _FeedParserMixin:
         self.insource = 0
         self.sourcedata = FeedParserDict()
         self.contentparams = FeedParserDict()
+        self._summaryKey = None
         self.namespacemap = {}
         self.elementstack = []
         self.basestack = []
@@ -1250,11 +1256,16 @@ class _FeedParserMixin:
         self.pop('errorreportsto')
         
     def _start_summary(self, attrsD):
+#        context = self._getContext()
+#        self._summaryKey = context.has_key('summary') and 'content' or 'summary'
+#        self.pushContent(self._summaryKey, attrsD, 'text/plain', 1)
         self.pushContent('summary', attrsD, 'text/plain', 1)
     _start_itunes_summary = _start_summary
 
     def _end_summary(self):
+#        self.popContent(self._summaryKey or 'summary')
         self.popContent('summary')
+        self._summaryKey = None
     _end_itunes_summary = _end_summary
         
     def _start_enclosure(self, attrsD):
@@ -1625,19 +1636,38 @@ def _sanitizeHTML(htmlSource, encoding):
     p = _HTMLSanitizer(encoding)
     p.feed(htmlSource)
     data = p.output()
-    if _tidy and TIDY_MARKUP:
-        utf8 = isinstance(data, unicode)
-        if utf8:
-            data = data.encode('utf-8')
-        data = _tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding="utf8")
-        if utf8:
-            data = unicode(data, 'utf-8')
-        if data.count('<body'):
-            data = data.split('<body', 1)[1]
-            if data.count('>'):
-                data = data.split('>', 1)[1]
-        if data.count('</body'):
-            data = data.split('</body', 1)[0]
+    if TIDY_MARKUP:
+        # loop through list of preferred Tidy interfaces looking for one that's installed,
+        # then set up a common _tidy function to wrap the interface-specific API.
+        _tidy = None
+        for tidy_interface in PREFERRED_TIDY_INTERFACES:
+            try:
+                if tidy_interface == "uTidy":
+                    from tidy import parseString as _utidy
+                    def _tidy(data, **kwargs):
+                        return str(_utidy(data, **kwargs))
+                    break
+                elif tidy_interface == "mxTidy":
+                    from mx.Tidy import Tidy as _mxtidy
+                    def _tidy(data, **kwargs):
+                        nerrors, nwarnings, data, errordata = _mxtidy.tidy(data, **kwargs)
+                        return data
+                    break
+            except:
+                pass
+        if _tidy:
+            utf8 = isinstance(data, unicode)
+            if utf8:
+                data = data.encode('utf-8')
+            data = _tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding="utf8")
+            if utf8:
+                data = unicode(data, 'utf-8')
+            if data.count('<body'):
+                data = data.split('<body', 1)[1]
+                if data.count('>'):
+                    data = data.split('>', 1)[1]
+            if data.count('</body'):
+                data = data.split('</body', 1)[0]
     data = data.strip().replace('\r\n', '\n')
     return data
 
@@ -2448,7 +2478,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         if last_modified:
             result['modified'] = _parse_date(last_modified)
     if hasattr(f, 'url'):
-        result['url'] = f.url
+        result['href'] = f.url
         result['status'] = 200
     if hasattr(f, 'status'):
         result['status'] = f.status
@@ -2475,7 +2505,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         
     result['version'], data = _stripDoctype(data)
 
-    baseuri = http_headers.get('content-location', result.get('url'))
+    baseuri = http_headers.get('content-location', result.get('href'))
     baselang = http_headers.get('content-language', None)
 
     # if server sent 304, we're done

@@ -36,3 +36,4 @@ Redirect permanent /docs/reference-feed-modified.html http://feedparser.org/docs
 Redirect permanent /docs/reference-feed-modified_parsed.html http://feedparser.org/docs/reference-feed-modified_parsed.html
 Redirect permanent /docs/reference-feed-tagline.html http://feedparser.org/docs/reference-feed-subtitle.html
 Redirect permanent /docs/reference-feed-tagline_detail.html http://feedparser.org/docs/reference-feed-subtitle_detail.html
+Redirect permanent /docs/reference-url.html http://feedparser.org/docs/reference-href.html

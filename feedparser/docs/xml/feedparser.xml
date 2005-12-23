@@ -1947,7 +1947,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 </sectioninfo>
 <title>&http; Redirects</title>
 <para>When a feed has temporarily moved to a new location, the web server will return a <constant>302</constant> status code.  &feedparser; makes this available in <varname>d.status</varname>.</para>
-<para>There is nothing special you need to do with temporary redirects; by the time you learn about it, &feedparser; has already followed the redirect to the new location (available in <varname>d.url</varname>), downloaded the feed, and parsed it.  Since the redirect is temporary, you should continue requesting the original &url; the next time you want to parse the feed.</para>
+<para>There is nothing special you need to do with temporary redirects; by the time you learn about it, &feedparser; has already followed the redirect to the new location (available in <varname>d.href</varname>), downloaded the feed, and parsed it.  Since the redirect is temporary, you should continue requesting the original &url; the next time you want to parse the feed.</para>
 
 <example id="example.redirect.temporary">
 <title>Noticing temporary redirects</title>
@@ -1955,7 +1955,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 &prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_temporary;"/>')</userinput>
 &prompt;<userinput>d.status</userinput>
 <computeroutput>302</computeroutput>
-&prompt;<userinput>d.url</userinput>
+&prompt;<userinput>d.href</userinput>
 <computeroutput>'&url_example_atom10;'</computeroutput>
 &prompt;<userinput>d.feed.title</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
@@ -1963,7 +1963,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 
 <para>When a feed has permanently moved to a new location, the web server will return a <constant>301</constant> status code.  Again, &feedparser; makes this available in <varname>d.status</varname>.</para>
 
-<para>If you are polling a feed on a regular basis, it is very important to check the status code (<varname>d.status</varname>) every time you download.  If the feed has been permanently redirected, you should update your database or configuration file with the new address (<varname>d.url</varname>).  Repeatedly requesting the original address of a feed that has been permanently redirected is very rude, and may get you banned from the server.</para>
+<para>If you are polling a feed on a regular basis, it is very important to check the status code (<varname>d.status</varname>) every time you download.  If the feed has been permanently redirected, you should update your database or configuration file with the new address (<varname>d.href</varname>).  Repeatedly requesting the original address of a feed that has been permanently redirected is very rude, and may get you banned from the server.</para>
 
 <example id="example.redirect.permanent">
 <title>Noticing permanent redirects</title>
@@ -1971,7 +1971,7 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 &prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_permanent;"/>')</userinput>
 &prompt;<userinput>d.status</userinput>
 <computeroutput>301</computeroutput>
-&prompt;<userinput>d.url</userinput>
+&prompt;<userinput>d.href</userinput>
 <computeroutput>'&url_example_atom10;'</computeroutput>
 &prompt;<userinput>d.feed.title</userinput>
 <computeroutput>u'Sample Feed'</computeroutput></screen>
@@ -4289,19 +4289,19 @@ xxx
 </tip>
 </section>
 
-<section id="reference.url">
-<?dbhtml filename="reference-url.html"?>
+<section id="reference.href">
+<?dbhtml filename="reference-href.html"?>
 <sectioninfo>
 <abstract>
 <title/>
 <para>The final &url; of the feed that was parsed.</para>
 </abstract>
 </sectioninfo>
-<title>url</title>
-<para>If the feed was redirected from the original requested address, <varname>url</varname> will contain the final (redirected) address.</para>
+<title>href</title>
+<para>If the feed was redirected from the original requested address, <varname>href</varname> will contain the final (redirected) address.</para>
 <tip>
 <title/>
-<para><varname>url</varname> will only be present if the feed was retrieved from a web server.  If the feed was parsed from a local file or from a string in memory, <varname>url</varname> will not be present.</para>
+<para><varname>href</varname> will only be present if the feed was retrieved from a web server.  If the feed was parsed from a local file or from a string in memory, <varname>href</varname> will not be present.</para>
 </tip>
 </section>
 

@@ -550,4 +550,98 @@ Atom
     * xml:base
     * overridden xml:base
 
+Atom 1.0:
+* feed/atom:generator (doublecheck syntax against atom03:generator)
+  * @uri (was @url)
+  * @version (unchanged)
+  * content (unchanged)
+* feed/atom:icon
+  * content is URI
+* feed/atom:logo
+  * content is URI
+* feed/atom:subtitle (was atom03:tagline)
+* feed/atom:updated (was atom03:modified, sort of)
+  * no more feed/modified, feed/created, or feed/created
+* feed/atom:rights (was atom03:copyright)
+* feed/atom:link new rels
+  * see entry/atom:link new rels
+* feed/atom:link new attributes
+  * see entry/atom:link new attributes
+
+* entry/id no normalization (section 4.2.6.1)
+* entry/atom:category (section 4.2.2)
+  * @term
+  * @scheme
+  * @label
+* entry/atom:link rels
+  * rel="alternate"
+  * rel="related"
+  * rel="self"
+  * rel="enclosure"
+    * map to enclosures array
+  * rel="via"
+  * rel="<absoluteURI>"
+* entry/atom:link new attributes
+  * @hreflang
+  * @length
+* entry/atom:content new standard types
+  * text (was text/plain)
+  * html (was text/html)
+  * xhtml (was application/xhtml+xml)
+  * !!!see section 4.1.3.3 Processing Model
+    * startswith('text/') --> text
+    * endswith('+xml') --> xml
+    * endswith('/xml') --> xml
+    * all others base64 (but no mode attr)
+* entry/atom:content/@src
+  * new src property in content dict
+* entry/atom:updated (was atom03:modified, sort of)
+* entry/atom:published (was atom03:issued)
+  * no more modified or created
+* entry/atom:rights (was atom03:copyright)
+* entry/atom:source a.k.a. "Smells Like Wyman Spirit"
+  * atom:author
+  * atom:category
+  * atom:contributor
+  * atom:generator
+  * atom:icon
+  * atom:id
+  * atom:link
+  * atom:logo
+  * atom:rights
+  * atom:subtitle
+  * atom:title
+  * atom:updated
+
+iTunes support:
+* namespace variations
+  * namespace are case-insensitive
+* elements outside the iTunes namespace are case-insensitive
+* channel/itunes:block
+  * content="yes" --> true, otherwise false, see http://lists.apple.com/faq/pub/syndication-dev/index.php?sid=359&aktion=artikel&rubrik=001&id=3&lang=en
+* channel/itunes:category --> category
+  * @text --> term
+  * @scheme is always "itms://itunes.com/browse?bp=/"
+  * @label is always blank
+  * subcategories are nested itunes:category elements
+  * don't worry about establishing hierarchy, just treat each itunes:category as a category
+* channel/itunes:explicit
+* channel/itunes:image
+  * itunes:link rel="image" @href
+* channel/itunes:keywords
+* channel/itunes:owner
+* channel/itunes:subtitle
+* channel/itunes:summary
+* item/itunes:author
+* item/itunes:block
+  * see channel/itunes:block
+* item/itunes:category
+  * see channel/itunes:category
+- item/itunes:duration
+* item/itunes:explicit
+* item/itunes:image
+* item/itunes:keywords
+* item/itunes:subtitle
+* item/itunes:summary
+
 """
