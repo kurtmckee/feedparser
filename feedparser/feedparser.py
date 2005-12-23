@@ -1204,18 +1204,27 @@ class _FeedParserMixin:
     _end_media_title = _end_title
 
     def _start_description(self, attrsD):
-        self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
+        context = self._getContext()
+        if context.has_key('summary'):
+            self._summaryKey = 'content'
+            self._start_content(attrsD)
+        else:
+            self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
 
     def _start_abstract(self, attrsD):
         self.pushContent('description', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_description(self):
-        value = self.popContent('description')
-        context = self._getContext()
-        if self.intextinput:
-            context['textinput']['description'] = value
-        elif self.inimage:
-            context['image']['description'] = value
+        if self._summaryKey == 'content':
+            self._end_content()
+        else:
+            value = self.popContent('description')
+            context = self._getContext()
+            if self.intextinput:
+                context['textinput']['description'] = value
+            elif self.inimage:
+                context['image']['description'] = value
+        self._summaryKey = None
     _end_abstract = _end_description
 
     def _start_info(self, attrsD):
@@ -1256,15 +1265,21 @@ class _FeedParserMixin:
         self.pop('errorreportsto')
         
     def _start_summary(self, attrsD):
-#        context = self._getContext()
-#        self._summaryKey = context.has_key('summary') and 'content' or 'summary'
-#        self.pushContent(self._summaryKey, attrsD, 'text/plain', 1)
-        self.pushContent('summary', attrsD, 'text/plain', 1)
+        context = self._getContext()
+        if context.has_key('summary'):
+            self._summaryKey = 'content'
+            self._start_content(attrsD)
+        else:
+            self._summaryKey = 'summary'
+            self.pushContent(self._summaryKey, attrsD, 'text/plain', 1)
+#        self.pushContent('summary', attrsD, 'text/plain', 1)
     _start_itunes_summary = _start_summary
 
     def _end_summary(self):
-#        self.popContent(self._summaryKey or 'summary')
-        self.popContent('summary')
+        if self._summaryKey == 'content':
+            self._end_content()
+        else:
+            self.popContent(self._summaryKey or 'summary')
         self._summaryKey = None
     _end_itunes_summary = _end_summary
         

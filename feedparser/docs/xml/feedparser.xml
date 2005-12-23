@@ -3528,6 +3528,10 @@ xxx
 <title>See also</title>
 <listitem><para><xref linkend="reference.entry.summary_detail"/></para></listitem>
 </itemizedlist>
+<note>
+<title/>
+<para>Some feeds include both a <literal>summary</literal> and <literal>description</literal> element for each entry.  In this case, the first element will be available in <varname>entry['summary']</varname> and the second will be available in <varname>entry['content'][0]</varname>.</para>
+</note>
 </section>
 
 <section id="reference.entry.summary_detail">
