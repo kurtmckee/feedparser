@@ -11,7 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "4.0"# + "$Revision$"[11:15] + "-cvs"
+__version__ = "4.0.1"# + "$Revision$"[11:15] + "-cvs"
 __license__ = """Copyright (c) 2002-2005, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -40,7 +40,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com/>",
                     "Kevin Marks <http://epeus.blogspot.com/>"]
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -139,6 +139,7 @@ class ThingsNobodyCaresAboutButMe(Exception): pass
 class CharacterEncodingOverride(ThingsNobodyCaresAboutButMe): pass
 class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe): pass
 class NonXMLContentType(ThingsNobodyCaresAboutButMe): pass
+class UndeclaredNamespace(Exception): pass
 
 sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
 sgmllib.special = re.compile('<!')
@@ -241,8 +242,8 @@ class FeedParserDict(UserDict):
             raise AttributeError, "object has no attribute '%s'" % key
 
     def __setattr__(self, key, value):
-        if key.startswith('_'):
-            return UserDict.__setattr__(self, key, value)
+        if key.startswith('_') or key == 'data':
+            self.__dict__[key] = value
         else:
             return self.__setitem__(key, value)
 
@@ -349,7 +350,8 @@ class _FeedParserMixin:
                   'http://wellformedweb.org/commentAPI/':                 'wfw',
                   'http://purl.org/rss/1.0/modules/wiki/':                'wiki',
                   'http://www.w3.org/1999/xhtml':                         'xhtml',
-                  'http://www.w3.org/XML/1998/namespace':                 'xml'
+                  'http://www.w3.org/XML/1998/namespace':                 'xml',
+                  'http://schemas.pocketsoap.com/rss/myDescModule/':      'szf'
 }
     _matchnamespaces = {}
 
@@ -649,7 +651,7 @@ class _FeedParserMixin:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding)
 
-        if self.encoding and not isinstance(output, unicode):
+        if self.encoding and type(output) != type(u''):
             try:
                 output = unicode(output, self.encoding)
             except:
@@ -1360,14 +1362,17 @@ if _XML_AVAILABLE:
                 # match any backend.userland.com namespace
                 namespace = 'http://backend.userland.com/rss'
                 lowernamespace = namespace
-            if qname.find(':') > 0:
+            if qname and qname.find(':') > 0:
                 givenprefix = qname.split(':')[0]
             else:
-                givenprefix = ''
+                givenprefix = None
             prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
+            if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and not self.namespacesInUse.has_key(givenprefix):
+                    raise UndeclaredNamespace, "'%s' is not associated with a namespace" % givenprefix
             if prefix:
                 localname = prefix + ':' + localname
             localname = str(localname).lower()
+            if _debug: sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
 
             # qname implementation is horribly broken in Python 2.1 (it
             # doesn't report any), and slightly broken in Python 2.2 (it
@@ -1393,7 +1398,7 @@ if _XML_AVAILABLE:
         def endElementNS(self, name, qname):
             namespace, localname = name
             lowernamespace = str(namespace or '').lower()
-            if qname.find(':') > 0:
+            if qname and qname.find(':') > 0:
                 givenprefix = qname.split(':')[0]
             else:
                 givenprefix = ''
@@ -1424,18 +1429,19 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         self.pieces = []
         sgmllib.SGMLParser.reset(self)
 
+    def _shorttag_replace(self, match):
+        tag = match.group(1)
+        if tag in self.elements_no_end_tag:
+            return '<' + tag + ' />'
+        else:
+            return '<' + tag + '></' + tag + '>'
+        
     def feed(self, data):
         data = re.compile(r'<!((?!DOCTYPE|--|\[))', re.IGNORECASE).sub(r'&lt;!\1', data)
-        def shorttag_replace(match):
-            tag = match.group(1)
-            if tag in self.elements_no_end_tag:
-                return '<' + tag + ' />'
-            else:
-                return '<' + tag + '></' + tag + '>'
-        data = re.sub(r'<(\S+?)\s*?/>', shorttag_replace, data)
+        data = re.sub(r'<(\S+?)\s*?/>', self._shorttag_replace, data)
         data = data.replace('&#39;', "'")
         data = data.replace('&#34;', '"')
-        if self.encoding and isinstance(data, unicode):
+        if self.encoding and type(data) == type(u''):
             data = data.encode(self.encoding)
         sgmllib.SGMLParser.feed(self, data)
 
@@ -1453,7 +1459,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         uattrs = []
         # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
         for key, value in attrs:
-            if not isinstance(value, unicode):
+            if type(value) != type(u''):
                 value = unicode(value, self.encoding)
             uattrs.append((unicode(key, self.encoding), value))
         strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs]).encode(self.encoding)
@@ -1670,7 +1676,7 @@ def _sanitizeHTML(htmlSource, encoding):
             except:
                 pass
         if _tidy:
-            utf8 = isinstance(data, unicode)
+            utf8 = type(data) == type(u'')
             if utf8:
                 data = data.encode('utf-8')
             data = _tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding="utf8")
