@@ -34,6 +34,9 @@ clean:
 maintainer-clean: clean
 	rm -f docs/*.html
 
+release-check:
+	${PYTHON} releasecheck.py
+
 dist: validate
 	cd docs; \
 	mkdir -p dist/docs/; \
@@ -51,4 +54,4 @@ dist: validate
 	zip -9r dist/feedparser-tests-${VERSION}.zip LICENSE README-TESTS feedparser.py feedparsertest.py tests -x \*/CVS/\*
 	ls -l dist
 
-all: validate maintainer-clean docs dist
+all: validate release-check maintainer-clean docs dist
