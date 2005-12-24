@@ -311,6 +311,26 @@
 <listitem><para><ulink url="&url_pythonunicode;">Introduction to &python; Unicode strings</ulink></para></listitem>
 </itemizedlist>
 </section>
+<section id="basic.changes40">
+<?dbhtml filename="changes-40.html"?>
+<title>Changes in version 4.0</title>
+<abstract>
+<title/>
+<para>Here is a summary of the major changes in &feedparser; 4.0.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>Support for <xref linkend="annotated.atom10"/>.</para></listitem>
+<listitem><para>Support for &itunes; extensions.</para></listitem>
+<listitem><para>Support for <literal>dc:contributor</literal>.</para></listitem>
+<listitem><para>&feedparser; now captures the feed's <xref linkend="reference.namespaces"/>.  See <xref linkend="advanced.namespaces"/> for details.</para></listitem>
+<listitem><para>Lots of things have been renamed to match Atom 1.0 terminology.  <literal>issued</literal> is now <xref linkend="reference.entry.published"/>, <literal>modified</literal> is now <xref linkend="reference.entry.updated"/>, and <literal>url</literal> is now <literal>href</literal> everywhere.  You can still access these elements with the old names, so you shouldn't need to change any existing code, but don't be surprised if you can't find them during debugging.</para></listitem>
+<listitem><para><literal>category</literal> and <literal>categories</literal> have been replaced by <literal>tags</literal>, see <xref linkend="reference.feed.tags"/> and <xref linkend="reference.entry.tags"/>.  The old names still work.</para></listitem>
+<listitem><para><literal>mode</literal> is gone from all detail and content dictionaries.  It was never terribly useful, since &feedparser; unescapes content automatically.</para></listitem>
+<listitem><para><xref linkend="reference.entry.source"/> is now a dictionary of feed metadata as per section 4.2.11 of RFC 4287.  &feedparser; no longer supports the RSS 2.0's <literal>source</literal> element.</para></listitem>
+<listitem><para>Content in unknown namespaces is no longer discarded (<ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=993305&amp;group_id=112328&amp;atid=661937">bug 993305</ulink>)</para></listitem>
+<listitem><para>Lots of other bug fixes.</para></listitem>
+</itemizedlist>
+</section>
 <section id="basic.rss">
 <?dbhtml filename="common-rss-elements.html"?>
 <title>Common &rss; Elements</title>
