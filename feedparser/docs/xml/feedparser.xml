@@ -6,7 +6,7 @@
 %entities_version;
 <!ENTITY license SYSTEM "license.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "4.0.1">
+<!ENTITY feedparser_version "4.0.2">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
