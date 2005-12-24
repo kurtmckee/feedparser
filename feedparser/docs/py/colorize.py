@@ -133,7 +133,7 @@ if __name__ == "__main__":
     if os.path.isdir(filedir):
       import glob
       for f in glob.glob(os.path.join(filedir, '*.html')):
-        print "Colorizing %s" % os.path.basename(f)
+        print "Colorizing %s" % f.replace('\\', '/')
         process(f, usefonts)
     else:
       print "Colorizing %s" % os.path.basename(filedir)

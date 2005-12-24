@@ -1,4 +1,5 @@
 <!--
+SkipUnless:   __import__('sys').version.split()[0] >= '2.2.0'
 Description: crashes
 Expect:      1
 -->
