@@ -12,10 +12,12 @@
 <div id="main">
 <div id="mainInner">
 
+<p><em>[2005-12-23] Version 4.0 is finally out.  <a href="docs/changes-40.html">What's new in 4.0</a>.</em></p>
+
 <h2 class="skip"><span>Getting started</span></h2>
 <div class="example">
 <pre class="screen"><samp class="prompt">>>> </samp><span class="userinput"><span class='pykeyword'>import</span> feedparser</span>
-<samp class="prompt">>>> </samp><span class="userinput">d = feedparser.parse(<span class='pystring'>"<a href="http://feedparser.org/docs/examples/atom.xml">http://feedparser.org/docs/examples/atom10.xml</a>"</span>)</span>
+<samp class="prompt">>>> </samp><span class="userinput">d = feedparser.parse(<span class='pystring'>"<a href="http://feedparser.org/docs/examples/atom10.xml">http://feedparser.org/docs/examples/atom10.xml</a>"</span>)</span>
 <samp class="prompt">>>> </samp><span class="userinput">d['feed']['title']</span>             <span class="pycomment"># feed data is a dictionary</span>
 <span class="computeroutput">u'Sample Feed'</span>
 <samp class="prompt">>>> </samp><span class="userinput">d.feed.title</span>                   <span class="pycomment"># get values attr-style or dict-style</span>
