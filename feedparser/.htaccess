@@ -2,19 +2,15 @@ Options -Indexes +IncludesNoExec +ExecCGI
 
 AddHandler cgi-script .cgi
 
+RemoveOutputFilter .js
+SetEnvIfNoCase Request_URI \.js$ no-gzip dont-vary
+
 AddType text/html;charset=utf-8 .html
 AddHandler server-parsed .html
 #XBitHack full
 
 AddType application/xml .xml
 AddType text/plain .py
-
-RewriteEngine On
-RewriteBase /
-RewriteCond %{HTTP_X_MOZ} ^prefetch$
-RewriteRule ^.*$ - [F]
-RewriteCond %{REMOTE_ADDR} ^72.14.192.      
-RewriteRule ^.*$ - [F]
 
 Redirect permanent /docs/annotated-atom.html http://feedparser.org/docs/annotated-atom03.html
 Redirect permanent /docs/gpl.html http://feedparser.org/docs/license.html

@@ -3,7 +3,7 @@ Redirect permanent /docs/examples/permanent.xml http://feedparser.org/docs/examp
 Redirect gone /docs/examples/gone.xml
 
 <Files "basic_auth.xml">
-  AuthUserFile /home/f8dy/web/feedparser.org/docs/examples/.htpasswd_basic
+  AuthUserFile /home/mark/web/feedparser.org/docs/examples/.htpasswd_basic
   AuthName "BasicTest"
   AuthType Basic
   order deny,allow
@@ -12,7 +12,7 @@ Redirect gone /docs/examples/gone.xml
 </Files>
 
 <Files "digest_auth.xml">
-  AuthDigestFile /home/f8dy/web/feedparser.org/docs/examples/.htpasswd_digest
+  AuthDigestFile /home/mark/web/feedparser.org/docs/examples/.htpasswd_digest
   AuthName "DigestTest"
   AuthType Digest
   order deny,allow
