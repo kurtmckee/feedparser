@@ -22,29 +22,29 @@ validate:
 docs: validate
 	cd docs; \
 	${XSLTPROC} xsl/html.xsl xml/feedparser.xml; \
-	${PYTHON} py/colorize.py . 0; \
+	${PYTHON} ../util/colorize.py . 0; \
 	cd ..
 
 clean:
 	rm -rf dist
 	rm -f *.pyc
 	rm -rf docs/dist
-	rm -rf docs/py/*.pyc
+	rm -rf util/*.pyc
 
 maintainer-clean: clean
 	rm -f docs/*.html
 
 release-check:
-	${PYTHON} releasecheck.py
+	${PYTHON} util/releasecheck.py
 
-dist: validate
+dist: validate release-check
 	cd docs; \
 	mkdir -p dist/docs/; \
 	rsync -rtpvz --exclude=CVS --exclude=directory_listing.css ../css dist/docs/; \
 	rsync -rtpvz --exclude=CVS --exclude=atom-logo100px.gif images dist/docs/; \
 	rsync -rtpvz --exclude=CVS examples dist/docs/; \
 	${XSLTPROC} xsl/htmldist.xsl xml/feedparser.xml; \
-	${PYTHON} py/colorize.py dist/docs/ 0; \
+	${PYTHON} ../util/colorize.py dist/docs/ 0; \
 	cd ..
 	mkdir -p dist
 	zip -9r dist/feedparser-${VERSION}.zip LICENSE README feedparser.py setup.py
