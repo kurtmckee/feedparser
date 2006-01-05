@@ -35,7 +35,7 @@ Recommended: libxml2 <http://xmlsoft.org/python.html>
         "Environment :: Other Environment",
         "Environment :: Web Environment",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: Python Software Foundation License",
+        "License :: OSI Approved :: BSD",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Topic :: Communications",
