@@ -11,7 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "4.0.2"# + "$Revision$"[11:15] + "-cvs"
+__version__ = "4.1"# + "$Revision$"[11:15] + "-cvs"
 __license__ = """Copyright (c) 2002-2005, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -66,7 +66,7 @@ TIDY_MARKUP = 0
 PREFERRED_TIDY_INTERFACES = ["uTidy", "mxTidy"]
 
 # ---------- required modules (should come with any Python distribution) ----------
-import sgmllib, re, sys, copy, urlparse, time, rfc822, types, cgi
+import sgmllib, re, sys, copy, urlparse, time, rfc822, types, cgi, urllib, urllib2
 try:
     from cStringIO import StringIO as _StringIO
 except:
@@ -83,22 +83,6 @@ try:
     import zlib
 except:
     zlib = None
-
-# timeoutsocket allows feedparser to time out rather than hang forever on ultra-slow servers.
-# Python 2.3 now has this functionality available in the standard socket library, so under
-# 2.3 or later you don't need to install anything.  In fact, under Python 2.4, timeoutsocket
-# write all sorts of crazy errors to stderr while running my unit tests, so it's probably
-# outlived its usefulness.
-import socket
-if hasattr(socket, 'setdefaulttimeout'):
-    socket.setdefaulttimeout(20)
-else:
-    try:
-        import timeoutsocket # http://www.timo-tasi.org/python/timeoutsocket.py
-        timeoutsocket.setDefaultSocketTimeout(20)
-    except ImportError:
-        pass
-import urllib, urllib2
 
 # If a real XML parser is available, feedparser will attempt to use it.  feedparser has
 # been tested with the built-in SAX parser, PyXML, and libxml2.  On platforms where the
@@ -133,6 +117,16 @@ try:
     import iconv_codec
 except:
     pass
+
+# chardet library auto-detects character encodings
+# Download from http://chardet.feedparser.org/
+try:
+    import chardet
+    if _debug:
+        import chardet.constants
+        chardet.constants._debug = 1
+except:
+    chardet = None
 
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
@@ -2543,17 +2537,46 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     use_strict_parser = 0
     known_encoding = 0
     tried_encodings = []
-    for proposed_encoding in (result['encoding'], xml_encoding, sniffed_xml_encoding, 'utf-8', 'windows-1252'):
-        if proposed_encoding in tried_encodings: continue
+    # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
+    for proposed_encoding in (result['encoding'], xml_encoding, sniffed_xml_encoding):
         if not proposed_encoding: continue
+        if proposed_encoding in tried_encodings: continue
+        tried_encodings.append(proposed_encoding)
         try:
             data = _toUTF8(data, proposed_encoding)
-            known_encoding = 1
-            use_strict_parser = 1
+            known_encoding = use_strict_parser = 1
             break
         except:
             pass
-        tried_encodings.append(proposed_encoding)
+    # if no luck and we have auto-detection library, try that
+    if (not known_encoding) and chardet:
+        try:
+            proposed_encoding = chardet.detect(data)['encoding']
+            if proposed_encoding and (proposed_encoding not in tried_encodings):
+                tried_encodings.append(proposed_encoding)
+                data = _toUTF8(data, proposed_encoding)
+                known_encoding = use_strict_parser = 1
+        except:
+            pass
+    # if still no luck and we haven't tried utf-8 yet, try that
+    if (not known_encoding) and ('utf-8' not in tried_encodings):
+        try:
+            proposed_encoding = 'utf-8'
+            tried_encodings.append(proposed_encoding)
+            data = _toUTF8(data, proposed_encoding)
+            known_encoding = use_strict_parser = 1
+        except:
+            pass
+    # if still no luck and we haven't tried windows-1252 yet, try that
+    if (not known_encoding) and ('windows-1252' not in tried_encodings):
+        try:
+            proposed_encoding = 'windows-1252'
+            tried_encodings.append(proposed_encoding)
+            data = _toUTF8(data, proposed_encoding)
+            known_encoding = use_strict_parser = 1
+        except:
+            pass
+    # if still no luck, give up
     if not known_encoding:
         result['bozo'] = 1
         result['bozo_exception'] = CharacterEncodingUnknown( \
@@ -2831,3 +2854,4 @@ if __name__ == '__main__':
 #  {'term': term, 'scheme': scheme, 'label': label} to match Atom 1.0
 #  terminology; parse RFC 822-style dates with no time; lots of other
 #  bug fixes
+#4.1 - MAP - removed socket timeout; added support for chardet library
