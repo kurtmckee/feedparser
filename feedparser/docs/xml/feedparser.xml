@@ -6,7 +6,7 @@
 %entities_version;
 <!ENTITY license SYSTEM "license.xml">
 <!ENTITY feedparser "<application>Universal Feed Parser</application>">
-<!ENTITY feedparser_version "4.0.2">
+<!ENTITY feedparser_version "4.1">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
@@ -110,6 +110,9 @@
 <!ENTITY url_xmlbase "http://www.w3.org/TR/xmlbase/">
 <!ENTITY url_podcasting "http://en.wikipedia.org/wiki/Podcasting">
 <!ENTITY url_microformats "http://microformats.org/">
+<!ENTITY url_chardet "http://chardet.feedparser.org/">
+<!ENTITY chardet_name "<application>Universal Encoding Detector</application>">
+<!ENTITY chardet "<ulink url='&url_chardet;'>&chardet_name;</ulink>">
 
 <!ENTITY example_atom03 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom03;&#34;/>')</userinput>">
 <!ENTITY example_atom10 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom10;&#34;/>')</userinput>">
@@ -309,26 +312,6 @@
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
 <listitem><para><ulink url="&url_pythonunicode;">Introduction to &python; Unicode strings</ulink></para></listitem>
-</itemizedlist>
-</section>
-<section id="basic.changes40">
-<?dbhtml filename="changes-40.html"?>
-<title>Changes in version 4.0</title>
-<abstract>
-<title/>
-<para>Here is a summary of the major changes in &feedparser; 4.0.</para>
-</abstract>
-<itemizedlist>
-<listitem><para>Support for <xref linkend="annotated.atom10"/>.</para></listitem>
-<listitem><para>Support for &itunes; extensions.</para></listitem>
-<listitem><para>Support for <literal>dc:contributor</literal>.</para></listitem>
-<listitem><para>&feedparser; now captures the feed's <xref linkend="reference.namespaces"/>.  See <xref linkend="advanced.namespaces"/> for details.</para></listitem>
-<listitem><para>Lots of things have been renamed to match Atom 1.0 terminology.  <literal>issued</literal> is now <xref linkend="reference.entry.published"/>, <literal>modified</literal> is now <xref linkend="reference.entry.updated"/>, and <literal>url</literal> is now <literal>href</literal> everywhere.  You can still access these elements with the old names, so you shouldn't need to change any existing code, but don't be surprised if you can't find them during debugging.</para></listitem>
-<listitem><para><literal>category</literal> and <literal>categories</literal> have been replaced by <literal>tags</literal>, see <xref linkend="reference.feed.tags"/> and <xref linkend="reference.entry.tags"/>.  The old names still work.</para></listitem>
-<listitem><para><literal>mode</literal> is gone from all detail and content dictionaries.  It was never terribly useful, since &feedparser; unescapes content automatically.</para></listitem>
-<listitem><para><xref linkend="reference.entry.source"/> is now a dictionary of feed metadata as per section 4.2.11 of RFC 4287.  &feedparser; no longer supports the RSS 2.0's <literal>source</literal> element.</para></listitem>
-<listitem><para>Content in unknown namespaces is no longer discarded (<ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=993305&amp;group_id=112328&amp;atid=661937">bug 993305</ulink>)</para></listitem>
-<listitem><para>Lots of other bug fixes.</para></listitem>
 </itemizedlist>
 </section>
 <section id="basic.rss">
@@ -1790,6 +1773,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 <orderedlist>
 <listitem><para>the encoding specified in the &xml; declaration</para></listitem>
 <listitem><para>the encoding sniffed from the first four bytes of the document (as per <ulink url="&url_sectionf;">Section F</ulink>)</para></listitem>
+<listitem><para>the encoding auto-detected by the &chardet;, if installed</para></listitem>
 <listitem><para><literal>utf-8</literal></para></listitem>
 <listitem><para><literal>windows-1252</literal></para></listitem>
 </orderedlist>
@@ -2482,6 +2466,43 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </example>
 </section>
 
+</chapter>
+
+<chapter id="history">
+<?dbhtml filename="history.html"?>
+<title>Revision history</title>
+<section id="changes.41">
+<?dbhtml filename="changes-41.html"?>
+<title>Changes in version 4.1</title>
+<abstract>
+<title/>
+<para>Here is a summary of the major changes in &feedparser; 4.1.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>Support for the &chardet; to autodetect character encoding of feeds that declare their encoding incorrectly or don't declare it at all.  See <xref linkend="advanced.encoding"/> for details of when this gets called.</para></listitem>
+<listitem><para>&feedparser; no longer sets a default socket timeout (bug <ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1392140&amp;group_id=112328&amp;atid=661937">1392140</ulink>).  If you were relying on this feature, you will need to call <literal>socket.setdefaulttimeout(TIMEOUT_IN_SECONDS)</literal> yourself.</para></listitem>
+</itemizedlist>
+</section>
+<section id="changes.40">
+<?dbhtml filename="changes-40.html"?>
+<title>Changes in version 4.0</title>
+<abstract>
+<title/>
+<para>Here is a summary of the major changes in &feedparser; 4.0.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>Support for <xref linkend="annotated.atom10"/>.</para></listitem>
+<listitem><para>Support for &itunes; extensions.</para></listitem>
+<listitem><para>Support for <literal>dc:contributor</literal>.</para></listitem>
+<listitem><para>&feedparser; now captures the feed's <xref linkend="reference.namespaces"/>.  See <xref linkend="advanced.namespaces"/> for details.</para></listitem>
+<listitem><para>Lots of things have been renamed to match Atom 1.0 terminology.  <literal>issued</literal> is now <xref linkend="reference.entry.published"/>, <literal>modified</literal> is now <xref linkend="reference.entry.updated"/>, and <literal>url</literal> is now <literal>href</literal> everywhere.  You can still access these elements with the old names, so you shouldn't need to change any existing code, but don't be surprised if you can't find them during debugging.</para></listitem>
+<listitem><para><literal>category</literal> and <literal>categories</literal> have been replaced by <literal>tags</literal>, see <xref linkend="reference.feed.tags"/> and <xref linkend="reference.entry.tags"/>.  The old names still work.</para></listitem>
+<listitem><para><literal>mode</literal> is gone from all detail and content dictionaries.  It was never terribly useful, since &feedparser; unescapes content automatically.</para></listitem>
+<listitem><para><xref linkend="reference.entry.source"/> is now a dictionary of feed metadata as per section 4.2.11 of RFC 4287.  &feedparser; no longer supports the RSS 2.0's <literal>source</literal> element.</para></listitem>
+<listitem><para>Content in unknown namespaces is no longer discarded (<ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=993305&amp;group_id=112328&amp;atid=661937">bug 993305</ulink>)</para></listitem>
+<listitem><para>Lots of other bug fixes.</para></listitem>
+</itemizedlist>
+</section>
 </chapter>
 
 <chapter id="reference">

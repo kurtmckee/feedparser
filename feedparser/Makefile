@@ -1,4 +1,4 @@
-VERSION = 4.0.2
+VERSION = 4.1
 XSLTPROC = xsltproc
 XMLLINT = xmllint
 PYTHON = python

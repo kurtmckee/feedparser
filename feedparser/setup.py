@@ -10,7 +10,7 @@ if not hasattr(DistributionMetadata, 'download_url'):
     
 setup(
     name = 'feedparser',
-    version = '4.0.2',
+    version = '4.1',
     description = 'Universal feed parser, handles RSS 0.9x, RSS 1.0, '
                   'RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
     long_description = """\
