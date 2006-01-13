@@ -1123,8 +1123,6 @@ d = feedparser.parse(...)</programlisting>
 <para>The <ulink url="&url_tests_sanitize;">unit tests for &html; sanitizing</ulink> show many different examples of dangerous markup that &feedparser; sanitizes by default.</para>
 </note>
 
-<para>One emerging technology that affects feed parsing is the inclusion of <ulink url="&url_microformats;">microformats</ulink> within syndicated content.  Briefly, publishers can add additional semantics to their &html; content using <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes.  &feedparser; does not currently parse microformat content within embedded &html; markup, but it doesn't destroy it either.  Both the <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes survive &html; sanitizing, so applications built on &feedparser; that wish to parse microformat content are free to do so.</para>
-
 <section id="advanced.sanitization.why">
 <title>Whitelist, Don't Blacklist</title>
 <para>I am often asked why &feedparser; is so hard-assed about &html; sanitizing.  This topic usually comes up when someone notices that &feedparser; strips all <sgmltag class="attribute">style</sgmltag> attributes by default.</para>
@@ -1180,6 +1178,22 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 </itemizedlist>
 </section>
 
+</section>
+
+<section id="advanced.microformats">
+<?dbhtml filename="microformats.html">
+<sectioninfo>
+<abstract>
+<title/>
+<para>One emerging technology that affects feed parsing is the inclusion of <ulink url="&url_microformats;">microformats</ulink> within syndicated content.  Besides the semantics defined by individual feed formats, publishers can add additional semantics using <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes in embedded &html; content.</para>
+</abstract>
+</sectioninfo>
+<title>Microformats</title>
+<para>TODO</para>
+<note>
+<title/>
+<para>There are a growing number of microformats, and &feedparser; does not parse all of them.  However, both the <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes survive <link linkend="advanced.sanitization">&html; sanitizing</link>, so applications built on &feedparser; that wish to parse microformat content are free to do so.</para>
+</note>
 </section>
 
 <section id="advanced.normalization">

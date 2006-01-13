@@ -11,7 +11,7 @@ Recommended: Python 2.3 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "4.1"# + "$Revision$"[11:15] + "-cvs"
+__version__ = "4.2-pre-" + "$Revision$"[11:15] + "-cvs"
 __license__ = """Copyright (c) 2002-2006, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -635,16 +635,27 @@ class _FeedParserMixin:
         except KeyError:
             pass
 
+        is_htmlish = self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types
         # resolve relative URIs within embedded markup
-        if self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types:
+        if is_htmlish:
             if element in self.can_contain_relative_uris:
                 output = _resolveRelativeURIs(output, self.baseuri, self.encoding)
-        
+                
         # sanitize embedded markup
-        if self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types:
+        if is_htmlish:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding)
 
+        # parse microformats
+        if is_htmlish:
+            mfresults = _parseMicroformats(output, self.baseuri, self.encoding)
+            for tag in mfresults['tags']:
+                self._addTag(tag['term'], tag['scheme'], tag['label'])
+            for enclosure in mfresults['enclosures']:
+                self._start_enclosure(enclosure)
+            for xfn in mfresults['xfn']:
+                self._addXFN(xfn['relationships'], xfn['href'], xfn['name'])
+        
         if self.encoding and type(output) != type(u''):
             try:
                 output = unicode(output, self.encoding)
@@ -1101,13 +1112,20 @@ class _FeedParserMixin:
     def _end_creativecommons_license(self):
         self.pop('license')
 
+    def _addXFN(self, relationships, href, name):
+        context = self._getContext()
+        xfn = context.setdefault('xfn', [])
+        value = FeedParserDict({'relationships': relationships, 'href': href, 'name': name})
+        if value not in xfn:
+            xfn.append(value)
+        
     def _addTag(self, term, scheme, label):
         context = self._getContext()
         tags = context.setdefault('tags', [])
         if (not term) and (not scheme) and (not label): return
         value = FeedParserDict({'term': term, 'scheme': scheme, 'label': label})
         if value not in tags:
-            tags.append(FeedParserDict({'term': term, 'scheme': scheme, 'label': label}))
+            tags.append(value)
 
     def _start_category(self, attrsD):
         if _debug: sys.stderr.write('entering _start_category with %s\n' % repr(attrsD))
@@ -1280,12 +1298,11 @@ class _FeedParserMixin:
         
     def _start_enclosure(self, attrsD):
         attrsD = self._itsAnHrefDamnIt(attrsD)
-        self._getContext().setdefault('enclosures', []).append(FeedParserDict(attrsD))
+        context = self._getContext()
+        context.setdefault('enclosures', []).append(FeedParserDict(attrsD))
         href = attrsD.get('href')
-        if href:
-            context = self._getContext()
-            if not context.get('id'):
-                context['id'] = href
+        if href and not context.get('id'):
+            context['id'] = href
             
     def _start_source(self, attrsD):
         self.insource = 1
@@ -1549,6 +1566,85 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
             data = data.replace('&apos;', "'")
         return data
         
+class _MicroformatsParser(_BaseHTMLProcessor):
+    known_xfn_relationships = ['contact', 'acquaintance', 'friend', 'met', 'co-worker', 'coworker', 'colleague', 'co-resident', 'coresident', 'neighbor', 'child', 'parent', 'sibling', 'brother', 'sister', 'spouse', 'wife', 'husband', 'kin', 'relative', 'muse', 'crush', 'date', 'sweetheart', 'me']
+    known_binary_extensions =  ['zip','rar','exe','gz','tar','tgz','tbz2','bz2','z','dmg','img','sit','sitx','hqx','deb','rpm','bz2','jar','iso','bin','msi','mp2','mp3','ogg','mp4','m4v','m4a','avi','wma','wmv']
+
+    def __init__(self, baseuri, encoding):
+        _BaseHTMLProcessor.__init__(self, encoding)
+        self.baseuri = baseuri
+        self.tags = []
+        self.enclosures = []
+        self.xfn = []
+        self.ina = 0
+        self.intag = 0
+        self.inxfn = 0
+        self.inenclosure = 0
+
+    def isProbablyDownloadable(self, attrsD):
+        if not attrsD.has_key('href'): return 0
+        linktype = attrsD.get('type', '').strip()
+        if linktype.startswith('audio/') or \
+           linktype.startswith('video/') or \
+           (linktype.startswith('application/') and not linktype.endswith('xml')):
+            return 1
+        path = urlparse.urlparse(attrsD['href'])[2]
+        if path.find('.') == -1: return 0
+        fileext = path.split('.').pop().lower()
+        return fileext in self.known_binary_extensions
+        
+    def start_a(self, attrs):
+        self.ina += 1
+        attrsD = dict(self.normalize_attrs(attrs))
+        if not attrsD.has_key('href'): return
+        rels = attrsD.get('rel', '').split()
+        if 'tag' in rels:
+            urlscheme, domain, path, params, query, fragment = \
+                       urlparse.urlparse(_urljoin(self.baseuri, attrsD['href']))
+            segments = path.split('/')
+            tag = segments.pop()
+            if not tag:
+                tag = segments.pop()
+            tagscheme = urlparse.urlunparse((urlscheme, domain, '/'.join(segments), '', '', ''))
+            if not tagscheme.endswith('/'):
+                tagscheme += '/'
+            self.tags.append(FeedParserDict({"term": tag, "scheme": tagscheme, "label": ""}))
+            self.intag = 1
+        if ('enclosure' in rels) or (self.isProbablyDownloadable(attrsD)):
+            self.enclosures.append(attrsD)
+            self.inenclosure = 1
+        xfn_rels = []
+        for rel in rels:
+            if rel in self.known_xfn_relationships:
+                xfn_rels.append(rel)
+        if xfn_rels:
+            self.xfn.append({"relationships": xfn_rels, "href": attrsD['href'], "name": ''})
+            self.inxfn = 1
+
+    def end_a(self):
+        self.ina -= 1
+        if self.ina < 0:
+            self.ina = 0
+        if not self.ina:
+            self.intag = 0
+            self.inxfn = 0
+            self.inenclosure = 0
+
+    def handle_data(self, text):
+        if self.intag and self.tags:
+            self.tags[-1]['label'] += text
+        if self.inxfn and self.xfn:
+            self.xfn[-1]['name'] += text
+        if self.inenclosure and self.enclosures:
+            if not self.enclosures[-1].get('title', ''):
+                self.enclosures[-1]['title'] = text
+
+def _parseMicroformats(htmlSource, baseURI, encoding):
+    if _debug: sys.stderr.write('entering _parseMicroformats\n')
+    p = _MicroformatsParser(baseURI, encoding)
+    p.feed(htmlSource)
+    return {"tags": p.tags, "enclosures": p.enclosures, "xfn": p.xfn}
+
 class _RelativeURIResolver(_BaseHTMLProcessor):
     relative_uris = [('a', 'href'),
                      ('applet', 'codebase'),
@@ -2856,3 +2952,6 @@ if __name__ == '__main__':
 #  terminology; parse RFC 822-style dates with no time; lots of other
 #  bug fixes
 #4.1 - MAP - removed socket timeout; added support for chardet library
+#4.2 - MAP - added support for parsing microformats within content elements,
+#  currently supports rel-tag (maps to 'tags'), rel-enclosure (maps to
+#  'enclosures'), and XFN links within content elements (maps to 'xfn')
