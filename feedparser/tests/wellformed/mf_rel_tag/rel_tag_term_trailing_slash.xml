@@ -1,4 +1,5 @@
 <!--
+SkipUnless:  __import__('BeautifulSoup')
 Description: content contains rel='tag' link
 Expect:      not bozo and entries[0]['tags'][0]['term'] == u'tech'
 -->

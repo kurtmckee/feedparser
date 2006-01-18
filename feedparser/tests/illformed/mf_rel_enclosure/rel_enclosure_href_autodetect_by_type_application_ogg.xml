@@ -1,4 +1,5 @@
 <!--
+SkipUnless:  __import__('BeautifulSoup')
 Description: content contains rel='enclosure' link
 Expect:      bozo and entries[0]['enclosures'][0]['href'] == u'http://example.com/generate-enclosure.php'
 -->
