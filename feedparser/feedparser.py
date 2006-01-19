@@ -648,6 +648,22 @@ class _FeedParserMixin:
             if element in self.can_contain_relative_uris:
                 output = _resolveRelativeURIs(output, self.baseuri, self.encoding)
                 
+        # parse microformats
+        # (must do this before sanitizing because some microformats
+        # rely on elements that we sanitize)
+        if is_htmlish and element in ['content', 'description', 'summary']:
+            mfresults = _parseMicroformats(output, self.baseuri, self.encoding)
+            if mfresults:
+                for tag in mfresults.get('tags', []):
+                    self._addTag(tag['term'], tag['scheme'], tag['label'])
+                for enclosure in mfresults.get('enclosures', []):
+                    self._start_enclosure(enclosure)
+                for xfn in mfresults.get('xfn', []):
+                    self._addXFN(xfn['relationships'], xfn['href'], xfn['name'])
+                vcard = mfresults.get('vcard')
+                if vcard:
+                    self._getContext()['vcard'] = vcard
+        
         # sanitize embedded markup
         if is_htmlish:
             if element in self.can_contain_dangerous_markup:
@@ -1333,19 +1349,6 @@ class _FeedParserMixin:
         if copyToDescription:
             self._save('description', value)
 
-        # parse microformats
-        mfresults = _parseMicroformats(value, self.baseuri, self.encoding)
-        if mfresults:
-            for tag in mfresults.get('tags', []):
-                self._addTag(tag['term'], tag['scheme'], tag['label'])
-            for enclosure in mfresults.get('enclosures', []):
-                self._start_enclosure(enclosure)
-            for xfn in mfresults.get('xfn', []):
-                self._addXFN(xfn['relationships'], xfn['href'], xfn['name'])
-            vcard = mfresults.get('vcard')
-            if vcard:
-                self._getContext()['vcard'] = vcard
-        
     _end_body = _end_content
     _end_xhtml_body = _end_content
     _end_content_encoded = _end_content
@@ -1829,8 +1832,7 @@ class _MicroformatsParser:
             # BDAY
             dtBday = self.getPropertyValue(elmCard, 'bday', self.DATE)
             if dtBday:
-                arLines.append(self.vcardFold('BDAY:' + toISO8601(dtBday)))
-            
+                arLines.append(self.vcardFold('BDAY:' + self.toISO8601(dtBday)))
             
             # ADR (address)
             arAdr = self.getPropertyValue(elmCard, 'adr', bAllowMultiple=1)
