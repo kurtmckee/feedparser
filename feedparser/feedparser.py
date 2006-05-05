@@ -286,6 +286,35 @@ def _ebcdic_to_ascii(s):
         _ebcdic_to_ascii_map = string.maketrans( \
             ''.join(map(chr, range(256))), ''.join(map(chr, emap)))
     return s.translate(_ebcdic_to_ascii_map)
+ 
+_cp1252 = {
+  unichr(128): unichr(8364), # euro sign
+  unichr(130): unichr(8218), # single low-9 quotation mark
+  unichr(131): unichr( 402), # latin small letter f with hook
+  unichr(132): unichr(8222), # double low-9 quotation mark
+  unichr(133): unichr(8230), # horizontal ellipsis
+  unichr(134): unichr(8224), # dagger
+  unichr(135): unichr(8225), # double dagger
+  unichr(136): unichr( 710), # modifier letter circumflex accent
+  unichr(137): unichr(8240), # per mille sign
+  unichr(138): unichr( 352), # latin capital letter s with caron
+  unichr(139): unichr(8249), # single left-pointing angle quotation mark
+  unichr(140): unichr( 338), # latin capital ligature oe
+  unichr(142): unichr( 381), # latin capital letter z with caron
+  unichr(145): unichr(8216), # left single quotation mark
+  unichr(146): unichr(8217), # right single quotation mark
+  unichr(147): unichr(8220), # left double quotation mark
+  unichr(148): unichr(8221), # right double quotation mark
+  unichr(149): unichr(8226), # bullet
+  unichr(150): unichr(8211), # en dash
+  unichr(151): unichr(8212), # em dash
+  unichr(152): unichr( 732), # small tilde
+  unichr(153): unichr(8482), # trade mark sign
+  unichr(154): unichr( 353), # latin small letter s with caron
+  unichr(155): unichr(8250), # single right-pointing angle quotation mark
+  unichr(156): unichr( 339), # latin small ligature oe
+  unichr(158): unichr( 382), # latin small letter z with caron
+  unichr(159): unichr( 376)} # latin capital letter y with diaeresis
 
 _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
@@ -674,6 +703,18 @@ class _FeedParserMixin:
                 output = unicode(output, self.encoding)
             except:
                 pass
+
+        # address common error where people take data that is already
+        # utf-8, presume that it is iso-8859-1, and re-encode it.
+        if self.encoding=='utf-8' and type(output) == type(u''):
+            try:
+                output = unicode(output.encode('iso-8859-1'), 'utf-8')
+            except:
+                pass
+
+        # map win-1252 extensions to the proper code points
+        if type(output) == type(u''):
+            output = u''.join([c in _cp1252 and _cp1252[c] or c for c in output])
 
         # categories/tags/keywords/whatever are handled in _end_category
         if element == 'category':
@@ -1588,7 +1629,7 @@ class _MicroformatsParser:
     EMAIL = 5
 
     known_xfn_relationships = ['contact', 'acquaintance', 'friend', 'met', 'co-worker', 'coworker', 'colleague', 'co-resident', 'coresident', 'neighbor', 'child', 'parent', 'sibling', 'brother', 'sister', 'spouse', 'wife', 'husband', 'kin', 'relative', 'muse', 'crush', 'date', 'sweetheart', 'me']
-    known_binary_extensions =  ['zip','rar','exe','gz','tar','tgz','tbz2','bz2','z','dmg','img','sit','sitx','hqx','deb','rpm','bz2','jar','iso','bin','msi','mp2','mp3','ogg','mp4','m4v','m4a','avi','wma','wmv']
+    known_binary_extensions =  ['zip','rar','exe','gz','tar','tgz','tbz2','bz2','z','7z','dmg','img','sit','sitx','hqx','deb','rpm','bz2','jar','rar','iso','bin','msi','mp2','mp3','ogg','ogm','mp4','m4v','m4a','avi','wma','wmv']
 
     def __init__(self, data, baseuri, encoding):
         self.document = BeautifulSoup.BeautifulSoup(data)
@@ -3296,6 +3337,8 @@ if __name__ == '__main__':
 #  terminology; parse RFC 822-style dates with no time; lots of other
 #  bug fixes
 #4.1 - MAP - removed socket timeout; added support for chardet library
-#4.2 - MAP - added support for parsing microformats within content elements,
+#4.2 - MAP - added support for parsing microformats within content elements:
 #  currently supports rel-tag (maps to 'tags'), rel-enclosure (maps to
-#  'enclosures'), and XFN links within content elements (maps to 'xfn')
+#  'enclosures'), XFN links within content elements (maps to 'xfn'),
+#  and hCard (parses as vCard); bug [ 1481975 ] Misencoded utf-8/win-1252
+
