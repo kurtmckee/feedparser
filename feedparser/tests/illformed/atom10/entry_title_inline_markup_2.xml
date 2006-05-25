@@ -1,6 +1,6 @@
 <!--
 Description: entry title inline XHTML with escaped markup
-Expect:      bozo and entries[0]['title'] == u'<div>History of the &lt;blink&gt; tag</div>'
+Expect:      bozo and entries[0]['title'] == u'History of the &lt;blink&gt; tag'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

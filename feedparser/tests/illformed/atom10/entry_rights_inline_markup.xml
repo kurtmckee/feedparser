@@ -1,6 +1,6 @@
 <!--
 Description: entry rights inline XHTML
-Expect:      bozo and entries[0]['rights'] == u'<div>Example <b>Atom</b></div>'
+Expect:      bozo and entries[0]['rights'] == u'Example <b>Atom</b>'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>
