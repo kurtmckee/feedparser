@@ -1,0 +1,11 @@
+<!--
+Description: italics
+Expect:      bozo and entries[0]['title'] == u'<i>italics</i>' and entries[0]['title_detail']['type'] == 'text/html'
+-->
+<rss version="2.0">
+<channel>
+<item>
+<title>&lt;i&gt;italics&lt;/i&gt;</title>
+</item>
+</channel>
+</rss

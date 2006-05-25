@@ -1,0 +1,9 @@
+<!--
+Description: copyright as hex numeric character reference
+Expect:      not bozo and feed['rights'] == u'&#xA9; copyright 2006' and feed['rights_detail']['type'] == 'text/html'
+-->
+<rss version="2.0">
+<channel>
+<copyright>&amp;#xA9; copyright 2006</copyright>
+</channel>
+</rss>

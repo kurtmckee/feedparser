@@ -683,6 +683,9 @@ class _FeedParserMixin:
         if not self.contentparams.get('base64', 0):
             output = self.decodeEntities(element, output)
 
+        if self.lookslikehtml(output):
+            self.contentparams['type']='text/html'
+
         # remove temporary cruft from contentparams
         try:
             del self.contentparams['mode']
@@ -789,6 +792,28 @@ class _FeedParserMixin:
         self.contentparams.clear()
         return value
         
+    # a number of elements in a number of RSS variants are nominally plain
+    # text, but this is routinely ignored.  This is an attempt to detect
+    # the most common cases.  As false positives often result in silent
+    # data loss, this function errs on the conservative side.
+    def lookslikehtml(self, str):
+        if self.version.startswith('atom'): return
+        if self.contentparams.get('type','text/html') != 'text/plain': return
+
+        # must have a close tag or a entity reference to qualify
+        if not (re.search(r'</(\w+)>',str) or re.search("&#?\w+;",str)): return
+
+        # all tags must be in a restricted subset of valid HTML tags
+        if filter(lambda t: t.lower() not in _HTMLSanitizer.acceptable_elements,
+            re.findall(r'</?(\w+)',str)): return
+
+        # all entities must have been defined as valid HTML entities
+        from htmlentitydefs import entitydefs
+        if filter(lambda e: e not in entitydefs.keys(),
+            re.findall(r'&(\w+);',str)): return
+
+        return True
+
     def _mapToStandardPrefix(self, name):
         colonpos = name.find(':')
         if colonpos <> -1:

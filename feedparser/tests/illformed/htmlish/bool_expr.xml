@@ -1,0 +1,11 @@
+<!--
+Description: 2 < 3
+Expect:      bozo and entries[0]['title'] == u'2 < 3' and entries[0]['title_detail']['type'] == 'text/plain'
+-->
+<rss version="2.0">
+<channel>
+<item>
+<title>2 &lt; 3</title>
+</item>
+</channel>
+</rss

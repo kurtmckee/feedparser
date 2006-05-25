@@ -1,0 +1,11 @@
+<!--
+Description: anchor tag
+Expect:      bozo and entries[0]['title'] == u'<a href="">here</a>' and entries[0]['title_detail']['type'] == 'text/html'
+-->
+<rss version="2.0">
+<channel>
+<item>
+<title>&lt;a href=""&gt;here&lt;/a&gt;</title>
+</item>
+</channel>
+</rss

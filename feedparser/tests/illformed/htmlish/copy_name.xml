@@ -1,0 +1,9 @@
+<!--
+Description: copyright as named entity reference
+Expect:      bozo and feed['rights'] == u'&copy; copyright 2006' and feed['rights_detail']['type'] == 'text/html'
+-->
+<rss version="2.0">
+<channel>
+<copyright>&amp;copy; copyright 2006</copyright>
+</channel>
+</rss
