@@ -2159,6 +2159,29 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
     unacceptable_elements_with_end_tag = ['script', 'applet']
 
+    acceptable_css_properties = ['azimuth', 'background-color',
+      'border-bottom-color', 'border-collapse', 'border-color',
+      'border-left-color', 'border-right-color', 'border-top-color', 'clear',
+      'color', 'cursor', 'direction', 'display', 'elevation', 'float', 'font',
+      'font-family', 'font-size', 'font-style', 'font-variant', 'font-weight',
+      'height', 'letter-spacing', 'line-height', 'overflow', 'pause',
+      'pause-after', 'pause-before', 'pitch', 'pitch-range', 'richness',
+      'speak', 'speak-header', 'speak-numeral', 'speak-punctuation',
+      'speech-rate', 'stress', 'text-align', 'text-decoration', 'text-indent',
+      'unicode-bidi', 'vertical-align', 'voice-family', 'volume',
+      'white-space', 'width']
+
+    # survey of common keywords found in feeds
+    acceptable_css_keywords = ['aqua', 'black', 'block', 'blue', 'bold',
+      'both', 'bottom', 'brown', 'center', 'collapse', 'dashed', 'dotted',
+      'fuchsia', 'gray', 'green', '!important', 'italic', 'left', 'lime',
+      'maroon', 'medium', 'none', 'navy', 'normal', 'nowrap', 'olive',
+      'pointer', 'purple', 'red', 'right', 'solid', 'silver', 'teal', 'top',
+      'transparent', 'underline', 'white', 'yellow']
+
+    valid_css_values = re.compile('^(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|' +
+      '\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$')
+
     def reset(self):
         _BaseHTMLProcessor.reset(self)
         self.unacceptablestack = 0
@@ -2168,9 +2191,14 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack += 1
             return
-        attrs = self.normalize_attrs(attrs)
-        attrs = [(key, value) for key, value in attrs if key in self.acceptable_attributes]
-        _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
+        clean_attrs = []
+        for key, value in self.normalize_attrs(attrs):
+            if key in self.acceptable_attributes:
+                clean_attrs.append((key,value))
+            elif key=='style':
+                clean_value = self.sanitize_style(value)
+                if clean_value: clean_attrs.append((key,clean_value))
+        _BaseHTMLProcessor.unknown_starttag(self, tag, clean_attrs)
         
     def unknown_endtag(self, tag):
         if not tag in self.acceptable_elements:
@@ -2188,6 +2216,26 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
     def handle_data(self, text):
         if not self.unacceptablestack:
             _BaseHTMLProcessor.handle_data(self, text)
+
+    def sanitize_style(self, style):
+        # gauntlet
+        if not re.match("""^([:,;#%.\sa-zA-Z0-9!]|\w-\w|'[\s\w]+'|"[\s\w]+"|\([\d,\s]+\))*$""", style): return ''
+        if not re.match("^(\s*[-\w]+\s*:\s*[^:;]*(;|$))*$", style): return ''
+
+        clean = []
+        for prop,value in re.findall("([-\w]+)\s*:\s*([^:;]*)",style):
+          if prop.lower() in self.acceptable_css_properties:
+              clean.append(prop + ': ' + value + ';')
+          elif prop.split('-')[0].lower() in ['background','border','margin','padding']:
+              for keyword in value.split():
+                  if not keyword in self.acceptable_css_keywords and \
+                      not self.valid_css_values.match(keyword):
+                      break
+              else:
+                  clean.append(prop + ': ' + value + ';')
+
+        return ' '.join(clean)
+
 
 def _sanitizeHTML(htmlSource, encoding):
     p = _HTMLSanitizer(encoding)
