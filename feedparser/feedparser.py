@@ -1495,6 +1495,8 @@ if _XML_AVAILABLE:
             # at all).  Thanks to MatejC for helping me test this and
             # tirelessly telling me that it didn't work yet.
             attrsD = {}
+            if localname=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
+                attrsD['xmlns']=namespace
             for (namespace, attrlocalname), attrvalue in attrs._attrs.items():
                 lowernamespace = (namespace or '').lower()
                 prefix = self._matchnamespaces.get(lowernamespace, '')
@@ -1561,9 +1563,11 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         sgmllib.SGMLParser.close(self)
 
     def normalize_attrs(self, attrs):
+        if not attrs: return attrs
         # utility method to be called by descendants
         attrs = [(k.lower(), v) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
+        attrs.sort()
         return attrs
 
     def unknown_starttag(self, tag, attrs):
@@ -2182,18 +2186,44 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
     valid_css_values = re.compile('^(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|' +
       '\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$')
 
+    mathml_elements = ['maction', 'math', 'merror', 'mfrac', 'mi',
+      'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded', 'mphantom',
+      'mprescripts', 'mroot', 'mrow', 'mspace', 'msqrt', 'mstyle', 'msub',
+      'msubsup', 'msup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder',
+      'munderover', 'none']
+
+    mathml_attributes = ['actiontype', 'align', 'columnalign', 'columnalign',
+      'columnalign', 'columnlines', 'columnspacing', 'columnspan', 'depth',
+      'display', 'displaystyle', 'equalcolumns', 'equalrows', 'fence',
+      'fontstyle', 'fontweight', 'frame', 'height', 'linethickness', 'lspace',
+      'mathvariant', 'mathvariant', 'other', 'rowalign', 'rowalign',
+      'rowalign', 'rowlines', 'rowspacing', 'rowspan', 'rspace', 'scriptlevel',
+      'selection', 'separator', 'stretchy', 'width', 'width', 'xlink:href',
+      'xlink:show', 'xlink:type', 'xmlns', 'xmlns:xlink']
+
     def reset(self):
         _BaseHTMLProcessor.reset(self)
         self.unacceptablestack = 0
+        self.mathmlOK = 0
         
     def unknown_starttag(self, tag, attrs):
+        acceptable_attributes = self.acceptable_attributes
         if not tag in self.acceptable_elements:
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack += 1
-            return
+
+            # not otherwise acceptable, perhaps it is MathML?
+            if tag=='math' and ('xmlns','http://www.w3.org/1998/Math/MathML') in attrs:
+                self.mathmlOK = 1
+            if not self.mathmlOK or not tag in self.mathml_elements:
+                return
+            if filter(lambda (n,v): n.startswith('xlink:'),attrs):
+                if not ('xmlns:xlink','http://www.w3.org/1999/xlink') in attrs:
+                    attrs.append(('xmlns:xlink','http://www.w3.org/1999/xlink'))
+            acceptable_attributes = self.mathml_attributes
         clean_attrs = []
         for key, value in self.normalize_attrs(attrs):
-            if key in self.acceptable_attributes:
+            if key in acceptable_attributes:
                 clean_attrs.append((key,value))
             elif key=='style':
                 clean_value = self.sanitize_style(value)
@@ -2204,7 +2234,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         if not tag in self.acceptable_elements:
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack -= 1
-            return
+            if not self.mathmlOK or not tag in self.mathml_elements:
+                return
         _BaseHTMLProcessor.unknown_endtag(self, tag)
 
     def handle_pi(self, text):
