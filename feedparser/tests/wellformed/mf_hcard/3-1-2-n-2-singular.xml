@@ -1,5 +1,5 @@
 <!--
-SkipUnless:  __import__('BeautifulSoup')
+SkipUnless:  feedparser.BeautifulSoup
 Description: 3.1.2 N (example 2)
 Expect:      not bozo and entries[0].vcard == u'BEGIN:vCard\nVERSION:3.0\nN:Stevenson;John;Philip,Paul;Dr.;Jr.,M.D.,A.C.P.\nEND:vCard'
 -->

@@ -1,5 +1,5 @@
 <!--
-SkipUnless:  __import__('BeautifulSoup')
+SkipUnless:  feedparser.BeautifulSoup
 Description: content contains duplicate rel='tag' link
 Expect:      not bozo and len(entries[0]['tags']) == 1
 -->

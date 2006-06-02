@@ -1,5 +1,5 @@
 <!--
-SkipUnless:  __import__('BeautifulSoup')
+SkipUnless:  feedparser.BeautifulSoup
 Description: 3.5.4 AGENT (example 2)
 Expect:      not bozo and entries[0].vcard == u'BEGIN:vCard\nVERSION:3.0\nAGENT:BEGIN:vCard\\nVERSION:3.0\\nFN:Susan Thomas\\nN:\\nTEL\\;TYPE=voice:+1-919\n -555-1234\\nEMAIL\\;TYPE=internet:sthomas@host.com\\nEND:vCard\\n\nEND:vCard'
 -->

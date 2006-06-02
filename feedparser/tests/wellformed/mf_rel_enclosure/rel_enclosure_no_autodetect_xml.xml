@@ -1,5 +1,5 @@
 <!--
-SkipUnless:  __import__('BeautifulSoup')
+SkipUnless:  feedparser.BeautifulSoup
 Description: content contains rel='enclosure' link
 Expect:      not bozo and not entries[0].has_key('enclosures')
 -->

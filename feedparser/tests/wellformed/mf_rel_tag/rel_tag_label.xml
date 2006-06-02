@@ -1,5 +1,5 @@
 <!--
-SkipUnless:  __import__('BeautifulSoup')
+SkipUnless:  feedparser.BeautifulSoup
 Description: content contains rel='tag' link
 Expect:      not bozo and entries[0]['tags'][0]['label'] == u'Technology'
 -->
