@@ -3061,6 +3061,7 @@ def _stripDoctype(data):
     stripped_data is the same XML document, minus the DOCTYPE
     '''
     entity_pattern = re.compile(r'<!ENTITY([^>]*?)>', re.MULTILINE)
+    entity_results=entity_pattern.findall(data)
     data = entity_pattern.sub('', data)
     doctype_pattern = re.compile(r'<!DOCTYPE([^>]*?)>', re.MULTILINE)
     doctype_results = doctype_pattern.findall(data)
@@ -3069,7 +3070,16 @@ def _stripDoctype(data):
         version = 'rss091n'
     else:
         version = None
-    data = doctype_pattern.sub('', data)
+
+    # only allow in 'safe' inline entity definitions
+    replacement=''
+    if len(doctype_results)==1 and entity_results:
+       safe_pattern=re.compile('\s+\w* "(&#\w+;|[^&"]*)"')
+       safe_entities=filter(lambda e: safe_pattern.match(e),entity_results)
+       if safe_entities:
+           replacement='<!DOCTYPE feed [\n  <!ENTITY %s>\n]>' % '>\n  <!ENTITY '.join(safe_entities)
+    data = doctype_pattern.sub(replacement, data)
+
     return version, data
     
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[]):
