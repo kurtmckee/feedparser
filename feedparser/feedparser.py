@@ -2406,6 +2406,16 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
                 if user_passwd:
                     url_file_stream_or_string = '%s://%s%s' % (urltype, realhost, rest)
                     auth = base64.encodestring(user_passwd).strip()
+
+        # iri support
+        try:
+            if isinstance(url_file_stream_or_string,unicode):
+                url_file_stream_or_string = url_file_stream_or_string.encode('idna')
+            else:
+                url_file_stream_or_string = url_file_stream_or_string.decode('utf-8').encode('idna')
+        except:
+            pass
+
         # try to open with urllib2 (to use optional headers)
         request = urllib2.Request(url_file_stream_or_string)
         request.add_header('User-Agent', agent)
