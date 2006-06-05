@@ -552,6 +552,10 @@ class _FeedParserMixin:
         if _debug: sys.stderr.write('entering handle_entityref with %s\n' % ref)
         if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
             text = '&%s;' % ref
+        elif ref in self.entities:
+            text = self.entities[ref]
+            if text.startswith('&#') and text.endswith(';'):
+                return self.handle_entityref(text)
         else:
             # entity resolution graciously donated by Aaron Swartz
             def name2cp(k):
@@ -559,6 +563,8 @@ class _FeedParserMixin:
                 if hasattr(htmlentitydefs, 'name2codepoint'): # requires Python 2.3
                     return htmlentitydefs.name2codepoint[k]
                 k = htmlentitydefs.entitydefs[k]
+                if k.startswith('&#x') and k.endswith(';'):
+                    return int(k[3:-1],16) # not in latin-1
                 if k.startswith('&#') and k.endswith(';'):
                     return int(k[2:-1]) # not in latin-1
                 return ord(k)
@@ -1595,7 +1601,15 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
         # Reconstruct the original character reference.
-        self.pieces.append('&#%(ref)s;' % locals())
+        if ref.startswith('x'):
+            value = unichr(int(ref[1:],16))
+        else:
+            value = unichr(int(ref))
+
+        if value in _cp1252:
+            self.pieces.append('&#%s;' % hex(ord(_cp1252[value]))[1:])
+        else:
+            self.pieces.append('&#%(ref)s;' % locals())
         
     def handle_entityref(self, ref):
         # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
@@ -1653,9 +1667,10 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         return ''.join([str(p) for p in self.pieces])
 
 class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
-    def __init__(self, baseuri, baselang, encoding):
+    def __init__(self, baseuri, baselang, encoding, entities):
         sgmllib.SGMLParser.__init__(self)
         _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
+        self.entities=entities
 
     def decodeEntities(self, element, data):
         data = data.replace('&#60;', '&lt;')
@@ -3074,13 +3089,13 @@ def _stripDoctype(data):
     # only allow in 'safe' inline entity definitions
     replacement=''
     if len(doctype_results)==1 and entity_results:
-       safe_pattern=re.compile('\s+\w* "(&#\w+;|[^&"]*)"')
+       safe_pattern=re.compile('\s+(\w+)\s+"(&#\w+;|[^&"]*)"')
        safe_entities=filter(lambda e: safe_pattern.match(e),entity_results)
        if safe_entities:
            replacement='<!DOCTYPE feed [\n  <!ENTITY %s>\n]>' % '>\n  <!ENTITY '.join(safe_entities)
     data = doctype_pattern.sub(replacement, data)
 
-    return version, data
+    return version, data, dict(replacement and safe_pattern.findall(replacement))
     
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[]):
     '''Parse a feed from a URL, file, stream, or string'''
@@ -3154,7 +3169,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['bozo'] = 1
         result['bozo_exception'] = NonXMLContentType(bozo_message)
         
-    result['version'], data = _stripDoctype(data)
+    result['version'], data, entities = _stripDoctype(data)
 
     baseuri = http_headers.get('content-location', result.get('href'))
     baselang = http_headers.get('content-language', None)
@@ -3255,7 +3270,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
     if not use_strict_parser:
-        feedparser = _LooseFeedParser(baseuri, baselang, known_encoding and 'utf-8' or '')
+        feedparser = _LooseFeedParser(baseuri, baselang, known_encoding and 'utf-8' or '', entities)
         feedparser.feed(data)
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
