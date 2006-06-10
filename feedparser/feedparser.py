@@ -1537,6 +1537,7 @@ if _XML_AVAILABLE:
             raise exc
 
 class _BaseHTMLProcessor(sgmllib.SGMLParser):
+    special = re.compile('''[<>'"]''')
     elements_no_end_tag = ['area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
       'img', 'input', 'isindex', 'link', 'meta', 'param']
     
@@ -1548,6 +1549,36 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def reset(self):
         self.pieces = []
         sgmllib.SGMLParser.reset(self)
+
+    def parse_starttag(self, start):
+        # SGMLParser doesn't handle markup in quoted strings very well (take
+        # a look at the comments in the implementation of this method to see
+        # what I mean), so scan ahead and escape just the angle brackets
+        i = start
+        state = 0
+        while 1:
+             match = self.special.search(self.rawdata, i+1)
+             if not match: break
+             i = match.start(0)
+             match=match.group(0)
+             if match == '<':
+                 if state == 0: break
+                 self.rawdata=self.rawdata[:i]+'&lt;'+self.rawdata[i+1:]
+             elif match == '>':
+                 if state == 0: break
+                 self.rawdata=self.rawdata[:i]+'&gt;'+self.rawdata[i+1:]
+             elif match == "'":
+                 if state == 0:
+                     state = 1
+                 elif state == 1:
+                     state = 0
+             elif match == '"':
+                 if state == 0:
+                     state = 2
+                 elif state == 2:
+                     state = 0
+
+        return sgmllib.SGMLParser.parse_starttag(self, start)
 
     def _shorttag_replace(self, match):
         tag = match.group(1)
@@ -1583,6 +1614,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         uattrs = []
         # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
         for key, value in attrs:
+            value=value.replace('>','&gt;').replace('<','&lt;')
             if type(value) != type(u''):
                 value = unicode(value, self.encoding)
             uattrs.append((unicode(key, self.encoding), value))
