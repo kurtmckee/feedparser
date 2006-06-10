@@ -1554,6 +1554,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # SGMLParser doesn't handle markup in quoted strings very well (take
         # a look at the comments in the implementation of this method to see
         # what I mean), so scan ahead and escape just the angle brackets
+        save = None
         i = start
         state = 0
         while 1:
@@ -1563,9 +1564,11 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
              match=match.group(0)
              if match == '<':
                  if state == 0: break
+                 if not save: save=self.rawdata
                  self.rawdata=self.rawdata[:i]+'&lt;'+self.rawdata[i+1:]
              elif match == '>':
                  if state == 0: break
+                 if not save: save=self.rawdata
                  self.rawdata=self.rawdata[:i]+'&gt;'+self.rawdata[i+1:]
              elif match == "'":
                  if state == 0:
@@ -1578,7 +1581,12 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
                  elif state == 2:
                      state = 0
 
-        return sgmllib.SGMLParser.parse_starttag(self, start)
+        if save:
+            result = sgmllib.SGMLParser.parse_starttag(self, start)
+            self.rawdata = save
+            return result
+        else:
+            return sgmllib.SGMLParser.parse_starttag(self, start)
 
     def _shorttag_replace(self, match):
         tag = match.group(1)
