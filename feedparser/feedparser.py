@@ -147,7 +147,7 @@ sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
 sgmllib.special = re.compile('<!')
 sgmllib.charref = re.compile('&#(\d+|x[0-9a-fA-F]+);')
 
-if sgmllib.endbracket.search('"<'):
+if sgmllib.endbracket.match('"<'):
     class EndBracketMatch:
         endbracket = re.compile('''([^'"<>]|"[^"]*"|'[^']*')*(?=[<>])''')
         def search(self,string,index=0):
@@ -1548,6 +1548,7 @@ if _XML_AVAILABLE:
 
 class _BaseHTMLProcessor(sgmllib.SGMLParser):
     special = re.compile('''[<>'"]''')
+    bare_ampersand = re.compile("&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
     elements_no_end_tag = ['area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
       'img', 'input', 'isindex', 'link', 'meta', 'param']
     
@@ -1581,7 +1582,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def normalize_attrs(self, attrs):
         if not attrs: return attrs
         # utility method to be called by descendants
-        attrs = [(k.lower(), v) for k, v in attrs]
+        attrs = dict([(k.lower(), v) for k, v in attrs]).items()
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
         attrs.sort()
         return attrs
@@ -1595,8 +1596,12 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
         for key, value in attrs:
             value=value.replace('>','&gt;').replace('<','&lt;')
+            value = self.bare_ampersand.sub("&amp;", value)
             if type(value) != type(u''):
-                value = unicode(value, self.encoding)
+                try:
+                    value = unicode(value, self.encoding)
+                except:
+                    value = unicode(value, 'iso-8859-1')
             uattrs.append((unicode(key, self.encoding), value))
         strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs]).encode(self.encoding)
         if tag in self.elements_no_end_tag:
