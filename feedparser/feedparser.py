@@ -147,6 +147,16 @@ sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
 sgmllib.special = re.compile('<!')
 sgmllib.charref = re.compile('&#(\d+|x[0-9a-fA-F]+);')
 
+if sgmllib.endbracket.search('"<'):
+    class EndBracketMatch:
+        endbracket = re.compile('''([^'"<>]|"[^"]*"|'[^']*')*(?=[<>])''')
+        def search(self,string,index=0):
+            self.match = self.endbracket.match(string,index)
+            if self.match: return self
+        def start(self,n):
+            return self.match.end(n)
+    sgmllib.endbracket = EndBracketMatch()
+
 SUPPORTED_VERSIONS = {'': 'unknown',
                       'rss090': 'RSS 0.90',
                       'rss091n': 'RSS 0.91 (Netscape)',
@@ -1549,44 +1559,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def reset(self):
         self.pieces = []
         sgmllib.SGMLParser.reset(self)
-
-    def parse_starttag(self, start):
-        # SGMLParser doesn't handle markup in quoted strings very well (take
-        # a look at the comments in the implementation of this method to see
-        # what I mean), so scan ahead and escape just the angle brackets
-        save = None
-        i = start
-        state = 0
-        while 1:
-             match = self.special.search(self.rawdata, i+1)
-             if not match: break
-             i = match.start(0)
-             match=match.group(0)
-             if match == '<':
-                 if state == 0: break
-                 if not save: save=self.rawdata
-                 self.rawdata=self.rawdata[:i]+'&lt;'+self.rawdata[i+1:]
-             elif match == '>':
-                 if state == 0: break
-                 if not save: save=self.rawdata
-                 self.rawdata=self.rawdata[:i]+'&gt;'+self.rawdata[i+1:]
-             elif match == "'":
-                 if state == 0:
-                     state = 1
-                 elif state == 1:
-                     state = 0
-             elif match == '"':
-                 if state == 0:
-                     state = 2
-                 elif state == 2:
-                     state = 0
-
-        if save:
-            result = sgmllib.SGMLParser.parse_starttag(self, start)
-            self.rawdata = save
-            return result
-        else:
-            return sgmllib.SGMLParser.parse_starttag(self, start)
 
     def _shorttag_replace(self, match):
         tag = match.group(1)
