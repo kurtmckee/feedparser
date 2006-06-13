@@ -1596,7 +1596,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         strattrs=''
         if attrs:
             for key, value in attrs:
-                value=value.replace('>','&gt;').replace('<','&lt;')
+                value=value.replace('>','&gt;').replace('<','&lt;').replace('"','&quot;')
                 value = self.bare_ampersand.sub("&amp;", value)
                 # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
                 if type(value) != type(u''):
@@ -1718,7 +1718,7 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
         return data
         
     def strattrs(self, attrs):
-        return ''.join([' %s="%s"' % t for t in attrs])
+        return ''.join([' %s="%s"' % (n,v.replace('"','&quot;')) for n,v in attrs])
 
 class _MicroformatsParser:
     STRING = 1
