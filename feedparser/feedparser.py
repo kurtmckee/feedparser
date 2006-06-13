@@ -1593,17 +1593,24 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # e.g. for <pre class='screen'>, tag='pre', attrs=[('class', 'screen')]
         if _debug: sys.stderr.write('_BaseHTMLProcessor, unknown_starttag, tag=%s\n' % tag)
         uattrs = []
-        # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
-        for key, value in attrs:
-            value=value.replace('>','&gt;').replace('<','&lt;')
-            value = self.bare_ampersand.sub("&amp;", value)
-            if type(value) != type(u''):
+        strattrs=''
+        if attrs:
+            for key, value in attrs:
+                value=value.replace('>','&gt;').replace('<','&lt;')
+                value = self.bare_ampersand.sub("&amp;", value)
+                # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
+                if type(value) != type(u''):
+                    try:
+                        value = unicode(value, self.encoding)
+                    except:
+                        value = unicode(value, 'iso-8859-1')
+                uattrs.append((unicode(key, self.encoding), value))
+            strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs])
+            if self.encoding:
                 try:
-                    value = unicode(value, self.encoding)
+                    strattrs=strattrs.encode(self.encoding)
                 except:
-                    value = unicode(value, 'iso-8859-1')
-            uattrs.append((unicode(key, self.encoding), value))
-        strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs]).encode(self.encoding)
+                    pass
         if tag in self.elements_no_end_tag:
             self.pieces.append('<%(tag)s%(strattrs)s />' % locals())
         else:
@@ -3245,12 +3252,21 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             known_encoding = use_strict_parser = 1
         except:
             pass
+    # if still no luck and we haven't tried iso-8859-2 yet, try that.
+    if (not known_encoding) and ('iso-8859-2' not in tried_encodings):
+        try:
+            proposed_encoding = 'iso-8859-2'
+            tried_encodings.append(proposed_encoding)
+            data = _toUTF8(data, proposed_encoding)
+            known_encoding = use_strict_parser = 1
+        except:
+            pass
     # if still no luck, give up
     if not known_encoding:
         result['bozo'] = 1
         result['bozo_exception'] = CharacterEncodingUnknown( \
             'document encoding unknown, I tried ' + \
-            '%s, %s, utf-8, and windows-1252 but nothing worked' % \
+            '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' % \
             (result['encoding'], xml_encoding))
         result['encoding'] = ''
     elif proposed_encoding != result['encoding']:
