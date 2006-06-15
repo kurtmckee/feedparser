@@ -2234,10 +2234,11 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'columnalign', 'columnlines', 'columnspacing', 'columnspan', 'depth',
       'display', 'displaystyle', 'equalcolumns', 'equalrows', 'fence',
       'fontstyle', 'fontweight', 'frame', 'height', 'linethickness', 'lspace',
-      'mathbackground', 'mathcolor', 'mathvariant', 'mathvariant', 'other',
-      'rowalign', 'rowalign', 'rowalign', 'rowlines', 'rowspacing', 'rowspan',
-      'rspace', 'scriptlevel', 'selection', 'separator', 'stretchy', 'width',
-      'width', 'xlink:href', 'xlink:show', 'xlink:type', 'xmlns', 'xmlns:xlink']
+      'mathbackground', 'mathcolor', 'mathvariant', 'mathvariant', 'maxsize',
+      'minsize', 'other', 'rowalign', 'rowalign', 'rowalign', 'rowlines',
+      'rowspacing', 'rowspan', 'rspace', 'scriptlevel', 'selection',
+      'separator', 'stretchy', 'width', 'width', 'xlink:href', 'xlink:show',
+      'xlink:type', 'xmlns', 'xmlns:xlink']
 
     def reset(self):
         _BaseHTMLProcessor.reset(self)
