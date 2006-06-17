@@ -479,7 +479,13 @@ class _FeedParserMixin:
             # because that compensates for the bugs in our namespace handling.
             # This will horribly munge inline content with non-empty qnames,
             # but nobody actually does that, so I'm not fixing it.
-            tag = tag.split(':')[-1]
+            if tag.find(':') <> -1:
+                prefix, tag = tag.split(':', 1)
+                namespace = self.namespacesInUse.get(prefix, '')
+                if tag=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
+                    attrs.append(('xmlns',namespace))
+                if tag=='svg' and namespace=='http://www.w3.org/2000/svg':
+                    attrs.append(('xmlns',namespace))
             return self.handle_data('<%s%s>' % (tag, self.strattrs(attrs)), escape=0)
 
         # match namespaces
@@ -1497,10 +1503,7 @@ if _XML_AVAILABLE:
             prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
             if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and not self.namespacesInUse.has_key(givenprefix):
                     raise UndeclaredNamespace, "'%s' is not associated with a namespace" % givenprefix
-            if prefix:
-                localname = prefix + ':' + localname
             localname = str(localname).lower()
-            if _debug: sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
 
             # qname implementation is horribly broken in Python 2.1 (it
             # doesn't report any), and slightly broken in Python 2.2 (it
@@ -1512,6 +1515,13 @@ if _XML_AVAILABLE:
             attrsD = {}
             if localname=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
                 attrsD['xmlns']=namespace
+            if localname=='svg' and namespace=='http://www.w3.org/2000/svg':
+                attrsD['xmlns']=namespace
+
+            if prefix:
+                localname = prefix.lower() + ':' + localname
+            if _debug: sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
+
             for (namespace, attrlocalname), attrvalue in attrs._attrs.items():
                 lowernamespace = (namespace or '').lower()
                 prefix = self._matchnamespaces.get(lowernamespace, '')
@@ -2179,25 +2189,27 @@ def _resolveRelativeURIs(htmlSource, baseURI, encoding):
     return p.output()
 
 class _HTMLSanitizer(_BaseHTMLProcessor):
-    acceptable_elements = ['a', 'abbr', 'acronym', 'address', 'area', 'b', 'big',
-      'blockquote', 'br', 'button', 'caption', 'center', 'cite', 'code', 'col',
-      'colgroup', 'dd', 'del', 'dfn', 'dir', 'div', 'dl', 'dt', 'em', 'fieldset',
-      'font', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'i', 'img', 'input',
-      'ins', 'kbd', 'label', 'legend', 'li', 'map', 'menu', 'ol', 'optgroup',
-      'option', 'p', 'pre', 'q', 's', 'samp', 'select', 'small', 'span', 'strike',
-      'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'textarea', 'tfoot', 'th',
-      'thead', 'tr', 'tt', 'u', 'ul', 'var']
+    acceptable_elements = ['a', 'abbr', 'acronym', 'address', 'area', 'b',
+      'big', 'blockquote', 'br', 'button', 'caption', 'center', 'cite',
+      'code', 'col', 'colgroup', 'dd', 'del', 'dfn', 'dir', 'div', 'dl', 'dt',
+      'em', 'fieldset', 'font', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+      'hr', 'i', 'img', 'input', 'ins', 'kbd', 'label', 'legend', 'li', 'map',
+      'menu', 'ol', 'optgroup', 'option', 'p', 'pre', 'q', 's', 'samp',
+      'select', 'small', 'span', 'strike', 'strong', 'sub', 'sup', 'table',
+      'tbody', 'td', 'textarea', 'tfoot', 'th', 'thead', 'tr', 'tt', 'u',
+      'ul', 'var']
 
     acceptable_attributes = ['abbr', 'accept', 'accept-charset', 'accesskey',
-      'action', 'align', 'alt', 'axis', 'border', 'cellpadding', 'cellspacing',
-      'char', 'charoff', 'charset', 'checked', 'cite', 'class', 'clear', 'cols',
-      'colspan', 'color', 'compact', 'coords', 'datetime', 'dir', 'disabled',
-      'enctype', 'for', 'frame', 'headers', 'height', 'href', 'hreflang', 'hspace',
-      'id', 'ismap', 'label', 'lang', 'longdesc', 'maxlength', 'media', 'method',
-      'multiple', 'name', 'nohref', 'noshade', 'nowrap', 'prompt', 'readonly',
-      'rel', 'rev', 'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape', 'size',
-      'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title', 'type',
-      'usemap', 'valign', 'value', 'vspace', 'width', 'xml:lang']
+      'action', 'align', 'alt', 'axis', 'border', 'cellpadding',
+      'cellspacing', 'char', 'charoff', 'charset', 'checked', 'cite', 'class',
+      'clear', 'cols', 'colspan', 'color', 'compact', 'coords', 'datetime',
+      'dir', 'disabled', 'enctype', 'for', 'frame', 'headers', 'height',
+      'href', 'hreflang', 'hspace', 'id', 'ismap', 'label', 'lang',
+      'longdesc', 'maxlength', 'media', 'method', 'multiple', 'name',
+      'nohref', 'noshade', 'nowrap', 'prompt', 'readonly', 'rel', 'rev',
+      'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape', 'size',
+      'span', 'src', 'start', 'summary', 'tabindex', 'target', 'title',
+      'type', 'usemap', 'valign', 'value', 'vspace', 'width', 'xml:lang']
 
     unacceptable_elements_with_end_tag = ['script', 'applet']
 
@@ -2240,10 +2252,18 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'separator', 'stretchy', 'width', 'width', 'xlink:href', 'xlink:show',
       'xlink:type', 'xmlns', 'xmlns:xlink']
 
+    svg_elements = ['a', 'circle', 'defs', 'ellipse', 'g', 'path', 'polygon',
+      'rect', 'style', 'svg', 'text', 'title', 'use']
+
+    svg_attributes = ['class', 'cx', 'cy', 'd', 'height', 'id', 'points', 'r',
+      'rx', 'ry', 'text-anchor', 'transform', 'type', 'viewbox',
+      'width', 'x', 'xlink:href', 'xlink:title', 'xmlns', 'xmlns:xlink', 'y']
+
     def reset(self):
         _BaseHTMLProcessor.reset(self)
         self.unacceptablestack = 0
         self.mathmlOK = 0
+        self.svgOK = 0
         
     def unknown_starttag(self, tag, attrs):
         acceptable_attributes = self.acceptable_attributes
@@ -2251,15 +2271,26 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack += 1
 
-            # not otherwise acceptable, perhaps it is MathML?
+            # not otherwise acceptable, perhaps it is MathML or SVG?
             if tag=='math' and ('xmlns','http://www.w3.org/1998/Math/MathML') in attrs:
                 self.mathmlOK = 1
-            if not self.mathmlOK or not tag in self.mathml_elements:
+            if tag=='svg' and ('xmlns','http://www.w3.org/2000/svg') in attrs:
+                self.svgOK = 1
+
+            # chose acceptable attributes based on tag class, else bail
+            if  self.mathmlOK and tag in self.mathml_elements:
+                acceptable_attributes = self.mathml_attributes
+            elif self.svgOK and tag in self.svg_elements:
+                acceptable_attributes = self.svg_attributes
+            else:
                 return
+
+        # declare xlink namespace, if needed
+        if self.mathmlOK or self.svgOK:
             if filter(lambda (n,v): n.startswith('xlink:'),attrs):
                 if not ('xmlns:xlink','http://www.w3.org/1999/xlink') in attrs:
                     attrs.append(('xmlns:xlink','http://www.w3.org/1999/xlink'))
-            acceptable_attributes = self.mathml_attributes
+
         clean_attrs = []
         for key, value in self.normalize_attrs(attrs):
             if key in acceptable_attributes:
@@ -2273,7 +2304,11 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         if not tag in self.acceptable_elements:
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack -= 1
-            if not self.mathmlOK or not tag in self.mathml_elements:
+            if self.mathmlOK and tag in self.mathml_elements:
+                if tag == 'math': self.mathmlOK = 0
+            elif self.svgOK and tag in self.svg_elements:
+                if tag == 'svg': self.svgOK = 0
+            else:
                 return
         _BaseHTMLProcessor.unknown_endtag(self, tag)
 
