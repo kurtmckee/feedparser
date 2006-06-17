@@ -2256,8 +2256,9 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'rect', 'style', 'svg', 'text', 'title', 'use']
 
     svg_attributes = ['class', 'cx', 'cy', 'd', 'height', 'id', 'points', 'r',
-      'rx', 'ry', 'text-anchor', 'transform', 'type', 'viewbox',
-      'width', 'x', 'xlink:href', 'xlink:title', 'xmlns', 'xmlns:xlink', 'y']
+      'rx', 'ry', 'stroke', 'stroke-width', 'text-anchor', 'transform',
+      'type', 'viewbox', 'width', 'x', 'xlink:href', 'xlink:title', 'xmlns',
+      'xmlns:xlink', 'y']
 
     def reset(self):
         _BaseHTMLProcessor.reset(self)
