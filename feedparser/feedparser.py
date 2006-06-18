@@ -671,6 +671,10 @@ class _FeedParserMixin:
             # only if all the remaining content is nested underneath it.
             # This means that the divs would be retained in the following:
             #    <div>foo</div><div>bar</div>
+            if pieces and len(pieces)>1 and not pieces[-1].strip():
+                del pieces[-1]
+            if pieces and len(pieces)>1 and not pieces[0].strip():
+                del pieces[0]
             if pieces and (pieces[0] == '<div>' or pieces[0].startswith('<div ')) and pieces[-1]=='</div>':
                 depth = 0
                 for piece in pieces[:-1]:
@@ -1325,11 +1329,13 @@ class _FeedParserMixin:
             self._save('link', value)
 
     def _start_title(self, attrsD):
+        if self.mathmlOK: return unknown_starttag('title', attrsD)
         self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
     _start_media_title = _start_title
 
     def _end_title(self):
+        if self.mathmlOK: return unknown_endtag('title', attrsD)
         value = self.popContent('title')
         context = self._getContext()
         if self.intextinput:
