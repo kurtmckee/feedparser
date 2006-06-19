@@ -1,0 +1,9 @@
+<!--
+Description:  SVG
+Expect:       bozo and entries[0]['description'] == '<svg height="200px" width="300px" xmlns="http://www.w3.org/2000/svg"><title>foo</title><circle cx="150px" cy="100px" r="50px" stroke="#000000" stroke-width="5px"></svg>'
+-->
+<atom xmlns="http://www.w3.org/2005/Atom">
+<entry xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svg="http://www.w3.org/2000/svg">
+<content><div xmlns="http://www.w3.org/1999/xhtml"><svg:svg version="1.1" baseProfile="full" width="300px" height="200px"><svg:title>foo</svg:title><svg:circle cx="150px" cy="100px" r="50px" fill="#ff0000" stroke="#000000" stroke-width="5px"/></svg:svg></div></content>
+</entry>
+</atom

@@ -1329,14 +1329,14 @@ class _FeedParserMixin:
             self._save('link', value)
 
     def _start_title(self, attrsD):
-        if self.mathmlOK: return unknown_starttag('title', attrsD)
+        if self.incontent: return self.unknown_starttag('title', attrsD)
         self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
     _start_media_title = _start_title
 
     def _end_title(self):
-        if self.mathmlOK: return unknown_endtag('title', attrsD)
         value = self.popContent('title')
+        if not value: return
         context = self._getContext()
         if self.intextinput:
             context['textinput']['title'] = value
