@@ -433,7 +433,7 @@ class _FeedParserMixin:
         self.baseuri = baseuri or ''
         self.lang = baselang or None
         if baselang:
-            self.feeddata['language'] = baselang
+            self.feeddata['language'] = baselang.replace('_','-')
 
     def unknown_starttag(self, tag, attrs):
         if _debug: sys.stderr.write('start %s with %s\n' % (tag, attrs))
@@ -454,7 +454,7 @@ class _FeedParserMixin:
             lang = self.lang
         if lang:
             if tag in ('feed', 'rss', 'rdf:RDF'):
-                self.feeddata['language'] = lang
+                self.feeddata['language'] = lang.replace('_','-')
         self.lang = lang
         self.basestack.append(self.baseuri)
         self.langstack.append(lang)
@@ -804,6 +804,7 @@ class _FeedParserMixin:
 
     def pushContent(self, tag, attrsD, defaultContentType, expectingText):
         self.incontent += 1
+        if self.lang: self.lang=self.lang.replace('_','-')
         self.contentparams = FeedParserDict({
             'type': self.mapContentType(attrsD.get('type', defaultContentType)),
             'language': self.lang,
