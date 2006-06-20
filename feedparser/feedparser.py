@@ -2572,7 +2572,7 @@ _iso8601_re = [
     'OOO', r'(?P<ordinal>[0123]\d\d)').replace(
     'CC', r'(?P<century>\d\d$)')
     + r'(T?(?P<hour>\d{2}):(?P<minute>\d{2})'
-    + r'(:(?P<second>\d{2}))?'
+    + r'(:(?P<second>\d{2}(\.\d*)?))?'
     + r'(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?'
     for tmpl in _iso8601_tmpl]
 del tmpl
@@ -2631,7 +2631,7 @@ def _parse_date_iso8601(dateString):
             params[field] = 0
     hour = int(params.get('hour', 0))
     minute = int(params.get('minute', 0))
-    second = int(params.get('second', 0))
+    second = int(float(params.get('second', 0)))
     # weekday is normalized by mktime(), we can ignore it
     weekday = 0
     daylight_savings_flag = -1
