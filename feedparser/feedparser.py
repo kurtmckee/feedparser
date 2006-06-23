@@ -2260,12 +2260,16 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'xlink:type', 'xmlns', 'xmlns:xlink']
 
     svg_elements = ['a', 'circle', 'defs', 'ellipse', 'g', 'path', 'polygon',
-      'rect', 'style', 'svg', 'text', 'title', 'use']
+      'rect', 'svg', 'text', 'title', 'use']
 
-    svg_attributes = ['class', 'cx', 'cy', 'd', 'height', 'id', 'points', 'r',
-      'rx', 'ry', 'stroke', 'stroke-width', 'text-anchor', 'transform',
-      'type', 'viewbox', 'width', 'x', 'xlink:href', 'xlink:title', 'xmlns',
-      'xmlns:xlink', 'y']
+    svg_attributes = ['class', 'cx', 'cy', 'd', 'fill', 'height', 'id',
+       'points', 'r', 'rx', 'ry', 'stroke', 'stroke-width', 'text-anchor',
+       'transform', 'type', 'viewbox', 'width', 'x', 'xlink:href',
+       'xlink:title', 'xmlns', 'xmlns:xlink', 'y']
+
+    acceptable_svg_properties = [ 'fill', 'fill-opacity', 'fill-rule',
+      'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
+      'stroke-opacity']
 
     def reset(self):
         _BaseHTMLProcessor.reset(self)
@@ -2275,6 +2279,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         
     def unknown_starttag(self, tag, attrs):
         acceptable_attributes = self.acceptable_attributes
+        keymap = {}
         if not tag in self.acceptable_elements:
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack += 1
@@ -2290,6 +2295,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                 acceptable_attributes = self.mathml_attributes
             elif self.svgOK and tag in self.svg_elements:
                 acceptable_attributes = self.svg_attributes
+                keymap = {'viewbox':'viewBox'}
             else:
                 return
 
@@ -2302,6 +2308,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         clean_attrs = []
         for key, value in self.normalize_attrs(attrs):
             if key in acceptable_attributes:
+                key=keymap.get(key,key)
                 clean_attrs.append((key,value))
             elif key=='style':
                 clean_value = self.sanitize_style(value)
@@ -2346,6 +2353,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                       break
               else:
                   clean.append(prop + ': ' + value + ';')
+          elif self.svgOK and prop.lower() in self.acceptable_svg_properties:
+              clean.append(prop + ': ' + value + ';')
 
         return ' '.join(clean)
 
