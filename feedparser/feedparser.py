@@ -725,7 +725,7 @@ class _FeedParserMixin:
         # resolve relative URIs within embedded markup
         if is_htmlish:
             if element in self.can_contain_relative_uris:
-                output = _resolveRelativeURIs(output, self.baseuri, self.encoding)
+                output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
                 
         # parse microformats
         # (must do this before sanitizing because some microformats
@@ -746,7 +746,7 @@ class _FeedParserMixin:
         # sanitize embedded markup
         if is_htmlish:
             if element in self.can_contain_dangerous_markup:
-                output = _sanitizeHTML(output, self.encoding)
+                output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
 
         if self.encoding and type(output) != type(u''):
             try:
@@ -1569,8 +1569,9 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     elements_no_end_tag = ['area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
       'img', 'input', 'isindex', 'link', 'meta', 'param']
     
-    def __init__(self, encoding):
+    def __init__(self, encoding, type):
         self.encoding = encoding
+        self.type = type
         if _debug: sys.stderr.write('entering BaseHTMLProcessor, encoding=%s\n' % self.encoding)
         sgmllib.SGMLParser.__init__(self)
         
@@ -1584,7 +1585,14 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
             return '<' + tag + ' />'
         else:
             return '<' + tag + '></' + tag + '>'
-        
+
+    def parse_starttag(self,i):
+        j=sgmllib.SGMLParser.parse_starttag(self, i)
+        if self.type == 'application/xhtml+xml':
+            if j>2 and self.rawdata[j-2:j]=='/>':
+                self.unknown_endtag(self.lasttag)
+        return j
+
     def feed(self, data):
         data = re.compile(r'<!((?!DOCTYPE|--|\[))', re.IGNORECASE).sub(r'&lt;!\1', data)
         #data = re.sub(r'<(\S+?)\s*?/>', self._shorttag_replace, data) # bug [ 1399464 ] Bad regexp for _shorttag_replace
@@ -1711,6 +1719,7 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
     def __init__(self, baseuri, baselang, encoding, entities):
         sgmllib.SGMLParser.__init__(self)
         _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
+        _BaseHTMLProcessor.__init__(self, encoding, 'application/xhtml+xml')
         self.entities=entities
 
     def decodeEntities(self, element, data):
@@ -2177,8 +2186,8 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
                      ('q', 'cite'),
                      ('script', 'src')]
 
-    def __init__(self, baseuri, encoding):
-        _BaseHTMLProcessor.__init__(self, encoding)
+    def __init__(self, baseuri, encoding, type):
+        _BaseHTMLProcessor.__init__(self, encoding, type)
         self.baseuri = baseuri
 
     def resolveURI(self, uri):
@@ -2189,9 +2198,9 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
         attrs = [(key, ((tag, key) in self.relative_uris) and self.resolveURI(value) or value) for key, value in attrs]
         _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
         
-def _resolveRelativeURIs(htmlSource, baseURI, encoding):
+def _resolveRelativeURIs(htmlSource, baseURI, encoding, type):
     if _debug: sys.stderr.write('entering _resolveRelativeURIs\n')
-    p = _RelativeURIResolver(baseURI, encoding)
+    p = _RelativeURIResolver(baseURI, encoding, type)
     p.feed(htmlSource)
     return p.output()
 
@@ -2359,8 +2368,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         return ' '.join(clean)
 
 
-def _sanitizeHTML(htmlSource, encoding):
-    p = _HTMLSanitizer(encoding)
+def _sanitizeHTML(htmlSource, encoding, type):
+    p = _HTMLSanitizer(encoding, type)
     p.feed(htmlSource)
     data = p.output()
     if TIDY_MARKUP:
