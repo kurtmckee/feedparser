@@ -149,7 +149,7 @@ sgmllib.charref = re.compile('&#(\d+|x[0-9a-fA-F]+);')
 
 if sgmllib.endbracket.search(' <').start(0):
     class EndBracketMatch:
-        endbracket = re.compile('''([^'"<>]|"[^"]*"|'[^']*')*(?=[<>])''')
+        endbracket = re.compile('''([^'"<>]|"[^"]*"(?=>|/|\s|\w+=)|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])|.*?(?=[<>])''')
         def search(self,string,index=0):
             self.match = self.endbracket.match(string,index)
             if self.match: return self
