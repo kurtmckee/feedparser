@@ -2268,13 +2268,37 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'separator', 'stretchy', 'width', 'width', 'xlink:href', 'xlink:show',
       'xlink:type', 'xmlns', 'xmlns:xlink']
 
-    svg_elements = ['a', 'circle', 'defs', 'ellipse', 'g', 'path', 'polygon',
-      'rect', 'svg', 'text', 'title', 'use']
+    # svgtiny - foreignObject
+    svg_elements = ['a', 'animate', 'animateColor', 'animateMotion',
+      'animateTransform', 'circle', 'defs', 'desc', 'ellipse', 'font-face',
+      'font-face-name', 'font-face-src', 'g', 'glyph', 'hkern', 'image',
+      'line', 'metadata', 'missing-glyph', 'mpath', 'path', 'polygon',
+      'polyline', 'rect', 'set', 'svg', 'switch', 'text', 'title', 'use']
 
-    svg_attributes = ['class', 'cx', 'cy', 'd', 'fill', 'height', 'id',
-       'points', 'r', 'rx', 'ry', 'stroke', 'stroke-width', 'text-anchor',
-       'transform', 'type', 'viewbox', 'width', 'x', 'xlink:href',
-       'xlink:title', 'xmlns', 'xmlns:xlink', 'y']
+    # svgtiny + class + xmlns + xmlns:xlink
+    svg_attributes = ['accent-height', 'accumulate', 'additive', 'alphabetic',
+       'arabic-form', 'ascent', 'attributeName', 'attributeType',
+       'baseProfile', 'bbox', 'begin', 'by', 'calcMode', 'cap-height',
+       'class', 'color', 'color-rendering', 'content', 'cx', 'cy', 'd',
+       'descent', 'display', 'dur', 'end', 'fill', 'fill-rule', 'font-family',
+       'font-size', 'font-stretch', 'font-style', 'font-variant',
+       'font-weight', 'from', 'g1', 'g2', 'glyph-name', 'hanging', 'height',
+       'horiz-adv-x', 'horiz-origin-x', 'id', 'ideographic', 'k',
+       'keyPoints', 'keySplines', 'keyTimes', 'lang', 'mathematical', 'max',
+       'min', 'name', 'origin', 'overline-position', 'overline-thickness',
+       'panose-1', 'path', 'pathLength', 'points', 'preserveAspectRatio', 'r',
+       'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures',
+       'restart', 'rotate', 'rx', 'ry', 'slope', 'stemh', 'stemv',
+       'strikethrough-position', 'strikethrough-thickness', 'stroke',
+       'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap',
+       'stroke-linejoin', 'stroke-miterlimit', 'stroke-width',
+       'systemLanguage', 'target', 'text-anchor', 'to', 'transform', 'type',
+       'u1', 'u2', 'underline-position', 'underline-thickness', 'unicode',
+       'unicode-range', 'units-per-em', 'values', 'version', 'viewBox',
+       'visibility', 'width', 'widths', 'x', 'x-height', 'x1', 'x2',
+       'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role',
+       'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang',
+       'xml:space', 'xmlns', 'xmlns:xlink', 'y', 'y1', 'y2', 'zoomAndPan']
 
     acceptable_svg_properties = [ 'fill', 'fill-opacity', 'fill-rule',
       'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
