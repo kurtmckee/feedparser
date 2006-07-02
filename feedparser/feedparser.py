@@ -2300,6 +2300,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
        'xlink:show', 'xlink:title', 'xlink:type', 'xml:base', 'xml:lang',
        'xml:space', 'xmlns', 'xmlns:xlink', 'y', 'y1', 'y2', 'zoomAndPan']
 
+    svg_attr_map = None
+
     acceptable_svg_properties = [ 'fill', 'fill-opacity', 'fill-rule',
       'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
       'stroke-opacity']
@@ -2327,8 +2329,15 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if  self.mathmlOK and tag in self.mathml_elements:
                 acceptable_attributes = self.mathml_attributes
             elif self.svgOK and tag in self.svg_elements:
+                # for most vocabularies, lowercasing is a good idea.  Many
+                # svg elements, however, are camel case
+                if not self.svg_attr_map:
+                    lower=[attr.lower() for attr in self.svg_attributes]
+                    mix=[a for a in self.svg_attributes if a not in lower]
+                    self.svg_attributes = lower
+                    self.svg_attr_map = dict([(a.lower(),a) for a in mix])
                 acceptable_attributes = self.svg_attributes
-                keymap = {'viewbox':'viewBox'}
+                keymap = self.svg_attr_map
             else:
                 return
 
