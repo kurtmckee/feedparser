@@ -392,6 +392,7 @@ class _FeedParserMixin:
                   'http://purl.org/rss/1.0/modules/wiki/':                'wiki',
                   'http://www.w3.org/1999/xhtml':                         'xhtml',
                   'http://www.w3.org/XML/1998/namespace':                 'xml',
+                  'http://www.w3.org/1999/xlink':                         'xlink',
                   'http://schemas.pocketsoap.com/rss/myDescModule/':      'szf'
 }
     _matchnamespaces = {}
@@ -2268,14 +2269,15 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'separator', 'stretchy', 'width', 'width', 'xlink:href', 'xlink:show',
       'xlink:type', 'xmlns', 'xmlns:xlink']
 
-    # svgtiny - foreignObject
+    # svgtiny - foreignObject + linearGradient - stop
     svg_elements = ['a', 'animate', 'animateColor', 'animateMotion',
       'animateTransform', 'circle', 'defs', 'desc', 'ellipse', 'font-face',
       'font-face-name', 'font-face-src', 'g', 'glyph', 'hkern', 'image',
-      'line', 'metadata', 'missing-glyph', 'mpath', 'path', 'polygon',
-      'polyline', 'rect', 'set', 'svg', 'switch', 'text', 'title', 'use']
+      'linearGradient', 'line', 'metadata', 'missing-glyph', 'mpath', 'path',
+      'polygon', 'polyline', 'rect', 'set', 'stop', 'svg', 'switch', 'text',
+      'title', 'use']
 
-    # svgtiny + class + xmlns + xmlns:xlink
+    # svgtiny + class + opacity + offset + xmlns + xmlns:xlink
     svg_attributes = ['accent-height', 'accumulate', 'additive', 'alphabetic',
        'arabic-form', 'ascent', 'attributeName', 'attributeType',
        'baseProfile', 'bbox', 'begin', 'by', 'calcMode', 'cap-height',
@@ -2285,15 +2287,16 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
        'font-weight', 'from', 'g1', 'g2', 'glyph-name', 'hanging', 'height',
        'horiz-adv-x', 'horiz-origin-x', 'id', 'ideographic', 'k',
        'keyPoints', 'keySplines', 'keyTimes', 'lang', 'mathematical', 'max',
-       'min', 'name', 'origin', 'overline-position', 'overline-thickness',
-       'panose-1', 'path', 'pathLength', 'points', 'preserveAspectRatio', 'r',
-       'repeatCount', 'repeatDur', 'requiredExtensions', 'requiredFeatures',
-       'restart', 'rotate', 'rx', 'ry', 'slope', 'stemh', 'stemv',
-       'strikethrough-position', 'strikethrough-thickness', 'stroke',
-       'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap',
-       'stroke-linejoin', 'stroke-miterlimit', 'stroke-width',
-       'systemLanguage', 'target', 'text-anchor', 'to', 'transform', 'type',
-       'u1', 'u2', 'underline-position', 'underline-thickness', 'unicode',
+       'min', 'name', 'offset', 'opacity', 'origin', 'overline-position',
+       'overline-thickness', 'panose-1', 'path', 'pathLength', 'points',
+       'preserveAspectRatio', 'r', 'repeatCount', 'repeatDur',
+       'requiredExtensions', 'requiredFeatures', 'restart', 'rotate', 'rx',
+       'ry', 'slope', 'stemh', 'stemv', 'strikethrough-position',
+       'strikethrough-thickness', 'stroke', 'stroke-dasharray',
+       'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin',
+       'stroke-miterlimit', 'stroke-width', 'systemLanguage', 'target',
+       'text-anchor', 'to', 'transform', 'type', 'u1', 'u2',
+       'underline-position', 'underline-thickness', 'unicode',
        'unicode-range', 'units-per-em', 'values', 'version', 'viewBox',
        'visibility', 'width', 'widths', 'x', 'x-height', 'x1', 'x2',
        'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role',
@@ -2315,7 +2318,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
     def unknown_starttag(self, tag, attrs):
         acceptable_attributes = self.acceptable_attributes
         keymap = {}
-        if not tag in self.acceptable_elements:
+        if not tag in self.acceptable_elements or self.svgOK:
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack += 1
 
