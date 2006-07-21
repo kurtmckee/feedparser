@@ -4,6 +4,6 @@ Expect:       not bozo and entries[0]['description'] == '<math xmlns="http://www
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry xmlns:xlink="http://www.w3.org/1999/xlink">
-<content><div xmlns="http://www.w3.org/1999/xhtml"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow xlink:type="simple" xlink:show="replace" xlink:href="http://golem.ph.utexas.edu"><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow></mrow></math></div></content>
+<content type="xhtml"><div xmlns="http://www.w3.org/1999/xhtml"><math xmlns="http://www.w3.org/1998/Math/MathML"><mrow xlink:type="simple" xlink:show="replace" xlink:href="http://golem.ph.utexas.edu"><mrow><mi>a</mi><mo>+</mo><mi>b</mi></mrow></mrow></math></div></content>
 </entry>
 </feed>
