@@ -2269,13 +2269,13 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'separator', 'stretchy', 'width', 'width', 'xlink:href', 'xlink:show',
       'xlink:type', 'xmlns', 'xmlns:xlink']
 
-    # svgtiny - foreignObject + linearGradient - stop
+    # svgtiny - foreignObject + linearGradient + radialGradient + stop
     svg_elements = ['a', 'animate', 'animateColor', 'animateMotion',
       'animateTransform', 'circle', 'defs', 'desc', 'ellipse', 'font-face',
       'font-face-name', 'font-face-src', 'g', 'glyph', 'hkern', 'image',
       'linearGradient', 'line', 'metadata', 'missing-glyph', 'mpath', 'path',
-      'polygon', 'polyline', 'rect', 'set', 'stop', 'svg', 'switch', 'text',
-      'title', 'use']
+      'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop', 'svg',
+      'switch', 'text', 'title', 'use']
 
     # svgtiny + class + opacity + offset + xmlns + xmlns:xlink
     svg_attributes = ['accent-height', 'accumulate', 'additive', 'alphabetic',
@@ -2284,19 +2284,19 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
        'class', 'color', 'color-rendering', 'content', 'cx', 'cy', 'd',
        'descent', 'display', 'dur', 'end', 'fill', 'fill-rule', 'font-family',
        'font-size', 'font-stretch', 'font-style', 'font-variant',
-       'font-weight', 'from', 'g1', 'g2', 'glyph-name', 'hanging', 'height',
-       'horiz-adv-x', 'horiz-origin-x', 'id', 'ideographic', 'k',
+       'font-weight', 'from', 'fx', 'fy', 'g1', 'g2', 'glyph-name', 'hanging',
+       'height', 'horiz-adv-x', 'horiz-origin-x', 'id', 'ideographic', 'k',
        'keyPoints', 'keySplines', 'keyTimes', 'lang', 'mathematical', 'max',
        'min', 'name', 'offset', 'opacity', 'origin', 'overline-position',
        'overline-thickness', 'panose-1', 'path', 'pathLength', 'points',
        'preserveAspectRatio', 'r', 'repeatCount', 'repeatDur',
        'requiredExtensions', 'requiredFeatures', 'restart', 'rotate', 'rx',
-       'ry', 'slope', 'stemh', 'stemv', 'strikethrough-position',
-       'strikethrough-thickness', 'stroke', 'stroke-dasharray',
-       'stroke-dashoffset', 'stroke-linecap', 'stroke-linejoin',
-       'stroke-miterlimit', 'stroke-width', 'systemLanguage', 'target',
-       'text-anchor', 'to', 'transform', 'type', 'u1', 'u2',
-       'underline-position', 'underline-thickness', 'unicode',
+       'ry', 'slope', 'stemh', 'stemv', 'stop-color',
+       'strikethrough-position', 'strikethrough-thickness', 'stroke',
+       'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap',
+       'stroke-linejoin', 'stroke-miterlimit', 'stroke-width',
+       'systemLanguage', 'target', 'text-anchor', 'to', 'transform', 'type',
+       'u1', 'u2', 'underline-position', 'underline-thickness', 'unicode',
        'unicode-range', 'units-per-em', 'values', 'version', 'viewBox',
        'visibility', 'width', 'widths', 'x', 'x-height', 'x1', 'x2',
        'xlink:actuate', 'xlink:arcrole', 'xlink:href', 'xlink:role',
@@ -2304,6 +2304,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
        'xml:space', 'xmlns', 'xmlns:xlink', 'y', 'y1', 'y2', 'zoomAndPan']
 
     svg_attr_map = None
+    svg_elem_map = None
 
     acceptable_svg_properties = [ 'fill', 'fill-opacity', 'fill-rule',
       'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
@@ -2339,7 +2340,13 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                     mix=[a for a in self.svg_attributes if a not in lower]
                     self.svg_attributes = lower
                     self.svg_attr_map = dict([(a.lower(),a) for a in mix])
+
+                    lower=[attr.lower() for attr in self.svg_elements]
+                    mix=[a for a in self.svg_elements if a not in lower]
+                    self.svg_elements = lower
+                    self.svg_elem_map = dict([(a.lower(),a) for a in mix])
                 acceptable_attributes = self.svg_attributes
+                tag = self.svg_elem_map.get(tag,tag)
                 keymap = self.svg_attr_map
             else:
                 return
@@ -2367,6 +2374,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if self.mathmlOK and tag in self.mathml_elements:
                 if tag == 'math': self.mathmlOK = 0
             elif self.svgOK and tag in self.svg_elements:
+                tag = self.svg_elem_map.get(tag,tag)
                 if tag == 'svg': self.svgOK = 0
             else:
                 return
