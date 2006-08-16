@@ -790,7 +790,7 @@ class _FeedParserMixin:
                     contentparams = copy.deepcopy(self.contentparams)
                     contentparams['value'] = output
                     self.entries[-1][element + '_detail'] = contentparams
-        elif (self.infeed or self.insource) and (not self.intextinput) and (not self.inimage):
+        elif (self.infeed or self.insource):# and (not self.intextinput) and (not self.inimage):
             context = self._getContext()
             if element == 'description':
                 element = 'subtitle'
@@ -933,20 +933,20 @@ class _FeedParserMixin:
     _end_feed = _end_channel
     
     def _start_image(self, attrsD):
-        self.inimage = 1
-        self.push('image', 0)
         context = self._getContext()
         context.setdefault('image', FeedParserDict())
+        self.inimage = 1
+        self.push('image', 0)
             
     def _end_image(self):
         self.pop('image')
         self.inimage = 0
 
     def _start_textinput(self, attrsD):
-        self.intextinput = 1
-        self.push('textinput', 0)
         context = self._getContext()
         context.setdefault('textinput', FeedParserDict())
+        self.intextinput = 1
+        self.push('textinput', 0)
     _start_textInput = _start_textinput
     
     def _end_textinput(self):
@@ -1016,7 +1016,7 @@ class _FeedParserMixin:
             self._save_contributor('name', value)
         elif self.intextinput:
             context = self._getContext()
-            context['textinput']['name'] = value
+            context['name'] = value
     _end_itunes_name = _end_name
 
     def _start_width(self, attrsD):
@@ -1030,7 +1030,7 @@ class _FeedParserMixin:
             value = 0
         if self.inimage:
             context = self._getContext()
-            context['image']['width'] = value
+            context['width'] = value
 
     def _start_height(self, attrsD):
         self.push('height', 0)
@@ -1043,7 +1043,7 @@ class _FeedParserMixin:
             value = 0
         if self.inimage:
             context = self._getContext()
-            context['image']['height'] = value
+            context['height'] = value
 
     def _start_url(self, attrsD):
         self.push('href', 1)
@@ -1056,12 +1056,6 @@ class _FeedParserMixin:
             self._save_author('href', value)
         elif self.incontributor:
             self._save_contributor('href', value)
-        elif self.inimage:
-            context = self._getContext()
-            context['image']['href'] = value
-        elif self.intextinput:
-            context = self._getContext()
-            context['textinput']['link'] = value
     _end_homepage = _end_url
     _end_uri = _end_url
 
@@ -1082,6 +1076,10 @@ class _FeedParserMixin:
     def _getContext(self):
         if self.insource:
             context = self.sourcedata
+        elif self.inimage:
+            context = self.feeddata['image']
+        elif self.intextinput:
+            context = self.feeddata['textinput']
         elif self.inentry:
             context = self.entries[-1]
         else:
@@ -1315,10 +1313,6 @@ class _FeedParserMixin:
     def _end_link(self):
         value = self.pop('link')
         context = self._getContext()
-        if self.intextinput:
-            context['textinput']['link'] = value
-        if self.inimage:
-            context['image']['link'] = value
     _end_producturl = _end_link
 
     def _start_guid(self, attrsD):
@@ -1343,10 +1337,6 @@ class _FeedParserMixin:
         value = self.popContent('title')
         if not value: return
         context = self._getContext()
-        if self.intextinput:
-            context['textinput']['title'] = value
-        elif self.inimage:
-            context['image']['title'] = value
     _end_dc_title = _end_title
     _end_media_title = _end_title
 
@@ -1366,11 +1356,6 @@ class _FeedParserMixin:
             self._end_content()
         else:
             value = self.popContent('description')
-            context = self._getContext()
-            if self.intextinput:
-                context['textinput']['description'] = value
-            elif self.inimage:
-                context['image']['description'] = value
         self._summaryKey = None
     _end_abstract = _end_description
 
