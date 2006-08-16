@@ -1291,7 +1291,10 @@ class _FeedParserMixin:
         
     def _start_link(self, attrsD):
         attrsD.setdefault('rel', 'alternate')
-        attrsD.setdefault('type', 'text/html')
+        if attrsD['rel'] == 'self':
+            attrsD.setdefault('type', 'application/atom+xml')
+        else:
+            attrsD.setdefault('type', 'text/html')
         attrsD = self._itsAnHrefDamnIt(attrsD)
         if attrsD.has_key('href'):
             attrsD['href'] = self.resolveURI(attrsD['href'])
