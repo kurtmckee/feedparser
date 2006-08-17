@@ -2379,12 +2379,16 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             _BaseHTMLProcessor.handle_data(self, text)
 
     def sanitize_style(self, style):
+        # disallow urls
+        style=re.compile('url\s*\(\s*[^\s)]+?\s*\)\s*').sub(' ',style)
+
         # gauntlet
         if not re.match("""^([:,;#%.\sa-zA-Z0-9!]|\w-\w|'[\s\w]+'|"[\s\w]+"|\([\d,\s]+\))*$""", style): return ''
         if not re.match("^(\s*[-\w]+\s*:\s*[^:;]*(;|$))*$", style): return ''
 
         clean = []
         for prop,value in re.findall("([-\w]+)\s*:\s*([^:;]*)",style):
+          if not value: continue
           if prop.lower() in self.acceptable_css_properties:
               clean.append(prop + ': ' + value + ';')
           elif prop.split('-')[0].lower() in ['background','border','margin','padding']:
