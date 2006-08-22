@@ -2231,10 +2231,10 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'white-space', 'width']
 
     # survey of common keywords found in feeds
-    acceptable_css_keywords = ['aqua', 'black', 'block', 'blue', 'bold',
-      'both', 'bottom', 'brown', 'center', 'collapse', 'dashed', 'dotted',
-      'fuchsia', 'gray', 'green', '!important', 'italic', 'left', 'lime',
-      'maroon', 'medium', 'none', 'navy', 'normal', 'nowrap', 'olive',
+    acceptable_css_keywords = ['auto', 'aqua', 'black', 'block', 'blue',
+      'bold', 'both', 'bottom', 'brown', 'center', 'collapse', 'dashed',
+      'dotted', 'fuchsia', 'gray', 'green', '!important', 'italic', 'left',
+      'lime', 'maroon', 'medium', 'none', 'navy', 'normal', 'nowrap', 'olive',
       'pointer', 'purple', 'red', 'right', 'solid', 'silver', 'teal', 'top',
       'transparent', 'underline', 'white', 'yellow']
 
