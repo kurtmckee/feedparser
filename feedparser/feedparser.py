@@ -1112,12 +1112,14 @@ class _FeedParserMixin:
         else:
             author, email = context.get(key), None
             if not author: return
-            emailmatch = re.search(r'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))''', author)
+            emailmatch = re.search(r'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))(\?subject=\S+)?''', author)
             if emailmatch:
                 email = emailmatch.group(0)
                 # probably a better way to do the following, but it passes all the tests
                 author = author.replace(email, '')
                 author = author.replace('()', '')
+                author = author.replace('<>', '')
+                author = author.replace('&lt;&gt;', '')
                 author = author.strip()
                 if author and (author[0] == '('):
                     author = author[1:]
