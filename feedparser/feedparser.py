@@ -3414,20 +3414,75 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['namespaces'] = feedparser.namespacesInUse
     return result
 
+class Serializer:
+    def __init__(self, results):
+        self.results = results
+
+class TextSerializer(Serializer):
+    def write(self, stream=sys.stdout):
+        self._writer(stream, self.results, '')
+
+    def _writer(self, stream, node, prefix):
+        if not node: return
+        if hasattr(node, 'keys'):
+            keys = node.keys()
+            keys.sort()
+            for k in keys:
+                if k in ('description', 'link'): continue
+                if node.has_key(k + '_detail'): continue
+                if node.has_key(k + '_parsed'): continue
+                self._writer(stream, node[k], prefix + k + '.')
+        elif type(node) == types.ListType:
+            index = 0
+            for n in node:
+                self._writer(stream, n, prefix[:-1] + '[' + str(index) + '].')
+                index += 1
+        else:
+            try:
+                s = str(node).encode('utf-8')
+                s = s.replace('\\', '\\\\')
+                s = s.replace('\r', '')
+                s = s.replace('\n', r'\n')
+                stream.write(prefix[:-1])
+                stream.write('=')
+                stream.write(s)
+                stream.write('\n')
+            except:
+                pass
+        
+class PprintSerializer(Serializer):
+    def write(self, stream=sys.stdout):
+        stream.write(self.results['href'] + '\n\n')
+        from pprint import pprint
+        pprint(self.results, stream)
+        stream.write('\n')
+        
 if __name__ == '__main__':
-    if not sys.argv[1:]:
-        print __doc__
-        sys.exit(0)
+    try:
+        from optparse import OptionParser
+    except:
+        OptionParser = None
+
+    if OptionParser:
+        optionParser = OptionParser(version=__version__, usage="%prog [options] URL(s)")
+        optionParser.set_defaults(format="pprint")
+        optionParser.add_option("-f", "--format", dest="format", metavar="FORMAT", help="output results in FORMAT (text, pprint)")
+        (options, urls) = optionParser.parse_args()
     else:
+        if not sys.argv[1:]:
+            print __doc__
+            sys.exit(0)
+        class _Options:
+            format = 'pprint'
+        options = _Options()
         urls = sys.argv[1:]
+
     zopeCompatibilityHack()
-    from pprint import pprint
+
+    serializer = globals().get(options.format.capitalize() + 'Serializer', Serializer)
     for url in urls:
-        print url
-        print
-        result = parse(url)
-        pprint(result)
-        print
+        results = parse(url)
+        serializer(results).write(sys.stdout)
 
 #REVISION HISTORY
 #1.0 - 9/27/2002 - MAP - fixed namespace processing on prefixed RSS 2.0 elements,
