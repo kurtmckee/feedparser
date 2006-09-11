@@ -2514,10 +2514,12 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     If the etag argument is supplied, it will be used as the value of an
     If-None-Match request header.
 
-    If the modified argument is supplied, it must be a tuple of 9 integers
-    as returned by gmtime() in the standard Python time module. This MUST
-    be in GMT (Greenwich Mean Time). The formatted date/time will be used
-    as the value of an If-Modified-Since request header.
+    If the modified argument is supplied, it can be a tuple of 9 integers
+    (as returned by gmtime() in the standard Python time module) or a date
+    string in any format supported by feedparser. Regardless, it MUST
+    be in GMT (Greenwich Mean Time). It will be reformatted into an
+    RFC 1123-compliant date and used as the value of an If-Modified-Since
+    request header.
 
     If the agent argument is supplied, it will be used as the value of a
     User-Agent request header.
@@ -2563,6 +2565,8 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         request.add_header('User-Agent', agent)
         if etag:
             request.add_header('If-None-Match', etag)
+        if type(modified) == type(''):
+            modified = _parse_date(modified)
         if modified:
             # format into an RFC 1123-compliant timestamp. We can't use
             # time.strftime() since the %a and %b directives can be affected
@@ -3464,15 +3468,26 @@ if __name__ == '__main__':
         OptionParser = None
 
     if OptionParser:
-        optionParser = OptionParser(version=__version__, usage="%prog [options] URL(s)")
+        optionParser = OptionParser(version=__version__, usage="%prog [options] url_or_filename_or_-")
         optionParser.set_defaults(format="pprint")
+        optionParser.add_option("-A", "--user-agent", dest="agent", metavar="AGENT", help="User-Agent for HTTP URLs")
+        optionParser.add_option("-e", "--referer", "--referrer", dest="referrer", metavar="URL", help="Referrer for HTTP URLs")
+        optionParser.add_option("-t", "--etag", dest="etag", metavar="TAG", help="ETag/If-None-Match for HTTP URLs")
+        optionParser.add_option("-m", "--last-modified", dest="modified", metavar="DATE", help="Last-modified/If-Modified-Since for HTTP URLs (any supported date format)")
         optionParser.add_option("-f", "--format", dest="format", metavar="FORMAT", help="output results in FORMAT (text, pprint)")
+        optionParser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="write debugging information to stderr")
         (options, urls) = optionParser.parse_args()
+        if options.verbose:
+            _debug = 1
+        if not urls:
+            optionParser.print_help()
+            sys.exit(0)
     else:
         if not sys.argv[1:]:
             print __doc__
             sys.exit(0)
         class _Options:
+            etag = modified = agent = referrer = None
             format = 'pprint'
         options = _Options()
         urls = sys.argv[1:]
@@ -3481,7 +3496,7 @@ if __name__ == '__main__':
 
     serializer = globals().get(options.format.capitalize() + 'Serializer', Serializer)
     for url in urls:
-        results = parse(url)
+        results = parse(url, etag=options.etag, modified=options.modified, agent=options.agent, referrer=options.referrer)
         serializer(results).write(sys.stdout)
 
 #REVISION HISTORY
