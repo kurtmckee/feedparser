@@ -10,7 +10,9 @@
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
 <!ENTITY title "Documentation">
-<!ENTITY url_book "http://feedparser.org/docs/">
+<!ENTITY feedparser_domain "feedparser.org">
+<!ENTITY url_feedparser "http://&feedparser_domain;/">
+<!ENTITY url_book "&url_feedparser;docs/">
 <!ENTITY python "<application>Python</application>">
 <!ENTITY prompt "<prompt>>>> </prompt>">
 <!ENTITY continuationprompt "<prompt>...     </prompt>">
@@ -82,7 +84,7 @@
 <!ENTITY url_sf_feedparser "http://sourceforge.net/projects/feedparser/">
 <!ENTITY url_howtoconsumersssafely "http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely">
 
-<!ENTITY url_example "http://feedparser.org/docs/examples/">
+<!ENTITY url_example "&url_book;examples/">
 <!ENTITY url_example_atom10 "&url_example;atom10.xml">
 <!ENTITY url_example_atom03 "&url_example;atom03.xml">
 <!ENTITY url_example_rss20 "&url_example;rss20.xml">
@@ -95,12 +97,12 @@
 <!ENTITY url_example_gone "&url_example;gone.xml">
 <!ENTITY url_example_basic_auth "&url_example;basic_auth.xml">
 <!ENTITY url_example_digest_auth "&url_example;digest_auth.xml">
-<!ENTITY url_example_basic_auth_inline "http://test:basic@feedparser.org/docs/examples/basic_auth.xml">
-<!ENTITY url_example_digest_auth_inline "http://test:digest@feedparser.org/docs/examples/digest_auth.xml">
+<!ENTITY url_example_basic_auth_inline "http://test:basic@&feedparser_domain;/docs/examples/basic_auth.xml">
+<!ENTITY url_example_digest_auth_inline "http://test:digest@&feedparser_domain;/docs/examples/digest_auth.xml">
 <!ENTITY url_example_base "&url_example;base.xml">
 <!ENTITY url_example_http_base "&url_example;http_base.xml">
 <!ENTITY url_example_no_base "&url_example;no_base.xml">
-<!ENTITY url_tests_sanitize "http://feedparser.org/tests/wellformed/sanitize/">
+<!ENTITY url_tests_sanitize "&url_feedparser;tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
 <!ENTITY url_pythonunicode "http://docs.python.org/tut/node5.html#SECTION005130000000000000000">
@@ -1830,7 +1832,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 &example_atom10;
 &prompt;<userinput>d.bozo</userinput>
 <computeroutput>0</computeroutput>
-&prompt;<userinput>d = feedparser.parse('<ulink url="http://feedparser.org/tests/illformed/rss/aaa_illformed.xml"/>')</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_feedparser;tests/illformed/rss/aaa_illformed.xml"/>')</userinput>
 &prompt;<userinput>d.bozo</userinput>
 <computeroutput>1</computeroutput>
 &prompt;<userinput>d.bozo_exception</userinput>
@@ -2050,7 +2052,7 @@ auth = urllib2.HTTPBasicAuthHandler()
 # A single handler can contain passwords for multiple sites;
 # urllib2 will sort out which passwords get sent to which sites
 # based on the realm and host of the URL you're retrieving
-auth.add_password('BasicTest', 'feedparser.org', 'test', 'basic')
+auth.add_password('BasicTest', '&feedparser_domain;', 'test', 'basic')
 
 # Pass the authentication handler to the feed parser.
 # handlers is a list because there might be more than one
@@ -2067,7 +2069,7 @@ d = feedparser.parse('<ulink url="&url_example_basic_auth;">&url_example_basic_a
 <programlisting language="python">import urllib2, feedparser
 
 auth = urllib2.HTTPDigestAuthHandler()
-auth.add_password('DigestTest', 'feedparser.org', 'test', 'digest')
+auth.add_password('DigestTest', '&feedparser_domain;', 'test', 'digest')
 d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest_auth;</ulink>', \
                      handlers=[auth])</programlisting>
 </example>
