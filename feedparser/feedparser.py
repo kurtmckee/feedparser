@@ -569,7 +569,7 @@ class _FeedParserMixin:
         if _debug: sys.stderr.write('entering handle_entityref with %s\n' % ref)
         if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
             text = '&%s;' % ref
-        elif ref in self.entities:
+        elif ref in self.entities.keys():
             text = self.entities[ref]
             if text.startswith('&#') and text.endswith(';'):
                 return self.handle_entityref(text)
@@ -765,7 +765,7 @@ class _FeedParserMixin:
 
         # map win-1252 extensions to the proper code points
         if type(output) == type(u''):
-            output = u''.join([c in _cp1252 and _cp1252[c] or c for c in output])
+            output = u''.join([c in _cp1252.keys() and _cp1252[c] or c for c in output])
 
         # categories/tags/keywords/whatever are handled in _end_category
         if element == 'category':
@@ -839,7 +839,7 @@ class _FeedParserMixin:
         if filter(lambda e: e not in entitydefs.keys(),
             re.findall(r'&(\w+);',str)): return
 
-        return True
+        return 1
 
     def _mapToStandardPrefix(self, name):
         colonpos = name.find(':')
@@ -1649,7 +1649,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         else:
             value = unichr(int(ref))
 
-        if value in _cp1252:
+        if value in _cp1252.keys():
             self.pieces.append('&#%s;' % hex(ord(_cp1252[value]))[1:])
         else:
             self.pieces.append('&#%(ref)s;' % locals())
