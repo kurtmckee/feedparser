@@ -1,6 +1,7 @@
+import sys, re, time
+sys.path.insert(0, '.')
 import feedparser
 import feedparsertest
-import sys, re, time
 
 if feedparser._debug:
     sys.stderr.write('feedparser._debug == 1\n')
