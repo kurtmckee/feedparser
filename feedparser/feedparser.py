@@ -2284,7 +2284,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
        'overline-thickness', 'panose-1', 'path', 'pathLength', 'points',
        'preserveAspectRatio', 'r', 'repeatCount', 'repeatDur',
        'requiredExtensions', 'requiredFeatures', 'restart', 'rotate', 'rx',
-       'ry', 'slope', 'stemh', 'stemv', 'stop-color',
+       'ry', 'slope', 'stemh', 'stemv', 'stop-color', 'stop-opacity',
        'strikethrough-position', 'strikethrough-thickness', 'stroke',
        'stroke-dasharray', 'stroke-dashoffset', 'stroke-linecap',
        'stroke-linejoin', 'stroke-miterlimit', 'stroke-width',
