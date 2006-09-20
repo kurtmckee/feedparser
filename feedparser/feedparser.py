@@ -130,6 +130,18 @@ try:
 except:
     chardet = None
 
+# reversable htmlentitydefs mappings for Python 2.2
+try:
+  from htmlentitydefs import name2codepoint, codepoint2name
+except:
+  import htmlentitydefs
+  name2codepoint={}
+  codepoint2name={}
+  for (name,codepoint) in htmlentitydefs.entitydefs.iteritems():
+    if codepoint.startswith('&#'): codepoint=unichr(int(codepoint[2:-1]))
+    name2codepoint[name]=ord(codepoint)
+    codepoint2name[ord(codepoint)]=name
+
 # BeautifulSoup parser used for parsing microformats from embedded HTML content
 # http://www.crummy.com/software/BeautifulSoup/.  At the moment, it appears
 # that there is a version incompatibility, so the import is replaced with
@@ -574,20 +586,9 @@ class _FeedParserMixin:
             if text.startswith('&#') and text.endswith(';'):
                 return self.handle_entityref(text)
         else:
-            # entity resolution graciously donated by Aaron Swartz
-            def name2cp(k):
-                import htmlentitydefs
-                if hasattr(htmlentitydefs, 'name2codepoint'): # requires Python 2.3
-                    return htmlentitydefs.name2codepoint[k]
-                k = htmlentitydefs.entitydefs[k]
-                if k.startswith('&#x') and k.endswith(';'):
-                    return int(k[3:-1],16) # not in latin-1
-                if k.startswith('&#') and k.endswith(';'):
-                    return int(k[2:-1]) # not in latin-1
-                return ord(k)
-            try: name2cp(ref)
+            try: name2codepoint[ref]
             except KeyError: text = '&%s;' % ref
-            else: text = unichr(name2cp(ref)).encode('utf-8')
+            else: text = unichr(name2codepoint[ref]).encode('utf-8')
         self.elementstack[-1][2].append(text)
 
     def handle_data(self, text, escape=1):
@@ -672,9 +673,9 @@ class _FeedParserMixin:
             # only if all the remaining content is nested underneath it.
             # This means that the divs would be retained in the following:
             #    <div>foo</div><div>bar</div>
-            if pieces and len(pieces)>1 and not pieces[-1].strip():
+            while pieces and len(pieces)>1 and not pieces[-1].strip():
                 del pieces[-1]
-            if pieces and len(pieces)>1 and not pieces[0].strip():
+            while pieces and len(pieces)>1 and not pieces[0].strip():
                 del pieces[0]
             if pieces and (pieces[0] == '<div>' or pieces[0].startswith('<div ')) and pieces[-1]=='</div>':
                 depth = 0
@@ -1521,6 +1522,11 @@ if _XML_AVAILABLE:
 
             if prefix:
                 localname = prefix.lower() + ':' + localname
+            elif namespace and not qname: #Expat
+                for name,value in self.namespacesInUse.items():
+                     if name and value == namespace:
+                         localname = name + ':' + localname
+                         break
             if _debug: sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
 
             for (namespace, attrlocalname), attrvalue in attrs._attrs.items():
@@ -1546,6 +1552,11 @@ if _XML_AVAILABLE:
             prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
             if prefix:
                 localname = prefix + ':' + localname
+            elif namespace and not qname: #Expat
+                for name,value in self.namespacesInUse.items():
+                     if name and value == namespace:
+                         localname = name + ':' + localname
+                         break
             localname = str(localname).lower()
             self.unknown_endtag(localname)
 
@@ -1657,8 +1668,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def handle_entityref(self, ref):
         # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
         # Reconstruct the original entity reference.
-        import htmlentitydefs
-        if not hasattr(htmlentitydefs, 'name2codepoint') or htmlentitydefs.name2codepoint.has_key(ref):
+        if name2codepoint.has_key(ref):
             self.pieces.append('&%(ref)s;' % locals())
         else:
             self.pieces.append('&amp;%(ref)s' % locals())
