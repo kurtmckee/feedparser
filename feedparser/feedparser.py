@@ -1715,6 +1715,12 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
 #            self.updatepos(declstartpos, i)
             return None, -1
 
+    def convert_charref(self, name):
+        return '&#%s;' % name
+
+    def convert_entityref(self, name):
+        return '&%s;' % name
+
     def output(self):
         '''Return processed HTML as a single string'''
         return ''.join([str(p) for p in self.pieces])
