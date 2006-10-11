@@ -342,7 +342,11 @@ _cp1252 = {
 _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
     uri = _urifixer.sub(r'\1\3', uri)
-    return urlparse.urljoin(base, uri)
+    try:
+        return urlparse.urljoin(base, uri)
+    except:
+        uri = urlparse.urlunparse([urllib.quote(part) for part in urlparse.urlparse(uri)])
+        return urlparse.urljoin(base, uri)
 
 class _FeedParserMixin:
     namespaces = {'': '',
@@ -2636,7 +2640,7 @@ def registerDateHandler(func):
 # 0301-04-01), so we use templates instead.
 # Please note the order in templates is significant because we need a
 # greedy match.
-_iso8601_tmpl = ['YYYY-?MM-?DD', 'YYYY-MM', 'YYYY-?OOO',
+_iso8601_tmpl = ['YYYY-?MM-?DD', 'YYYY-0MM?-?DD', 'YYYY-MM', 'YYYY-?OOO',
                 'YY-?MM-?DD', 'YY-?OOO', 'YYYY', 
                 '-YY-?MM', '-OOO', '-YY',
                 '--MM-?DD', '--MM',

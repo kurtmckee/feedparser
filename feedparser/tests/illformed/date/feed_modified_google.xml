@@ -1,0 +1,9 @@
+<!--
+Description: parsed modified, google format (extra zero in month)
+Expect:      bozo and feed['modified_parsed'] == (2003, 12, 31, 10, 14, 55, 2, 365, 0)
+-->
+<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+
+<modified>2003-012-31T10:14:55+00:00</modified>
+
+</feed
