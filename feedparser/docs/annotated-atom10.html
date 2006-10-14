@@ -27,7 +27,7 @@
 </div>
 <div></div>
 </div>
-<a name="id4761488"></a><table class="caution" border="0" summary="">
+<a name="id2517562"></a><table class="caution" border="0" summary="">
 <tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/caution.png" alt="Caution" title="" width="24" height="24"></td></tr>
 <tr><td colspan="2" align="left" valign="top" width="99%">Even though many of these elements are required according to the specification, real-world feeds may be missing any element.  If an element is not present in the feed, it will not be present in the parsed results.  You should not rely on any particular element being present.</td></tr>
 </table>
@@ -36,13 +36,13 @@
 <pre class="programlisting ">
 &lt;?xml version="1.0" encoding="<a href="reference-encoding.html" title="encoding">utf-8</a>"?&gt;
 &lt;feed xmlns="<a href="reference-version.html" title="version">http://www.w3.org/2005/Atom</a>"
-      xml:base="http://example.org/"
-      xml:lang="en"&gt;
+      xml:base="<a href="resolving-relative-links.html" title="Relative Link Resolution">http://example.org/</a>"
+      xml:lang="<a href="reference-feed-title_detail.html#reference.feed.title_detail.language" title="feed.title_detail.language">en</a>"&gt;
   &lt;title type="<a href="reference-feed-title_detail.html#reference.feed.title_detail.type" title="feed.title_detail.type">text</a>"&gt;
     <a href="reference-feed-title.html" title="feed.title">Sample Feed</a>
   &lt;/title&gt;
   &lt;subtitle type="<a href="reference-feed-subtitle_detail.html#reference.feed.subtitle_detail.type" title="feed.subtitle_detail.type">html</a>"&gt;
-    <a href="reference-feed-subtitle.html" title="feed.subtitle">For documentation &lt;em&gt;only&lt;/em&gt;</a>
+    <a href="reference-feed-subtitle.html" title="feed.subtitle">For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;</a>
   &lt;/subtitle&gt;
   &lt;link rel="<a href="reference-feed-links.html#reference.feed.links.rel" title="feed.links[i].rel">alternate</a>"
         type="<a href="reference-feed-links.html#reference.feed.links.type" title="feed.links[i].type">html</a>"
@@ -51,7 +51,7 @@
         type="<a href="reference-feed-links.html#reference.feed.links.type" title="feed.links[i].type">application/atom+xml</a>"
         href="<a href="reference-feed-links.html#reference.feed.links.href" title="feed.links[i].href">http://www.example.org/atom10.xml</a>"/&gt;
   &lt;rights type="<a href="reference-feed-rights_detail.html#reference.feed.rights_detail.type" title="feed.rights_detail.type">html</a>"&gt;
-        <a href="reference-feed-rights.html" title="feed.rights">&lt;p&gt;Copyright 2005, Mark Pilgrim&lt;/p&gt;&lt;</a>
+        <a href="reference-feed-rights.html" title="feed.rights">&amp;lt;p&gt;Copyright 2005, Mark Pilgrim&amp;lt;/p&gt;</a>
   &lt;/rights&gt;
   &lt;generator uri="<a href="reference-feed-generator_detail.html#reference.feed.generator_detail.href" title="feed.generator_detail.href">http://example.org/generator/</a>"
              version="<a href="reference-feed-generator_detail.html#reference.feed.generator_detail.version" title="feed.generator_detail.version">4.0</a>"&gt;

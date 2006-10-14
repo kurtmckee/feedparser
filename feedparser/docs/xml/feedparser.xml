@@ -2154,13 +2154,13 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <programlisting>
 &lt;?xml version="1.0" encoding="<link linkend="reference.encoding">utf-8</link>"?>
 &lt;feed xmlns="<link linkend="reference.version">http://www.w3.org/2005/Atom</link>"
-      xml:base="http://example.org/"
-      xml:lang="en">
+      xml:base="<link linkend="advanced.base">http://example.org/</link>"
+      xml:lang="<link linkend="reference.feed.title_detail.language">en</link>">
   &lt;title type="<link linkend="reference.feed.title_detail.type">text</link>">
     <link linkend="reference.feed.title">Sample Feed</link>
   &lt;/title>
   &lt;subtitle type="<link linkend="reference.feed.subtitle_detail.type">html</link>">
-    <link linkend="reference.feed.subtitle">For documentation &lt;em&gt;only&lt;/em&gt;</link>
+    <link linkend="reference.feed.subtitle">For documentation &amp;lt;em&amp;gt;only&amp;lt;/em&amp;gt;</link>
   &lt;/subtitle>
   &lt;link rel="<link linkend="reference.feed.links.rel">alternate</link>"
         type="<link linkend="reference.feed.links.type">html</link>"
@@ -2169,7 +2169,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
         type="<link linkend="reference.feed.links.type">application/atom+xml</link>"
         href="<link linkend="reference.feed.links.href">http://www.example.org/atom10.xml</link>"/>
   &lt;rights type="<link linkend="reference.feed.rights_detail.type">html</link>">
-        <link linkend="reference.feed.rights">&lt;p>Copyright 2005, Mark Pilgrim&lt;/p>&lt;</link>
+        <link linkend="reference.feed.rights">&amp;lt;p>Copyright 2005, Mark Pilgrim&amp;lt;/p></link>
   &lt;/rights>
   &lt;generator uri="<link linkend="reference.feed.generator_detail.href">http://example.org/generator/</link>"
              version="<link linkend="reference.feed.generator_detail.version">4.0</link>">
