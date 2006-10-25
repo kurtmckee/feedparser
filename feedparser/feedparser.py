@@ -1360,6 +1360,7 @@ class _FeedParserMixin:
             self._start_content(attrsD)
         else:
             self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
+    _start_dc_description = _start_description
 
     def _start_abstract(self, attrsD):
         self.pushContent('description', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
@@ -1371,6 +1372,7 @@ class _FeedParserMixin:
             value = self.popContent('description')
         self._summaryKey = None
     _end_abstract = _end_description
+    _end_dc_description = _end_description
 
     def _start_info(self, attrsD):
         self.pushContent('info', attrsD, 'text/plain', 1)
