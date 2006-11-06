@@ -3254,7 +3254,7 @@ def _stripDoctype(data):
 
     return version, data, dict(replacement and safe_pattern.findall(replacement))
     
-def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[], resp_headers=None):
+def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[]):
     '''Parse a feed from a URL, file, stream, or string'''
     result = FeedParserDict()
     result['feed'] = FeedParserDict()
@@ -3263,9 +3263,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['bozo'] = 0
     if type(handlers) == types.InstanceType:
         handlers = [handlers]
-    if resp_headers:
-       f = None
-       data = url_file_stream_or_string
     try:
         f = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers)
         data = f.read()
@@ -3310,8 +3307,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['status'] = f.status
     if hasattr(f, 'headers'):
         result['headers'] = f.headers.dict
-    if resp_headers:
-        result['headers'] = resp_headers 
     if hasattr(f, 'close'):
         f.close()
 
