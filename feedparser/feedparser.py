@@ -3021,6 +3021,21 @@ _additional_timezones = {'AT': -400, 'ET': -500, 'CT': -600, 'MT': -700, 'PT': -
 rfc822._timezones.update(_additional_timezones)
 registerDateHandler(_parse_date_rfc822)    
 
+def _parse_date_perforce(aDateString):
+	"""parse a date in yyyy/mm/dd hh:mm:ss TTT format"""
+	# Fri, 2006/09/15 08:19:53 EDT
+	_my_date_pattern = re.compile( \
+		r'(\w{,3}), (\d{,4})/(\d{,2})/(\d{2}) (\d{,2}):(\d{2}):(\d{2}) (\w{,3})')
+
+	dow, year, month, day, hour, minute, second, tz = \
+		_my_date_pattern.search(aDateString).groups()
+	months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+	dateString = "%s, %s %s %s %s:%s:%s %s" % (dow, day, months[int(month) - 1], year, hour, minute, second, tz)
+	tm = rfc822.parsedate_tz(dateString)
+	if tm:
+		return time.gmtime(rfc822.mktime_tz(tm))
+registerDateHandler(_parse_date_perforce)
+
 def _parse_date(dateString):
     '''Parses a variety of date formats into a 9-tuple in GMT'''
     for handler in _date_handlers:

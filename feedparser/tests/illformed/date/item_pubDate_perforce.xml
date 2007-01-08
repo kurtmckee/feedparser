@@ -1,0 +1,11 @@
+<!--
+Description: parsed item pubDate - perforce
+Expect:      bozo and entries[0]['date_parsed'] == (2006, 9, 15, 12, 19, 53, 4, 258, 0)
+-->
+<rss version="2.0">
+<channel>
+<item>
+<pubDate>Fri, 2006/09/15 08:19:53 EDT</pubDate>
+</item>
+</channel>
+</rss
