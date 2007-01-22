@@ -65,6 +65,14 @@ TIDY_MARKUP = 0
 # if TIDY_MARKUP = 1
 PREFERRED_TIDY_INTERFACES = ["uTidy", "mxTidy"]
 
+# If you want feedparser to automatically resolve all relative URIs, set this
+# to 1.
+RESOLVE_RELATIVE_URIS = 1
+
+# If you want feedparser to automatically sanitize all potentially unsafe
+# HTML content, set this to 1.
+SANITIZE_HTML = 1
+
 # ---------- required modules (should come with any Python distribution) ----------
 import sgmllib, re, sys, copy, urlparse, time, rfc822, types, cgi, urllib, urllib2
 try:
@@ -732,7 +740,7 @@ class _FeedParserMixin:
 
         is_htmlish = self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types
         # resolve relative URIs within embedded markup
-        if is_htmlish:
+        if is_htmlish and RESOLVE_RELATIVE_URIS:
             if element in self.can_contain_relative_uris:
                 output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
                 
@@ -753,7 +761,7 @@ class _FeedParserMixin:
                     self._getContext()['vcard'] = vcard
         
         # sanitize embedded markup
-        if is_htmlish:
+        if is_htmlish and SANITIZE_HTML:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
 
