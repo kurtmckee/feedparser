@@ -4277,7 +4277,7 @@ xxx
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/item/creativeCommons:license</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/cc:license/@rdf:resource</literal></para></listitem>
-<listitem><para><literal>/atom10:feed/atom:entry/atom10:link[@rel="license"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[@rel="license"]/@href</literal></para></listitem>
 </itemizedlist>
 </section>
 
