@@ -2623,9 +2623,9 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 &isrelativelink;
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom10:feed/atom10:link[rel="alternate"]/@href</literal></para></listitem>
-<listitem><para><literal>/atom10:feed/atom10:link[@not rel]/@href</literal></para></listitem>
-<listitem><para><literal>/atom03:feed/atom03:link[rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:link[@rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:link[not(@rel)]/@href</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:link[@rel="alternate"]/@href</literal></para></listitem>
 <listitem><para><literal>/rss/channel/link</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:channel/rdf:link</literal></para></listitem>
 </itemizedlist>
@@ -3397,6 +3397,7 @@ xxx
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/creativeCommons:license</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/cc:license/@rdf:resource</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:link[@rel="license"]/@href</literal></para></listitem>
 </itemizedlist>
 </section>
 
@@ -3513,9 +3514,9 @@ xxx
 <para>In other words, <emphasis>you can always use <varname>d.entries[i].link</varname> to get the entry link</emphasis>, regardless of how the feed is actually structured.</para>
 <itemizedlist role="reference-from">
 <title>Comes from</title>
-<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[rel="alternate"]/@href</literal></para></listitem>
-<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[not @rel]/@href</literal></para></listitem>
-<listitem><para><literal>/atom03:feed/atom03:entry/atom03:link[rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[@rel="alternate"]/@href</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[not(@rel)]/@href</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:link[@rel="alternate"]/@href</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/link</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/rdf:link</literal></para></listitem>
 </itemizedlist>
@@ -4276,6 +4277,7 @@ xxx
 <title>Comes from</title>
 <listitem><para><literal>/rss/channel/item/creativeCommons:license</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/cc:license/@rdf:resource</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom:entry/atom10:link[@rel="license"]/@href</literal></para></listitem>
 </itemizedlist>
 </section>
 

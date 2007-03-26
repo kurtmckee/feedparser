@@ -229,6 +229,10 @@ class FeedParserDict(UserDict):
         if key == 'enclosures':
             norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
             return [norel(link) for link in UserDict.__getitem__(self, 'links') if link['rel']=='enclosure']
+        if key == 'license':
+            for link in UserDict.__getitem__(self, 'links'):
+                if link['rel']=='license' and link.has_key('href'):
+                    return link['href']
         if key == 'categories':
             return [(tag['scheme'], tag['term']) for tag in UserDict.__getitem__(self, 'tags')]
         realkey = self.keymap.get(key, key)
@@ -424,7 +428,7 @@ class _FeedParserMixin:
 }
     _matchnamespaces = {}
 
-    can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'href', 'comments', 'license', 'icon', 'logo']
+    can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'href', 'comments', 'icon', 'logo']
     can_contain_relative_uris = ['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description']
     can_contain_dangerous_markup = ['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description']
     html_types = ['text/html', 'application/xhtml+xml']
@@ -1247,17 +1251,26 @@ class _FeedParserMixin:
         self._save('expired_parsed', _parse_date(self.pop('expired')))
 
     def _start_cc_license(self, attrsD):
-        self.push('license', 1)
+        context = self._getContext()
         value = self._getAttribute(attrsD, 'rdf:resource')
-        if value:
-            self.elementstack[-1][2].append(value)
-        self.pop('license')
+        attrsD = FeedParserDict()
+        attrsD['rel']='license'
+        if value: attrsD['href']=value
+        context.setdefault('links', []).append(attrsD)
         
     def _start_creativecommons_license(self, attrsD):
         self.push('license', 1)
+    _start_creativeCommons_license = _start_creativecommons_license
 
     def _end_creativecommons_license(self):
-        self.pop('license')
+        value = self.pop('license')
+        context = self._getContext()
+        attrsD = FeedParserDict()
+        attrsD['rel']='license'
+        if value: attrsD['href']=value
+        context.setdefault('links', []).append(attrsD)
+        del context['license']
+    _end_creativeCommons_license = _end_creativecommons_license
 
     def _addXFN(self, relationships, href, name):
         context = self._getContext()
@@ -3506,7 +3519,8 @@ class TextSerializer(Serializer):
         
 class PprintSerializer(Serializer):
     def write(self, stream=sys.stdout):
-        stream.write(self.results['href'] + '\n\n')
+        if self.results.has_key('href'):
+            stream.write(self.results['href'] + '\n\n')
         from pprint import pprint
         pprint(self.results, stream)
         stream.write('\n')

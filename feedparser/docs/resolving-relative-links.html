@@ -117,7 +117,7 @@
 <p>If no <tt class="literal">Content-Location</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header is present, the <acronym title="Uniform Resource Locator">URL</acronym> used to retrieve the feed itself is the default base <acronym title="Uniform Resource Identifier">URI</acronym> for all relative links within the feed.  If the feed was retrieved via an <acronym title="Hypertext Transfer Protocol">HTTP</acronym> redirect (any <acronym title="Hypertext Transfer Protocol">HTTP</acronym> 3xx status code), then the final <acronym title="Uniform Resource Locator">URL</acronym> of the feed is the default base <acronym title="Uniform Resource Identifier">URI</acronym>.</p>
 <p>For example, an <tt class="sgmltag-attribute">xml:base</tt> on the root-level element sets the base <acronym title="Uniform Resource Identifier">URI</acronym> for all <acronym title="Uniform Resource Identifier">URI</acronym>s in the feed.</p>
 <div class="example">
-<a name="id2513526" class="skip" href="#id2513526" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: <tt class="sgmltag-attribute">xml:base</tt> on the root-level element</h3>
+<a name="id2518034" class="skip" href="#id2518034" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: <tt class="sgmltag-attribute">xml:base</tt> on the root-level element</h3>
 <pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse("<a href="http://feedparser.org/docs/examples/base.xml">http://feedparser.org/docs/examples/base.xml</a>")</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.link</span>
@@ -127,7 +127,7 @@
 </div>
 <p>An <tt class="sgmltag-attribute">xml:base</tt> attribute on an <tt class="sgmltag-element">&lt;entry&gt;</tt> overrides the <tt class="sgmltag-attribute">xml:base</tt> on the parent <tt class="sgmltag-element">&lt;feed&gt;</tt>.</p>
 <div class="example">
-<a name="id2513632" class="skip" href="#id2513632" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Overriding <tt class="sgmltag-attribute">xml:base</tt> on an <tt class="sgmltag-element">&lt;entry&gt;</tt></h3>
+<a name="id2518140" class="skip" href="#id2518140" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Overriding <tt class="sgmltag-attribute">xml:base</tt> on an <tt class="sgmltag-element">&lt;entry&gt;</tt></h3>
 <pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse("<a href="http://feedparser.org/docs/examples/base.xml">http://feedparser.org/docs/examples/base.xml</a>")</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].link</span>
@@ -137,7 +137,7 @@
 </div>
 <p>An <tt class="sgmltag-attribute">xml:base</tt> on <tt class="sgmltag-element">&lt;content&gt;</tt> overrides the <tt class="sgmltag-attribute">xml:base</tt> on the parent <tt class="sgmltag-element">&lt;entry&gt;</tt>.  In addition, whatever the base <acronym title="Uniform Resource Identifier">URI</acronym> is for the <tt class="sgmltag-element">&lt;content&gt;</tt> element (whether defined directly on the <tt class="sgmltag-element">&lt;content&gt;</tt> element, or inherited from the parent element) is used as the base <acronym title="Uniform Resource Identifier">URI</acronym> for the embedded <acronym title="HyperText Markup Language">HTML</acronym> or <acronym title="Extensible HyperText Markup Language">XHTML</acronym> markup within the <tt class="sgmltag-element">content</tt>.</p>
 <div class="example">
-<a name="id2513774" class="skip" href="#id2513774" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Relative links within embedded <acronym title="HyperText Markup Language">HTML</acronym></h3>
+<a name="id2518281" class="skip" href="#id2518281" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Relative links within embedded <acronym title="HyperText Markup Language">HTML</acronym></h3>
 <pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse("<a href="http://feedparser.org/docs/examples/base.xml">http://feedparser.org/docs/examples/base.xml</a>")</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].content[0].value</span>
@@ -147,7 +147,7 @@
 </div>
 <p>The <tt class="sgmltag-attribute">xml:base</tt> affects other attributes in the element in which it is declared.</p>
 <div class="example">
-<a name="id2513849" class="skip" href="#id2513849" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: <tt class="sgmltag-attribute">xml:base</tt> and sibling attributes</h3>
+<a name="id2518357" class="skip" href="#id2518357" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: <tt class="sgmltag-attribute">xml:base</tt> and sibling attributes</h3>
 <pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse("<a href="http://feedparser.org/docs/examples/base.xml">http://feedparser.org/docs/examples/base.xml</a>")</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.entries[0].links[1].rel</span>
@@ -157,7 +157,7 @@
 </div>
 <p>If no <tt class="sgmltag-attribute">xml:base</tt> is specified on the root-level element, the default base <acronym title="Uniform Resource Identifier">URI</acronym> is given in the <tt class="literal">Content-Location</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header.  This can still be overridden by any child element that declares an <tt class="sgmltag-attribute">xml:base</tt> attribute.</p>
 <div class="example">
-<a name="id2513963" class="skip" href="#id2513963" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: <tt class="literal">Content-Location</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header</h3>
+<a name="id2518470" class="skip" href="#id2518470" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: <tt class="literal">Content-Location</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header</h3>
 <pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse("<a href="http://feedparser.org/docs/examples/http_base.xml">http://feedparser.org/docs/examples/http_base.xml</a>")</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.link</span>
@@ -167,7 +167,7 @@
 </div>
 <p>Finally, if no root-level <tt class="sgmltag-attribute">xml:base</tt> is declared, and no <tt class="literal">Content-Location</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header is present, the <acronym title="Uniform Resource Locator">URL</acronym> of the feed itself is the default base <acronym title="Uniform Resource Identifier">URI</acronym>.  Again, this can still be overridden by any element that declares an <tt class="sgmltag-attribute">xml:base</tt> attribute.</p>
 <div class="example">
-<a name="id2514092" class="skip" href="#id2514092" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Feed <acronym title="Uniform Resource Locator">URL</acronym> as default base <acronym title="Uniform Resource Identifier">URI</acronym></h3>
+<a name="id2518599" class="skip" href="#id2518599" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Feed <acronym title="Uniform Resource Locator">URL</acronym> as default base <acronym title="Uniform Resource Identifier">URI</acronym></h3>
 <pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse("<a href="http://feedparser.org/docs/examples/no_base.xml">http://feedparser.org/docs/examples/no_base.xml</a>")</span>
 <tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d.feed.link</span>
