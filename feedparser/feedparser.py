@@ -464,6 +464,7 @@ class _FeedParserMixin:
         self.langstack = []
         self.baseuri = baseuri or ''
         self.lang = baselang or None
+        self.svgOK = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
 
@@ -518,6 +519,7 @@ class _FeedParserMixin:
                     attrs.append(('xmlns',namespace))
                 if tag=='svg' and namespace=='http://www.w3.org/2000/svg':
                     attrs.append(('xmlns',namespace))
+            if tag == 'svg': self.svgOK = 1
             return self.handle_data('<%s%s>' % (tag, self.strattrs(attrs)), escape=0)
 
         # match namespaces
@@ -553,6 +555,7 @@ class _FeedParserMixin:
         prefix = self.namespacemap.get(prefix, prefix)
         if prefix:
             prefix = prefix + '_'
+        if tag == 'svg': self.svgOK = 0
 
         # call special handler (if defined) or default handler
         methodname = '_end_' + prefix + suffix
@@ -1362,12 +1365,13 @@ class _FeedParserMixin:
             self._save('link', value)
 
     def _start_title(self, attrsD):
-        if self.incontent: return self.unknown_starttag('title', attrsD)
+        if self.svgOK: return self.unknown_starttag('title', attrsD)
         self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
     _start_media_title = _start_title
 
     def _end_title(self):
+        if self.svgOK: return
         value = self.popContent('title')
         if not value: return
         context = self._getContext()
