@@ -556,7 +556,7 @@ class _FeedParserMixin:
         prefix = self.namespacemap.get(prefix, prefix)
         if prefix:
             prefix = prefix + '_'
-        if tag == 'svg': self.svgOK = 0
+        if suffix == 'svg': self.svgOK = 0
 
         # call special handler (if defined) or default handler
         methodname = '_end_' + prefix + suffix
@@ -1366,7 +1366,7 @@ class _FeedParserMixin:
             self._save('link', value)
 
     def _start_title(self, attrsD):
-        if self.svgOK: return self.unknown_starttag('title', attrsD)
+        if self.svgOK: return self.unknown_starttag('title', attrsD.items())
         self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
     _start_media_title = _start_title
