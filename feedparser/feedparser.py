@@ -12,7 +12,7 @@ Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
 __version__ = "4.2-pre-" + "$Revision$"[11:16] + "-cvs"
-__license__ = """Copyright (c) 2002-2006, Mark Pilgrim, All rights reserved.
+__license__ = """Copyright (c) 2002-2007, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
@@ -39,7 +39,8 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "John Beimler <http://john.beimler.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com/>",
-                    "Kevin Marks <http://epeus.blogspot.com/>"]
+                    "Kevin Marks <http://epeus.blogspot.com/>",
+                    "Sam Ruby <http://intertwingly.net/>"]
 _debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
@@ -3785,4 +3786,3 @@ if __name__ == '__main__':
 #  currently supports rel-tag (maps to 'tags'), rel-enclosure (maps to
 #  'enclosures'), XFN links within content elements (maps to 'xfn'),
 #  and hCard (parses as vCard); bug [ 1481975 ] Misencoded utf-8/win-1252
-

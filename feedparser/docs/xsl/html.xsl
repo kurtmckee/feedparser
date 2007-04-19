@@ -7,7 +7,7 @@
 <xsl:param name="html.stylesheet">../css/feedparser.css</xsl:param>
 
 <xsl:param name="using.chunker" select="1"/>
-<xsl:param name="base.dir"></xsl:param>
+<xsl:param name="base.dir">www/docs/</xsl:param>
 <xsl:param name="admon.graphics.path">images/</xsl:param>
 <xsl:param name="callout.graphics.path">images/callouts/</xsl:param>
 <xsl:param name="chunk.first.sections" select="1"/>

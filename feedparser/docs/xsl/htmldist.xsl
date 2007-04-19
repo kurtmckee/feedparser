@@ -64,10 +64,10 @@
 
 <div class="s" id="quickSummary">
 <ul>
-  <li class="li1"><a href="http://sourceforge.net/projects/feedparser/"><span>Download</span></a> &#183;</li>
+  <li class="li1"><a href="http://code.google.com/p/feedparser/downloads/list"><span>Download</span></a> &#183;</li>
   <li class="li2"><a href="http://feedparser.org/docs/"><span>Documentation</span></a> &#183;</li>
   <li class="li3"><a href="http://feedparser.org/tests/"><span>Unit tests</span></a> &#183;</li>
-  <li class="li4"><a href="http://sourceforge.net/tracker/?func=browse&amp;group_id=112328&amp;atid=661937"><span>Report a bug</span></a></li>
+  <li class="li4"><a href="http://code.google.com/p/feedparser/issues/list"><span>Report a bug</span></a></li>
 </ul>
 </div> <!-- quickSummary -->
 </div>

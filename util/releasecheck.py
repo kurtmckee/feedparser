@@ -1,5 +1,5 @@
-import sys, re, time
-sys.path.insert(0, '.')
+import sys, re, time, os
+sys.path.insert(0, os.path.join(os.getcwd(), 'feedparser'))
 import feedparser
 import feedparsertest
 
@@ -33,7 +33,7 @@ if not feedparser_version:
     sys.exit(1)
 
 docs_re = re.compile(r'^<!ENTITY\s*feedparser_version\s*["\'](.*?)["\']>$')
-for line in file('docs/xml/feedparser.xml'):
+for line in file('feedparser/docs/xml/feedparser.xml'):
     m = docs_re.search(line)
     if m:
         docs_version = m.group(1)
@@ -43,7 +43,7 @@ if not docs_version:
     sys.exit(1)
 
 setup_re = re.compile(r'^\s*version\s*=\s*["\'](.*?)["\']\s*,\s*$')
-for line in file('setup.py'):
+for line in file('feedparser/setup.py'):
     m = setup_re.search(line)
     if m:
         setup_version = m.group(1)
@@ -77,7 +77,7 @@ if setup_version != docs_version:
     sys.exit(1)
 
 date_re = re.compile(r'^<!ENTITY\s*fileversion\s*["\'](.*?)["\']>$')
-for line in file('docs/xml/version.xml'):
+for line in file('feedparser/docs/xml/version.xml'):
     m = date_re.search(line)
     if m:
         docs_date = m.group(1)

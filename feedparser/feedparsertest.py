@@ -1,7 +1,7 @@
 """$Id$"""
 
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
-__license__ = """Copyright (c) 2004-2005, Mark Pilgrim, All rights reserved.
+__license__ = """Copyright (c) 2004-2007, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
