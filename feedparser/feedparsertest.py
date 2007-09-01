@@ -90,6 +90,7 @@ class FeedParserTestServer(Thread):
     while self.requests:
       self.httpd.handle_request()
       self.requests -= 1
+    self.ready = 0
 
 #---------- dummy test case class (test methods are added dynamically) ----------
 
@@ -219,7 +220,8 @@ if __name__ == "__main__":
         # threading, self-terminating HTTP servers, and unittest is really
         # quite flaky.  Just what you want in a testing framework, no?
         httpd.requests = 0
-        urllib.urlopen('http://127.0.0.1:8097/tests/wellformed/rss/aaa_wellformed.xml').read()
+        if httpd.ready:
+          urllib.urlopen('http://127.0.0.1:8097/tests/wellformed/rss/aaa_wellformed.xml').read()
       httpd.join(0)
 
 """
