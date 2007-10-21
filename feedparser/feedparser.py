@@ -502,6 +502,7 @@ class _FeedParserMixin:
 
         # track inline content
         if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', 'xml').endswith('xml'):
+            if tag in ['xhtml:div', 'div']: return # typepad does this 10/2007
             # element declared itself as escaped markup, but it isn't really
             self.contentparams['type'] = 'application/xhtml+xml'
         if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
@@ -569,6 +570,7 @@ class _FeedParserMixin:
         # track inline content
         if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', 'xml').endswith('xml'):
             # element declared itself as escaped markup, but it isn't really
+            if tag in ['xhtml:div', 'div']: return # typepad does this 10/2007
             self.contentparams['type'] = 'application/xhtml+xml'
         if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
             tag = tag.split(':')[-1]
