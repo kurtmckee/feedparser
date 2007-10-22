@@ -2294,7 +2294,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'value', 'variable', 'volume', 'vspace', 'vrml', 'width', 'wrap',
       'xml:lang']
 
-    unacceptable_elements_with_end_tag = ['script', 'applet']
+    unacceptable_elements_with_end_tag = ['script', 'applet', 'style']
 
     acceptable_css_properties = ['azimuth', 'background-color',
       'border-bottom-color', 'border-collapse', 'border-color',
