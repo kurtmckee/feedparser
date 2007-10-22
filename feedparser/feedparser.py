@@ -478,6 +478,11 @@ class _FeedParserMixin:
         # track xml:base and xml:lang
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
+        if type(baseuri) != type(u''):
+            try:
+                baseuri = unicode(baseuri, self.encoding)
+            except:
+                baseuri = unicode(baseuri, 'iso-8859-1')
         self.baseuri = _urljoin(self.baseuri, baseuri)
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang == '':
