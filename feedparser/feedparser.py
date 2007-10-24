@@ -3297,11 +3297,15 @@ def _stripDoctype(data):
     rss_version may be 'rss091n' or None
     stripped_data is the same XML document, minus the DOCTYPE
     '''
-    entity_pattern = re.compile(r'<!ENTITY([^>]*?)>', re.MULTILINE)
-    entity_results=entity_pattern.findall(data)
-    data = entity_pattern.sub('', data)
-    doctype_pattern = re.compile(r'<!DOCTYPE([^>]*?)>', re.MULTILINE)
-    doctype_results = doctype_pattern.findall(data)
+    start = re.search('<\w',data)
+    start = start and start.start() or -1
+    head,data = data[:start+1], data[start+1:]
+    
+    entity_pattern = re.compile(r'^\s*<!ENTITY([^>]*?)>', re.MULTILINE)
+    entity_results=entity_pattern.findall(head)
+    head = entity_pattern.sub('', head)
+    doctype_pattern = re.compile(r'^\s*<!DOCTYPE([^>]*?)>', re.MULTILINE)
+    doctype_results = doctype_pattern.findall(head)
     doctype = doctype_results and doctype_results[0] or ''
     if doctype.lower().count('netscape'):
         version = 'rss091n'
@@ -3315,7 +3319,7 @@ def _stripDoctype(data):
        safe_entities=filter(lambda e: safe_pattern.match(e),entity_results)
        if safe_entities:
            replacement='<!DOCTYPE feed [\n  <!ENTITY %s>\n]>' % '>\n  <!ENTITY '.join(safe_entities)
-    data = doctype_pattern.sub(replacement, data)
+    data = doctype_pattern.sub(replacement, head) + data
 
     return version, data, dict(replacement and safe_pattern.findall(replacement))
     
