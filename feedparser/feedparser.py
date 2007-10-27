@@ -2417,7 +2417,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                 acceptable_attributes = self.svg_attributes
                 tag = self.svg_elem_map.get(tag,tag)
                 keymap = self.svg_attr_map
-            else:
+            elif not tag in self.acceptable_elements:
                 return
 
         # declare xlink namespace, if needed
