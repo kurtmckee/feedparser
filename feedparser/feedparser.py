@@ -466,6 +466,7 @@ class _FeedParserMixin:
         self.baseuri = baseuri or ''
         self.lang = baselang or None
         self.svgOK = 0
+        self.hasTitle = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
 
@@ -801,6 +802,9 @@ class _FeedParserMixin:
         # categories/tags/keywords/whatever are handled in _end_category
         if element == 'category':
             return output
+
+        if element == 'title' and self.hasTitle:
+            return output
         
         # store output in appropriate place(s)
         if self.inentry and not self.insource:
@@ -967,6 +971,7 @@ class _FeedParserMixin:
         context = self._getContext()
         context.setdefault('image', FeedParserDict())
         self.inimage = 1
+        self.hasTitle = 0
         self.push('image', 0)
             
     def _end_image(self):
@@ -977,6 +982,7 @@ class _FeedParserMixin:
         context = self._getContext()
         context.setdefault('textinput', FeedParserDict())
         self.intextinput = 1
+        self.hasTitle = 0
         self.push('textinput', 0)
     _start_textInput = _start_textinput
     
@@ -1189,6 +1195,7 @@ class _FeedParserMixin:
         self.push('item', 0)
         self.inentry = 1
         self.guidislink = 0
+        self.hasTitle = 0
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1383,8 +1390,12 @@ class _FeedParserMixin:
         value = self.popContent('title')
         if not value: return
         context = self._getContext()
+        self.hasTitle = 1
     _end_dc_title = _end_title
-    _end_media_title = _end_title
+
+    def _end_media_title(self):
+        self._end_title()
+        self.hasTitle = 0
 
     def _start_description(self, attrsD):
         context = self._getContext()
