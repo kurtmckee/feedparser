@@ -1485,6 +1485,7 @@ class _FeedParserMixin:
             
     def _start_source(self, attrsD):
         self.insource = 1
+        self.hasTitle = 0
 
     def _end_source(self):
         self.insource = 0
