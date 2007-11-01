@@ -1394,8 +1394,9 @@ class _FeedParserMixin:
     _end_dc_title = _end_title
 
     def _end_media_title(self):
+        hasTitle = self.hasTitle
         self._end_title()
-        self.hasTitle = 0
+        self.hasTitle = hasTitle
 
     def _start_description(self, attrsD):
         context = self._getContext()
