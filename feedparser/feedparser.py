@@ -568,6 +568,7 @@ class _FeedParserMixin:
         # call special handler (if defined) or default handler
         methodname = '_end_' + prefix + suffix
         try:
+            if self.svgOK: raise AttributeError()
             method = getattr(self, methodname)
             method()
         except AttributeError:
