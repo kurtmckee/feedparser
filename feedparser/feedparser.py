@@ -2334,25 +2334,25 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       '\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$')
 
     mathml_elements = ['annotation', 'annotation-xml', 'maction', 'math',
-      'merror', 'mfrac', 'mi', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded',
+      'merror', 'mfenced', 'mfrac', 'mi', 'mmultiscripts', 'mn', 'mo', 'mover', 'mpadded',
       'mphantom', 'mprescripts', 'mroot', 'mrow', 'mspace', 'msqrt', 'mstyle',
       'msub', 'msubsup', 'msup', 'mtable', 'mtd', 'mtext', 'mtr', 'munder',
       'munderover', 'none', 'semantics']
 
     mathml_attributes = ['actiontype', 'align', 'columnalign', 'columnalign',
-      'columnalign', 'columnlines', 'columnspacing', 'columnspan', 'depth',
+      'columnalign', 'close', 'columnlines', 'columnspacing', 'columnspan', 'depth',
       'display', 'displaystyle', 'encoding', 'equalcolumns', 'equalrows',
       'fence', 'fontstyle', 'fontweight', 'frame', 'height', 'linethickness',
       'lspace', 'mathbackground', 'mathcolor', 'mathvariant', 'mathvariant',
-      'maxsize', 'minsize', 'other', 'rowalign', 'rowalign', 'rowalign',
+      'maxsize', 'minsize', 'open', 'other', 'rowalign', 'rowalign', 'rowalign',
       'rowlines', 'rowspacing', 'rowspan', 'rspace', 'scriptlevel', 'selection',
-      'separator', 'stretchy', 'width', 'width', 'xlink:href', 'xlink:show',
-      'xlink:type', 'xmlns', 'xmlns:xlink']
+      'separator', 'separators', 'stretchy', 'width', 'width', 'xlink:href',
+      'xlink:show', 'xlink:type', 'xmlns', 'xmlns:xlink']
 
     # svgtiny - foreignObject + linearGradient + radialGradient + stop
     svg_elements = ['a', 'animate', 'animateColor', 'animateMotion',
-      'animateTransform', 'circle', 'defs', 'desc', 'ellipse', 'font-face',
-      'font-face-name', 'font-face-src', 'g', 'glyph', 'hkern', 
+      'animateTransform', 'circle', 'defs', 'desc', 'ellipse', 'foreignObject',
+      'font-face', 'font-face-name', 'font-face-src', 'g', 'glyph', 'hkern', 
       'linearGradient', 'line', 'marker', 'metadata', 'missing-glyph', 'mpath',
       'path', 'polygon', 'polyline', 'radialGradient', 'rect', 'set', 'stop',
       'svg', 'switch', 'text', 'title', 'tspan', 'use']
