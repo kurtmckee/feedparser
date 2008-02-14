@@ -12,7 +12,7 @@ Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
 __version__ = "4.2-pre-" + "$Revision$"[11:14] + "-svn"
-__license__ = """Copyright (c) 2002-2007, Mark Pilgrim, All rights reserved.
+__license__ = """Copyright (c) 2002-2008, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
