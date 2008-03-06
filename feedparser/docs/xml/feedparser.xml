@@ -18,11 +18,14 @@
 <!ENTITY continuationprompt "<prompt>...     </prompt>">
 <!ENTITY xml "<acronym condition='Extensible Markup Language'>XML</acronym>">
 <!ENTITY html "<acronym condition='HyperText Markup Language'>HTML</acronym>">
+<!ENTITY html5 "&html; 5">
 <!ENTITY xhtml "<acronym condition='Extensible HyperText Markup Language'>XHTML</acronym>">
 <!ENTITY http "<acronym condition='Hypertext Transfer Protocol'>HTTP</acronym>">
 <!ENTITY https "<acronym>HTTPS</acronym>">
 <!ENTITY mime "<acronym>MIME</acronym>">
 <!ENTITY css "<acronym condition='Cascading Style Sheets'>CSS</acronym>">
+<!ENTITY svg "<acronym condition='Scalable Vector Graphics'>SVG</acronym>">
+<!ENTITY mathml "<acronym condition='Mathematical Markup Language'>MathML</acronym>">
 <!ENTITY rfc "<acronym condition='Request For Comments'>RFC</acronym>">
 <!ENTITY rfc822 "&rfc; 822">
 <!ENTITY rfc3339 "&rfc; 3339">
@@ -954,10 +957,10 @@ d = feedparser.parse(...)</programlisting>
 
 <section id="advanced.sanitization">
 <?dbhtml filename="html-sanitization.html"?>
-<title>&html; Sanitization</title>
+<title>Sanitization</title>
 <abstract>
 <title/>
-<para>Many feed elements may contain &html; markup, and many feed aggregators use a web browser (or browser component) to display content.  By default, &feedparser; sanitizes &html; markup in several elements, removing &html; tags and attributes that could introduce &javascript; or other security risks.</para>
+<para>Most feeds embed &html; markup within feed elements.  Some feeds even embed other types of markup, such as &svg; or &mathml;.  Since many feed aggregators use a web browser (or browser component) to display content, &feedparser; sanitizes embedded markup to remove things that could pose security risks.</para>
 </abstract>
 <para>These elements are sanitized by default:</para>
 <itemizedlist>
@@ -970,35 +973,50 @@ d = feedparser.parse(...)</programlisting>
 <listitem><para><xref linkend="reference.entry.content"/></para></listitem>
 </itemizedlist>
 
-<para>The following &html; tags are allowed by default (all others are stripped):
+<section id="advanced.sanitization.html">
+<title>&html; Sanitization</title>
+<para>The following &html; elements are allowed by default (all others are stripped):
 <simplelist type="inline">
 <member><sgmltag class="element">a</sgmltag></member>
 <member><sgmltag class="element">abbr</sgmltag></member>
 <member><sgmltag class="element">acronym</sgmltag></member>
 <member><sgmltag class="element">address</sgmltag></member>
 <member><sgmltag class="element">area</sgmltag></member>
+<member><sgmltag class="element">article</sgmltag></member>
+<member><sgmltag class="element">aside</sgmltag></member>
+<member><sgmltag class="element">audio</sgmltag></member>
 <member><sgmltag class="element">b</sgmltag></member>
 <member><sgmltag class="element">big</sgmltag></member>
 <member><sgmltag class="element">blockquote</sgmltag></member>
 <member><sgmltag class="element">br</sgmltag></member>
 <member><sgmltag class="element">button</sgmltag></member>
+<member><sgmltag class="element">canvas</sgmltag></member>
 <member><sgmltag class="element">caption</sgmltag></member>
 <member><sgmltag class="element">center</sgmltag></member>
 <member><sgmltag class="element">cite</sgmltag></member>
 <member><sgmltag class="element">code</sgmltag></member>
 <member><sgmltag class="element">col</sgmltag></member>
 <member><sgmltag class="element">colgroup</sgmltag></member>
+<member><sgmltag class="element">command</sgmltag></member>
+<member><sgmltag class="element">datagrid</sgmltag></member>
+<member><sgmltag class="element">datalist</sgmltag></member>
 <member><sgmltag class="element">dd</sgmltag></member>
 <member><sgmltag class="element">del</sgmltag></member>
+<member><sgmltag class="element">details</sgmltag></member>
 <member><sgmltag class="element">dfn</sgmltag></member>
+<member><sgmltag class="element">dialog</sgmltag></member>
 <member><sgmltag class="element">dir</sgmltag></member>
 <member><sgmltag class="element">div</sgmltag></member>
 <member><sgmltag class="element">dl</sgmltag></member>
 <member><sgmltag class="element">dt</sgmltag></member>
 <member><sgmltag class="element">em</sgmltag></member>
+<member><sgmltag class="element">event-source</sgmltag></member>
 <member><sgmltag class="element">fieldset</sgmltag></member>
+<member><sgmltag class="element">figure</sgmltag></member>
+<member><sgmltag class="element">footer</sgmltag></member>
 <member><sgmltag class="element">font</sgmltag></member>
 <member><sgmltag class="element">form</sgmltag></member>
+<member><sgmltag class="element">header</sgmltag></member>
 <member><sgmltag class="element">h1</sgmltag></member>
 <member><sgmltag class="element">h2</sgmltag></member>
 <member><sgmltag class="element">h3</sgmltag></member>
@@ -1010,22 +1028,35 @@ d = feedparser.parse(...)</programlisting>
 <member><sgmltag class="element">img</sgmltag></member>
 <member><sgmltag class="element">input</sgmltag></member>
 <member><sgmltag class="element">ins</sgmltag></member>
+<member><sgmltag class="element">keygen</sgmltag></member>
 <member><sgmltag class="element">kbd</sgmltag></member>
 <member><sgmltag class="element">label</sgmltag></member>
 <member><sgmltag class="element">legend</sgmltag></member>
 <member><sgmltag class="element">li</sgmltag></member>
+<member><sgmltag class="element">m</sgmltag></member>
 <member><sgmltag class="element">map</sgmltag></member>
 <member><sgmltag class="element">menu</sgmltag></member>
+<member><sgmltag class="element">meter</sgmltag></member>
+<member><sgmltag class="element">multicol</sgmltag></member>
+<member><sgmltag class="element">nav</sgmltag></member>
+<member><sgmltag class="element">nextid</sgmltag></member>
+<member><sgmltag class="element">noscript</sgmltag></member>
 <member><sgmltag class="element">ol</sgmltag></member>
+<member><sgmltag class="element">output</sgmltag></member>
 <member><sgmltag class="element">optgroup</sgmltag></member>
 <member><sgmltag class="element">option</sgmltag></member>
 <member><sgmltag class="element">p</sgmltag></member>
 <member><sgmltag class="element">pre</sgmltag></member>
+<member><sgmltag class="element">progress</sgmltag></member>
 <member><sgmltag class="element">q</sgmltag></member>
 <member><sgmltag class="element">s</sgmltag></member>
 <member><sgmltag class="element">samp</sgmltag></member>
+<member><sgmltag class="element">section</sgmltag></member>
 <member><sgmltag class="element">select</sgmltag></member>
 <member><sgmltag class="element">small</sgmltag></member>
+<member><sgmltag class="element">sound</sgmltag></member>
+<member><sgmltag class="element">source</sgmltag></member>
+<member><sgmltag class="element">spacer</sgmltag></member>
 <member><sgmltag class="element">span</sgmltag></member>
 <member><sgmltag class="element">strike</sgmltag></member>
 <member><sgmltag class="element">strong</sgmltag></member>
@@ -1035,6 +1066,7 @@ d = feedparser.parse(...)</programlisting>
 <member><sgmltag class="element">tbody</sgmltag></member>
 <member><sgmltag class="element">td</sgmltag></member>
 <member><sgmltag class="element">textarea</sgmltag></member>
+<member><sgmltag class="element">time</sgmltag></member>
 <member><sgmltag class="element">tfoot</sgmltag></member>
 <member><sgmltag class="element">th</sgmltag></member>
 <member><sgmltag class="element">thead</sgmltag></member>
@@ -1043,6 +1075,7 @@ d = feedparser.parse(...)</programlisting>
 <member><sgmltag class="element">u</sgmltag></member>
 <member><sgmltag class="element">ul</sgmltag></member>
 <member><sgmltag class="element">var</sgmltag></member>
+<member><sgmltag class="element">video</sgmltag></member>
 </simplelist>
 </para>
 
@@ -1055,50 +1088,106 @@ d = feedparser.parse(...)</programlisting>
 <member><sgmltag class="attribute">action</sgmltag></member>
 <member><sgmltag class="attribute">align</sgmltag></member>
 <member><sgmltag class="attribute">alt</sgmltag></member>
+<member><sgmltag class="attribute">autoplay</sgmltag></member>
+<member><sgmltag class="attribute">autocomplete</sgmltag></member>
+<member><sgmltag class="attribute">autofocus</sgmltag></member>
 <member><sgmltag class="attribute">axis</sgmltag></member>
+<member><sgmltag class="attribute">background</sgmltag></member>
+<member><sgmltag class="attribute">balance</sgmltag></member>
+<member><sgmltag class="attribute">bgcolor</sgmltag></member>
+<member><sgmltag class="attribute">bgproperties</sgmltag></member>
 <member><sgmltag class="attribute">border</sgmltag></member>
+<member><sgmltag class="attribute">bordercolor</sgmltag></member>
+<member><sgmltag class="attribute">bordercolordark</sgmltag></member>
+<member><sgmltag class="attribute">bordercolorlight</sgmltag></member>
+<member><sgmltag class="attribute">bottompadding</sgmltag></member>
 <member><sgmltag class="attribute">cellpadding</sgmltag></member>
 <member><sgmltag class="attribute">cellspacing</sgmltag></member>
+<member><sgmltag class="attribute">ch</sgmltag></member>
+<member><sgmltag class="attribute">challenge</sgmltag></member>
 <member><sgmltag class="attribute">char</sgmltag></member>
 <member><sgmltag class="attribute">charoff</sgmltag></member>
+<member><sgmltag class="attribute">choff</sgmltag></member>
 <member><sgmltag class="attribute">charset</sgmltag></member>
 <member><sgmltag class="attribute">checked</sgmltag></member>
 <member><sgmltag class="attribute">cite</sgmltag></member>
 <member><sgmltag class="attribute">class</sgmltag></member>
 <member><sgmltag class="attribute">clear</sgmltag></member>
+<member><sgmltag class="attribute">color</sgmltag></member>
 <member><sgmltag class="attribute">cols</sgmltag></member>
 <member><sgmltag class="attribute">colspan</sgmltag></member>
-<member><sgmltag class="attribute">color</sgmltag></member>
 <member><sgmltag class="attribute">compact</sgmltag></member>
+<member><sgmltag class="attribute">contenteditable</sgmltag></member>
 <member><sgmltag class="attribute">coords</sgmltag></member>
+<member><sgmltag class="attribute">data</sgmltag></member>
+<member><sgmltag class="attribute">datafld</sgmltag></member>
+<member><sgmltag class="attribute">datapagesize</sgmltag></member>
+<member><sgmltag class="attribute">datasrc</sgmltag></member>
 <member><sgmltag class="attribute">datetime</sgmltag></member>
+<member><sgmltag class="attribute">default</sgmltag></member>
+<member><sgmltag class="attribute">delay</sgmltag></member>
 <member><sgmltag class="attribute">dir</sgmltag></member>
 <member><sgmltag class="attribute">disabled</sgmltag></member>
+<member><sgmltag class="attribute">draggable</sgmltag></member>
+<member><sgmltag class="attribute">dynsrc</sgmltag></member>
 <member><sgmltag class="attribute">enctype</sgmltag></member>
+<member><sgmltag class="attribute">end</sgmltag></member>
+<member><sgmltag class="attribute">face</sgmltag></member>
 <member><sgmltag class="attribute">for</sgmltag></member>
+<member><sgmltag class="attribute">form</sgmltag></member>
 <member><sgmltag class="attribute">frame</sgmltag></member>
+<member><sgmltag class="attribute">galleryimg</sgmltag></member>
+<member><sgmltag class="attribute">gutter</sgmltag></member>
 <member><sgmltag class="attribute">headers</sgmltag></member>
 <member><sgmltag class="attribute">height</sgmltag></member>
+<member><sgmltag class="attribute">hidefocus</sgmltag></member>
+<member><sgmltag class="attribute">hidden</sgmltag></member>
+<member><sgmltag class="attribute">high</sgmltag></member>
 <member><sgmltag class="attribute">href</sgmltag></member>
 <member><sgmltag class="attribute">hreflang</sgmltag></member>
 <member><sgmltag class="attribute">hspace</sgmltag></member>
+<member><sgmltag class="attribute">icon</sgmltag></member>
 <member><sgmltag class="attribute">id</sgmltag></member>
+<member><sgmltag class="attribute">inputmode</sgmltag></member>
 <member><sgmltag class="attribute">ismap</sgmltag></member>
+<member><sgmltag class="attribute">keytype</sgmltag></member>
 <member><sgmltag class="attribute">label</sgmltag></member>
+<member><sgmltag class="attribute">leftspacing</sgmltag></member>
 <member><sgmltag class="attribute">lang</sgmltag></member>
+<member><sgmltag class="attribute">list</sgmltag></member>
 <member><sgmltag class="attribute">longdesc</sgmltag></member>
+<member><sgmltag class="attribute">loop</sgmltag></member>
+<member><sgmltag class="attribute">loopcount</sgmltag></member>
+<member><sgmltag class="attribute">loopend</sgmltag></member>
+<member><sgmltag class="attribute">loopstart</sgmltag></member>
+<member><sgmltag class="attribute">low</sgmltag></member>
+<member><sgmltag class="attribute">lowsrc</sgmltag></member>
+<member><sgmltag class="attribute">max</sgmltag></member>
 <member><sgmltag class="attribute">maxlength</sgmltag></member>
 <member><sgmltag class="attribute">media</sgmltag></member>
 <member><sgmltag class="attribute">method</sgmltag></member>
+<member><sgmltag class="attribute">min</sgmltag></member>
 <member><sgmltag class="attribute">multiple</sgmltag></member>
 <member><sgmltag class="attribute">name</sgmltag></member>
 <member><sgmltag class="attribute">nohref</sgmltag></member>
 <member><sgmltag class="attribute">noshade</sgmltag></member>
 <member><sgmltag class="attribute">nowrap</sgmltag></member>
+<member><sgmltag class="attribute">open</sgmltag></member>
+<member><sgmltag class="attribute">optimum</sgmltag></member>
+<member><sgmltag class="attribute">pattern</sgmltag></member>
+<member><sgmltag class="attribute">ping</sgmltag></member>
+<member><sgmltag class="attribute">point-size</sgmltag></member>
 <member><sgmltag class="attribute">prompt</sgmltag></member>
+<member><sgmltag class="attribute">pqg</sgmltag></member>
+<member><sgmltag class="attribute">radiogroup</sgmltag></member>
 <member><sgmltag class="attribute">readonly</sgmltag></member>
 <member><sgmltag class="attribute">rel</sgmltag></member>
+<member><sgmltag class="attribute">repeat-max</sgmltag></member>
+<member><sgmltag class="attribute">repeat-min</sgmltag></member>
+<member><sgmltag class="attribute">replace</sgmltag></member>
+<member><sgmltag class="attribute">required</sgmltag></member>
 <member><sgmltag class="attribute">rev</sgmltag></member>
+<member><sgmltag class="attribute">rightspacing</sgmltag></member>
 <member><sgmltag class="attribute">rows</sgmltag></member>
 <member><sgmltag class="attribute">rowspan</sgmltag></member>
 <member><sgmltag class="attribute">rules</sgmltag></member>
@@ -1109,16 +1198,362 @@ d = feedparser.parse(...)</programlisting>
 <member><sgmltag class="attribute">span</sgmltag></member>
 <member><sgmltag class="attribute">src</sgmltag></member>
 <member><sgmltag class="attribute">start</sgmltag></member>
+<member><sgmltag class="attribute">step</sgmltag></member>
 <member><sgmltag class="attribute">summary</sgmltag></member>
+<member><sgmltag class="attribute">suppress</sgmltag></member>
 <member><sgmltag class="attribute">tabindex</sgmltag></member>
 <member><sgmltag class="attribute">target</sgmltag></member>
+<member><sgmltag class="attribute">template</sgmltag></member>
 <member><sgmltag class="attribute">title</sgmltag></member>
+<member><sgmltag class="attribute">toppadding</sgmltag></member>
 <member><sgmltag class="attribute">type</sgmltag></member>
+<member><sgmltag class="attribute">unselectable</sgmltag></member>
 <member><sgmltag class="attribute">usemap</sgmltag></member>
+<member><sgmltag class="attribute">urn</sgmltag></member>
 <member><sgmltag class="attribute">valign</sgmltag></member>
 <member><sgmltag class="attribute">value</sgmltag></member>
+<member><sgmltag class="attribute">variable</sgmltag></member>
+<member><sgmltag class="attribute">volume</sgmltag></member>
 <member><sgmltag class="attribute">vspace</sgmltag></member>
+<member><sgmltag class="attribute">vrml</sgmltag></member>
 <member><sgmltag class="attribute">width</sgmltag></member>
+<member><sgmltag class="attribute">wrap</sgmltag></member>
+<member><sgmltag class="attribute">xml:lang</sgmltag></member>
+</simplelist>
+</para>
+</section>
+
+<section id="advanced.sanitization.svg">
+<title>&svg; Sanitization</title>
+<para>The following SVG elements are allowed by default (all others are stripped):
+<simplelist type="inline">
+<member><sgmltag class="element">a</sgmltag></member>
+<member><sgmltag class="element">animate</sgmltag></member>
+<member><sgmltag class="element">animateColor</sgmltag></member>
+<member><sgmltag class="element">animateMotion</sgmltag></member>
+<member><sgmltag class="element">animateTransform</sgmltag></member>
+<member><sgmltag class="element">circle</sgmltag></member>
+<member><sgmltag class="element">defs</sgmltag></member>
+<member><sgmltag class="element">desc</sgmltag></member>
+<member><sgmltag class="element">ellipse</sgmltag></member>
+<member><sgmltag class="element">foreignObject</sgmltag></member>
+<member><sgmltag class="element">font-face</sgmltag></member>
+<member><sgmltag class="element">font-face-name</sgmltag></member>
+<member><sgmltag class="element">font-face-src</sgmltag></member>
+<member><sgmltag class="element">g</sgmltag></member>
+<member><sgmltag class="element">glyph</sgmltag></member>
+<member><sgmltag class="element">hkern</sgmltag></member>
+<member><sgmltag class="element"> linearGradient</sgmltag></member>
+<member><sgmltag class="element">line</sgmltag></member>
+<member><sgmltag class="element">marker</sgmltag></member>
+<member><sgmltag class="element">metadata</sgmltag></member>
+<member><sgmltag class="element">missing-glyph</sgmltag></member>
+<member><sgmltag class="element">mpath</sgmltag></member>
+<member><sgmltag class="element">path</sgmltag></member>
+<member><sgmltag class="element">polygon</sgmltag></member>
+<member><sgmltag class="element">polyline</sgmltag></member>
+<member><sgmltag class="element">radialGradient</sgmltag></member>
+<member><sgmltag class="element">rect</sgmltag></member>
+<member><sgmltag class="element">set</sgmltag></member>
+<member><sgmltag class="element">stop</sgmltag></member>
+<member><sgmltag class="element">svg</sgmltag></member>
+<member><sgmltag class="element">switch</sgmltag></member>
+<member><sgmltag class="element">text</sgmltag></member>
+<member><sgmltag class="element">title</sgmltag></member>
+<member><sgmltag class="element">tspan</sgmltag></member>
+<member><sgmltag class="element">use</sgmltag></member>
+</simplelist>
+</para>
+
+<para>The following &svg; attributes are allowed by default (all others are stripped):
+<simplelist type="inline">
+<member><sgmltag class="attribute">accent-height</sgmltag></member>
+<member><sgmltag class="attribute">accumulate</sgmltag></member>
+<member><sgmltag class="attribute">additive</sgmltag></member>
+<member><sgmltag class="attribute">alphabetic</sgmltag></member>
+<member><sgmltag class="attribute">arabic-form</sgmltag></member>
+<member><sgmltag class="attribute">ascent</sgmltag></member>
+<member><sgmltag class="attribute">attributeName</sgmltag></member>
+<member><sgmltag class="attribute">attributeType</sgmltag></member>
+<member><sgmltag class="attribute">baseProfile</sgmltag></member>
+<member><sgmltag class="attribute">bbox</sgmltag></member>
+<member><sgmltag class="attribute">begin</sgmltag></member>
+<member><sgmltag class="attribute">by</sgmltag></member>
+<member><sgmltag class="attribute">calcMode</sgmltag></member>
+<member><sgmltag class="attribute">cap-height</sgmltag></member>
+<member><sgmltag class="attribute">class</sgmltag></member>
+<member><sgmltag class="attribute">color</sgmltag></member>
+<member><sgmltag class="attribute">color-rendering</sgmltag></member>
+<member><sgmltag class="attribute">content</sgmltag></member>
+<member><sgmltag class="attribute">cx</sgmltag></member>
+<member><sgmltag class="attribute">cy</sgmltag></member>
+<member><sgmltag class="attribute">d</sgmltag></member>
+<member><sgmltag class="attribute">dx</sgmltag></member>
+<member><sgmltag class="attribute">dy</sgmltag></member>
+<member><sgmltag class="attribute">descent</sgmltag></member>
+<member><sgmltag class="attribute">display</sgmltag></member>
+<member><sgmltag class="attribute">dur</sgmltag></member>
+<member><sgmltag class="attribute">end</sgmltag></member>
+<member><sgmltag class="attribute">fill</sgmltag></member>
+<member><sgmltag class="attribute">fill-opacity</sgmltag></member>
+<member><sgmltag class="attribute">fill-rule</sgmltag></member>
+<member><sgmltag class="attribute">font-family</sgmltag></member>
+<member><sgmltag class="attribute">font-size</sgmltag></member>
+<member><sgmltag class="attribute">font-stretch</sgmltag></member>
+<member><sgmltag class="attribute">font-style</sgmltag></member>
+<member><sgmltag class="attribute">font-variant</sgmltag></member>
+<member><sgmltag class="attribute">font-weight</sgmltag></member>
+<member><sgmltag class="attribute">from</sgmltag></member>
+<member><sgmltag class="attribute">fx</sgmltag></member>
+<member><sgmltag class="attribute">fy</sgmltag></member>
+<member><sgmltag class="attribute">g1</sgmltag></member>
+<member><sgmltag class="attribute">g2</sgmltag></member>
+<member><sgmltag class="attribute">glyph-name</sgmltag></member>
+<member><sgmltag class="attribute">gradientUnits</sgmltag></member>
+<member><sgmltag class="attribute">hanging</sgmltag></member>
+<member><sgmltag class="attribute">height</sgmltag></member>
+<member><sgmltag class="attribute">horiz-adv-x</sgmltag></member>
+<member><sgmltag class="attribute">horiz-origin-x</sgmltag></member>
+<member><sgmltag class="attribute">id</sgmltag></member>
+<member><sgmltag class="attribute">ideographic</sgmltag></member>
+<member><sgmltag class="attribute">k</sgmltag></member>
+<member><sgmltag class="attribute">keyPoints</sgmltag></member>
+<member><sgmltag class="attribute">keySplines</sgmltag></member>
+<member><sgmltag class="attribute">keyTimes</sgmltag></member>
+<member><sgmltag class="attribute">lang</sgmltag></member>
+<member><sgmltag class="attribute">mathematical</sgmltag></member>
+<member><sgmltag class="attribute">marker-end</sgmltag></member>
+<member><sgmltag class="attribute">marker-mid</sgmltag></member>
+<member><sgmltag class="attribute">marker-start</sgmltag></member>
+<member><sgmltag class="attribute">markerHeight</sgmltag></member>
+<member><sgmltag class="attribute">markerUnits</sgmltag></member>
+<member><sgmltag class="attribute">markerWidth</sgmltag></member>
+<member><sgmltag class="attribute">max</sgmltag></member>
+<member><sgmltag class="attribute">min</sgmltag></member>
+<member><sgmltag class="attribute">name</sgmltag></member>
+<member><sgmltag class="attribute">offset</sgmltag></member>
+<member><sgmltag class="attribute">opacity</sgmltag></member>
+<member><sgmltag class="attribute">orient</sgmltag></member>
+<member><sgmltag class="attribute">origin</sgmltag></member>
+<member><sgmltag class="attribute">overline-position</sgmltag></member>
+<member><sgmltag class="attribute">overline-thickness</sgmltag></member>
+<member><sgmltag class="attribute">panose-1</sgmltag></member>
+<member><sgmltag class="attribute">path</sgmltag></member>
+<member><sgmltag class="attribute">pathLength</sgmltag></member>
+<member><sgmltag class="attribute">points</sgmltag></member>
+<member><sgmltag class="attribute">preserveAspectRatio</sgmltag></member>
+<member><sgmltag class="attribute">r</sgmltag></member>
+<member><sgmltag class="attribute">refX</sgmltag></member>
+<member><sgmltag class="attribute">refY</sgmltag></member>
+<member><sgmltag class="attribute">repeatCount</sgmltag></member>
+<member><sgmltag class="attribute">repeatDur</sgmltag></member>
+<member><sgmltag class="attribute">requiredExtensions</sgmltag></member>
+<member><sgmltag class="attribute">requiredFeatures</sgmltag></member>
+<member><sgmltag class="attribute">restart</sgmltag></member>
+<member><sgmltag class="attribute">rotate</sgmltag></member>
+<member><sgmltag class="attribute">rx</sgmltag></member>
+<member><sgmltag class="attribute">ry</sgmltag></member>
+<member><sgmltag class="attribute">slope</sgmltag></member>
+<member><sgmltag class="attribute">stemh</sgmltag></member>
+<member><sgmltag class="attribute">stemv</sgmltag></member>
+<member><sgmltag class="attribute">stop-color</sgmltag></member>
+<member><sgmltag class="attribute">stop-opacity</sgmltag></member>
+<member><sgmltag class="attribute">strikethrough-position</sgmltag></member>
+<member><sgmltag class="attribute">strikethrough-thickness</sgmltag></member>
+<member><sgmltag class="attribute">stroke</sgmltag></member>
+<member><sgmltag class="attribute">stroke-dasharray</sgmltag></member>
+<member><sgmltag class="attribute">stroke-dashoffset</sgmltag></member>
+<member><sgmltag class="attribute">stroke-linecap</sgmltag></member>
+<member><sgmltag class="attribute">stroke-linejoin</sgmltag></member>
+<member><sgmltag class="attribute">stroke-miterlimit</sgmltag></member>
+<member><sgmltag class="attribute">stroke-opacity</sgmltag></member>
+<member><sgmltag class="attribute">stroke-width</sgmltag></member>
+<member><sgmltag class="attribute">systemLanguage</sgmltag></member>
+<member><sgmltag class="attribute">target</sgmltag></member>
+<member><sgmltag class="attribute">text-anchor</sgmltag></member>
+<member><sgmltag class="attribute">to</sgmltag></member>
+<member><sgmltag class="attribute">transform</sgmltag></member>
+<member><sgmltag class="attribute">type</sgmltag></member>
+<member><sgmltag class="attribute">u1</sgmltag></member>
+<member><sgmltag class="attribute">u2</sgmltag></member>
+<member><sgmltag class="attribute">underline-position</sgmltag></member>
+<member><sgmltag class="attribute">underline-thickness</sgmltag></member>
+<member><sgmltag class="attribute">unicode</sgmltag></member>
+<member><sgmltag class="attribute">unicode-range</sgmltag></member>
+<member><sgmltag class="attribute">units-per-em</sgmltag></member>
+<member><sgmltag class="attribute">values</sgmltag></member>
+<member><sgmltag class="attribute">version</sgmltag></member>
+<member><sgmltag class="attribute">viewBox</sgmltag></member>
+<member><sgmltag class="attribute">visibility</sgmltag></member>
+<member><sgmltag class="attribute">width</sgmltag></member>
+<member><sgmltag class="attribute">widths</sgmltag></member>
+<member><sgmltag class="attribute">x</sgmltag></member>
+<member><sgmltag class="attribute">x-height</sgmltag></member>
+<member><sgmltag class="attribute">x1</sgmltag></member>
+<member><sgmltag class="attribute">x2</sgmltag></member>
+<member><sgmltag class="attribute">xlink:actuate</sgmltag></member>
+<member><sgmltag class="attribute">xlink:arcrole</sgmltag></member>
+<member><sgmltag class="attribute">xlink:href</sgmltag></member>
+<member><sgmltag class="attribute">xlink:role</sgmltag></member>
+<member><sgmltag class="attribute">xlink:show</sgmltag></member>
+<member><sgmltag class="attribute">xlink:title</sgmltag></member>
+<member><sgmltag class="attribute">xlink:type</sgmltag></member>
+<member><sgmltag class="attribute">xml:base</sgmltag></member>
+<member><sgmltag class="attribute">xml:lang</sgmltag></member>
+<member><sgmltag class="attribute">xml:space</sgmltag></member>
+<member><sgmltag class="attribute">xmlns</sgmltag></member>
+<member><sgmltag class="attribute">xmlns:xlink</sgmltag></member>
+<member><sgmltag class="attribute">y</sgmltag></member>
+<member><sgmltag class="attribute">y1</sgmltag></member>
+<member><sgmltag class="attribute">y2</sgmltag></member>
+<member><sgmltag class="attribute">zoomAndPan</sgmltag></member>
+</simplelist>
+</para>
+</section>
+
+<section id="advanced.sanitization.mathml">
+<title>&mathml; Sanitization</title>
+<para>The following &mathml; elements are allowed by default (all others are stripped):
+<simplelist type="inline">
+<member><sgmltag class="element">annotation</sgmltag></member>
+<member><sgmltag class="element">annotation-xml</sgmltag></member>
+<member><sgmltag class="element">maction</sgmltag></member>
+<member><sgmltag class="element">math</sgmltag></member>
+<member><sgmltag class="element">merror</sgmltag></member>
+<member><sgmltag class="element">mfenced</sgmltag></member>
+<member><sgmltag class="element">mfrac</sgmltag></member>
+<member><sgmltag class="element">mi</sgmltag></member>
+<member><sgmltag class="element">mmultiscripts</sgmltag></member>
+<member><sgmltag class="element">mn</sgmltag></member>
+<member><sgmltag class="element">mo</sgmltag></member>
+<member><sgmltag class="element">mover</sgmltag></member>
+<member><sgmltag class="element">mpadded</sgmltag></member>
+<member><sgmltag class="element">mphantom</sgmltag></member>
+<member><sgmltag class="element">mprescripts</sgmltag></member>
+<member><sgmltag class="element">mroot</sgmltag></member>
+<member><sgmltag class="element">mrow</sgmltag></member>
+<member><sgmltag class="element">mspace</sgmltag></member>
+<member><sgmltag class="element">msqrt</sgmltag></member>
+<member><sgmltag class="element">mstyle</sgmltag></member>
+<member><sgmltag class="element">msub</sgmltag></member>
+<member><sgmltag class="element">msubsup</sgmltag></member>
+<member><sgmltag class="element">msup</sgmltag></member>
+<member><sgmltag class="element">mtable</sgmltag></member>
+<member><sgmltag class="element">mtd</sgmltag></member>
+<member><sgmltag class="element">mtext</sgmltag></member>
+<member><sgmltag class="element">mtr</sgmltag></member>
+<member><sgmltag class="element">munder</sgmltag></member>
+<member><sgmltag class="element">munderover</sgmltag></member>
+<member><sgmltag class="element">none</sgmltag></member>
+<member><sgmltag class="element">semantics</sgmltag></member>
+</simplelist>
+</para>
+
+<para>The following &mathml; attributes are allowed by default (all others are stripped):
+<simplelist type="inline">
+<member><sgmltag class="attribute">actiontype</sgmltag></member>
+<member><sgmltag class="attribute">align</sgmltag></member>
+<member><sgmltag class="attribute">columnalign</sgmltag></member>
+<member><sgmltag class="attribute">columnalign</sgmltag></member>
+<member><sgmltag class="attribute">columnalign</sgmltag></member>
+<member><sgmltag class="attribute">close</sgmltag></member>
+<member><sgmltag class="attribute">columnlines</sgmltag></member>
+<member><sgmltag class="attribute">columnspacing</sgmltag></member>
+<member><sgmltag class="attribute">columnspan</sgmltag></member>
+<member><sgmltag class="attribute">depth</sgmltag></member>
+<member><sgmltag class="attribute">display</sgmltag></member>
+<member><sgmltag class="attribute">displaystyle</sgmltag></member>
+<member><sgmltag class="attribute">encoding</sgmltag></member>
+<member><sgmltag class="attribute">equalcolumns</sgmltag></member>
+<member><sgmltag class="attribute">equalrows</sgmltag></member>
+<member><sgmltag class="attribute">fence</sgmltag></member>
+<member><sgmltag class="attribute">fontstyle</sgmltag></member>
+<member><sgmltag class="attribute">fontweight</sgmltag></member>
+<member><sgmltag class="attribute">frame</sgmltag></member>
+<member><sgmltag class="attribute">height</sgmltag></member>
+<member><sgmltag class="attribute">linethickness</sgmltag></member>
+<member><sgmltag class="attribute">lspace</sgmltag></member>
+<member><sgmltag class="attribute">mathbackground</sgmltag></member>
+<member><sgmltag class="attribute">mathcolor</sgmltag></member>
+<member><sgmltag class="attribute">mathvariant</sgmltag></member>
+<member><sgmltag class="attribute">mathvariant</sgmltag></member>
+<member><sgmltag class="attribute">maxsize</sgmltag></member>
+<member><sgmltag class="attribute">minsize</sgmltag></member>
+<member><sgmltag class="attribute">open</sgmltag></member>
+<member><sgmltag class="attribute">other</sgmltag></member>
+<member><sgmltag class="attribute">rowalign</sgmltag></member>
+<member><sgmltag class="attribute">rowalign</sgmltag></member>
+<member><sgmltag class="attribute">rowalign</sgmltag></member>
+<member><sgmltag class="attribute">rowlines</sgmltag></member>
+<member><sgmltag class="attribute">rowspacing</sgmltag></member>
+<member><sgmltag class="attribute">rowspan</sgmltag></member>
+<member><sgmltag class="attribute">rspace</sgmltag></member>
+<member><sgmltag class="attribute">scriptlevel</sgmltag></member>
+<member><sgmltag class="attribute">selection</sgmltag></member>
+<member><sgmltag class="attribute">separator</sgmltag></member>
+<member><sgmltag class="attribute">separators</sgmltag></member>
+<member><sgmltag class="attribute">stretchy</sgmltag></member>
+<member><sgmltag class="attribute">width</sgmltag></member>
+<member><sgmltag class="attribute">width</sgmltag></member>
+<member><sgmltag class="attribute">xlink:href</sgmltag></member>
+<member><sgmltag class="attribute">xlink:show</sgmltag></member>
+<member><sgmltag class="attribute">xlink:type</sgmltag></member>
+<member><sgmltag class="attribute">xmlns</sgmltag></member>
+<member><sgmltag class="attribute">xmlns:xlink</sgmltag></member>
+</simplelist>
+</para>
+</section>
+
+<section id="advanced.sanitization.css">
+<title>&css; Sanitization</title>
+<para>The following &css; properties are allowed by default in <sgmltag class="attribute">style</sgmltag> attributes (all others are stripped):
+<simplelist type="inline">
+<member><sgmltag>azimuth</sgmltag></member>
+<member><sgmltag>background-color</sgmltag></member>
+<member><sgmltag>border-bottom-color</sgmltag></member>
+<member><sgmltag>border-collapse</sgmltag></member>
+<member><sgmltag>border-color</sgmltag></member>
+<member><sgmltag>border-left-color</sgmltag></member>
+<member><sgmltag>border-right-color</sgmltag></member>
+<member><sgmltag>border-top-color</sgmltag></member>
+<member><sgmltag>clear</sgmltag></member>
+<member><sgmltag>color</sgmltag></member>
+<member><sgmltag>cursor</sgmltag></member>
+<member><sgmltag>direction</sgmltag></member>
+<member><sgmltag>display</sgmltag></member>
+<member><sgmltag>elevation</sgmltag></member>
+<member><sgmltag>float</sgmltag></member>
+<member><sgmltag>font</sgmltag></member>
+<member><sgmltag>font-family</sgmltag></member>
+<member><sgmltag>font-size</sgmltag></member>
+<member><sgmltag>font-style</sgmltag></member>
+<member><sgmltag>font-variant</sgmltag></member>
+<member><sgmltag>font-weight</sgmltag></member>
+<member><sgmltag>height</sgmltag></member>
+<member><sgmltag>letter-spacing</sgmltag></member>
+<member><sgmltag>line-height</sgmltag></member>
+<member><sgmltag>overflow</sgmltag></member>
+<member><sgmltag>pause</sgmltag></member>
+<member><sgmltag>pause-after</sgmltag></member>
+<member><sgmltag>pause-before</sgmltag></member>
+<member><sgmltag>pitch</sgmltag></member>
+<member><sgmltag>pitch-range</sgmltag></member>
+<member><sgmltag>richness</sgmltag></member>
+<member><sgmltag>speak</sgmltag></member>
+<member><sgmltag>speak-header</sgmltag></member>
+<member><sgmltag>speak-numeral</sgmltag></member>
+<member><sgmltag>speak-punctuation</sgmltag></member>
+<member><sgmltag>speech-rate</sgmltag></member>
+<member><sgmltag>stress</sgmltag></member>
+<member><sgmltag>text-align</sgmltag></member>
+<member><sgmltag>text-decoration</sgmltag></member>
+<member><sgmltag>text-indent</sgmltag></member>
+<member><sgmltag>unicode-bidi</sgmltag></member>
+<member><sgmltag>vertical-align</sgmltag></member>
+<member><sgmltag>voice-family</sgmltag></member>
+<member><sgmltag>volume</sgmltag></member>
+<member><sgmltag>white-space</sgmltag></member>
+<member><sgmltag>width</sgmltag></member>
 </simplelist>
 </para>
 
@@ -1127,11 +1562,11 @@ d = feedparser.parse(...)</programlisting>
 <para>The <ulink url="&url_tests_sanitize;">unit tests for &html; sanitizing</ulink> show many different examples of dangerous markup that &feedparser; sanitizes by default.</para>
 </note>
 
+</section>
+
 <section id="advanced.sanitization.why">
 <title>Whitelist, Don't Blacklist</title>
-<para>I am often asked why &feedparser; is so hard-assed about &html; sanitizing.  This topic usually comes up when someone notices that &feedparser; strips all <sgmltag class="attribute">style</sgmltag> attributes by default.</para>
-
-<para>Here is an incomplete list of potentially dangerous &html; tags and attributes:</para>
+<para>I am often asked why &feedparser; is so hard-assed about &html; and &css; sanitizing.  To illustrate the problem, here is an incomplete list of potentially dangerous &html; tags and attributes:</para>
 <itemizedlist>
 <listitem><para><sgmltag class="element">script</sgmltag>, which can contain malicious script</para></listitem>
 <listitem><para><sgmltag class="element">applet</sgmltag>, <sgmltag class="element">embed</sgmltag>, and <sgmltag class="element">object</sgmltag>, which can automatically download and execute malicious code</para></listitem>
@@ -1175,10 +1610,10 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 &amp;#x72;&amp;#x67;&amp;#x2f;&amp;#x27;&amp;#x29;"&gt;</programlisting>
 <para>And so on, plus several other variations, plus every combination of every variation.</para>
 </example>
-<para>The more I investigate, the more cases I find where &iewin; will treat seemingly innocuous markup as code and blithely execute it.  This is why &feedparser; uses a whitelist and not a blacklist.   I am reasonably confident that none of the elements or attributes on the whitelist are security risks.  I am not at all confident about elements or attributes that I have not explicitly investigated.  And I have no confidence at all in my ability to detect strings within attribute values that &iewin; will treat as executable code.  I will not attempt to preserve <quote>just the good styles</quote>.  All styles are stripped.</para>
+<para>The more I investigate, the more cases I find where &iewin; will treat seemingly innocuous markup as code and blithely execute it.  This is why &feedparser; uses a whitelist and not a blacklist.   I am reasonably confident that none of the elements or attributes on the whitelist are security risks.  I am not at all confident about elements or attributes that I have not explicitly investigated.  And I have no confidence at all in my ability to detect strings within attribute values that &iewin; will treat as executable code.</para>
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
-<listitem><para><ulink url="&url_howtoconsumersssafely;">How to consume RSS safely</ulink></para></listitem>
+<listitem><para><ulink url="&url_howtoconsumersssafely;">How to consume RSS safely</ulink> is a (somewhat dated) blog post that formed the basis of my thinking about sanitizing feeds.</para></listitem>
 </itemizedlist>
 </section>
 
@@ -2490,6 +2925,21 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <chapter id="history">
 <?dbhtml filename="history.html"?>
 <title>Revision history</title>
+<section id="changes.42">
+<?dbhtml filename="changes-42.html"?>
+<title>Changes in version 4.2</title>
+<abstract>
+<title/>
+<para>Here is a summary of the major changes in &feedparser; 4.2.</para>
+</abstract>
+<itemizedlist>
+<listitem><para><xref linkend="advanced.microformats"/>.</para></listitem>
+<listitem><para><xref linkend="advanced.sanitization.css"/>.  (Previous versions of &feedparser; simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.</para></listitem>
+<listitem><para><xref linkend="advanced.sanitization.svg"/> and <xref linkend="advanced.sanitization.mathml"/>.  Many thanks to Jacques Distler for patiently debugging these features.</para></listitem>
+<listitem><para>Updated the whitelist of <link linkend="advanced.sanitization.html">acceptable HTML elements and attributes</link> based on the latest draft of the &html5; specification.</para></listitem>
+<listitem><para>Better detection of HTML content in elements with ambiguous content types.</para></listitem>
+</itemizedlist>
+</section>
 <section id="changes.41">
 <?dbhtml filename="changes-41.html"?>
 <title>Changes in version 4.1</title>
