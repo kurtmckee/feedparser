@@ -25,12 +25,19 @@
 <div class="itemizedlist"><ul>
 <li>
 <a href="microformats.html" title="Microformats">Microformats</a>.</li>
+<li>Updated the whitelist of <a href="html-sanitization.html#advanced.sanitization.html" title="HTML Sanitization">acceptable HTML elements and attributes</a> based on the latest draft of the <acronym title="HyperText Markup Language">HTML</acronym> 5 specification.</li>
 <li>
 <a href="html-sanitization.html#advanced.sanitization.css" title="CSS Sanitization">CSS Sanitization</a>.  (Previous versions of <span class="application">Universal Feed Parser</span> simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.</li>
 <li>
 <a href="html-sanitization.html#advanced.sanitization.svg" title="SVG Sanitization">SVG Sanitization</a> and <a href="html-sanitization.html#advanced.sanitization.mathml" title="MathML Sanitization">MathML Sanitization</a>.  Many thanks to Jacques Distler for patiently debugging these features.</li>
-<li>Updated the whitelist of <a href="html-sanitization.html#advanced.sanitization.html" title="HTML Sanitization">acceptable HTML elements and attributes</a> based on the latest draft of the <acronym title="HyperText Markup Language">HTML</acronym> 5 specification.</li>
-<li>Better detection of HTML content in elements with ambiguous content types.</li>
+<li>
+<span class="application">Universal Feed Parser</span> always outputs embedded markup as wellformed <acronym title="Extensible HyperText Markup Language">XHTML</acronym>, no matter how malformed the input.  You can serve the output as <tt class="literal">application/xhtml+xml</tt>, and it will never trigger your browser's user-hostile draconian error handling.</li>
+<li>
+<acronym title="International Resource Identifier">IRI</acronym> support for every element that can contain a <acronym title="Uniform Resource Identifier">URI</acronym>.</li>
+<li>Ability to <a href="resolving-relative-links.html#advanced.base.disable" title="Disabling Relative URIs Resolution">disable relative <acronym title="Uniform Resource Identifier">URI</acronym> resolution</a>.</li>
+<li>
+<a href="command-line.html" title="Command Line">Command-line arguments and alternate serializers</a>, for manipulating <span class="application">Universal Feed Parser</span> from shell scripts or other non-Python sources.</li>
+<li>More robust parsing of author email addresses, misencoded win-1252 content, <tt class="literal">rel=self</tt> links, and better detection of HTML content in elements with ambiguous content types.</li>
 </ul></div>
 </div>
 <div style="float: left">← <a class="NavigationArrow" href="history.html">Revision history</a>

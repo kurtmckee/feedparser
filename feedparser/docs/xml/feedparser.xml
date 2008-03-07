@@ -31,6 +31,7 @@
 <!ENTITY rfc3339 "&rfc; 3339">
 <!ENTITY iso "<acronym>ISO</acronym>">
 <!ENTITY uri "<acronym condition='Uniform Resource Identifier'>URI</acronym>">
+<!ENTITY iri "<acronym condition='International Resource Identifier'>IRI</acronym>">
 <!ENTITY url "<acronym condition='Uniform Resource Locator'>URL</acronym>">
 <!ENTITY cdf "<acronym condition='Channel Definition Format'>CDF</acronym>">
 <!ENTITY rss "<acronym condition='Rich Site Summary'>RSS</acronym>">
@@ -39,6 +40,9 @@
 <!ENTITY w3cdtf "<acronym condition='W3C Date Time Format'>W3CDTF</acronym>">
 <!ENTITY soap "<acronym condition='Simple Object Access Protocol'>SOAP</acronym>">
 <!ENTITY xmlbase "&xml;:Base">
+<!ENTITY xfn "<acronym condition='XHTML Friends Network'>XFN</acronym>">
+<!ENTITY hCard "hCard">
+<!ENTITY vCard "vCard">
 <!ENTITY time "<filename class='headerfile'>time</filename>">
 <!ENTITY urllib2 "<filename class='headerfile'>urllib2</filename>">
 <!ENTITY parse "<function>parse</function>">
@@ -105,6 +109,7 @@
 <!ENTITY url_example_base "&url_example;base.xml">
 <!ENTITY url_example_http_base "&url_example;http_base.xml">
 <!ENTITY url_example_no_base "&url_example;no_base.xml">
+<!ENTITY url_example_hcard "&url_example;hcard.xml">
 <!ENTITY url_tests_sanitize "&url_feedparser;tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
@@ -115,6 +120,10 @@
 <!ENTITY url_xmlbase "http://www.w3.org/TR/xmlbase/">
 <!ENTITY url_podcasting "http://en.wikipedia.org/wiki/Podcasting">
 <!ENTITY url_microformats "http://microformats.org/">
+<!ENTITY url_microformats_hcard "&url_microformats;wiki/hcard">
+<!ENTITY url_microformats_reltag "&url_microformats;wiki/rel-tag">
+<!ENTITY url_microformats_relenclosure "&url_microformats;wiki/rel-enclosure">
+<!ENTITY url_xfn "&url_microformats;wiki/XFN">
 <!ENTITY url_chardet "http://chardet.feedparser.org/">
 <!ENTITY chardet_name "<application>Universal Encoding Detector</application>">
 <!ENTITY chardet "<ulink url='&url_chardet;'>&chardet_name;</ulink>">
@@ -973,6 +982,11 @@ d = feedparser.parse(...)</programlisting>
 <listitem><para><xref linkend="reference.entry.content"/></para></listitem>
 </itemizedlist>
 
+<note>
+<title/>
+<para>The <ulink url="&url_tests_sanitize;">unit tests for &html; sanitizing</ulink> show many different examples of dangerous markup that &feedparser; sanitizes by default.</para>
+</note>
+
 <section id="advanced.sanitization.html">
 <title>&html; Sanitization</title>
 <para>The following &html; elements are allowed by default (all others are stripped):
@@ -1559,7 +1573,7 @@ d = feedparser.parse(...)</programlisting>
 
 <note>
 <title/>
-<para>The <ulink url="&url_tests_sanitize;">unit tests for &html; sanitizing</ulink> show many different examples of dangerous markup that &feedparser; sanitizes by default.</para>
+<para>Not all possible CSS values are allowed for these properties.  The allowable values are restricted by a whitelist and a regular expression that allows color values and lengths.  &uri;s are not allowed, to prevent <ulink url="&url_howtoconsumersssafely;">platypus attacks</ulink>.  See the <classname>_HTMLSanitizer</classname> class for more details.</para>
 </note>
 
 </section>
@@ -1613,26 +1627,10 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <para>The more I investigate, the more cases I find where &iewin; will treat seemingly innocuous markup as code and blithely execute it.  This is why &feedparser; uses a whitelist and not a blacklist.   I am reasonably confident that none of the elements or attributes on the whitelist are security risks.  I am not at all confident about elements or attributes that I have not explicitly investigated.  And I have no confidence at all in my ability to detect strings within attribute values that &iewin; will treat as executable code.</para>
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
-<listitem><para><ulink url="&url_howtoconsumersssafely;">How to consume RSS safely</ulink> is a (somewhat dated) blog post that formed the basis of my thinking about sanitizing feeds.</para></listitem>
+<listitem><para><ulink url="&url_howtoconsumersssafely;">How to consume RSS safely</ulink> explains the platypus attack.</para></listitem>
 </itemizedlist>
 </section>
 
-</section>
-
-<section id="advanced.microformats">
-<?dbhtml filename="microformats.html"?>
-<sectioninfo>
-<abstract>
-<title/>
-<para>One emerging technology that affects feed parsing is the inclusion of <ulink url="&url_microformats;">microformats</ulink> within syndicated content.  Besides the semantics defined by individual feed formats, publishers can add additional semantics using <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes in embedded &html; content.</para>
-</abstract>
-</sectioninfo>
-<title>Microformats</title>
-<para>TODO</para>
-<note>
-<title/>
-<para>There are a growing number of microformats, and &feedparser; does not parse all of them.  However, both the <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes survive <link linkend="advanced.sanitization">&html; sanitizing</link>, so applications built on &feedparser; that wish to parse microformat content are free to do so.</para>
-</note>
 </section>
 
 <section id="advanced.normalization">
@@ -1696,6 +1694,68 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <title/>
 <para>For more examples of how &feedparser; normalizes content from different formats, see <xref linkend="annotated"/>.</para>
 </note>
+</section>
+
+<section id="advanced.microformats">
+<?dbhtml filename="microformats.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>One emerging technology that affects feed parsing is the inclusion of <ulink url="&url_microformats;">microformats</ulink> within syndicated content.  Besides the semantics defined by individual feed formats, publishers can add additional semantics using <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes in embedded &html; content.</para>
+</abstract>
+</sectioninfo>
+<title>Microformats</title>
+<para>TODO</para>
+
+<section id="advanced.microformats.hcard">
+<title>&hCard;</title>
+<para>TODO</para>
+<example id="example.hcard">
+<title>Parsing embedded &hCard; markup into a &vCard;</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_hcard;">&url_example_hcard;</ulink>')</userinput>
+&prompt;<userinput>print d.entries[0].vcard</userinput>
+<computeroutput>BEGIN:vCard
+VERSION:3.0
+FN:Frank Dawson
+N:Dawson;Frank
+ADR;TYPE=work,postal,parcel:;;6544 Battleford Drive;Raleigh;NC;27613-3502;U
+ .S.A.
+TEL;TYPE=WORK,VOICE,MSG:+1-919-676-9515
+TEL;TYPE=WORK,FAX:+1-919-676-9564
+EMAIL;TYPE=internet,pref:Frank_Dawson at Lotus.com
+EMAIL;TYPE=internet:fdawson at earthlink.net
+ORG:Lotus Development Corporation
+URL:http://home.earthlink.net/~fdawson
+END:vCard
+BEGIN:vCard
+VERSION:3.0
+FN:Tim Howes
+N:Howes;Tim
+ADR;TYPE=work:;;501 E. Middlefield Rd.;Mountain View;CA;94043;U.S.A.
+TEL;TYPE=WORK,VOICE,MSG:+1-415-937-3419
+TEL;TYPE=WORK,FAX:+1-415-528-4164
+EMAIL;TYPE=internet:howes at netscape.com
+ORG:Netscape Communications Corp.
+END:vCard</computeroutput></screen>
+</example>
+
+<note>
+<title/>
+<para>There are a growing number of microformats, and &feedparser; does not parse all of them.  However, both the <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes survive <link linkend="advanced.sanitization">&html; sanitizing</link>, so applications built on &feedparser; that wish to parse additional microformat content are free to do so.</para>
+</note>
+
+<itemizedlist role="furtherreading">
+<title>Elsewhere</title>
+<listitem><para><ulink url="&url_microformats;">Microformats.org</ulink></para></listitem>
+<listitem><para><ulink url="&url_microformats_hcard;">&hCard; specification</ulink></para></listitem>
+<listitem><para><ulink url="&url_microformats_reltag;"><literal>rel=tag</literal> specification</ulink></para></listitem>
+<listitem><para><ulink url="&url_microformats_relenclosure;"><literal>rel=enclosure</literal> specification</ulink></para></listitem>
+<listitem><para><ulink url="&url_microformats_reltag;"><literal>rel=tag</literal> specification</ulink></para></listitem>
+<listitem><para><ulink url="&url_xfn;">&xfn; specification</ulink></para></listitem>
+</itemizedlist>
+
+</section>
 </section>
 
 <section id="advanced.namespaces">
@@ -1908,6 +1968,10 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 <entry><literal>http://purl.org/rss/1.0/modules/syndication/</literal></entry>
 </row>
 <row>
+<entry><literal>szf</literal></entry>
+<entry><literal>http://schemas.pocketsoap.com/rss/myDescModule/</literal></entry>
+</row>
+<row>
 <entry><literal>taxo</literal></entry>
 <entry><literal>http://purl.org/rss/1.0/modules/taxonomy/</literal></entry>
 </row>
@@ -1934,6 +1998,10 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 <row>
 <entry><literal>xhtml</literal></entry>
 <entry><literal>http://www.w3.org/1999/xhtml</literal></entry>
+</row>
+<row>
+<entry><literal>xlink</literal></entry>
+<entry><literal>http://www.w3.org/1999/xlink</literal></entry>
 </row>
 <row>
 <entry><literal>xml</literal></entry>
@@ -1966,6 +2034,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 </abstract>
 </sectioninfo>
 <title>Relative Link Resolution</title>
+
 <section id="advanced.base.which">
 <title>Which Values Are &uri;s</title>
 <para>These feed elements are treated as &uri;s, and resolved if they are relative:</para>
@@ -2124,6 +2193,30 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 
 </section>
 
+<section id="advanced.base.disable">
+<title>Disabling Relative &uri;s Resolution</title>
+<para>Though not recommended, it is possible to disable &feedparser;'s relative &uri; resolution by setting <literal>feedparser.RESOLVE_RELATIVE_URIS</literal> to &zero;.</para>
+
+<example id="example.base.disable">
+<title>How to disable relative &uri; resolution</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_base;">&url_example_base;</ulink>')</userinput>
+&prompt;<userinput>d.entries[0].content[0].base</userinput>
+<computeroutput>u'http://example.org/archives/000001.html'</computeroutput>
+&prompt;<userinput>print d.entries[0].content[0].value</userinput>
+<computeroutput>&lt;p id="anchor1">&lt;a href="http://example.org/archives/000001.html#anchor2">skip to anchor 2&lt;/a>&lt;/p>
+      &lt;p>Some content&lt;/p>
+      &lt;p id="anchor2">This is anchor 2&lt;/p></computeroutput>
+&prompt;<userinput>feedparser.RESOLVE_RELATIVE_URIS = 0</userinput>
+&prompt;<userinput>d2 = feedparser.parse('<ulink url="&url_example_base;">&url_example_base;</ulink>')</userinput>
+&prompt;<userinput>d2.entries[0].content[0].base</userinput>
+<computeroutput>u'http://example.org/archives/000001.html'</computeroutput>
+&prompt;<userinput>print d2.entries[0].content[0].value</userinput>
+<computeroutput>&lt;p id="anchor1">&lt;a href="#anchor2">skip to anchor 2&lt;/a>&lt;/p>
+      &lt;p>Some content&lt;/p>
+      &lt;p id="anchor2">This is anchor 2&lt;/p></computeroutput></screen>
+</example>
+</section>
 </section>
 
 <!--
@@ -2278,8 +2371,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 &prompt;<userinput>exc.getMessage()</userinput>
 <computeroutput>"expected '>'\n"</computeroutput>
 &prompt;<userinput>exc.getLineNumber()</userinput>
-<computeroutput>6</computeroutput>
-</screen>
+<computeroutput>6</computeroutput></screen>
 </example>
 <para>There are many reasons an &xml; document could be non-well-formed besides this example (incomplete end tags)  See <xref linkend="advanced.encoding"/> for some other ways to trip the bozo bit.</para>
 </section>
@@ -2570,6 +2662,48 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </example>
 
 </section>
+</chapter>
+
+<chapter id="commandline">
+<?dbhtml filename="command-line.html"?>
+<title>Command Line</title>
+
+<section id="commandline.basic">
+<?dbhtml filename="command-line-basic.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>TODO</para>
+</abstract>
+</sectioninfo>
+<title>Basic Command Line Usage</title>
+<para>TODO</para>
+</section>
+
+<section id="commandline.arguments">
+<?dbhtml filename="command-line-arguments.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>TODO</para>
+</abstract>
+</sectioninfo>
+<title>Optional Arguments</title>
+<para>TODO</para>
+</section>
+
+<section id="commandline.outputformats">
+<?dbhtml filename="command-line-output-formats.html"?>
+<sectioninfo>
+<abstract>
+<title/>
+<para>TODO</para>
+</abstract>
+</sectioninfo>
+<title>Output Formats</title>
+<para>TODO</para>
+</section>
+
 </chapter>
 
 <chapter id="annotated">
@@ -2934,10 +3068,15 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </abstract>
 <itemizedlist>
 <listitem><para><xref linkend="advanced.microformats"/>.</para></listitem>
+<listitem><para>Updated the whitelist of <link linkend="advanced.sanitization.html">acceptable HTML elements and attributes</link> based on the latest draft of the &html5; specification.</para></listitem>
 <listitem><para><xref linkend="advanced.sanitization.css"/>.  (Previous versions of &feedparser; simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.</para></listitem>
 <listitem><para><xref linkend="advanced.sanitization.svg"/> and <xref linkend="advanced.sanitization.mathml"/>.  Many thanks to Jacques Distler for patiently debugging these features.</para></listitem>
-<listitem><para>Updated the whitelist of <link linkend="advanced.sanitization.html">acceptable HTML elements and attributes</link> based on the latest draft of the &html5; specification.</para></listitem>
-<listitem><para>Better detection of HTML content in elements with ambiguous content types.</para></listitem>
+<listitem><para>&feedparser; always outputs embedded markup as wellformed &xhtml;, no matter how malformed the input.  You can serve the output as <literal>application/xhtml+xml</literal>, and it will never trigger your browser's user-hostile draconian error handling.</para></listitem>
+<listitem><para>&iri; support for every element that can contain a &uri;.</para></listitem>
+<listitem><para>Ability to <link linkend="advanced.base.disable">disable relative &uri; resolution</link>.</para></listitem>
+<!--<listitem><para>Ability to <link linkend="advanced.sanitization.disable">disable &html; sanitizing</link>.</para></listitem>-->
+<listitem><para><link linkend="commandline">Command-line arguments and alternate serializers</link>, for manipulating &feedparser; from shell scripts or other non-Python sources.</para></listitem>
+<listitem><para>More robust parsing of author email addresses, misencoded win-1252 content, <literal>rel=self</literal> links, and better detection of HTML content in elements with ambiguous content types.</para></listitem>
 </itemizedlist>
 </section>
 <section id="changes.41">

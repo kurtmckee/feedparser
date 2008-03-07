@@ -416,6 +416,7 @@ class _FeedParserMixin:
                   'http://hacks.benhammersley.com/rss/streaming/':        'str',
                   'http://purl.org/rss/1.0/modules/subscription/':        'sub',
                   'http://purl.org/rss/1.0/modules/syndication/':         'sy',
+                  'http://schemas.pocketsoap.com/rss/myDescModule/':      'szf',
                   'http://purl.org/rss/1.0/modules/taxonomy/':            'taxo',
                   'http://purl.org/rss/1.0/modules/threading/':           'thr',
                   'http://purl.org/rss/1.0/modules/textinput/':           'ti',
@@ -423,9 +424,8 @@ class _FeedParserMixin:
                   'http://wellformedweb.org/commentAPI/':                 'wfw',
                   'http://purl.org/rss/1.0/modules/wiki/':                'wiki',
                   'http://www.w3.org/1999/xhtml':                         'xhtml',
-                  'http://www.w3.org/XML/1998/namespace':                 'xml',
                   'http://www.w3.org/1999/xlink':                         'xlink',
-                  'http://schemas.pocketsoap.com/rss/myDescModule/':      'szf'
+                  'http://www.w3.org/XML/1998/namespace':                 'xml'
 }
     _matchnamespaces = {}
 
@@ -512,14 +512,6 @@ class _FeedParserMixin:
             # element declared itself as escaped markup, but it isn't really
             self.contentparams['type'] = 'application/xhtml+xml'
         if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
-            # Note: probably shouldn't simply recreate localname here, but
-            # our namespace handling isn't actually 100% correct in cases where
-            # the feed redefines the default namespace (which is actually
-            # the usual case for inline content, thanks Sam), so here we
-            # cheat and just reconstruct the element based on localname
-            # because that compensates for the bugs in our namespace handling.
-            # This will horribly munge inline content with non-empty qnames,
-            # but nobody actually does that, so I'm not fixing it.
             if tag.find(':') <> -1:
                 prefix, tag = tag.split(':', 1)
                 namespace = self.namespacesInUse.get(prefix, '')

@@ -9,8 +9,8 @@
 <meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
 <link rel="start" href="index.html" title="Documentation">
 <link rel="up" href="advanced.html" title="Advanced Features">
-<link rel="prev" href="html-sanitization.html" title="Sanitization">
-<link rel="next" href="content-normalization.html" title="Content Normalization">
+<link rel="prev" href="content-normalization.html" title="Content Normalization">
+<link rel="next" href="namespace-handling.html" title="Namespace Handling">
 </head>
 <body id="feedparser-org" class="docs">
 <!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
@@ -28,15 +28,63 @@
 <div></div>
 </div>
 <p>TODO</p>
-<a name="id292072"></a><table class="note" border="0" summary="">
-<tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td></tr>
-<tr><td colspan="2" align="left" valign="top" width="99%">There are a growing number of microformats, and <span class="application">Universal Feed Parser</span> does not parse all of them.  However, both the <tt class="sgmltag-attribute">rel</tt> and <tt class="sgmltag-attribute">class</tt> attributes survive <a href="html-sanitization.html" title="Sanitization"><acronym title="HyperText Markup Language">HTML</acronym> sanitizing</a>, so applications built on <span class="application">Universal Feed Parser</span> that wish to parse microformat content are free to do so.</td></tr>
-</table>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h3 class="title">
+<a name="advanced.microformats.hcard" class="skip" href="#advanced.microformats.hcard" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> hCard</h3></div></div>
+<div></div>
 </div>
-<div style="float: left">← <a class="NavigationArrow" href="html-sanitization.html">Sanitization</a>
+<p>TODO</p>
+<div class="example">
+<a name="example.hcard" class="skip" href="#example.hcard" title="link to this example"><img src="images/permalink.gif" alt="[link]" title="link to this example" width="8" height="9"></a> <h3 class="title">Example: Parsing embedded hCard markup into a vCard</h3>
+<pre class="screen"><tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>import</b></font> feedparser</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput">d = feedparser.parse('<a href="http://feedparser.org/docs/examples/hcard.xml">http://feedparser.org/docs/examples/hcard.xml</a>')</span>
+<tt class="prompt">&gt;&gt;&gt; </tt><span class="userinput"><font color='navy'><b>print</b></font> d.entries[0].vcard</span>
+<span class="computeroutput">BEGIN:vCard
+VERSION:3.0
+FN:Frank Dawson
+N:Dawson;Frank
+ADR;TYPE=work,postal,parcel:;;6544 Battleford Drive;Raleigh;NC;27613-3502;U
+ .S.A.
+TEL;TYPE=WORK,VOICE,MSG:+1-919-676-9515
+TEL;TYPE=WORK,FAX:+1-919-676-9564
+EMAIL;TYPE=internet,pref:Frank_Dawson at Lotus.com
+EMAIL;TYPE=internet:fdawson at earthlink.net
+ORG:Lotus Development Corporation
+URL:http://home.earthlink.net/~fdawson
+END:vCard
+BEGIN:vCard
+VERSION:3.0
+FN:Tim Howes
+N:Howes;Tim
+ADR;TYPE=work:;;501 E. Middlefield Rd.;Mountain View;CA;94043;U.S.A.
+TEL;TYPE=WORK,VOICE,MSG:+1-415-937-3419
+TEL;TYPE=WORK,FAX:+1-415-528-4164
+EMAIL;TYPE=internet:howes at netscape.com
+ORG:Netscape Communications Corp.
+END:vCard</span></pre>
+</div>
+<a name="id292549"></a><table class="note" border="0" summary="">
+<tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/note.png" alt="Note" title="" width="24" height="24"></td></tr>
+<tr><td colspan="2" align="left" valign="top" width="99%">There are a growing number of microformats, and <span class="application">Universal Feed Parser</span> does not parse all of them.  However, both the <tt class="sgmltag-attribute">rel</tt> and <tt class="sgmltag-attribute">class</tt> attributes survive <a href="html-sanitization.html" title="Sanitization"><acronym title="HyperText Markup Language">HTML</acronym> sanitizing</a>, so applications built on <span class="application">Universal Feed Parser</span> that wish to parse additional microformat content are free to do so.</td></tr>
+</table>
+<div class="furtherreading">
+<h3>Elsewhere</h3>
+<ul>
+<li><a href="http://microformats.org/">Microformats.org</a></li>
+<li><a href="http://microformats.org/wiki/hcard">hCard specification</a></li>
+<li><a href="http://microformats.org/wiki/rel-tag"><tt class="literal">rel=tag</tt> specification</a></li>
+<li><a href="http://microformats.org/wiki/rel-enclosure"><tt class="literal">rel=enclosure</tt> specification</a></li>
+<li><a href="http://microformats.org/wiki/rel-tag"><tt class="literal">rel=tag</tt> specification</a></li>
+<li><a href="http://microformats.org/wiki/XFN"><acronym title="XHTML Friends Network">XFN</acronym> specification</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="content-normalization.html">Content Normalization</a>
 </div>
 <div style="text-align: right">
-<a class="NavigationArrow" href="content-normalization.html">Content Normalization</a> →</div>
+<a class="NavigationArrow" href="namespace-handling.html">Namespace Handling</a> →</div>
 <hr style="clear:both">
 <div class="footer"><p class="copyright">Copyright © 2004, 2005, 2006, 2007, 2008 Mark Pilgrim</p></div>
 </div></div>

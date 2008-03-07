@@ -1,0 +1,59 @@
+<feed xmlns="http://www.w3.org/2005/Atom">
+<title>hCard example</title>
+<entry>
+<content type="xhtml">
+<div xmlns="http://www.w3.org/1999/xhtml">
+<div class="vcard">
+<a class="url fn" href="http://home.earthlink.net/~fdawson">Frank Dawson</a>
+<div class="org">Lotus Development Corporation</div>
+<div class="adr">
+ <span class="type">work</span> address 
+(<abbr class="type" title="postal">mail</abbr> and
+ <abbr class="type" title="parcel">packages</abbr>):
+ <div class="street-address">6544 Battleford Drive</div>
+ <span class="locality">Raleigh</span>
+ <span class="region">NC</span>
+ <span class="postal-code">27613-3502</span>
+ <div class="country-name">U.S.A.</div>
+</div>
+<div class="tel">
+ <span class="value">+1-919-676-9515</span> 
+(<abbr class="type" title="WORK">w</abbr>,
+ <abbr class="type" title="VOICE">v</abbr><abbr class="type" title="MSG">m</abbr>)
+</div>
+<div class="tel">
+ <span class="value">+1-919-676-9564</span>
+(<abbr class="type" title="WORK">w</abbr><abbr class="type" title="FAX">f</abbr>)
+</div>
+<a class="email" href="mailto:Frank_Dawson@Lotus.com">
+ <span class="type">pref</span>erred email
+</a>,
+<a class="email" href="mailto:fdawson@earthlink.net">
+ alternate email
+</a>
+</div>
+<div class="vcard">
+<a class="email fn" href="mailto:howes@netscape.com">Tim Howes</a>
+<div class="org">Netscape Communications Corp.</div>
+<div class="adr">
+ <span class="type">work</span> address:
+ <div class="street-address">501 E. Middlefield Rd.</div>
+ <span class="locality">Mountain View</span>, 
+ <span class="region">CA</span>
+ <span class="postal-code">94043</span>
+ <div class="country-name">U.S.A.</div>
+</div>
+<div class="tel">
+ <span class="value">+1-415-937-3419</span> 
+(<abbr class="type" title="WORK">w</abbr>,
+ <abbr class="type" title="VOICE">v</abbr><abbr class="type" title="MSG">m</abbr>)
+</div>
+<div class="tel">
+ <span class="value">+1-415-528-4164</span>
+(<abbr class="type" title="WORK">w</abbr><abbr class="type" title="FAX">f</abbr>)
+</div>
+</div>
+</div>
+</content>
+</entry>
+</feed>
