@@ -127,6 +127,9 @@
 <!ENTITY url_chardet "http://chardet.feedparser.org/">
 <!ENTITY chardet_name "<application>Universal Encoding Detector</application>">
 <!ENTITY chardet "<ulink url='&url_chardet;'>&chardet_name;</ulink>">
+<!ENTITY url_beautifulsoup "http://www.crummy.com/software/BeautifulSoup/">
+<!ENTITY beautifulsoup_name "Beautiful Soup">
+<!ENTITY beautifulsoup "<ulink url='&url_beautifulsoup;'>&beautifulsoup_name;</ulink>">
 
 <!ENTITY example_atom03 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom03;&#34;/>')</userinput>">
 <!ENTITY example_atom10 "&prompt;<userinput>d = feedparser.parse('<ulink url=&#34;&url_example_atom10;&#34;/>')</userinput>">
@@ -1705,7 +1708,60 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 </abstract>
 </sectioninfo>
 <title>Microformats</title>
-<para>TODO</para>
+
+<para>To parse embedded &html; markup looking for microformats. &feedparser; relies on a third-party library called &beautifulsoup;, which is distributed separately.  If &beautifulsoup_name; is not installed, &feedparser; will silently skip microformats parsing.</para>
+
+<section id="advanced.microformats.relenclosure">
+<title>rel=enclosure</title>
+<para>&feedparser; looks for links within embedded markup that meet any of the following conditions:</para>
+
+<itemizedlist>
+<listitem><para><literal>rel</literal> attribute contains <literal>enclosure</literal> (note: <literal>rel</literal> attributes can contain a list of space-separated values)</para></listitem>
+<listitem><para><literal>type</literal> attribute starts with <literal>audio/</literal></para></listitem>
+<listitem><para><literal>type</literal> attribute starts with <literal>video/</literal></para></listitem>
+<listitem><para><literal>type</literal> attribute starts with <literal>application/</literal> but does not end with <literal>xml</literal></para></listitem>
+<listitem><para><literal>href</literal> attribute ends with one of the following file extensions: 
+<simplelist type="inline">
+<member><filename>.zip</filename></member>
+<member><filename>.rar</filename></member>
+<member><filename>.exe</filename></member>
+<member><filename>.gz</filename></member>
+<member><filename>.tar</filename></member>
+<member><filename>.tgz</filename></member>
+<member><filename>.tbz2</filename></member>
+<member><filename>.bz2</filename></member>
+<member><filename>.z</filename></member>
+<member><filename>.7z</filename></member>
+<member><filename>.dmg</filename></member>
+<member><filename>.img</filename></member>
+<member><filename>.sit</filename></member>
+<member><filename>.sitx</filename></member>
+<member><filename>.hqx</filename></member>
+<member><filename>.deb</filename></member>
+<member><filename>.rpm</filename></member>
+<member><filename>.bz2</filename></member>
+<member><filename>.jar</filename></member>
+<member><filename>.rar</filename></member>
+<member><filename>.iso</filename></member>
+<member><filename>.bin</filename></member>
+<member><filename>.msi</filename></member>
+<member><filename>.mp2</filename></member>
+<member><filename>.mp3</filename></member>
+<member><filename>.ogg</filename></member>
+<member><filename>.ogm</filename></member>
+<member><filename>.mp4</filename></member>
+<member><filename>.m4v</filename></member>
+<member><filename>.m4a</filename></member>
+<member><filename>.avi</filename></member>
+<member><filename>.wma</filename></member>
+<member><filename>.wmv</filename></member>
+</simplelist>
+</para></listitem>
+</itemizedlist>
+
+<para>When &feedparser; finds a link that satisfies any of these conditions, it adds it to <xref linkend="reference.entry.enclosures"/>.</para>
+
+</section>
 
 <section id="advanced.microformats.hcard">
 <title>&hCard;</title>
@@ -4549,6 +4605,8 @@ xxx
 <title>Comes from</title>
 <listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[@rel="enclosure"]</literal></para></listitem>
 <listitem><para><literal>/rss/channel/item/enclosure</literal></para></listitem>
+<listitem><para><link linkend="advanced.microformats.relenclosure">Certain links within embedded markup</link></para></listitem>
+
 </itemizedlist>
 <section id="reference.entry.enclosures.href">
 <title>entries[i].enclosures[j].href</title>
