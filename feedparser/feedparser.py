@@ -41,7 +41,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Aaron Swartz <http://aaronsw.com/>",
                     "Kevin Marks <http://epeus.blogspot.com/>",
                     "Sam Ruby <http://intertwingly.net/>"]
-_debug = 0
+_debug = 1
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -152,10 +152,14 @@ except:
     codepoint2name[ord(codepoint)]=name
 
 # BeautifulSoup parser used for parsing microformats from embedded HTML content
-# http://www.crummy.com/software/BeautifulSoup/.  At the moment, it appears
-# that there is a version incompatibility, so the import is replaced with
-# a 'None'.  Restoring the try/import/except/none will renable the MF tests.
-BeautifulSoup = None
+# http://www.crummy.com/software/BeautifulSoup/.
+# feedparser is tested with BeautifulSoup 3.0.x, but it might work with the
+# older 2.x series.  If it doesn't, and you can figure out why, I'll accept a
+# patch and modify the compatibility statement accordingly.
+try:
+    import BeautifulSoup
+except:
+    BeautifulSoup = None
 
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
@@ -1862,7 +1866,7 @@ class _MicroformatsParser:
         sProperty = sProperty.lower()
         bFound = 0
         bNormalize = 1
-        propertyMatch = re.compile(r'\b%s\b' % sProperty)
+        propertyMatch = {'class': re.compile(r'\b%s\b' % sProperty)}
         if bAllowMultiple and (iPropertyType != self.NODE):
             snapResults = []
             containers = elmRoot(['ul', 'ol'], propertyMatch)
@@ -1893,13 +1897,13 @@ class _MicroformatsParser:
         if not bFound:
             if bAllowMultiple: return []
             elif iPropertyType == self.STRING: return ''
-            elif iPropertyType == self.DATE: return BeautifulSoup.Null
+            elif iPropertyType == self.DATE: return None
             elif iPropertyType == self.URI: return ''
-            elif iPropertyType == self.NODE: return BeautifulSoup.Null
-            else: return BeautifulSoup.Null
+            elif iPropertyType == self.NODE: return None
+            else: return None
         arValues = []
         for elmResult in arResults:
-            sValue = BeautifulSoup.Null
+            sValue = None
             if iPropertyType == self.NODE:
                 if bAllowMultiple:
                     arValues.append(elmResult)
@@ -2006,7 +2010,7 @@ class _MicroformatsParser:
                     if sAgentValue:
                         arLines.append(self.vcardFold('AGENT:' + sAgentValue))
                     elmAgent['class'] = ''
-                    elmAgent.contents = BeautifulSoup.Null
+                    elmAgent.contents = []
                 else:
                     sAgentValue = self.getPropertyValue(elmAgent, 'value', self.URI, bAutoEscape=1);
                     if sAgentValue:
