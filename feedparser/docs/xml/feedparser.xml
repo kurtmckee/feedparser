@@ -110,6 +110,8 @@
 <!ENTITY url_example_http_base "&url_example;http_base.xml">
 <!ENTITY url_example_no_base "&url_example;no_base.xml">
 <!ENTITY url_example_hcard "&url_example;hcard.xml">
+<!ENTITY url_example_relenclosure "&url_example;rel-enclosure.xml">
+<!ENTITY url_example_reltag "&url_example;rel-tag.xml">
 <!ENTITY url_tests_sanitize "&url_feedparser;tests/wellformed/sanitize/">
 <!ENTITY url_pythontime "http://docs.python.org/lib/module-time.html">
 <!ENTITY url_urllib2 "http://docs.python.org/lib/module-urllib2.html">
@@ -1704,16 +1706,19 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <sectioninfo>
 <abstract>
 <title/>
-<para>One emerging technology that affects feed parsing is the inclusion of <ulink url="&url_microformats;">microformats</ulink> within syndicated content.  Besides the semantics defined by individual feed formats, publishers can add additional semantics using <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes in embedded &html; content.</para>
+<para>An emerging trend in feed syndication is the inclusion of <ulink url="&url_microformats;">microformats</ulink>.  Besides the semantics defined by individual feed formats, publishers can add additional semantics using <sgmltag class="attribute">rel</sgmltag> and <sgmltag class="attribute">class</sgmltag> attributes in embedded &html; content.</para>
 </abstract>
 </sectioninfo>
 <title>Microformats</title>
 
-<para>To parse embedded &html; markup looking for microformats. &feedparser; relies on a third-party library called &beautifulsoup;, which is distributed separately.  If &beautifulsoup_name; is not installed, &feedparser; will silently skip microformats parsing.</para>
+<note>
+<title/>
+<para>To parse microformats. &feedparser; relies on a third-party library called &beautifulsoup;, which is distributed separately.  If &beautifulsoup_name; is not installed, &feedparser; will silently skip microformats parsing.</para>
+</note>
 
 <section id="advanced.microformats.relenclosure">
 <title>rel=enclosure</title>
-<para>&feedparser; looks for links within embedded markup that meet any of the following conditions:</para>
+<para>The <ulink url="&url_microformats_relenclosure;"><literal>rel=enclosure</literal></ulink> microformat provides a way for embedded &html; content to specify that a certain link should be treated as an <link linkend="reference.entry.enclosures">enclosure</link>.  &feedparser; looks for links within embedded markup that meet any of the following conditions:</para>
 
 <itemizedlist>
 <listitem><para><literal>rel</literal> attribute contains <literal>enclosure</literal> (note: <literal>rel</literal> attributes can contain a list of space-separated values)</para></listitem>
@@ -1760,6 +1765,41 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 </itemizedlist>
 
 <para>When &feedparser; finds a link that satisfies any of these conditions, it adds it to <xref linkend="reference.entry.enclosures"/>.</para>
+
+<example id="example.relenclosure">
+<title>Parsing embedded enclosures</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_relenclosure;">&url_example_relenclosure;</ulink>')</userinput>
+&prompt;<userinput>d.entries[0].enclosures</userinput>
+<computeroutput>[{u'href': u'http://example.com/movie.mp4', 'title': u'awesome movie'}]</computeroutput></screen>
+</example>
+
+</section>
+
+<section id="advanced.microformats.reltag">
+<title>rel=tag</title>
+
+<para>The <ulink url="&url_microformats_reltag;">rel=tag</ulink> microformat allows you to define <link linkend="reference.entry.tags">tags</link> within embedded &html; content.  &feedparser; looks for these attribute values in embedded markup and maps them to <xref linkend="reference.entry.tags"/>.</para>
+
+<example id="example.reltag">
+<title>Parsing embedded tags</title>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_reltag;">&url_example_reltag;</ulink>')</userinput>
+&prompt;<userinput>d.entries[0].tags</userinput>
+<computeroutput>[{'term': u'tech', 'scheme': u'http://del.icio.us/tag/', 'label': u'Technology'}]</computeroutput></screen>
+</example>
+
+</section>
+
+<section id="advanced.microformats.xfn">
+<title>&xfn;</title>
+
+<para>TODO</para>
+
+<example id="example.xfn">
+<title>Parsing &xfn; relationships</title>
+<screen>TODO</screen>
+</example>
 
 </section>
 
