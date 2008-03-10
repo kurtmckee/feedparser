@@ -110,6 +110,7 @@
 <!ENTITY url_example_http_base "&url_example;http_base.xml">
 <!ENTITY url_example_no_base "&url_example;no_base.xml">
 <!ENTITY url_example_hcard "&url_example;hcard.xml">
+<!ENTITY url_example_xfn "&url_example;xfn.xml">
 <!ENTITY url_example_relenclosure "&url_example;rel-enclosure.xml">
 <!ENTITY url_example_reltag "&url_example;rel-tag.xml">
 <!ENTITY url_tests_sanitize "&url_feedparser;tests/wellformed/sanitize/">
@@ -126,6 +127,7 @@
 <!ENTITY url_microformats_reltag "&url_microformats;wiki/rel-tag">
 <!ENTITY url_microformats_relenclosure "&url_microformats;wiki/rel-enclosure">
 <!ENTITY url_xfn "&url_microformats;wiki/XFN">
+<!ENTITY url_xfn_profile "http://gmpg.org/xfn/11">
 <!ENTITY url_chardet "http://chardet.feedparser.org/">
 <!ENTITY chardet_name "<application>Universal Encoding Detector</application>">
 <!ENTITY chardet "<ulink url='&url_chardet;'>&chardet_name;</ulink>">
@@ -232,6 +234,8 @@
 <!ENTITY isrelativelink "<para>If this is a relative &uri;, it is <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
 
 <!ENTITY containsrelativelinks "<para>If this contains &html; or &xhtml;, certain (X)HTML elements within this value may contain relative &uri;s.  If so, they are <link linkend='advanced.base'>resolved according to a set of rules</link>.</para>">
+
+<!ENTITY parsedformicroformats "<para>If this contains &html; or &xhtml;, it will be <link linkend='advanced.microformats'>parsed for microformats</link>.</para>">
 
 <!ENTITY parsedasadate "<link linkend='advanced.date'>parsed as a date</link>">
 
@@ -1716,6 +1720,12 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <para>To parse microformats. &feedparser; relies on a third-party library called &beautifulsoup;, which is distributed separately.  If &beautifulsoup_name; is not installed, &feedparser; will silently skip microformats parsing.</para>
 </note>
 
+<para>The following elements are parsed for microformats:</para>
+<itemizedlist>
+<listitem><para><xref linkend="reference.entry.summary_detail.value"/></para></listitem>
+<listitem><para><xref linkend="reference.entry.content.value"/></para></listitem>
+</itemizedlist>
+
 <section id="advanced.microformats.relenclosure">
 <title>rel=enclosure</title>
 <para>The <ulink url="&url_microformats_relenclosure;"><literal>rel=enclosure</literal></ulink> microformat provides a way for embedded &html; content to specify that a certain link should be treated as an <link linkend="reference.entry.enclosures">enclosure</link>.  &feedparser; looks for links within embedded markup that meet any of the following conditions:</para>
@@ -1794,20 +1804,39 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <section id="advanced.microformats.xfn">
 <title>&xfn;</title>
 
-<para>TODO</para>
+<para>The <ulink url="&url_xfn;">&xfn;</ulink> microformat allows you to define human relationships between &uri;s.  For example, you could link from your weblog to your spouse's weblog with the <constant>rel="spouse"</constant> relation.  It is intended primarily for "blogrolls" or other static lists of links, but the relations can occur anywhere in &html; content.  If found, &feedparser; will return the &xfn; information in <xref linkend="reference.entry.xfn"/>.</para>
+
+<para>&feedparser; supports all of the relationships listed in the <ulink url="&url_xfn_profile;">&xfn; 1.1 profile</ulink>, as well as the following variations:</para>
+
+<itemizedlist>
+<listitem><para><constant>coworker</constant> in addition to <constant>co-worker</constant></para></listitem>
+<listitem><para><constant>coresident</constant> in addition to <constant>co-resident</constant></para></listitem>
+<listitem><para><constant>relative</constant> in addition to <constant>kin</constant></para></listitem>
+<listitem><para><constant>brother</constant> and <constant>sister</constant> in addition to <constant>sibling</constant></para></listitem>
+<listitem><para><constant>husband</constant> and <constant>wife</constant> in addition to <constant>spouse</constant></para></listitem>
+</itemizedlist>
 
 <example id="example.xfn">
 <title>Parsing &xfn; relationships</title>
-<screen>TODO</screen>
+<screen>&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_xfn;">&url_example_xfn;</ulink>')</userinput>
+&prompt;<userinput>person = d.entries[0].xfn[0]</userinput>
+&prompt;<userinput>person.name</userinput>
+<computeroutput>u'John Doe'</computeroutput>
+&prompt;<userinput>person.href</userinput>
+<computeroutput>u'http://example.com/johndoe'</computeroutput>
+&prompt;<userinput>person.relationships</userinput>
+<computeroutput>[u'coworker', u'friend']</computeroutput></screen>
 </example>
 
 </section>
 
 <section id="advanced.microformats.hcard">
 <title>&hCard;</title>
-<para>TODO</para>
+<para>The <ulink url="&url_microformats_hcard;">&hCard;</ulink> microformat allows you to embed address book information within &html; content.  If &feedparser; finds an &hCard; within supported elements, it converts it into an RFC 2426-compliant &vCard; and returns it in <xref linkend="reference.entry.vcard"/>.</para>
+
 <example id="example.hcard">
-<title>Parsing embedded &hCard; markup into a &vCard;</title>
+<title>Converting embedded &hCard; markup into a &vCard;</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_hcard;">&url_example_hcard;</ulink>')</userinput>
 &prompt;<userinput>print d.entries[0].vcard</userinput>
@@ -1844,11 +1873,10 @@ END:vCard</computeroutput></screen>
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
 <listitem><para><ulink url="&url_microformats;">Microformats.org</ulink></para></listitem>
-<listitem><para><ulink url="&url_microformats_hcard;">&hCard; specification</ulink></para></listitem>
-<listitem><para><ulink url="&url_microformats_reltag;"><literal>rel=tag</literal> specification</ulink></para></listitem>
 <listitem><para><ulink url="&url_microformats_relenclosure;"><literal>rel=enclosure</literal> specification</ulink></para></listitem>
 <listitem><para><ulink url="&url_microformats_reltag;"><literal>rel=tag</literal> specification</ulink></para></listitem>
 <listitem><para><ulink url="&url_xfn;">&xfn; specification</ulink></para></listitem>
+<listitem><para><ulink url="&url_microformats_hcard;">&hCard; specification</ulink></para></listitem>
 </itemizedlist>
 
 </section>
@@ -4305,6 +4333,7 @@ xxx
 <para>Same as <xref linkend="reference.entry.summary"/>.</para>
 &sanitized;
 &containsrelativelinks;
+&parsedformicroformats;
 </section>
 <section id="reference.entry.summary_detail.type">
 <title>entries[i].summary_detail.type</title>
@@ -4346,6 +4375,7 @@ xxx
 <para>The value of this piece of content.</para>
 &sanitized;
 &containsrelativelinks;
+&parsedformicroformats;
 </section>
 <section id="reference.entry.content.type">
 <title>entries[i].content[j].type</title>
@@ -4967,6 +4997,74 @@ xxx
 <listitem><para><literal>/rss/channel/item/creativeCommons:license</literal></para></listitem>
 <listitem><para><literal>/rdf:RDF/rdf:item/cc:license/@rdf:resource</literal></para></listitem>
 <listitem><para><literal>/atom10:feed/atom10:entry/atom10:link[@rel="license"]/@href</literal></para></listitem>
+</itemizedlist>
+</section>
+
+<section id="reference.entry.xfn">
+<?dbhtml filename="reference-entry-xfn.html"?>
+<title>entries[i].xfn</title>
+<abstract>
+<title/>
+<para>A list of <link linkend="advanced.microformats.xfn">&xfn; relationships</link> found in this entry's &html; content.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:summary</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:summary</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/description</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/dc:description</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/rdf:description</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/dc:description</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:content</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:content</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/content:encoded</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/body</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/xhtml:body</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/fullitem</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/content:encoded</literal></para></listitem>
+</itemizedlist>
+
+<para><literal>entries[i].xfn</literal> is a list.  Each list item represents a single person and may contain the following values:</para>
+
+<section id="reference.entry.xfn.relationships">
+<title>entries[i].xfn[j].relationships</title>
+<para>A list of relationships for this person.  Each list item is a string, either one of the constants defined in the <ulink url="&url_xfn_profile;">&xfn; 1.1 profile</ulink> or <link linkend="advanced.microformats.xfn">one of these variations</link>.</para>
+</section>
+
+<section id="reference.entry.xfn.href">
+<title>entries[i].xfn[j].href</title>
+<para>The &uri; for this person.</para>
+&isrelativelink;
+</section>
+
+<section id="reference.entry.xfn.name">
+<title>entries[i].xfn[j].name</title>
+<para>The name of this person, a string.</para>
+</section>
+</section>
+
+<section id="reference.entry.vcard">
+<?dbhtml filename="reference-entry-vcard.html"?>
+<title>entries[i].vcard</title>
+<abstract>
+<title/>
+<para>An RFC 2426-compliant &vCard; derived from <link linkend="advanced.microformats.hcard">&hCard; information</link> found in this entry's &html; content.</para>
+</abstract>
+<itemizedlist role="reference-from">
+<title>Comes from</title>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:summary</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:summary</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/description</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/dc:description</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/rdf:description</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/dc:description</literal></para></listitem>
+<listitem><para><literal>/atom10:feed/atom10:entry/atom10:content</literal></para></listitem>
+<listitem><para><literal>/atom03:feed/atom03:entry/atom03:content</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/content:encoded</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/body</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/xhtml:body</literal></para></listitem>
+<listitem><para><literal>/rss/channel/item/fullitem</literal></para></listitem>
+<listitem><para><literal>/rdf:RDF/rdf:item/content:encoded</literal></para></listitem>
 </itemizedlist>
 </section>
 
