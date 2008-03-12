@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Changes in version 3.1 [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="start" href="index.html" title="Documentation">
+<link rel="up" href="history.html" title="Revision history">
+<link rel="prev" href="changes-32.html" title="Changes in version 3.2">
+<link rel="next" href="changes-301.html" title="Changes in version 3.0.1">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="history.html">Revision history</a> → <span class="thispage">Changes in version 3.1</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title">
+<a name="changes.31" class="skip" href="#changes.31" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Changes in version 3.1</h2></div></div>
+<div></div>
+</div>
+<div class="abstract"><p><span class="application">Universal Feed Parser</span> 3.1 was released on June 28, 2004.</p></div>
+<div class="itemizedlist"><ul>
+<li>added and passed tests for converting <acronym title="HyperText Markup Language">HTML</acronym> entities to Unicode equivalents in illformed feeds (aaronsw)</li>
+<li>added and passed tests for converting character entities to Unicode equivalents in illformed feeds (aaronsw)</li>
+<li>test for valid parsers when setting <tt class="constant">XML_AVAILABLE</tt>
+</li>
+<li>make version and encoding available when server returns a <tt class="constant">304</tt>
+</li>
+<li>add <tt class="varname">handlers</tt> parameter to pass arbitrary <tt class="filename">urllib2</tt> handlers (like digest auth or proxy support)</li>
+<li>add code to parse username/password out of url and send as basic authentication</li>
+<li>expose downloading-related exceptions in <tt class="varname">bozo_exception</tt> (aaronsw)</li>
+<li>added <tt class="methodname">__contains__</tt> method to <tt class="classname">FeedParserDict</tt> (aaronsw)</li>
+<li>added <tt class="varname">publisher_detail</tt> (aaronsw)</li>
+</ul></div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="changes-32.html">Changes in version 3.2</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="changes-301.html">Changes in version 3.0.1</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004, 2005, 2006, 2007, 2008 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>

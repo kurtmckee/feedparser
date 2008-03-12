@@ -21,7 +21,7 @@
 <a name="advanced.encoding" class="skip" href="#advanced.encoding" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Character Encoding Detection</h2></div></div>
 <div></div>
 </div>
-<a name="id296588"></a><table class="tip" border="0" summary="">
+<a name="id296592"></a><table class="tip" border="0" summary="">
 <tr><td rowspan="2" align="center" valign="top" width="1%"><img src="images/tip.png" alt="Tip" title="" width="24" height="24"></td></tr>
 <tr><td colspan="2" align="left" valign="top" width="99%">Feeds may be published in any character encoding.  <span class="application">Python</span> supports only a few character encodings by default.  To support the maximum number of character encodings (and be able to parse the maximum number of feeds), you should install <tt class="filename">cjkcodecs</tt> and <tt class="filename">iconv_codec</tt>.  Both are available at <a href="http://cjkpython.i18n.org/">http://cjkpython.i18n.org/</a>.</td></tr>
 </table>
@@ -34,7 +34,7 @@
 </div>
 <p>In <acronym title="Extensible Markup Language">XML</acronym>, the character encoding is optional and may be given in the <acronym title="Extensible Markup Language">XML</acronym> declaration in the first line of the document, like this:</p>
 <div class="informalexample"><pre class="programlisting ">&lt;xml version="1.0" encoding="utf-8"?&gt;</pre></div>
-<p>If no encoding is given, XML supports the use of a Byte Order Mark to identify the document as some flavor of UTF-32, UTF-16, or UTF-8.  <a href="http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info">Section F of the <acronym title="Extensible Markup Language">XML</acronym> specification</a> outlines the process for determining the character encoding based on unique properties of the Byte Order Mark in the first two to four bytes of the document.</p>
+<p>If no encoding is given, <acronym title="Extensible Markup Language">XML</acronym> supports the use of a Byte Order Mark to identify the document as some flavor of UTF-32, UTF-16, or UTF-8.  <a href="http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info">Section F of the <acronym title="Extensible Markup Language">XML</acronym> specification</a> outlines the process for determining the character encoding based on unique properties of the Byte Order Mark in the first two to four bytes of the document.</p>
 <p>If no encoding is specified and no Byte Order Mark is present, <acronym title="Extensible Markup Language">XML</acronym> defaults to UTF-8.</p>
 <p><acronym title="Hypertext Transfer Protocol">HTTP</acronym> uses <acronym>MIME</acronym> to define a method of specifying the character encoding, as part of the <tt class="literal">Content-Type</tt> <acronym title="Hypertext Transfer Protocol">HTTP</acronym> header, which looks like this:</p>
 <div class="informalexample"><pre class="programlisting ">Content-Type: text/html; charset="utf-8"</pre></div>
@@ -81,7 +81,7 @@
 <h3>Elsewhere</h3>
 <ul>
 <li><a href="http://www.ietf.org/rfc/rfc3023.txt">RFC 3023</a></li>
-<li><a href="http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info">Section F of the XML specification</a></li>
+<li><a href="http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info">Section F of the <acronym title="Extensible Markup Language">XML</acronym> specification</a></li>
 <li><a href="http://www.imc.org/atom-syntax/mail-archive/msg05575.html">On the well-formedness of <acronym title="Extensible Markup Language">XML</acronym> documents served as <tt class="literal">text/plain</tt></a></li>
 <li><a href="http://cjkpython.i18n.org/">CJKCodecs and iconv_codec</a></li>
 </ul>

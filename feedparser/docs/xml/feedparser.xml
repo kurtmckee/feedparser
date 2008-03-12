@@ -29,6 +29,9 @@
 <!ENTITY rfc "<acronym condition='Request For Comments'>RFC</acronym>">
 <!ENTITY rfc822 "&rfc; 822">
 <!ENTITY rfc3339 "&rfc; 3339">
+<!ENTITY ebcdic "<acronym>EBCDIC</acronym>">
+<!ENTITY ascii "<acronym>ASCII</acronym>">
+<!ENTITY bom "<acronym condition='Byte Order Mark'>BOM</acronym>">
 <!ENTITY iso "<acronym>ISO</acronym>">
 <!ENTITY uri "<acronym condition='Uniform Resource Identifier'>URI</acronym>">
 <!ENTITY iri "<acronym condition='International Resource Identifier'>IRI</acronym>">
@@ -1636,7 +1639,7 @@ nasty tricks&amp;lt;/span&amp;gt;&lt;/description></programlisting>
 <para>The more I investigate, the more cases I find where &iewin; will treat seemingly innocuous markup as code and blithely execute it.  This is why &feedparser; uses a whitelist and not a blacklist.   I am reasonably confident that none of the elements or attributes on the whitelist are security risks.  I am not at all confident about elements or attributes that I have not explicitly investigated.  And I have no confidence at all in my ability to detect strings within attribute values that &iewin; will treat as executable code.</para>
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
-<listitem><para><ulink url="&url_howtoconsumersssafely;">How to consume RSS safely</ulink> explains the platypus attack.</para></listitem>
+<listitem><para><ulink url="&url_howtoconsumersssafely;">How to consume &rss; safely</ulink> explains the platypus attack.</para></listitem>
 </itemizedlist>
 </section>
 
@@ -2408,7 +2411,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 <programlisting>&lt;xml version="1.0" encoding="utf-8"?></programlisting>
 </informalexample>
 
-<para>If no encoding is given, XML supports the use of a Byte Order Mark to identify the document as some flavor of UTF-32, UTF-16, or UTF-8.  <ulink url="&url_sectionf;">Section F of the &xml; specification</ulink> outlines the process for determining the character encoding based on unique properties of the Byte Order Mark in the first two to four bytes of the document.</para>
+<para>If no encoding is given, &xml; supports the use of a Byte Order Mark to identify the document as some flavor of UTF-32, UTF-16, or UTF-8.  <ulink url="&url_sectionf;">Section F of the &xml; specification</ulink> outlines the process for determining the character encoding based on unique properties of the Byte Order Mark in the first two to four bytes of the document.</para>
 
 <para>If no encoding is specified and no Byte Order Mark is present, &xml; defaults to UTF-8.</para>
 
@@ -2462,7 +2465,7 @@ AttributeError: object has no attribute 'foo_issn'</computeroutput>
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
 <listitem><para><ulink url="&url_rfc3023;">RFC 3023</ulink></para></listitem>
-<listitem><para><ulink url="&url_sectionf;">Section F of the XML specification</ulink></para></listitem>
+<listitem><para><ulink url="&url_sectionf;">Section F of the &xml; specification</ulink></para></listitem>
 <listitem><para><ulink url="&url_wellformedness;">On the well-formedness of &xml; documents served as <literal>text/plain</literal></ulink></para></listitem>
 <listitem><para><ulink url="&url_cjkcodecs;">CJKCodecs and iconv_codec</ulink></para></listitem>
 </itemizedlist>
@@ -3188,7 +3191,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>Changes in version 4.2</title>
 <abstract>
 <title/>
-<para>Here is a summary of the major changes in &feedparser; 4.2.</para>
+<para>&feedparser; 4.2 was released on &fileversion;.</para>
 </abstract>
 <itemizedlist>
 <listitem><para><xref linkend="advanced.microformats"/>.</para></listitem>
@@ -3208,11 +3211,33 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>Changes in version 4.1</title>
 <abstract>
 <title/>
-<para>Here is a summary of the major changes in &feedparser; 4.1.</para>
+<para>&feedparser; 4.1 was released on January 11, 2006.</para>
 </abstract>
 <itemizedlist>
 <listitem><para>Support for the &chardet; to autodetect character encoding of feeds that declare their encoding incorrectly or don't declare it at all.  See <xref linkend="advanced.encoding"/> for details of when this gets called.</para></listitem>
 <listitem><para>&feedparser; no longer sets a default socket timeout (bug <ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=1392140&amp;group_id=112328&amp;atid=661937">1392140</ulink>).  If you were relying on this feature, you will need to call <literal>socket.setdefaulttimeout(TIMEOUT_IN_SECONDS)</literal> yourself.</para></listitem>
+</itemizedlist>
+</section>
+<section id="changes.402">
+<?dbhtml filename="changes-402.html"?>
+<title>Changes in version 4.0.2</title>
+<abstract>
+<title/>
+<para>&feedparser; 4.0.2 was released on December 24, 2005.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>cleared <varname>_debug</varname> flag.</para></listitem>
+</itemizedlist>
+</section>
+<section id="changes.401">
+<?dbhtml filename="changes-401.html"?>
+<title>Changes in version 4.0.1</title>
+<abstract>
+<title/>
+<para>&feedparser; 4.0.1 was released on December 24, 2005.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>bug fixes for &python; 2.1 compatibility.</para></listitem>
 </itemizedlist>
 </section>
 <section id="changes.40">
@@ -3220,7 +3245,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>Changes in version 4.0</title>
 <abstract>
 <title/>
-<para>Here is a summary of the major changes in &feedparser; 4.0.</para>
+<para>&feedparser; 4.0 was released on December 23, 2005.</para>
 </abstract>
 <itemizedlist>
 <listitem><para>Support for <xref linkend="annotated.atom10"/>.</para></listitem>
@@ -3230,11 +3255,306 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <listitem><para>Lots of things have been renamed to match Atom 1.0 terminology.  <literal>issued</literal> is now <xref linkend="reference.entry.published"/>, <literal>modified</literal> is now <xref linkend="reference.entry.updated"/>, and <literal>url</literal> is now <literal>href</literal> everywhere.  You can still access these elements with the old names, so you shouldn't need to change any existing code, but don't be surprised if you can't find them during debugging.</para></listitem>
 <listitem><para><literal>category</literal> and <literal>categories</literal> have been replaced by <literal>tags</literal>, see <xref linkend="reference.feed.tags"/> and <xref linkend="reference.entry.tags"/>.  The old names still work.</para></listitem>
 <listitem><para><literal>mode</literal> is gone from all detail and content dictionaries.  It was never terribly useful, since &feedparser; unescapes content automatically.</para></listitem>
-<listitem><para><xref linkend="reference.entry.source"/> is now a dictionary of feed metadata as per section 4.2.11 of RFC 4287.  &feedparser; no longer supports the RSS 2.0's <literal>source</literal> element.</para></listitem>
+<listitem><para><xref linkend="reference.entry.source"/> is now a dictionary of feed metadata as per section 4.2.11 of RFC 4287.  &feedparser; no longer supports the &rss; 2.0's <literal>source</literal> element.</para></listitem>
 <listitem><para>Content in unknown namespaces is no longer discarded (<ulink url="http://sourceforge.net/tracker/index.php?func=detail&amp;aid=993305&amp;group_id=112328&amp;atid=661937">bug 993305</ulink>)</para></listitem>
 <listitem><para>Lots of other bug fixes.</para></listitem>
 </itemizedlist>
 </section>
+<section id="changes.33">
+<?dbhtml filename="changes-33.html"?>
+<title>Changes in version 3.3</title>
+<abstract>
+<title/>
+<para>&feedparser; 3.3 was released on July 15, 2004.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>optimized &ebcdic; to &ascii; conversion</para></listitem>
+<listitem><para>fixed obscure problem tracking <sgmltag>xml:base</sgmltag> and <sgmltag>xml:lang</sgmltag> if element declares it, child doesn't, first grandchild redeclares it, and second grandchild doesn't</para></listitem>
+<listitem><para>refactored date parsing</para></listitem>
+<listitem><para>defined public <function>registerDateHandler</function> so callers can add support for additional date formats at runtime</para></listitem>
+<listitem><para>added support for OnBlog, Nate, MSSQL, Greek, and Hungarian dates (ytrewq1)</para></listitem>
+<listitem><para>added <function>zopeCompatibilityHack()</function> which turns <classname>FeedParserDict</classname> into a regular dictionary, required for <application>Zope</application> compatibility, and also makes command-line debugging easier because pprint module formats real dictionaries better than dictionary-like objects</para></listitem>
+<listitem><para>added <classname>NonXMLContentType</classname> exception, which is stored in <varname>bozo_exception</varname> when a feed is served with a non-&xml; media type such as <constant>'text/plain'</constant></para></listitem>
+<listitem><para>respect <constant>Content-Language</constant> as default language if no <sgmltag>xml:lang</sgmltag> is present</para></listitem>
+<listitem><para><varname>cloud</varname> dict is now <classname>FeedParserDict</classname></para></listitem>
+<listitem><para>generator dict is now <classname>FeedParserDict</classname></para></listitem>
+<listitem><para>better tracking of <sgmltag>xml:lang</sgmltag>, including support for <literal>xml:lang=''</literal> to unset the current language</para></listitem>
+<listitem><para>recognize &rss; 1.0 feeds even when &rss; 1.0 namespace is not the default namespace</para></listitem>
+<listitem><para>don't overwrite final status on redirects (scenarios: redirecting to a &uri; that returns <constant>304</constant>, redirecting to a &uri; that redirects to another &uri; with a different type of redirect)</para></listitem>
+<listitem><para>add support for <constant>HTTP 303</constant> redirects</para></listitem>
+</itemizedlist>
+</section>
+<section id="changes.32">
+<?dbhtml filename="changes-32.html"?>
+<title>Changes in version 3.2</title>
+<abstract>
+<title/>
+<para>&feedparser; 3.2 was released on July 3, 2004.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>use <filename class='headerfile'>cjkcodecs</filename> and <filename class='headerfile'>iconv_codec</filename> if available</para></listitem>
+<listitem><para>always convert feed to UTF-8 before passing to &xml; parser</para></listitem>
+<listitem><para>completely revamped logic for determining character encoding and attempting &xml; parsing (much faster)</para></listitem>
+<listitem><para>increased default timeout to 20 seconds</para></listitem>
+<listitem><para>test for presence of <constant>Location</constant> header on redirects</para></listitem>
+<listitem><para>added tests for many alternate character encodings</para></listitem>
+<listitem><para>support various &ebcdic; encodings</para></listitem>
+<listitem><para>support UTF-16BE and UTF16-LE with or without a &bom;</para></listitem>
+<listitem><para>support UTF-8 with a &bom;</para></listitem>
+<listitem><para>support UTF-32BE and UTF-32LE with or without a &bom;</para></listitem>
+<listitem><para>fixed crashing bug if no &xml; parsers are available</para></listitem>
+<listitem><para>added support for <literal>'Content-encoding: deflate'</literal></para></listitem>
+<listitem><para>send blank <literal>'Accept-encoding: '</literal> header if neither <filename class='headerfile'>gzip</filename> nor <filename class='headerfile'>zlib</filename> modules are available</para></listitem>
+</itemizedlist>
+</section>
+<section id="changes.31">
+<?dbhtml filename="changes-31.html"?>
+<title>Changes in version 3.1</title>
+<abstract>
+<title/>
+<para>&feedparser; 3.1 was released on June 28, 2004.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>added and passed tests for converting &html; entities to Unicode equivalents in illformed feeds (aaronsw)</para></listitem>
+<listitem><para>added and passed tests for converting character entities to Unicode equivalents in illformed feeds (aaronsw)</para></listitem>
+<listitem><para>test for valid parsers when setting <constant>XML_AVAILABLE</constant></para></listitem>
+<listitem><para>make version and encoding available when server returns a <constant>304</constant></para></listitem>
+<listitem><para>add <varname>handlers</varname> parameter to pass arbitrary <filename class='headerfile'>urllib2</filename> handlers (like digest auth or proxy support)</para></listitem>
+<listitem><para>add code to parse username/password out of url and send as basic authentication</para></listitem>
+<listitem><para>expose downloading-related exceptions in <varname>bozo_exception</varname> (aaronsw)</para></listitem>
+<listitem><para>added <methodname>__contains__</methodname> method to <classname>FeedParserDict</classname> (aaronsw)</para></listitem>
+<listitem><para>added <varname>publisher_detail</varname> (aaronsw)</para></listitem>
+</itemizedlist>
+</section>
+<section id="changes.301">
+<?dbhtml filename="changes-301.html"?>
+<title>Changes in version 3.0.1</title>
+<abstract>
+<title/>
+<para>&feedparser; 3.0.1 was released on June 21, 2004.</para>
+</abstract>
+<itemizedlist>
+<listitem><para>default to <constant>us-ascii</constant> for all <literal>text/*</literal> content types</para></listitem>
+<listitem><para>recover from malformed <constant>content-type</constant> header parameter with no equals sign (<literal>"text/xml; charset:iso-8859-1"</literal>)</para></listitem>
+<listitem><para>docs: added <filename>reference-feed.html</filename> and <filename>reference-entry.html</filename> (bug #977723)</para></listitem>
+<listitem><para>docs: fixed <varname>entry[i]</varname> in documentation (should be <varname>entries[i]</varname>) (bug #977722)</para></listitem>
+<listitem><para>docs: added note about Unicode string usage (bug #977716)</para></listitem>
+<listitem><para>docs: added <filename>basic-existence.html</filename> (bug #977704)</para></listitem>
+<listitem><para>docs: fixed description of feed title (bug #977685)</para></listitem>
+<listitem><para>docs: fixed typo in annotated &rss; 1.0 feed (bug #977682)</para></listitem>
+</itemizedlist>
+</section>
+<section id="changes.30.and.friends">
+<?dbhtml filename="changes-30.html"?>
+<title>Changes in version 3.0 and the 26 betas that preceded it</title>
+<abstract>
+<title/>
+<para>This got a little out of hand.</para>
+</abstract>
+
+<bridgehead id="changes.30" renderas="sect3">Changes in version 3.0</bridgehead>
+<para>&feedparser; 3.0 was released on June 21, 2004.</para>
+<itemizedlist>
+<listitem><para>don't try <constant>iso-8859-1</constant> (can't distinguish between <constant>iso-8859-1</constant> and <constant>windows-1252</constant> anyway, and most incorrectly marked feeds are <constant>windows-1252</constant>)</para></listitem>
+<listitem><para>fixed regression that could cause the same encoding to be tried twice (even if it failed the first time)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30fc3" renderas="sect3">Changes in version 3.0fc3</bridgehead>
+<para>&feedparser; 3.0fc3 was released on June 18, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed bug in <function>_changeEncodingDeclaration</function> that failed to parse UTF-16 encoded feeds</para></listitem>
+<listitem><para>made <varname>source</varname> into a FeedParserDict</para></listitem>
+<listitem><para>duplicate <literal>admin:generatorAgent/@rdf:resource</literal> in <varname>generator_detail.url</varname></para></listitem>
+<listitem><para>added support for <sgmltag>image</sgmltag></para></listitem>
+<listitem><para>refactored <function>parse()</function> fallback logic to try other encodings if SAX parsing fails (previously it would only try other encodings if re-encoding failed)</para></listitem>
+<listitem><para>remove <function>unichr</function> madness in <methodname>normalize_attrs</methodname> now that we're properly tracking encoding in and out of <classname>BaseHTMLProcessor</classname></para></listitem>
+<listitem><para>set <varname>feed.language</varname> from root-level <sgmltag class='attribute'>xml:lang</sgmltag></para></listitem>
+<listitem><para>set <varname>entry.id</varname> from <sgmltag class='attribute'>rdf:about</sgmltag></para></listitem>
+<listitem><para>send <constant>Accept</constant> header</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30fc2" renderas="sect3">Changes in version 3.0fc2</bridgehead>
+<para>&feedparser; 3.0fc2 was released on May 10, 2004.</para>
+<itemizedlist>
+<listitem><para>added and passed Sam's <literal>amp</literal> tests</para></listitem>
+<listitem><para>added and passed my <sgmltag>blink</sgmltag> tag tests</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30fc1" renderas="sect3">Changes in version 3.0fc1</bridgehead>
+<para>&feedparser; 3.0fc1 was released on April 23, 2004.</para>
+<itemizedlist>
+<listitem><para>made <varname>results.entries[0].links[0]</varname> and <varname>results.entries[0].enclosures[0]</varname> into <classname>FeedParserDict</classname></para></listitem>
+<listitem><para>fixed typo that could cause the same encoding to be tried twice (even if it failed the first time)</para></listitem>
+<listitem><para>fixed DOCTYPE stripping when DOCTYPE contained entity declarations</para></listitem>
+<listitem><para>better <sgmltag>textinput</sgmltag> and <sgmltag>image</sgmltag> tracking in illformed &rss; 1.0 feeds</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b23" renderas="sect3">Changes in version 3.0b23</bridgehead>
+<para>&feedparser; 3.0b23 was released on April 21, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed <constant>UnicodeDecodeError</constant> for feeds that contain high-bit characters in attributes in embedded &html; in description (thanks Thijs van de Vossen)</para></listitem>
+<listitem><para>moved <varname>guid</varname>, <varname>date</varname>, and <varname>date_parsed</varname> to mapped keys in <classname>FeedParserDict</classname></para></listitem>
+<listitem><para>tweaked <methodname>FeedParserDict.has_key</methodname> to return <constant>True</constant> if asking about a mapped key</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b22" renderas="sect3">Changes in version 3.0b22</bridgehead>
+<para>&feedparser; 3.0b22 was released on April 19, 2004.</para>
+<itemizedlist>
+<listitem><para>changed <varname>channel</varname> to <varname>feed</varname>, <varname>item</varname> to <varname>entries</varname> in <varname>results</varname> dict</para></listitem>
+<listitem><para>changed <varname>results</varname> dict to allow getting values with <varname>results.key</varname> as well as <varname>results[key]</varname></para></listitem>
+<listitem><para>work around embedded illformed &html; with half a DOCTYPE</para></listitem>
+<listitem><para>work around malformed <constant>Content-Type</constant> header</para></listitem>
+<listitem><para>if character encoding is wrong, try several common ones before falling back to regexes (if this works, <varname>bozo_exception</varname> is set to <constant>CharacterEncodingOverride</constant></para></listitem>
+<listitem><para>fixed character encoding issues in <classname>BaseHTMLProcessor</classname> by tracking encoding and converting from Unicode to raw strings before feeding data to <classname>sgmllib.SGMLParser</classname></para></listitem>
+<listitem><para>convert each value in results to Unicode (if possible), even if using regex-based parsing</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b21" renderas="sect3">Changes in version 3.0b21</bridgehead>
+<para>&feedparser; 3.0b21 was released on April 14, 2004.</para>
+<itemizedlist>
+<listitem><para>added Hot RSS support</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b20" renderas="sect3">Changes in version 3.0b20</bridgehead>
+<para>&feedparser; 3.0b20 was released on April 7, 2004.</para>
+<itemizedlist>
+<listitem><para>added &cdf; support</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b19" renderas="sect3">Changes in version 3.0b19</bridgehead>
+<para>&feedparser; 3.0b19 was released on March 15, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed bug exploding author information when author name was in parentheses</para></listitem>
+<listitem><para>removed ultra-problematic <filename class='headerfile'>mxTidy</filename> support</para></listitem>
+<listitem><para>patch to workaround crash in PyXML/expat when encountering invalid entities (MarkMoraes)</para></listitem>
+<listitem><para>support for <sgmltag>textinput</sgmltag>/<sgmltag>textInput</sgmltag></para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b18" renderas="sect3">Changes in version 3.0b18</bridgehead>
+<para>&feedparser; 3.0b18 was released on February 17, 2004.</para>
+<itemizedlist>
+<listitem><para>always map <sgmltag>description</sgmltag> to <varname>summary_detail</varname> (Andrei)</para></listitem>
+<listitem><para>use <filename class='headerfile'>libxml2</filename> (if available)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b17" renderas="sect3">Changes in version 3.0b17</bridgehead>
+<para>&feedparser; 3.0b17 was released on February 13, 2004.</para>
+<itemizedlist>
+<listitem><para>determine character encoding as per <ulink url="&url_rfc3023;">RFC 3023</ulink></para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b16" renderas="sect3">Changes in version 3.0b16</bridgehead>
+<para>&feedparser; 3.0b16 was released on February 12, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed support for &rss; 0.90 (broken in b15)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b15" renderas="sect3">Changes in version 3.0b15</bridgehead>
+<para>&feedparser; 3.0b15 was released on February 11, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed bug resolving relative links in <sgmltag>wfw:commentRSS</sgmltag></para></listitem>
+<listitem><para>fixed bug capturing author and contributor &uri;</para></listitem>
+<listitem><para>fixed bug resolving relative links in author and contributor &uri;</para></listitem>
+<listitem><para>fixed bug resolving relative links in generator &uri;</para></listitem>
+<listitem><para>added support for recognizing &rss; 1.0</para></listitem>
+<listitem><para>passed Simon Fell's namespace tests, and included them permanently in the test suite with his permission</para></listitem>
+<listitem><para>fixed namespace handling under &python; 2.1</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b14" renderas="sect3">Changes in version 3.0b14</bridgehead>
+<para>&feedparser; 3.0b14 was released on February 8, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed CDATA handling in non-wellformed feeds under &python; 2.1</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b13" renderas="sect3">Changes in version 3.0b13</bridgehead>
+<para>&feedparser; 3.0b13 was released on February 8, 2004.</para>
+<itemizedlist>
+<listitem><para>better handling of empty &html; tags (<sgmltag>br</sgmltag>, <sgmltag>hr</sgmltag>, <sgmltag>img</sgmltag>, etc.) in embedded markup, in either &html; or &xhtml; form (<sgmltag>&lt;br></sgmltag>, <sgmltag>&lt;br/></sgmltag>, <sgmltag>&lt;br /></sgmltag>)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b12" renderas="sect3">Changes in version 3.0b12</bridgehead>
+<para>&feedparser; 3.0b12 was released on February 6, 2004.</para>
+<itemizedlist>
+<listitem><para>fiddled with <function>decodeEntities</function> (still not right)</para></listitem>
+<listitem><para>added support to &atom; 0.2 <sgmltag>subtitle</sgmltag></para></listitem>
+<listitem><para>added support for &atom; content model in <sgmltag>copyright</sgmltag></para></listitem>
+<listitem><para>better sanitizing of dangerous &html; elements with end tags (<sgmltag>script</sgmltag>, <sgmltag>frameset</sgmltag>)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b11" renderas="sect3">Changes in version 3.0b11</bridgehead>
+<para>&feedparser; 3.0b11 was released on February 2, 2004.</para>
+<itemizedlist>
+<listitem><para>added <sgmltag>rights</sgmltag> to list of elements that can contain dangerous markup</para></listitem>
+<listitem><para>fiddled with <function>decodeEntities</function> (not right)</para></listitem>
+<listitem><para>liberalized date parsing even further</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b10" renderas="sect3">Changes in version 3.0b10</bridgehead>
+<para>&feedparser; 3.0b10 was released on January 31, 2004.</para>
+<itemizedlist>
+<listitem><para>incorporated ISO-8601 date parsing routines from <filename class='headerfile'>xml.util.iso8601</filename></para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b9" renderas="sect3">Changes in version 3.0b9</bridgehead>
+<para>&feedparser; 3.0b9 was released on January 29, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed check for presence of <function>dict</function> function</para></listitem>
+<listitem><para>added support for <sgmltag>summary</sgmltag></para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b8" renderas="sect3">Changes in version 3.0b8</bridgehead>
+<para>&feedparser; 3.0b8 was released on January 28, 2004.</para>
+<itemizedlist>
+<listitem><para>added support for <sgmltag>contributor</sgmltag></para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b7" renderas="sect3">Changes in version 3.0b7</bridgehead>
+<para>&feedparser; 3.0b7 was released on January 28, 2004.</para>
+<itemizedlist>
+<listitem><para>support &atom;-style <sgmltag>author</sgmltag> element in <varname>author_detail</varname> (dictionary of <varname>name</varname>, <varname>url</varname>, <varname>email</varname>)</para></listitem>
+<listitem><para>map <varname>author</varname> to <varname>author_detail</varname> if <varname>author</varname> contains name + email address</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b6" renderas="sect3">Changes in version 3.0b6</bridgehead>
+<para>&feedparser; 3.0b6 was released on January 27, 2004.</para>
+<itemizedlist>
+<listitem><para>added feed type and version detection, <varname>result['version']</varname> will be one of <constant>SUPPORTED_VERSIONS.keys()</constant> or empty string if unrecognized</para></listitem>
+<listitem><para>added support for <sgmltag>creativeCommons:license</sgmltag> and <sgmltag>cc:license</sgmltag></para></listitem>
+<listitem><para>added support for full &atom; content model in <sgmltag>title</sgmltag>, <sgmltag>tagline</sgmltag>, <sgmltag>info</sgmltag>, <sgmltag>copyright</sgmltag>, <sgmltag>summary</sgmltag></para></listitem>
+<listitem><para>fixed bug with gzip encoding (not always telling server we support it when we do)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b5" renderas="sect3">Changes in version 3.0b5</bridgehead>
+<para>&feedparser; 3.0b5 was released on January 26, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed bug parsing multiple links at feed level</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b4" renderas="sect3">Changes in version 3.0b4</bridgehead>
+<para>&feedparser; 3.0b4 was released on January 26, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed <sgmltag>xml:lang</sgmltag> inheritance</para></listitem>
+<listitem><para>fixed multiple bugs tracking <sgmltag>xml:base</sgmltag> &uri;, one for documents that don't define one explicitly and one for documents that define an outer and an inner <sgmltag>xml:base</sgmltag> that goes out of scope before the end of the document</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b3" renderas="sect3">Changes in version 3.0b3</bridgehead>
+<para>&feedparser; 3.0b3 was released on January 23, 2004.</para>
+<itemizedlist>
+<listitem><para>parse entire feed with real &xml; parser (if available)</para></listitem>
+<listitem><para>added several new supported namespaces</para></listitem>
+<listitem><para>fixed bug tracking naked markup in <sgmltag>description</sgmltag></para></listitem>
+<listitem><para>added support for <sgmltag>enclosure</sgmltag></para></listitem>
+<listitem><para>added support for <sgmltag>source</sgmltag></para></listitem>
+<listitem><para>re-added support for <sgmltag>cloud</sgmltag> which got dropped somehow</para></listitem>
+<listitem><para>added support for <sgmltag>expirationDate</sgmltag></para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.30b2" renderas="sect3">Changes in version 3.0b2 and 3.0b1</bridgehead>
+<para>&feedparser; 3.0b2 and 3.0b1 have been lost in the mists of time.</para>
+
+</section>
+
 </chapter>
 
 <chapter id="reference">
@@ -4066,7 +4386,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <title>feed.ttl</title>
 <abstract>
 <title/>
-<para>According to the &rss; specification, <quote><sgmltag>ttl</sgmltag> stands for time to live.  It's a number of minutes that indicates how long a channel can be cached before refreshing from the source. This makes it possible for RSS sources to be managed by a file-sharing network such as Gnutella.</quote></para>
+<para>According to the &rss; specification, <quote><sgmltag>ttl</sgmltag> stands for time to live.  It's a number of minutes that indicates how long a channel can be cached before refreshing from the source. This makes it possible for &rss; sources to be managed by a file-sharing network such as Gnutella.</quote></para>
 </abstract>
 <para>No one is quite sure what this means, and no one publishes feeds via file-sharing networks.</para>
 <para>Some clients have interpreted this element to be some sort of inline caching mechanism, albeit one that completely ignores the underlying &http; protocol, its robust caching mechanisms, and the huge amount of &http;-savvy network infrastructure that understands them.  Given the vague documentation, it is impossible to say that this interpretation is any more ridiculous than the element itself.</para>
@@ -5089,7 +5409,7 @@ xxx
 <sectioninfo>
 <abstract>
 <title/>
-<para>A dictionary of all XML namespaces defined in the feed, as <literal>{prefix: namespaceURI}</literal>.</para>
+<para>A dictionary of all &xml; namespaces defined in the feed, as <literal>{prefix: namespaceURI}</literal>.</para>
 </abstract>
 </sectioninfo>
 <title>namespaces</title>
@@ -5099,7 +5419,7 @@ xxx
 </note>
 <tip>
 <title/>
-<para>This element always exists, although it may be an empty dictionary if the feed does not define any namespaces (such as an RSS 2.0 feed with no extensions).</para>
+<para>This element always exists, although it may be an empty dictionary if the feed does not define any namespaces (such as an &rss; 2.0 feed with no extensions).</para>
 </tip>
 </section>
 

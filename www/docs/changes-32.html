@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Changes in version 3.2 [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="start" href="index.html" title="Documentation">
+<link rel="up" href="history.html" title="Revision history">
+<link rel="prev" href="changes-33.html" title="Changes in version 3.3">
+<link rel="next" href="changes-31.html" title="Changes in version 3.1">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="history.html">Revision history</a> → <span class="thispage">Changes in version 3.2</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title">
+<a name="changes.32" class="skip" href="#changes.32" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Changes in version 3.2</h2></div></div>
+<div></div>
+</div>
+<div class="abstract"><p><span class="application">Universal Feed Parser</span> 3.2 was released on July 3, 2004.</p></div>
+<div class="itemizedlist"><ul>
+<li>use <tt class="filename">cjkcodecs</tt> and <tt class="filename">iconv_codec</tt> if available</li>
+<li>always convert feed to UTF-8 before passing to <acronym title="Extensible Markup Language">XML</acronym> parser</li>
+<li>completely revamped logic for determining character encoding and attempting <acronym title="Extensible Markup Language">XML</acronym> parsing (much faster)</li>
+<li>increased default timeout to 20 seconds</li>
+<li>test for presence of <tt class="constant">Location</tt> header on redirects</li>
+<li>added tests for many alternate character encodings</li>
+<li>support various <acronym>EBCDIC</acronym> encodings</li>
+<li>support UTF-16BE and UTF16-LE with or without a <acronym title="Byte Order Mark">BOM</acronym>
+</li>
+<li>support UTF-8 with a <acronym title="Byte Order Mark">BOM</acronym>
+</li>
+<li>support UTF-32BE and UTF-32LE with or without a <acronym title="Byte Order Mark">BOM</acronym>
+</li>
+<li>fixed crashing bug if no <acronym title="Extensible Markup Language">XML</acronym> parsers are available</li>
+<li>added support for <tt class="literal">'Content-encoding: deflate'</tt>
+</li>
+<li>send blank <tt class="literal">'Accept-encoding: '</tt> header if neither <tt class="filename">gzip</tt> nor <tt class="filename">zlib</tt> modules are available</li>
+</ul></div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="changes-33.html">Changes in version 3.3</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="changes-31.html">Changes in version 3.1</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004, 2005, 2006, 2007, 2008 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>

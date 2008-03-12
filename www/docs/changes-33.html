@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Changes in version 3.3 [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="start" href="index.html" title="Documentation">
+<link rel="up" href="history.html" title="Revision history">
+<link rel="prev" href="changes-40.html" title="Changes in version 4.0">
+<link rel="next" href="changes-32.html" title="Changes in version 3.2">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="history.html">Revision history</a> → <span class="thispage">Changes in version 3.3</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title">
+<a name="changes.33" class="skip" href="#changes.33" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Changes in version 3.3</h2></div></div>
+<div></div>
+</div>
+<div class="abstract"><p><span class="application">Universal Feed Parser</span> 3.3 was released on July 15, 2004.</p></div>
+<div class="itemizedlist"><ul>
+<li>optimized <acronym>EBCDIC</acronym> to <acronym>ASCII</acronym> conversion</li>
+<li>fixed obscure problem tracking <tt class="sgmltag-element">xml:base</tt> and <tt class="sgmltag-element">xml:lang</tt> if element declares it, child doesn't, first grandchild redeclares it, and second grandchild doesn't</li>
+<li>refactored date parsing</li>
+<li>defined public <tt class="function">registerDateHandler</tt> so callers can add support for additional date formats at runtime</li>
+<li>added support for OnBlog, Nate, MSSQL, Greek, and Hungarian dates (ytrewq1)</li>
+<li>added <tt class="function">zopeCompatibilityHack()</tt> which turns <tt class="classname">FeedParserDict</tt> into a regular dictionary, required for <span class="application">Zope</span> compatibility, and also makes command-line debugging easier because pprint module formats real dictionaries better than dictionary-like objects</li>
+<li>added <tt class="classname">NonXMLContentType</tt> exception, which is stored in <tt class="varname">bozo_exception</tt> when a feed is served with a non-<acronym title="Extensible Markup Language">XML</acronym> media type such as <tt class="constant">'text/plain'</tt>
+</li>
+<li>respect <tt class="constant">Content-Language</tt> as default language if no <tt class="sgmltag-element">xml:lang</tt> is present</li>
+<li>
+<tt class="varname">cloud</tt> dict is now <tt class="classname">FeedParserDict</tt>
+</li>
+<li>generator dict is now <tt class="classname">FeedParserDict</tt>
+</li>
+<li>better tracking of <tt class="sgmltag-element">xml:lang</tt>, including support for <tt class="literal">xml:lang=''</tt> to unset the current language</li>
+<li>recognize <acronym title="Rich Site Summary">RSS</acronym> 1.0 feeds even when <acronym title="Rich Site Summary">RSS</acronym> 1.0 namespace is not the default namespace</li>
+<li>don't overwrite final status on redirects (scenarios: redirecting to a <acronym title="Uniform Resource Identifier">URI</acronym> that returns <tt class="constant">304</tt>, redirecting to a <acronym title="Uniform Resource Identifier">URI</acronym> that redirects to another <acronym title="Uniform Resource Identifier">URI</acronym> with a different type of redirect)</li>
+<li>add support for <tt class="constant">HTTP 303</tt> redirects</li>
+</ul></div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="changes-40.html">Changes in version 4.0</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="changes-32.html">Changes in version 3.2</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004, 2005, 2006, 2007, 2008 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>
