@@ -30,6 +30,11 @@ a:hover {
   border-bottom: 0;
 }
 
+a.plain:link, a.plain:visited, a.plain:hover {
+  text-decoration: none !important;
+  border-bottom: 0 !important;
+}
+
 h1 {
   margin: 8px 0 0 0;
   padding: 0;
