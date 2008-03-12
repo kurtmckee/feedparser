@@ -1,0 +1,55 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Changes in version 2.6 [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="start" href="index.html" title="Documentation">
+<link rel="up" href="history.html" title="Revision history">
+<link rel="prev" href="changes-27.html" title="Changes in version 2.7.x">
+<link rel="next" href="changes-early.html" title="Changes in earlier versions">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="history.html">Revision history</a> → <span class="thispage">Changes in version 2.6</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title">
+<a name="changes.26" class="skip" href="#changes.26" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Changes in version 2.6</h2></div></div>
+<div></div>
+</div>
+<div class="abstract"><p><span class="application">Ultra-liberal Feed Parser</span> 2.6 was released on January 1, 2004.</p></div>
+<div class="itemizedlist"><ul>
+<li>
+<tt class="sgmltag-element">dc:author</tt> support (MarekK)</li>
+<li>fixed bug tracking nested <tt class="sgmltag-element">div</tt>s within content (JohnD)</li>
+<li>fixed missing <tt class="filename">sys</tt> import (JohanS)</li>
+<li>fixed regular expression to capture <acronym title="Extensible Markup Language">XML</acronym> character encoding (Andrei)</li>
+<li>added support for Atom 0.3-style links</li>
+<li>fixed bug with <tt class="sgmltag-element">textInput</tt> tracking</li>
+<li>added support for <tt class="sgmltag-element">cloud</tt> (MartijnP)</li>
+<li>added support for multiple <tt class="sgmltag-element">category</tt>/<tt class="sgmltag-element">dc:subject</tt> (MartijnP)</li>
+<li>normalize content model: <tt class="varname">description</tt> gets description (which can come from <tt class="sgmltag-element">&lt;description&gt;</tt>, <tt class="sgmltag-element">&lt;summary&gt;</tt>, or full content if no <tt class="sgmltag-element">&lt;description&gt;</tt>), <tt class="varname">content</tt> gets dict of <tt class="varname">base</tt>/<tt class="varname">language</tt>/<tt class="varname">type</tt>/<tt class="varname">value</tt> (which can come from <tt class="sgmltag-element">&lt;content:encoded&gt;</tt>, <tt class="sgmltag-element">&lt;xhtml:body</tt>, <tt class="sgmltag-element">&lt;content</tt>, or <tt class="sgmltag-element">&lt;fullitem&gt;</tt>)</li>
+<li>fixed bug matching arbitrary Userland namespaces</li>
+<li>added <tt class="sgmltag-element">xml:base</tt> and <tt class="sgmltag-element">xml:lang</tt> tracking</li>
+<li>fixed bug tracking unknown tags</li>
+<li>fixed bug tracking content when <tt class="sgmltag-element">&lt;content&gt;</tt> element is not in default namespace (like Pocketsoap feed)</li>
+<li>resolve relative URLs in <tt class="sgmltag-element">&lt;link&gt;</tt>, <tt class="sgmltag-element">&lt;guid&gt;</tt>, <tt class="sgmltag-element">&lt;docs&gt;</tt>, <tt class="sgmltag-element">&lt;url&gt;</tt>, <tt class="sgmltag-element">&lt;comments&gt;</tt>, <tt class="sgmltag-element">&lt;wfw:comment&gt;</tt>, <tt class="sgmltag-element">&lt;wfw:commentRSS&gt;</tt>
+</li>
+<li>resolve relative <acronym title="Uniform Resource Identifier">URI</acronym>s within embedded <acronym title="HyperText Markup Language">HTML</acronym> markup in <tt class="sgmltag-element">&lt;description&gt;</tt>, <tt class="sgmltag-element">&lt;xhtml:body&gt;</tt>, <tt class="sgmltag-element">&lt;content&gt;</tt>, <tt class="sgmltag-element">&lt;content:encoded&gt;</tt>, <tt class="sgmltag-element">&lt;title&gt;</tt>, <tt class="sgmltag-element">&lt;subtitle&gt;</tt>, <tt class="sgmltag-element">&lt;summary&gt;</tt>, <tt class="sgmltag-element">&lt;info&gt;</tt>, <tt class="sgmltag-element">&lt;tagline&gt;</tt>, and <tt class="sgmltag-element">&lt;copyright&gt;</tt>
+</li>
+<li>added support for pingback and trackback namespaces</li>
+</ul></div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="changes-27.html">Changes in version 2.7.x</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="changes-early.html">Changes in earlier versions</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004, 2005, 2006, 2007, 2008 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>

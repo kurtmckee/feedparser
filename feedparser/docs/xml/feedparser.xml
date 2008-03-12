@@ -9,6 +9,8 @@
 <!ENTITY feedparser_version "4.2">
 <!ENTITY feedparser_modulename "<filename class='headerfile'>feedparser</filename>">
 <!ENTITY feedparser_filename "<filename>feedparser.py</filename>">
+<!ENTITY ultraliberalfeedparser "<application>Ultra-liberal Feed Parser</application>">
+<!ENTITY ultraliberalrssparser "<application>Ultra-liberal RSS Parser</application>">
 <!ENTITY title "Documentation">
 <!ENTITY feedparser_domain "feedparser.org">
 <!ENTITY url_feedparser "http://&feedparser_domain;/">
@@ -3194,13 +3196,14 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <para>&feedparser; 4.2 was released on &fileversion;.</para>
 </abstract>
 <itemizedlist>
-<listitem><para><xref linkend="advanced.microformats"/>.</para></listitem>
+<listitem><para>Support for <link linkend="advanced.microformats">parsing microformats</link>, including <link linkend="advanced.microformats.relenclosure">rel=enclosure</link>, <link linkend="advanced.microformats.reltag">rel=tag</link>, <link linkend="advanced.microformats.xfn">&xfn;</link>, and <link linkend="advanced.microformats.hcard">&hCard;</link>.</para></listitem>
 <listitem><para>Updated the whitelist of <link linkend="advanced.sanitization.html">acceptable HTML elements and attributes</link> based on the latest draft of the &html5; specification.</para></listitem>
-<listitem><para><xref linkend="advanced.sanitization.css"/>.  (Previous versions of &feedparser; simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.</para></listitem>
-<listitem><para><xref linkend="advanced.sanitization.svg"/> and <xref linkend="advanced.sanitization.mathml"/>.  Many thanks to Jacques Distler for patiently debugging these features.</para></listitem>
+<listitem><para>Support for <xref linkend="advanced.sanitization.css"/>.  (Previous versions of &feedparser; simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.</para></listitem>
+<listitem><para>Support for <xref linkend="advanced.sanitization.svg"/>.</para></listitem>
+<listitem><para>Support for <xref linkend="advanced.sanitization.mathml"/>.  Many thanks to Jacques Distler for patiently debugging this feature.</para></listitem>
 <listitem><para>&iri; support for every element that can contain a &uri;.</para></listitem>
 <listitem><para>Ability to <link linkend="advanced.base.disable">disable relative &uri; resolution</link>.</para></listitem>
-<!--<listitem><para>Ability to <link linkend="advanced.sanitization.disable">disable &html; sanitizing</link>.</para></listitem>-->
+<!--TODO<listitem><para>Ability to <link linkend="advanced.sanitization.disable">disable &html; sanitizing</link>.</para></listitem>-->
 <listitem><para><link linkend="commandline">Command-line arguments and alternate serializers</link>, for manipulating &feedparser; from shell scripts or other non-Python sources.</para></listitem>
 <listitem><para>More robust parsing of author email addresses, misencoded win-1252 content, <literal>rel=self</literal> links, and better detection of HTML content in elements with ambiguous content types.</para></listitem>
 </itemizedlist>
@@ -3552,6 +3555,216 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <bridgehead id="changes.30b2" renderas="sect3">Changes in version 3.0b2 and 3.0b1</bridgehead>
 <para>&feedparser; 3.0b2 and 3.0b1 have been lost in the mists of time.</para>
 
+</section>
+
+<section id="changes.27x">
+<?dbhtml filename="changes-27.html"?>
+<title>Changes in version 2.7.x</title>
+<abstract>
+<title/>
+<para>The 2.7 series was a brief but necessary transition towards some of the core ideas in version 3.0.</para>
+</abstract>
+
+<bridgehead id="changes.276" renderas="sect3">Changes in version 2.7.6</bridgehead>
+<para>&ultraliberalfeedparser; 2.7.6 was released on January 16, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed bug with <filename class='headerfile'>StringIO</filename> importing</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.275" renderas="sect3">Changes in version 2.7.5</bridgehead>
+<para>&ultraliberalfeedparser; 2.7.5 was released on January 15, 2004.</para>
+<itemizedlist>
+<listitem><para>added workaround for malformed DOCTYPE (seen on many <systemitem class="domainname">blogspot.com</systemitem> sites)</para></listitem>
+<listitem><para>added <varname>_debug</varname> variable</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.274" renderas="sect3">Changes in version 2.7.4</bridgehead>
+<para>&ultraliberalfeedparser; 2.7.4 was released on January 14, 2004.</para>
+<itemizedlist>
+<listitem><para>added workaround for improperly formed <sgmltag>&lt;br/></sgmltag> tags in encoded &html; (skadz)</para></listitem>
+<listitem><para>fixed unicode handling in <methodname>normalize_attrs</methodname> (ChrisL)</para></listitem>
+<listitem><para>fixed relative &uri; processing for <sgmltag>guid</sgmltag> (skadz)</para></listitem>
+<listitem><para>added ICBM support</para></listitem>
+<listitem><para>added <filename class='headerfile'>base64</filename> support</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.273" renderas="sect3">Changes in version 2.7.3</bridgehead>
+<para>&ultraliberalfeedparser; 2.7.3 was released on January 14, 2004.</para>
+<itemizedlist>
+<listitem><para>reverted all changes made in 2.7.2</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.272" renderas="sect3">Changes in version 2.7.2</bridgehead>
+<para>&ultraliberalfeedparser; 2.7.2 was released on January 13, 2004.</para>
+<itemizedlist>
+<listitem><para>"Version 2.7.2 of my feed parser, released today, will by default refuse to parse <ulink url="http://intertwingly.net/stories/2004/01/12/broken.rss">this feed</ulink>.  It does a first-pass check for wellformedness, and when that fails it sets the 'bozo' bit in the result to &one; and immediately terminates.  You can revert to the previous behavior by passing <varname>disableWellFormedCheck=1</varname>, but it will print arrogant warning messages to stderr to the effect that anyone who can't create a well-formed &xml; feed is a bozo and an incompetent fool." <ulink url="http://intertwingly.net/blog/2004/01/12/Scientific-Method#c1074047818">source</ulink></para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.271" renderas="sect3">Changes in version 2.7.1</bridgehead>
+<para>&ultraliberalfeedparser; 2.7.1 was released on January 9, 2004.</para>
+<itemizedlist>
+<listitem><para>fixed bug handling <literal>&amp;quot;</literal> and <literal>&amp;apos;</literal></para></listitem>
+<listitem><para>fixed memory leak not closing url opener (JohnD)</para></listitem>
+<listitem><para>added <sgmltag>dc:publisher</sgmltag> support (MarekK)</para></listitem>
+<listitem><para>added <sgmltag>admin:errorReportsTo</sgmltag> support (MarekK)</para></listitem>
+<listitem><para>&python; 2.1 <function>dict</function> support (MarekK)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.27" renderas="sect3">Changes in version 2.7</bridgehead>
+<para>&ultraliberalfeedparser; 2.7 was released on January 5, 2004.</para>
+<itemizedlist>
+<listitem><para>really added support for trackback and pingback namespaces, as opposed to 2.6 when I said I did but didn't really</para></listitem>
+<listitem><para>sanitize &html; markup within some elements</para></listitem>
+<listitem><para>added <filename class='headerfile'>mxTidy</filename> support (if installed) to tidy &html; markup within some elements</para></listitem>
+<listitem><para>fixed indentation bug in <function>_parse_date</function> (FazalM)</para></listitem>
+<listitem><para>use <function>socket.setdefaulttimeout</function> if available (FazalM)</para></listitem>
+<listitem><para>universal date parsing and normalization (FazalM): <varname>created</varname>, <varname>modified</varname>, <varname>issued</varname> are parsed into 9-tuple date format and stored in <varname>created_parsed</varname>, <varname>modified_parsed</varname>, and <varname>issued_parsed</varname></para></listitem>
+<listitem><para><varname>date</varname> is duplicated in <varname>modified</varname> and vice-versa</para></listitem>
+<listitem><para><varname>date_parsed</varname> is duplicated in <varname>modified_parsed</varname> and vice-versa</para></listitem>
+</itemizedlist>
+
+</section>
+
+<section id="changes.26">
+<?dbhtml filename="changes-26.html"?>
+<title>Changes in version 2.6</title>
+<abstract>
+<title/>
+<para>&ultraliberalfeedparser; 2.6 was released on January 1, 2004.</para>
+</abstract>
+<itemizedlist>
+<listitem><para><sgmltag>dc:author</sgmltag> support (MarekK)</para></listitem>
+<listitem><para>fixed bug tracking nested <sgmltag>div</sgmltag>s within content (JohnD)</para></listitem>
+<listitem><para>fixed missing <filename class='headerfile'>sys</filename> import (JohanS)</para></listitem>
+<listitem><para>fixed regular expression to capture &xml; character encoding (Andrei)</para></listitem>
+<listitem><para>added support for &atom; 0.3-style links</para></listitem>
+<listitem><para>fixed bug with <sgmltag>textInput</sgmltag> tracking</para></listitem>
+<listitem><para>added support for <sgmltag>cloud</sgmltag> (MartijnP)</para></listitem>
+<listitem><para>added support for multiple <sgmltag>category</sgmltag>/<sgmltag>dc:subject</sgmltag> (MartijnP)</para></listitem>
+<listitem><para>normalize content model: <varname>description</varname> gets description (which can come from <sgmltag>&lt;description></sgmltag>, <sgmltag>&lt;summary></sgmltag>, or full content if no <sgmltag>&lt;description></sgmltag>), <varname>content</varname> gets dict of <varname>base</varname>/<varname>language</varname>/<varname>type</varname>/<varname>value</varname> (which can come from <sgmltag>&lt;content:encoded></sgmltag>, <sgmltag>&lt;xhtml:body</sgmltag>, <sgmltag>&lt;content</sgmltag>, or <sgmltag>&lt;fullitem></sgmltag>)</para></listitem>
+<listitem><para>fixed bug matching arbitrary Userland namespaces</para></listitem>
+<listitem><para>added <sgmltag>xml:base</sgmltag> and <sgmltag>xml:lang</sgmltag> tracking</para></listitem>
+<listitem><para>fixed bug tracking unknown tags</para></listitem>
+<listitem><para>fixed bug tracking content when <sgmltag>&lt;content></sgmltag> element is not in default namespace (like Pocketsoap feed)</para></listitem>
+<listitem><para>resolve relative URLs in <sgmltag>&lt;link></sgmltag>, <sgmltag>&lt;guid></sgmltag>, <sgmltag>&lt;docs></sgmltag>, <sgmltag>&lt;url></sgmltag>, <sgmltag>&lt;comments></sgmltag>, <sgmltag>&lt;wfw:comment></sgmltag>, <sgmltag>&lt;wfw:commentRSS></sgmltag></para></listitem>
+<listitem><para>resolve relative &uri;s within embedded &html; markup in <sgmltag>&lt;description></sgmltag>, <sgmltag>&lt;xhtml:body></sgmltag>, <sgmltag>&lt;content></sgmltag>, <sgmltag>&lt;content:encoded></sgmltag>, <sgmltag>&lt;title></sgmltag>, <sgmltag>&lt;subtitle></sgmltag>, <sgmltag>&lt;summary></sgmltag>, <sgmltag>&lt;info></sgmltag>, <sgmltag>&lt;tagline></sgmltag>, and <sgmltag>&lt;copyright></sgmltag></para></listitem>
+<listitem><para>added support for pingback and trackback namespaces</para></listitem>
+</itemizedlist>
+</section>
+
+<section id="changes.early">
+<?dbhtml filename="changes-early.html"?>
+<title>Changes in earlier versions</title>
+<abstract>
+<title/>
+<para>&feedparser; began as an "ultra-liberal RSS parser" named <filename>rssparser.py</filename>.  It was written as a weapon for battles that no one remembers, to work around problems that no longer exist.</para>
+</abstract>
+
+<bridgehead id="changes.253" renderas="sect3">Changes in version 2.5.3</bridgehead>
+<para>&ultraliberalfeedparser; 2.5.3 was released on August 3, 2003.</para>
+<itemizedlist>
+<listitem><para>track whether we're inside an <sgmltag>image</sgmltag> or <sgmltag>textInput</sgmltag> (TvdV)</para></listitem>
+<listitem><para>return the character encoding, if specified</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.252" renderas="sect3">Changes in version 2.5.2</bridgehead>
+<para>&ultraliberalfeedparser; 2.5.2 was released on July 28, 2003.</para>
+<itemizedlist>
+<listitem><para>entity-decode inline &xml; properly</para></listitem>
+<listitem><para>added support for inline <sgmltag>&lt;xhtml:body></sgmltag> and <sgmltag>&lt;xhtml:div></sgmltag> as used in some &rss; 2.0 feeds</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.251" renderas="sect3">Changes in version 2.5.1</bridgehead>
+<para>&ultraliberalfeedparser; 2.5.1 was released on July 26, 2003.</para>
+<itemizedlist>
+<listitem><para>clear <varname>opener.addheaders</varname> so we only send our custom <constant>User-Agent</constant> (otherwise <filename class='headerfile'>urllib2</filename> sends two, which confuses some servers) (RMK)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.25" renderas="sect3">Changes in version 2.5</bridgehead>
+<para>&ultraliberalfeedparser; 2.5 was released on July 25, 2003.</para>
+<itemizedlist>
+<listitem><para>changed to &python; license (all contributors agree)</para></listitem>
+<listitem><para>removed unnecessary <filename class='headerfile'>>urllib</filename> code -- <filename class='headerfile'>urllib2</filename> should always be available anyway</para></listitem>
+<listitem><para>return actual <varname>url</varname>, <varname>status</varname>, and full &http; headers (as <varname>result['url']</varname>, <varname>result['status']</varname>, and <varname>result['headers']</varname>) if parsing a remote feed over &http;.  This should pass all the <ulink url="http://diveintomark.org/tests/client/http/">Aggregator client &http; tests</ulink>.</para></listitem>
+<listitem><para>added the latest namespace-of-the-week for &rss; 2.0</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.24" renderas="sect3">Changes in version 2.4</bridgehead>
+<para>&ultraliberalfeedparser; 2.4 was released on July 9, 2003.</para>
+<itemizedlist>
+<listitem><para>added preliminary Pie/Atom/Echo support based on <ulink url="http://www.intertwingly.net/blog/1506.html">Sam Ruby's snapshot of July 1</ulink></para></listitem>
+<listitem><para>changed project name</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.231" renderas="sect3">Changes in version 2.3.1</bridgehead>
+<para>&ultraliberalrssparser; 2.3.1 was released on June 12, 2003.</para>
+<itemizedlist>
+<listitem><para>if item has both <sgmltag>link</sgmltag> and <sgmltag>guid</sgmltag>, return both as-is</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.23" renderas="sect3">Changes in version 2.3</bridgehead>
+<para>&ultraliberalrssparser; 2.3 was released on June 11, 2003.</para>
+<itemizedlist>
+<listitem><para>added <constant>USER_AGENT</constant> for default (if caller doesn't specify)</para></listitem>
+<listitem><para>make sure we send the <constant>User-Agent</constant> even if <filename class='headerfile'>urllib2</filename> isn't available</para></listitem>
+<listitem><para>Match any variation of <constant>backend.userland.com/rss</constant> namespace</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.22" renderas="sect3">Changes in version 2.2</bridgehead>
+<para>&ultraliberalrssparser; 2.2 was released on January 27, 2003.</para>
+<itemizedlist>
+<listitem><para>added attribute support and <sgmltag class='attribute'>admin:generatorAgent</sgmltag>.  <methodname>start_admingeneratoragent</methodname> is an example of how to handle elements with only attributes, no content.</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.21" renderas="sect3">Changes in version 2.1</bridgehead>
+<para>&ultraliberalrssparser; 2.1 was released on November 14, 2002.</para>
+<itemizedlist>
+<listitem><para>added gzip support</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.202" renderas="sect3">Changes in version 2.0.2</bridgehead>
+<para>&ultraliberalrssparser; 2.0.2 was released on October 21, 2002.</para>
+<itemizedlist>
+<listitem><para>added the <varname>inchannel</varname> to the <literal>if</literal> statement, otherwise it's useless.  Fixes the problem JD was addressing by adding it. (JB)</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.201" renderas="sect3">Changes in version 2.0.1</bridgehead>
+<para>&ultraliberalrssparser; 2.0.1 was released on October 21, 2002.</para>
+<itemizedlist>
+<listitem><para>changed <function>parse()</function> so that if we don't get anything because of <varname>etag</varname>/<varname>modified</varname>, return the old <varname>etag</varname>/<varname>modified</varname> to the caller to indicate why nothing is being returned</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.20" renderas="sect3">Changes in version 2.0</bridgehead>
+<para>&ultraliberalrssparser; 2.0 was released on October 19, 2002.</para>
+<itemizedlist>
+<listitem><para>use <varname>inchannel</varname> to watch out for <sgmltag>image</sgmltag> and <sgmltag>textinput</sgmltag> elements which can also contain <sgmltag>title</sgmltag>, <sgmltag>link</sgmltag>, and <sgmltag>description</sgmltag> elements (JD)</para></listitem>
+<listitem><para>check for <sgmltag class='attribute'>isPermaLink='false'</sgmltag> attribute on <sgmltag>guid</sgmltag> elements (JD)</para></listitem>
+<listitem><para>replaced <function>openAnything</function> with <function>open_resource</function> supporting <constant>ETag</constant> and <constant>If-Modified-Since</constant> request headers (JD)</para></listitem>
+<listitem><para><function>parse</function> now accepts <varname>etag</varname>, <varname>modified</varname>, <varname>agent</varname>, and <varname>referrer</varname> optional arguments (JD)</para></listitem>
+<listitem><para>modified <function>parse</function> to return a dictionary instead of a tuple so that any <varname>etag</varname> or <varname>modified</varname> information can be returned and cached by the caller</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.11" renderas="sect3">Changes in version 1.1</bridgehead>
+<para>&ultraliberalrssparser; 1.1 was released on September 27, 2002.</para>
+<itemizedlist>
+<listitem><para>fixed infinite loop on incomplete CDATA sections</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.10" renderas="sect3">Changes in version 1.0</bridgehead>
+<para>&ultraliberalrssparser; 1.0 was released on September 27, 2002.</para>
+<itemizedlist>
+<listitem><para>fixed namespace processing on prefixed &rss; 2.0 elements</para></listitem>
+<listitem><para>added Simon Fell's namespace test suite</para></listitem>
+</itemizedlist>
+
+<bridgehead id="changes.first" renderas="sect3">Initial release</bridgehead>
+<para>&ultraliberalrssparser; (unversioned) was released on August 13, 2002.</para>
+<para><ulink url="http://diveintomark.org/archives/2002/08/13/ultraliberal_rss_parser">Announcement</ulink>:</para>
+<blockquote>
+<para>Aaron Swartz has been looking for an ultra-liberal &rss; parser. Now that I'm experimenting with a homegrown &rss;-to-email news aggregator, so am I. You see, most &rss; feeds suck. Invalid characters, unescaped ampersands (Blogger feeds), invalid entities (Radio feeds), unescaped and invalid HTML (The Register's feed most days). Or just a bastardized mix of &rss; 0.9x elements with &rss; 1.0 elements (Movable Type feeds).</para>
+<para>Then there are feeds, like Aaron's feed, which are too bleeding edge. He puts an excerpt in the description element but puts the full text in the <sgmltag>content:encoded</sgmltag> element (as CDATA). This is valid &rss; 1.0, but nobody actually uses it (except Aaron), few news aggregators support it, and many parsers choke on it. Other parsers are confused by the new elements (<sgmltag>guid</sgmltag>) in &rss; 0.94 (see Dave Winer's feed for an example). And then there's Jon Udell's feed, with the <sgmltag>fullitem</sgmltag> element that he just sort of made up.</para>
+<para><filename>rssparser.py</filename>. GPL-licensed. Tested on 5000 active feeds.</para>
+</blockquote>
 </section>
 
 </chapter>

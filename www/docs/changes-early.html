@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Changes in earlier versions [Universal Feed Parser]</title>
+<link rel="stylesheet" href="../css/feedparser.css" type="text/css">
+<link rev="made" href="mailto:mark@diveintomark.org">
+<meta name="generator" content="DocBook XSL Stylesheets V1.65.1">
+<meta name="keywords" content="RSS, Atom, CDF, XML, feed, parser, Python">
+<link rel="start" href="index.html" title="Documentation">
+<link rel="up" href="history.html" title="Revision history">
+<link rel="prev" href="changes-26.html" title="Changes in version 2.6">
+<link rel="next" href="reference.html" title="Reference">
+</head>
+<body id="feedparser-org" class="docs">
+<!--#include virtual="/inc/header.html"--><div id="main"><div id="mainInner">
+<p id="breadcrumb">You are here: <a href="../">Home</a> → <a href="index.html">Documentation</a> → <a href="history.html">Revision history</a> → <span class="thispage">Changes in earlier versions</span></p>
+<div class="section" lang="en">
+<div class="titlepage">
+<div><div><h2 class="title">
+<a name="changes.early" class="skip" href="#changes.early" title="link to this section"><img src="images/permalink.gif" alt="[link]" title="link to this section" width="8" height="9"></a> Changes in earlier versions</h2></div></div>
+<div></div>
+</div>
+<div class="abstract"><p><span class="application">Universal Feed Parser</span> began as an "ultra-liberal RSS parser" named <tt class="filename">rssparser.py</tt>.  It was written as a weapon for battles that no one remembers, to work around problems that no longer exist.</p></div>
+<h3>
+<a name="changes.253" class="skip" href="#changes.253" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.5.3</h3>
+<p><span class="application">Ultra-liberal Feed Parser</span> 2.5.3 was released on August 3, 2003.</p>
+<div class="itemizedlist"><ul>
+<li>track whether we're inside an <tt class="sgmltag-element">image</tt> or <tt class="sgmltag-element">textInput</tt> (TvdV)</li>
+<li>return the character encoding, if specified</li>
+</ul></div>
+<h3>
+<a name="changes.252" class="skip" href="#changes.252" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.5.2</h3>
+<p><span class="application">Ultra-liberal Feed Parser</span> 2.5.2 was released on July 28, 2003.</p>
+<div class="itemizedlist"><ul>
+<li>entity-decode inline <acronym title="Extensible Markup Language">XML</acronym> properly</li>
+<li>added support for inline <tt class="sgmltag-element">&lt;xhtml:body&gt;</tt> and <tt class="sgmltag-element">&lt;xhtml:div&gt;</tt> as used in some <acronym title="Rich Site Summary">RSS</acronym> 2.0 feeds</li>
+</ul></div>
+<h3>
+<a name="changes.251" class="skip" href="#changes.251" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.5.1</h3>
+<p><span class="application">Ultra-liberal Feed Parser</span> 2.5.1 was released on July 26, 2003.</p>
+<div class="itemizedlist"><ul><li>clear <tt class="varname">opener.addheaders</tt> so we only send our custom <tt class="constant">User-Agent</tt> (otherwise <tt class="filename">urllib2</tt> sends two, which confuses some servers) (RMK)</li></ul></div>
+<h3>
+<a name="changes.25" class="skip" href="#changes.25" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.5</h3>
+<p><span class="application">Ultra-liberal Feed Parser</span> 2.5 was released on July 25, 2003.</p>
+<div class="itemizedlist"><ul>
+<li>changed to <span class="application">Python</span> license (all contributors agree)</li>
+<li>removed unnecessary <tt class="filename">&gt;urllib</tt> code -- <tt class="filename">urllib2</tt> should always be available anyway</li>
+<li>return actual <tt class="varname">url</tt>, <tt class="varname">status</tt>, and full <acronym title="Hypertext Transfer Protocol">HTTP</acronym> headers (as <tt class="varname">result['url']</tt>, <tt class="varname">result['status']</tt>, and <tt class="varname">result['headers']</tt>) if parsing a remote feed over <acronym title="Hypertext Transfer Protocol">HTTP</acronym>.  This should pass all the <a href="http://diveintomark.org/tests/client/http/">Aggregator client <acronym title="Hypertext Transfer Protocol">HTTP</acronym> tests</a>.</li>
+<li>added the latest namespace-of-the-week for <acronym title="Rich Site Summary">RSS</acronym> 2.0</li>
+</ul></div>
+<h3>
+<a name="changes.24" class="skip" href="#changes.24" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.4</h3>
+<p><span class="application">Ultra-liberal Feed Parser</span> 2.4 was released on July 9, 2003.</p>
+<div class="itemizedlist"><ul>
+<li>added preliminary Pie/Atom/Echo support based on <a href="http://www.intertwingly.net/blog/1506.html">Sam Ruby's snapshot of July 1</a>
+</li>
+<li>changed project name</li>
+</ul></div>
+<h3>
+<a name="changes.231" class="skip" href="#changes.231" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.3.1</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 2.3.1 was released on June 12, 2003.</p>
+<div class="itemizedlist"><ul><li>if item has both <tt class="sgmltag-element">link</tt> and <tt class="sgmltag-element">guid</tt>, return both as-is</li></ul></div>
+<h3>
+<a name="changes.23" class="skip" href="#changes.23" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.3</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 2.3 was released on June 11, 2003.</p>
+<div class="itemizedlist"><ul>
+<li>added <tt class="constant">USER_AGENT</tt> for default (if caller doesn't specify)</li>
+<li>make sure we send the <tt class="constant">User-Agent</tt> even if <tt class="filename">urllib2</tt> isn't available</li>
+<li>Match any variation of <tt class="constant">backend.userland.com/rss</tt> namespace</li>
+</ul></div>
+<h3>
+<a name="changes.22" class="skip" href="#changes.22" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.2</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 2.2 was released on January 27, 2003.</p>
+<div class="itemizedlist"><ul><li>added attribute support and <tt class="sgmltag-attribute">admin:generatorAgent</tt>.  <tt class="methodname">start_admingeneratoragent</tt> is an example of how to handle elements with only attributes, no content.</li></ul></div>
+<h3>
+<a name="changes.21" class="skip" href="#changes.21" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.1</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 2.1 was released on November 14, 2002.</p>
+<div class="itemizedlist"><ul><li>added gzip support</li></ul></div>
+<h3>
+<a name="changes.202" class="skip" href="#changes.202" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.0.2</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 2.0.2 was released on October 21, 2002.</p>
+<div class="itemizedlist"><ul><li>added the <tt class="varname">inchannel</tt> to the <tt class="literal">if</tt> statement, otherwise it's useless.  Fixes the problem JD was addressing by adding it. (JB)</li></ul></div>
+<h3>
+<a name="changes.201" class="skip" href="#changes.201" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.0.1</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 2.0.1 was released on October 21, 2002.</p>
+<div class="itemizedlist"><ul><li>changed <tt class="function">parse()</tt> so that if we don't get anything because of <tt class="varname">etag</tt>/<tt class="varname">modified</tt>, return the old <tt class="varname">etag</tt>/<tt class="varname">modified</tt> to the caller to indicate why nothing is being returned</li></ul></div>
+<h3>
+<a name="changes.20" class="skip" href="#changes.20" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 2.0</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 2.0 was released on October 19, 2002.</p>
+<div class="itemizedlist"><ul>
+<li>use <tt class="varname">inchannel</tt> to watch out for <tt class="sgmltag-element">image</tt> and <tt class="sgmltag-element">textinput</tt> elements which can also contain <tt class="sgmltag-element">title</tt>, <tt class="sgmltag-element">link</tt>, and <tt class="sgmltag-element">description</tt> elements (JD)</li>
+<li>check for <tt class="sgmltag-attribute">isPermaLink='false'</tt> attribute on <tt class="sgmltag-element">guid</tt> elements (JD)</li>
+<li>replaced <tt class="function">openAnything</tt> with <tt class="function">open_resource</tt> supporting <tt class="constant">ETag</tt> and <tt class="constant">If-Modified-Since</tt> request headers (JD)</li>
+<li>
+<tt class="function">parse</tt> now accepts <tt class="varname">etag</tt>, <tt class="varname">modified</tt>, <tt class="varname">agent</tt>, and <tt class="varname">referrer</tt> optional arguments (JD)</li>
+<li>modified <tt class="function">parse</tt> to return a dictionary instead of a tuple so that any <tt class="varname">etag</tt> or <tt class="varname">modified</tt> information can be returned and cached by the caller</li>
+</ul></div>
+<h3>
+<a name="changes.11" class="skip" href="#changes.11" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 1.1</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 1.1 was released on September 27, 2002.</p>
+<div class="itemizedlist"><ul><li>fixed infinite loop on incomplete CDATA sections</li></ul></div>
+<h3>
+<a name="changes.10" class="skip" href="#changes.10" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Changes in version 1.0</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> 1.0 was released on September 27, 2002.</p>
+<div class="itemizedlist"><ul>
+<li>fixed namespace processing on prefixed <acronym title="Rich Site Summary">RSS</acronym> 2.0 elements</li>
+<li>added Simon Fell's namespace test suite</li>
+</ul></div>
+<h3>
+<a name="changes.first" class="skip" href="#changes.first" title="link to this bridgehead"><img src="images/permalink.gif" alt="[link]" title="link to this bridgehead" width="8" height="9"></a> Initial release</h3>
+<p><span class="application">Ultra-liberal RSS Parser</span> (unversioned) was released on August 13, 2002.</p>
+<p><a href="http://diveintomark.org/archives/2002/08/13/ultraliberal_rss_parser">Announcement</a>:</p>
+<div class="blockquote"><blockquote class="blockquote">
+<p>Aaron Swartz has been looking for an ultra-liberal <acronym title="Rich Site Summary">RSS</acronym> parser. Now that I'm experimenting with a homegrown <acronym title="Rich Site Summary">RSS</acronym>-to-email news aggregator, so am I. You see, most <acronym title="Rich Site Summary">RSS</acronym> feeds suck. Invalid characters, unescaped ampersands (Blogger feeds), invalid entities (Radio feeds), unescaped and invalid HTML (The Register's feed most days). Or just a bastardized mix of <acronym title="Rich Site Summary">RSS</acronym> 0.9x elements with <acronym title="Rich Site Summary">RSS</acronym> 1.0 elements (Movable Type feeds).</p>
+<p>Then there are feeds, like Aaron's feed, which are too bleeding edge. He puts an excerpt in the description element but puts the full text in the <tt class="sgmltag-element">content:encoded</tt> element (as CDATA). This is valid <acronym title="Rich Site Summary">RSS</acronym> 1.0, but nobody actually uses it (except Aaron), few news aggregators support it, and many parsers choke on it. Other parsers are confused by the new elements (<tt class="sgmltag-element">guid</tt>) in <acronym title="Rich Site Summary">RSS</acronym> 0.94 (see Dave Winer's feed for an example). And then there's Jon Udell's feed, with the <tt class="sgmltag-element">fullitem</tt> element that he just sort of made up.</p>
+<p><tt class="filename">rssparser.py</tt>. GPL-licensed. Tested on 5000 active feeds.</p>
+</blockquote></div>
+</div>
+<div style="float: left">← <a class="NavigationArrow" href="changes-26.html">Changes in version 2.6</a>
+</div>
+<div style="text-align: right">
+<a class="NavigationArrow" href="reference.html">Reference</a> →</div>
+<hr style="clear:both">
+<div class="footer"><p class="copyright">Copyright © 2004, 2005, 2006, 2007, 2008 Mark Pilgrim</p></div>
+</div></div>
+</body>
+</html>
