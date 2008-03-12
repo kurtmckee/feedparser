@@ -3198,7 +3198,6 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <listitem><para>Updated the whitelist of <link linkend="advanced.sanitization.html">acceptable HTML elements and attributes</link> based on the latest draft of the &html5; specification.</para></listitem>
 <listitem><para><xref linkend="advanced.sanitization.css"/>.  (Previous versions of &feedparser; simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.</para></listitem>
 <listitem><para><xref linkend="advanced.sanitization.svg"/> and <xref linkend="advanced.sanitization.mathml"/>.  Many thanks to Jacques Distler for patiently debugging these features.</para></listitem>
-<listitem><para>&feedparser; always outputs embedded markup as wellformed &xhtml;, no matter how malformed the input.  You can serve the output as <literal>application/xhtml+xml</literal>, and it will never trigger your browser's user-hostile draconian error handling.</para></listitem>
 <listitem><para>&iri; support for every element that can contain a &uri;.</para></listitem>
 <listitem><para>Ability to <link linkend="advanced.base.disable">disable relative &uri; resolution</link>.</para></listitem>
 <!--<listitem><para>Ability to <link linkend="advanced.sanitization.disable">disable &html; sanitizing</link>.</para></listitem>-->
