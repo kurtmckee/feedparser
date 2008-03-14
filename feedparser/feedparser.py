@@ -3246,6 +3246,10 @@ def _getCharacterEncoding(http_headers, xml_data):
         true_encoding = xml_encoding or 'iso-8859-1'
     else:
         true_encoding = xml_encoding or 'utf-8'
+    # some feeds claim to be gb2312 but are actually gb18030.
+    # apparently MSIE and Firefox both do the following switch:
+    if true_encoding.lower() == 'gb2312':
+        true_encoding = 'gb18030'
     return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type
     
 def _toUTF8(data, encoding):
