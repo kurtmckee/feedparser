@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """$Id$"""
 
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"

@@ -2807,6 +2807,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </sectioninfo>
 <title>Basic Command Line Usage</title>
 <para>TODO</para>
+
 </section>
 
 <section id="commandline.arguments">
@@ -2819,6 +2820,28 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 </sectioninfo>
 <title>Optional Arguments</title>
 <para>TODO</para>
+
+<example id="example.commandline.help">
+<title>Available options</title>
+<screen><prompt>mark@atlantis$ </prompt><userinput>./feedparser.py --help</userinput>
+<computeroutput>usage: feedparser.py [options] url_or_filename_or_-
+
+options:
+  --version             show program's version number and exit
+  -h, --help            show this help message and exit
+  -A AGENT, --user-agent=AGENT
+                        User-Agent for HTTP URLs
+  -e URL, --referer=URL, --referrer=URL
+                        Referrer for HTTP URLs
+  -t TAG, --etag=TAG    ETag/If-None-Match for HTTP URLs
+  -m DATE, --last-modified=DATE
+                        Last-modified/If-Modified-Since for HTTP URLs (any supported date format)
+  -f FORMAT, --format=FORMAT
+                        output results in FORMAT (text, pprint)
+  -v, --verbose         write debugging information to stderr
+</computeroutput></screen>
+</example>
+
 </section>
 
 <section id="commandline.outputformats">
