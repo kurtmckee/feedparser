@@ -523,7 +523,7 @@ class _FeedParserMixin:
                     attrs.append(('xmlns',namespace))
                 if tag=='svg' and namespace=='http://www.w3.org/2000/svg':
                     attrs.append(('xmlns',namespace))
-            if tag == 'svg': self.svgOK = 1
+            if tag == 'svg': self.svgOK += 1
             return self.handle_data('<%s%s>' % (tag, self.strattrs(attrs)), escape=0)
 
         # match namespaces
@@ -559,7 +559,7 @@ class _FeedParserMixin:
         prefix = self.namespacemap.get(prefix, prefix)
         if prefix:
             prefix = prefix + '_'
-        if suffix == 'svg': self.svgOK = 0
+        if suffix == 'svg' and self.svgOK: self.svgOK -= 1
 
         # call special handler (if defined) or default handler
         methodname = '_end_' + prefix + suffix
@@ -2404,9 +2404,9 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
             # not otherwise acceptable, perhaps it is MathML or SVG?
             if tag=='math' and ('xmlns','http://www.w3.org/1998/Math/MathML') in attrs:
-                self.mathmlOK = 1
+                self.mathmlOK += 1
             if tag=='svg' and ('xmlns','http://www.w3.org/2000/svg') in attrs:
-                self.svgOK = 1
+                self.svgOK += 1
 
             # chose acceptable attributes based on tag class, else bail
             if  self.mathmlOK and tag in self.mathml_elements:
@@ -2451,10 +2451,10 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack -= 1
             if self.mathmlOK and tag in self.mathml_elements:
-                if tag == 'math': self.mathmlOK = 0
+                if tag == 'math' and self.mathmlOK: self.mathmlOK -= 1
             elif self.svgOK and tag in self.svg_elements:
                 tag = self.svg_elem_map.get(tag,tag)
-                if tag == 'svg': self.svgOK = 0
+                if tag == 'svg' and self.svgOK: self.svgOK -= 1
             else:
                 return
         _BaseHTMLProcessor.unknown_endtag(self, tag)
