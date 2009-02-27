@@ -2282,7 +2282,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'tr', 'tt', 'u', 'ul', 'var', 'video', 'noscript']
 
     acceptable_attributes = ['abbr', 'accept', 'accept-charset', 'accesskey',
-      'action', 'align', 'alt', 'autoplay', 'autocomplete', 'autofocus', 'axis',
+      'action', 'align', 'alt', 'autocomplete', 'autofocus', 'axis',
       'background', 'balance', 'bgcolor', 'bgproperties', 'border',
       'bordercolor', 'bordercolordark', 'bordercolorlight', 'bottompadding',
       'cellpadding', 'cellspacing', 'ch', 'challenge', 'char', 'charoff',
