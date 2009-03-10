@@ -1532,6 +1532,24 @@ class _FeedParserMixin:
         value = self.pop('itunes_explicit', 0)
         self._getContext()['itunes_explicit'] = (value == 'yes') and 1 or 0
 
+    def _start_media_content(self, attrsD):
+        context = self._getContext()
+        context.setdefault('media_content', [])
+        context['media_content'].append(attrsD)
+
+    def _start_media_thumbnail(self, attrsD):
+        context = self._getContext()
+        context.setdefault('media_thumbnail', [])
+        self.push('url', 1) # new
+        context['media_thumbnail'].append(attrsD)
+
+    def _end_media_thumbnail(self):
+        url = self.pop('url')
+        context = self._getContext()
+        if url != None and len(url.strip()) != 0:
+            if not context['media_thumbnail'][-1].has_key('url'):
+                context['media_thumbnail'][-1]['url'] = url
+
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
