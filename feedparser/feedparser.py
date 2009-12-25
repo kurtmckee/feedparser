@@ -547,7 +547,15 @@ class _FeedParserMixin:
             method = getattr(self, methodname)
             return method(attrsD)
         except AttributeError:
-            return self.push(prefix + suffix, 1)
+            # Since there's no handler or something has gone wrong we explicitly add the element and its attributes
+            unknown_tag = prefix + suffix
+            if len(attrsD) == 0:
+                # No attributes so merge it into the encosing dictionary
+                return self.push(unknown_tag, 1)
+            else:
+                # Has attributes so create it in its own dictionary
+                context = self._getContext()
+                context[unknown_tag] = attrsD
 
     def unknown_endtag(self, tag):
         if _debug: sys.stderr.write('end %s\n' % tag)
