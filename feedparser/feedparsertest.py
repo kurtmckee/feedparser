@@ -25,7 +25,7 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE."""
 
-import feedparser, unittest, new, os, sys, glob, re, urllib, string, posixpath, time, codecs
+import feedparser, unittest, new, os, sys, glob, re, urllib, string, posixpath, time, codecs, pprint
 if not feedparser._XML_AVAILABLE:
   sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
   sys.exit(1)
@@ -98,11 +98,12 @@ class FeedParserTestServer(Thread):
 class TestCase(unittest.TestCase):
   def failUnlessEval(self, evalString, env, msg=None):
     """Fail unless eval(evalString, env)"""
-    failure=(msg or 'not eval(%s)' % evalString)
+    
     try:
       env = env.data
     except:
       pass
+    failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
     if not eval(evalString, env):
       raise self.failureException, failure
   

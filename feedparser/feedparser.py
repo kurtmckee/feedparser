@@ -40,7 +40,8 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Fazal Majid <http://www.majid.info/mylos/weblog/>",
                     "Aaron Swartz <http://aaronsw.com/>",
                     "Kevin Marks <http://epeus.blogspot.com/>",
-                    "Sam Ruby <http://intertwingly.net/>"]
+                    "Sam Ruby <http://intertwingly.net/>",
+                    "Ade Oshineye <http://blog.oshineye.com/>"]
 _debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
@@ -927,7 +928,10 @@ class _FeedParserMixin:
                       '0.92': 'rss092',
                       '0.93': 'rss093',
                       '0.94': 'rss094'}
-        if not self.version:
+        #If we're here then this is an RSS feed.
+        #If we don't have a version or have a version that starts with something
+        #other than RSS then there's been a mistake. Correct it.
+        if not self.version or not self.version.startswith('rss'):
             attr_version = attrsD.get('version', '')
             version = versionmap.get(attr_version)
             if version:
