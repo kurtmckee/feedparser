@@ -2753,7 +2753,8 @@ _iso8601_re = [
     'OOO', r'(?P<ordinal>[0123]\d\d)').replace(
     'CC', r'(?P<century>\d\d$)')
     + r'(T?(?P<hour>\d{2}):(?P<minute>\d{2})'
-    + r'(:(?P<second>\d{2}(\.\d*)?))?'
+    + r'(:(?P<second>\d{2}))?'
+    + r'(\.(?P<fracsecond>\d+))?'
     + r'(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?'
     for tmpl in _iso8601_tmpl]
 del tmpl
