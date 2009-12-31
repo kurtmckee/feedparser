@@ -654,12 +654,19 @@ class _FeedParserMixin:
         if _debug: sys.stderr.write('entering parse_declaration\n')
         if self.rawdata[i:i+9] == '<![CDATA[':
             k = self.rawdata.find(']]>', i)
-            if k == -1: k = len(self.rawdata)
+            if k == -1:
+                # CDATA block began but didn't finish
+                k = len(self.rawdata)
+                return k
             self.handle_data(_xmlescape(self.rawdata[i+9:k]), 0)
             return k+3
         else:
             k = self.rawdata.find('>', i)
-            return k+1
+            if k >= 0:
+                return k+1
+            else:
+                # We have an incomplete CDATA block.
+                return k
 
     def mapContentType(self, contentType):
         contentType = contentType.lower()
@@ -1648,7 +1655,7 @@ if _XML_AVAILABLE:
         def error(self, exc):
             self.bozo = 1
             self.exc = exc
-            
+
         def fatalError(self, exc):
             self.error(exc)
             raise exc
@@ -1658,13 +1665,13 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     bare_ampersand = re.compile("&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
     elements_no_end_tag = ['area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
       'img', 'input', 'isindex', 'link', 'meta', 'param']
-    
+
     def __init__(self, encoding, type):
         self.encoding = encoding
         self.type = type
         if _debug: sys.stderr.write('entering BaseHTMLProcessor, encoding=%s\n' % self.encoding)
         sgmllib.SGMLParser.__init__(self)
-        
+
     def reset(self):
         self.pieces = []
         sgmllib.SGMLParser.reset(self)
@@ -2289,12 +2296,16 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
         return _urljoin(self.baseuri, uri.strip())
     
     def unknown_starttag(self, tag, attrs):
+        if _debug:
+            sys.stderr.write('tag: [%s] with attributes: [%s]\n' % (tag, str(attrs)))
         attrs = self.normalize_attrs(attrs)
         attrs = [(key, ((tag, key) in self.relative_uris) and self.resolveURI(value) or value) for key, value in attrs]
         _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
-        
+
 def _resolveRelativeURIs(htmlSource, baseURI, encoding, type):
-    if _debug: sys.stderr.write('entering _resolveRelativeURIs\n')
+    if _debug:
+        sys.stderr.write('entering _resolveRelativeURIs\n')
+
     p = _RelativeURIResolver(baseURI, encoding, type)
     p.feed(htmlSource)
     return p.output()
