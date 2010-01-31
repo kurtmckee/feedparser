@@ -1571,6 +1571,15 @@ class _FeedParserMixin:
             if not context['media_thumbnail'][-1].has_key('url'):
                 context['media_thumbnail'][-1]['url'] = url
 
+    def _start_media_player(self, attrsD):
+        self.push('media_player', 0)
+        self._getContext()['media_player'] = FeedParserDict(attrsD)
+
+    def _end_media_player(self):
+        value = self.pop('media_player')
+        context = self._getContext()
+        context['media_player']['content'] = value
+
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
