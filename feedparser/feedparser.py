@@ -1502,11 +1502,18 @@ class _FeedParserMixin:
             context['id'] = href
             
     def _start_source(self, attrsD):
+        if 'url' in attrsD:
+          # This means that we're processing a source element from an RSS 2.0 feed
+          self.sourcedata['href'] = attrsD[u'url']
+        self.push('source', 1)
         self.insource = 1
         self.hasTitle = 0
 
     def _end_source(self):
         self.insource = 0
+        value = self.pop('source')
+        if value:
+          self.sourcedata['title'] = value
         self._getContext()['source'] = copy.deepcopy(self.sourcedata)
         self.sourcedata.clear()
 
