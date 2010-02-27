@@ -2534,7 +2534,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
         # gauntlet
         if not re.match("""^([:,;#%.\sa-zA-Z0-9!]|\w-\w|'[\s\w]+'|"[\s\w]+"|\([\d,\s]+\))*$""", style): return ''
-        if not re.match("^(\s*[-\w]+\s*:\s*[^:;]*(;|$))*$", style): return ''
+        # This replaced a regexp that used re.match and was prone to pathological back-tracking.
+        if re.sub("\s*[-\w]+\s*:\s*[^:;]*;?", '', style).strip(): return ''
 
         clean = []
         for prop,value in re.findall("([-\w]+)\s*:\s*([^:;]*)",style):
