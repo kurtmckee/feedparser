@@ -1,6 +1,6 @@
 <!--
-Description:  content may contain <keygen></keygen>
-Expect:       not bozo and entries[0]['description'] == '<keygen></keygen>'
+Description:  content may contain <keygen />
+Expect:       not bozo and entries[0]['description'] == '<keygen />'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

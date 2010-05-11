@@ -1679,8 +1679,11 @@ if _XML_AVAILABLE:
 class _BaseHTMLProcessor(sgmllib.SGMLParser):
     special = re.compile('''[<>'"]''')
     bare_ampersand = re.compile("&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
-    elements_no_end_tag = ['area', 'base', 'basefont', 'br', 'col', 'frame', 'hr',
-      'img', 'input', 'isindex', 'link', 'meta', 'param']
+    elements_no_end_tag = [
+      'area', 'base', 'basefont', 'br', 'col', 'command', 'embed', 'frame', 
+      'hr', 'img', 'input', 'isindex', 'keygen', 'link', 'meta', 'param',
+      'source', 'track', 'wbr'
+    ]
 
     def __init__(self, encoding, type):
         self.encoding = encoding
