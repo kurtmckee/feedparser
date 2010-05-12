@@ -1595,9 +1595,12 @@ if _XML_AVAILABLE:
             _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
             self.bozo = 0
             self.exc = None
+            self.decls = {}
         
         def startPrefixMapping(self, prefix, uri):
             self.trackNamespace(prefix, uri)
+            if uri == 'http://www.w3.org/1999/xlink':
+              self.decls['xmlns:'+prefix] = uri
         
         def startElementNS(self, name, qname, attrs):
             namespace, localname = name
@@ -1622,7 +1625,7 @@ if _XML_AVAILABLE:
             # the qnames the SAX parser gives us (if indeed it gives us any
             # at all).  Thanks to MatejC for helping me test this and
             # tirelessly telling me that it didn't work yet.
-            attrsD = {}
+            attrsD, self.decls = self.decls, {}
             if localname=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
                 attrsD['xmlns']=namespace
             if localname=='svg' and namespace=='http://www.w3.org/2000/svg':
