@@ -1131,7 +1131,7 @@ class _FeedParserMixin:
     def _getContext(self):
         if self.insource:
             context = self.sourcedata
-        elif self.inimage:
+        elif self.inimage and self.feeddata.has_key('image'):
             context = self.feeddata['image']
         elif self.intextinput:
             context = self.feeddata['textinput']
