@@ -1,6 +1,6 @@
 <!--
 Description: item with an image inside a category should not cause error
-Expect:      not bozo and entries[0]['category']['image'] != None
+Expect:      not bozo and entries[0]['category'] != None
 -->
 <rss version="2.0">
 <channel>
