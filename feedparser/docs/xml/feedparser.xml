@@ -2565,6 +2565,12 @@ the server sent no data.  This is a feature, not a bug!'</computeroutput></scree
 <para>If you do not support &etag; and &lastmodified; headers, you will repeatedly download feeds that have not changed.  This wastes your bandwidth and the publisher's bandwidth, and the publisher may ban you from accessing their server.</para>
 </important>
 
+<note>
+<para>
+You can control the behaviour of &http; caches between your application and the origin server by using the <link linkend="example.http.headers.request"><varname>extra_headers</varname></link> parameter.  For example, you may want to send <constant>Cache-control: max-age=60</constant> to make the caches revalidate against the origin server unless their cached copy is less than a minute old.  Again, this should be used with consideration.
+</para>
+</note>
+
 <itemizedlist role="furtherreading">
 <title>Elsewhere</title>
 <listitem><para><ulink url="&url_conditionalget;">&http; Conditional Get For &rss; Hackers</ulink></para></listitem>
@@ -2768,13 +2774,23 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <sectioninfo>
 <abstract>
 <title/>
-<para>When you download a feed from a remote web server, &feedparser; exposes the complete set of &http; headers as a dictionary.</para>
+<para>You can specify extra &http; request headers as a dictionary.  When you download a feed from a remote web server, &feedparser; exposes the complete set of &http; response headers as a dictionary.</para>
 </abstract>
 </sectioninfo>
 <title>Other &http; Headers</title>
 
-<example id="example.http.headers">
-<title>Accessing other &http; headers</title>
+<example id="example.http.headers.request">
+<title>Sending custom &http; request headers</title>
+
+<screen>
+&prompt;<userinput>import feedparser</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_atom03;">&url_example_atom03;</ulink>',
+    extra_headers={'Cache-control': 'max-age=0'})</userinput>
+</screen>
+</example>
+
+<example id="example.http.headers.response">
+<title>Accessing other &http; response headers</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
 &example_atom03;
 &prompt;<userinput>d.headers</userinput>
