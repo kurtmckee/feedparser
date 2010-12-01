@@ -4434,7 +4434,7 @@ options:
 
 <section id="reference.feed.logo">
 <?dbhtml filename="reference-feed-logo.html"?>
-<title>feed.icon</title>
+<title>feed.logo</title>
 <abstract>
 <title/>
 <para>A URL to a graphic representing a logo for the feed.</para>
