@@ -929,9 +929,12 @@ class _FeedParserMixin:
             attrsD['href'] = href
         return attrsD
     
-    def _save(self, key, value):
+    def _save(self, key, value, overwrite=False):
         context = self._getContext()
-        context.setdefault(key, value)
+        if overwrite:
+            context[key] = value
+        else:
+            context.setdefault(key, value)
 
     def _start_rss(self, attrsD):
         versionmap = {'0.91': 'rss091u',
@@ -1252,7 +1255,7 @@ class _FeedParserMixin:
 
     def _end_published(self):
         value = self.pop('published')
-        self._save('published_parsed', _parse_date(value))
+        self._save('published_parsed', _parse_date(value), overwrite=True)
     _end_dcterms_issued = _end_published
     _end_issued = _end_published
 
