@@ -2073,6 +2073,8 @@ class _MicroformatsParser:
                         arLines.append(self.vcardFold('AGENT:' + sAgentValue))
                     elmAgent['class'] = ''
                     elmAgent.contents = []
+                    # Completely remove the agent element from the parse tree
+                    elmAgent.extract()
                 else:
                     sAgentValue = self.getPropertyValue(elmAgent, 'value', self.URI, bAutoEscape=1);
                     if sAgentValue:
