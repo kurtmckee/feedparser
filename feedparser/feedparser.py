@@ -1275,7 +1275,7 @@ class _FeedParserMixin:
     def _end_updated(self):
         value = self.pop('updated')
         parsed_value = _parse_date(value)
-        self._save('updated_parsed', parsed_value)
+        self._save('updated_parsed', parsed_value, overwrite=True)
     _end_modified = _end_updated
     _end_dcterms_modified = _end_updated
     _end_pubdate = _end_updated
@@ -1287,14 +1287,14 @@ class _FeedParserMixin:
 
     def _end_created(self):
         value = self.pop('created')
-        self._save('created_parsed', _parse_date(value))
+        self._save('created_parsed', _parse_date(value), overwrite=True)
     _end_dcterms_created = _end_created
 
     def _start_expirationdate(self, attrsD):
         self.push('expired', 1)
 
     def _end_expirationdate(self):
-        self._save('expired_parsed', _parse_date(self.pop('expired')))
+        self._save('expired_parsed', _parse_date(self.pop('expired')), overwrite=True)
 
     def _start_cc_license(self, attrsD):
         context = self._getContext()
