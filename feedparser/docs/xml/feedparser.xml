@@ -2752,7 +2752,7 @@ d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest
 <example id="example.auth.required">
 <title>Determining that a feed is password-protected</title>
 <screen>&prompt;<userinput>import feedparser</userinput>
-&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_digest_auth;">&url_example_digest_auth;</ulink>')</userinput>
+&prompt;<userinput>d = feedparser.parse('<ulink url="&url_example_basic_auth;">&url_example_basic_auth;</ulink>')</userinput>
 &prompt;<userinput>d.status</userinput>
 <computeroutput>401</computeroutput>
 &prompt;<userinput>d.headers['www-authenticate']</userinput>
