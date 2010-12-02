@@ -1,0 +1,9 @@
+<!--
+Description: entry parsed created, W3DTF format, with fractional second
+Expect:      not bozo and entries[0]['created_parsed'] == (2007, 4, 23, 13, 25, 47, 0, 113, 0)
+-->
+<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+<entry>
+<created>2007-04-23T23:25:47.538+10:00</created>
+</entry>
+</feed>
