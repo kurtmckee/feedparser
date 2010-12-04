@@ -1568,7 +1568,10 @@ class _FeedParserMixin:
 
     def _end_itunes_explicit(self):
         value = self.pop('itunes_explicit', 0)
-        self._getContext()['itunes_explicit'] = (value == 'yes') and 1 or 0
+        # Convert 'yes' -> True, 'clean' to False, and any other value to None
+        # False and None both evaluate as False, so the difference can be ignored
+        # by applications that only need to know if the content is explicit.
+        self._getContext()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
 
     def _start_media_content(self, attrsD):
         context = self._getContext()
