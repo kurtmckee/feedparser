@@ -2727,7 +2727,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
                 user_passwd, realhost = urllib.splituser(realhost)
                 if user_passwd:
                     url_file_stream_or_string = '%s://%s%s' % (urltype, realhost, rest)
-                    auth = base64.encodestring(user_passwd).strip()
+                    auth = base64.standard_b64encode(user_passwd).strip()
 
         # iri support
         try:
