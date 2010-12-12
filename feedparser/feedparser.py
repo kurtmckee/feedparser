@@ -1271,6 +1271,7 @@ class _FeedParserMixin:
     _start_dcterms_modified = _start_updated
     _start_pubdate = _start_updated
     _start_dc_date = _start_updated
+    _start_lastbuilddate = _start_updated
 
     def _end_updated(self):
         value = self.pop('updated')
@@ -1280,6 +1281,7 @@ class _FeedParserMixin:
     _end_dcterms_modified = _end_updated
     _end_pubdate = _end_updated
     _end_dc_date = _end_updated
+    _end_lastbuilddate = _end_updated
 
     def _start_created(self, attrsD):
         self.push('created', 1)
