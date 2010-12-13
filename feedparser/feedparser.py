@@ -1556,7 +1556,8 @@ class _FeedParserMixin:
 
     def _start_itunes_image(self, attrsD):
         self.push('itunes_image', 0)
-        self._getContext()['image'] = FeedParserDict({'href': attrsD.get('href')})
+        if attrsD.get('href'):
+            self._getContext()['image'] = FeedParserDict({'href': attrsD.get('href')})
     _start_itunes_link = _start_itunes_image
         
     def _end_itunes_block(self):
