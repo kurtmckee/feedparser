@@ -1,0 +1,9 @@
+<!--
+Description: parsed pubDate in etc/gmt timezone
+Expect:      not bozo and feed['date_parsed'] == (2009, 8, 19, 18, 28, 0, 2, 231, 0)
+-->
+<rss version="2.0">
+<channel>
+<pubDate>Wed, 19 Aug 2009 18:28:00 Etc/GMT</pubDate>
+</channel>
+</rss>

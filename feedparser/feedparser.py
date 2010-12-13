@@ -3168,6 +3168,10 @@ def _parse_date_rfc822(dateString):
         else:
             data.append('')
         dateString = " ".join(data)
+    # Account for the Etc/GMT timezone by stripping 'Etc/'
+    elif len(data) == 5 and data[4].lower().startswith('etc/'):
+        data[4] = data[4][4:]
+        dateString = " ".join(data)
     if len(data) < 5:
         dateString += ' 00:00:00 GMT'
     tm = rfc822.parsedate_tz(dateString)

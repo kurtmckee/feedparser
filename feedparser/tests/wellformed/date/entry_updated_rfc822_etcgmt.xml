@@ -1,0 +1,10 @@
+<!--
+Description: parsed pubDate in etc/gmt timezone
+Expect:      not bozo and entries[0]['updated_parsed'] == (2009, 8, 19, 18, 28, 0, 2, 231, 0)
+-->
+<rss version="2.0">
+<channel>
+<pubDate>Sun, 05 Dec 2010 12:00:00 Etc/GMT</pubDate>
+<item><title>Oil prices: 4 factors moving the market (CNNMoney.com)</title><link>http://us.rd.yahoo.com/finance/news/rss/story/*http://biz.yahoo.com/cnnm/090819/081909_oil_price_fluctuation.html?.v=2</link><description>Oil prices have surged nearly 50% from the start of the year, but don&apos;t expect a return to triple digits anytime soon -- worries about the pace of an economic recovery will continue to drive near-term volatility.</description><guid isPermaLink="false">yahoo_finance/3872052111</guid><pubDate>Wed, 19 Aug 2009 18:28:00 Etc/GMT</pubDate></item>
+</channel>
+</rss>
