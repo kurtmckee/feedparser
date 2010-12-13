@@ -2287,7 +2287,12 @@ class _MicroformatsParser:
 def _parseMicroformats(htmlSource, baseURI, encoding):
     if not BeautifulSoup: return
     if _debug: sys.stderr.write('entering _parseMicroformats\n')
-    p = _MicroformatsParser(htmlSource, baseURI, encoding)
+    try:
+        p = _MicroformatsParser(htmlSource, baseURI, encoding)
+    except UnicodeEncodeError:
+        # sgmllib throws this exception when performing lookups of tags
+        # with non-ASCII characters in them.
+        return
     p.vcard = p.findVCards(p.document)
     p.findTags()
     p.findEnclosures()
