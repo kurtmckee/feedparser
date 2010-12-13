@@ -2587,6 +2587,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
 def _sanitizeHTML(htmlSource, encoding, type):
     p = _HTMLSanitizer(encoding, type)
+    htmlSource = htmlSource.replace('<![CDATA[', '&lt;![CDATA[')
     p.feed(htmlSource)
     data = p.output()
     if TIDY_MARKUP:
