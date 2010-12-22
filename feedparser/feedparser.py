@@ -2029,10 +2029,10 @@ class _MicroformatsParser:
             arLines = []
             
             def processSingleString(sProperty):
-                sValue = self.getPropertyValue(elmCard, sProperty, self.STRING, bAutoEscape=1)
+                sValue = self.getPropertyValue(elmCard, sProperty, self.STRING, bAutoEscape=1).decode(self.encoding)
                 if sValue:
                     arLines.append(self.vcardFold(sProperty.upper() + ':' + sValue))
-                return sValue or ''
+                return sValue or u''
             
             def processSingleURI(sProperty):
                 sValue = self.getPropertyValue(elmCard, sProperty, self.URI)
@@ -2229,8 +2229,8 @@ class _MicroformatsParser:
             processSingleURI('key')
     
             if arLines:
-                arLines = ['BEGIN:vCard','VERSION:3.0'] + arLines + ['END:vCard']
-                sVCards += '\n'.join(arLines) + '\n'
+                arLines = [u'BEGIN:vCard',u'VERSION:3.0'] + arLines + [u'END:vCard']
+                sVCards += u'\n'.join(arLines) + u'\n'
     
         return sVCards.strip()
     
