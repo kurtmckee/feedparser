@@ -3648,8 +3648,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
     if not use_strict_parser:
-        feedparser = _LooseFeedParser(baseuri, baselang, known_encoding and 'utf-8' or '', entities)
-        feedparser.feed(data)
+        feedparser = _LooseFeedParser(baseuri, baselang, 'utf-8', entities)
+        feedparser.feed(data.decode('utf-8', 'replace'))
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
     result['version'] = result['version'] or feedparser.version
