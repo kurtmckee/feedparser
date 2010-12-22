@@ -830,9 +830,10 @@ class _FeedParserMixin:
                 contentparams['value'] = output
                 self.entries[-1][element].append(contentparams)
             elif element == 'link':
-                self.entries[-1][element] = output
-                if output:
-                    self.entries[-1]['links'][-1]['href'] = output
+                if not self.inimage:
+                    self.entries[-1][element] = output
+                    if output:
+                        self.entries[-1]['links'][-1]['href'] = output
             else:
                 if element == 'description':
                     element = 'summary'
@@ -991,7 +992,8 @@ class _FeedParserMixin:
     
     def _start_image(self, attrsD):
         context = self._getContext()
-        context.setdefault('image', FeedParserDict())
+        if not self.inentry:
+            context.setdefault('image', FeedParserDict())
         self.inimage = 1
         self.hasTitle = 0
         self.push('image', 0)
@@ -1381,7 +1383,8 @@ class _FeedParserMixin:
             attrsD['href'] = self.resolveURI(attrsD['href'])
         expectingText = self.infeed or self.inentry or self.insource
         context.setdefault('links', [])
-        context['links'].append(FeedParserDict(attrsD))
+        if not (self.inentry and self.inimage):
+            context['links'].append(FeedParserDict(attrsD))
         if attrsD.has_key('href'):
             expectingText = 0
             if (attrsD.get('rel') == 'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
