@@ -230,7 +230,7 @@ class FeedParserDict(UserDict):
               'guid': 'id',
               'date': 'updated',
               'date_parsed': 'updated_parsed',
-              'description': ['subtitle', 'summary'],
+              'description': ['summary', 'subtitle'],
               'url': ['href'],
               'modified': 'updated',
               'modified_parsed': 'updated_parsed',
@@ -1556,10 +1556,10 @@ class _FeedParserMixin:
     _start_fullitem = _start_content_encoded
 
     def _end_content(self):
-        copyToDescription = self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types)
+        copyToSummary = self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types)
         value = self.popContent('content')
-        if copyToDescription:
-            self._save('description', value)
+        if copyToSummary:
+            self._save('summary', value)
 
     _end_body = _end_content
     _end_xhtml_body = _end_content
