@@ -175,14 +175,24 @@ sgmllib.special = re.compile('<!')
 sgmllib.charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
 
 if sgmllib.endbracket.search(' <').start(0):
-    class EndBracketMatch:
-        endbracket = re.compile('''([^'"<>]|"[^"]*"(?=>|/|\s|\w+=)|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])|.*?(?=[<>])''')
+    class EndBracketRegEx:
+        def __init__(self):
+            # Overriding the built-in sgmllib.endbracket regex allows the
+            # parser to find angle brackets embedded in element attributes.
+            self.endbracket = re.compile('''([^'"<>]|"[^"]*"(?=>|/|\s|\w+=)|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])|.*?(?=[<>])''')
         def search(self,string,index=0):
-            self.match = self.endbracket.match(string,index)
-            if self.match: return self
-        def start(self,n):
+            match = self.endbracket.match(string,index)
+            if match is not None:
+                # Returning a new object in the calling thread's context
+                # resolves a thread-safety.
+                return EndBracketMatch(match) 
+            return None
+    class EndBracketMatch:
+        def __init__(self, match):
+            self.match = match
+        def start(self, n):
             return self.match.end(n)
-    sgmllib.endbracket = EndBracketMatch()
+    sgmllib.endbracket = EndBracketRegEx()
 
 SUPPORTED_VERSIONS = {'': 'unknown',
                       'rss090': 'RSS 0.90',
