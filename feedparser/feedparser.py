@@ -1357,6 +1357,10 @@ class _FeedParserMixin:
     _start_dc_subject = _start_category
     _start_keywords = _start_category
         
+    def _start_media_category(self, attrsD):
+        attrsD.setdefault('scheme', 'http://search.yahoo.com/mrss/category_schema')
+        self._start_category(attrsD)
+
     def _end_itunes_keywords(self):
         for term in self.pop('itunes_keywords').split():
             self._addTag(term, 'http://www.itunes.com/', None)
@@ -1377,6 +1381,7 @@ class _FeedParserMixin:
     _end_dc_subject = _end_category
     _end_keywords = _end_category
     _end_itunes_category = _end_category
+    _end_media_category = _end_category
 
     def _start_cloud(self, attrsD):
         self._getContext()['cloud'] = FeedParserDict(attrsD)
