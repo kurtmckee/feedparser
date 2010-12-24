@@ -76,12 +76,57 @@ RESOLVE_RELATIVE_URIS = 1
 # HTML content, set this to 1.
 SANITIZE_HTML = 1
 
-# ---------- required modules (should come with any Python distribution) ----------
-import sgmllib, re, sys, copy, urlparse, time, rfc822, types, cgi, urllib, urllib2, datetime
+# ---------- Python 3 modules (make it work if possible) ----------
 try:
-    from cStringIO import StringIO as _StringIO
+    import rfc822
+except ImportError:
+    from email import _parseaddr as rfc822
+
+try:
+    # Python 3.1 introduces bytes.maketrans and simultaneously
+    # deprecates string.maketrans; use bytes.maketrans if possible
+    _maketrans = bytes.maketrans
+except (NameError, AttributeError):
+    import string
+    _maketrans = string.maketrans
+    
+# base64 support for Atom feeds that contain embedded binary data
+try:
+    import base64, binascii
+    # Python 3.1 deprecates decodestring in favor of decodebytes
+    _base64decode = getattr(base64, 'decodebytes', base64.decodestring)
 except:
-    from StringIO import StringIO as _StringIO
+    base64 = binascii = None
+
+def _s2bytes(s):
+  # Convert a UTF-8 str to bytes if the interpreter is Python 3
+  try:
+    return bytes(s, 'utf8')
+  except (NameError, TypeError):
+    # In Python 2.5 and below, bytes doesn't exist (NameError)
+    # In Python 2.6 and above, bytes and str are the same (TypeError)
+    return s
+
+def _l2bytes(l):
+  # Convert a list of ints to bytes if the interpreter is Python 3
+  try:
+    if bytes is not str:
+      # In Python 2.6 and above, this call won't raise an exception
+      # but it will return bytes([65]) as '[65]' instead of 'A'
+      return bytes(l)
+    raise NameError
+  except NameError:
+    return ''.join(map(chr, l))
+
+# ---------- required modules (should come with any Python distribution) ----------
+import sgmllib, re, sys, copy, urlparse, time, types, cgi, urllib, urllib2, datetime
+try:
+    from io import BytesIO as _StringIO
+except ImportError:
+    try:
+        from cStringIO import StringIO as _StringIO
+    except:
+        from StringIO import StringIO as _StringIO
 
 # ---------- optional modules (feedparser will work without these, but with reduced functionality) ----------
 
@@ -113,12 +158,6 @@ except:
         for char, entity in entities:
             data = data.replace(char, entity)
         return data
-
-# base64 support for Atom feeds that contain embedded binary data
-try:
-    import base64, binascii
-except:
-    base64 = binascii = None
 
 # cjkcodecs and iconv_codec provide support for more character encodings.
 # Both are available from http://cjkpython.i18n.org/
@@ -255,9 +294,9 @@ class FeedParserDict(UserDict):
         realkey = self.keymap.get(key, key)
         if type(realkey) == types.ListType:
             for k in realkey:
-                if UserDict.has_key(self, k):
+                if UserDict.__contains__(self, k):
                     return UserDict.__getitem__(self, k)
-        if UserDict.has_key(self, key):
+        if UserDict.__contains__(self, key):
             return UserDict.__getitem__(self, key)
         return UserDict.__getitem__(self, realkey)
 
@@ -282,9 +321,12 @@ class FeedParserDict(UserDict):
         
     def has_key(self, key):
         try:
-            return hasattr(self, key) or UserDict.has_key(self, key)
+            return hasattr(self, key) or UserDict.__contains__(self, key)
         except AttributeError:
             return False
+    # This alias prevents the 2to3 tool from changing the semantics of the
+    # __contains__ function below and exhausting the maximum recursion depth
+    __has_key = has_key
         
     def __getattr__(self, key):
         try:
@@ -304,7 +346,7 @@ class FeedParserDict(UserDict):
             return self.__setitem__(key, value)
 
     def __contains__(self, key):
-        return self.has_key(key)
+        return self.__has_key(key)
 
 def zopeCompatibilityHack():
     global FeedParserDict
@@ -337,9 +379,8 @@ def _ebcdic_to_ascii(s):
             92,159,83,84,85,86,87,88,89,90,244,245,246,247,248,249,
             48,49,50,51,52,53,54,55,56,57,250,251,252,253,254,255
             )
-        import string
-        _ebcdic_to_ascii_map = string.maketrans( \
-            ''.join(map(chr, range(256))), ''.join(map(chr, emap)))
+        _ebcdic_to_ascii_map = _maketrans( \
+            _l2bytes(range(256)), _l2bytes(emap))
     return s.translate(_ebcdic_to_ascii_map)
  
 _cp1252 = {
@@ -745,6 +786,11 @@ class _FeedParserMixin:
                 else:
                     pieces = pieces[1:-1]
 
+        # Ensure each piece is a str for Python 3
+        for (i, v) in enumerate(pieces):
+            if not isinstance(v, basestring):
+                pieces[i] = v.decode('utf-8')
+
         output = ''.join(pieces)
         if stripWhitespace:
             output = output.strip()
@@ -753,11 +799,15 @@ class _FeedParserMixin:
         # decode base64 content
         if base64 and self.contentparams.get('base64', 0):
             try:
-                output = base64.decodestring(output)
+                output = _base64decode(output)
             except binascii.Error:
                 pass
             except binascii.Incomplete:
                 pass
+            except TypeError:
+                # In Python 3, base64 takes and outputs bytes, not str
+                # This may not be the most correct way to accomplish this
+                output = _base64decode(output.encode('utf-8')).decode('utf-8')
                 
         # resolve relative URIs
         if (element in self.can_be_relative_uri) and output:
@@ -815,7 +865,7 @@ class _FeedParserMixin:
 
         # address common error where people take data that is already
         # utf-8, presume that it is iso-8859-1, and re-encode it.
-        if self.encoding=='utf-8' and type(output) == type(u''):
+        if self.encoding in ('utf-8', 'utf-8_INVALID_PYTHON_3') and type(output) == type(u''):
             try:
                 output = unicode(output.encode('iso-8859-1'), 'utf-8')
             except:
@@ -885,21 +935,21 @@ class _FeedParserMixin:
     # text, but this is routinely ignored.  This is an attempt to detect
     # the most common cases.  As false positives often result in silent
     # data loss, this function errs on the conservative side.
-    def lookslikehtml(self, str):
+    def lookslikehtml(self, s):
         if self.version.startswith('atom'): return
         if self.contentparams.get('type','text/html') != 'text/plain': return
 
         # must have a close tag or a entity reference to qualify
-        if not (re.search(r'</(\w+)>',str) or re.search("&#?\w+;",str)): return
+        if not (re.search(r'</(\w+)>',s) or re.search("&#?\w+;",s)): return
 
         # all tags must be in a restricted subset of valid HTML tags
         if filter(lambda t: t.lower() not in _HTMLSanitizer.acceptable_elements,
-            re.findall(r'</?(\w+)',str)): return
+            re.findall(r'</?(\w+)',s)): return
 
         # all entities must have been defined as valid HTML entities
         from htmlentitydefs import entitydefs
         if filter(lambda e: e not in entitydefs.keys(),
-            re.findall(r'&(\w+);',str)): return
+            re.findall(r'&(\w+);',s)): return
 
         return 1
 
@@ -1747,8 +1797,14 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         data = re.sub(r'<([^<>\s]+?)\s*/>', self._shorttag_replace, data) 
         data = data.replace('&#39;', "'")
         data = data.replace('&#34;', '"')
-        if self.encoding and type(data) == type(u''):
-            data = data.encode(self.encoding)
+        try:
+            bytes
+            if bytes is str:
+                raise NameError
+            self.encoding = self.encoding + '_INVALID_PYTHON_3'
+        except NameError:
+            if self.encoding and type(data) == type(u''):
+                data = data.encode(self.encoding)
         sgmllib.SGMLParser.feed(self, data)
         sgmllib.SGMLParser.close(self)
 
@@ -1777,7 +1833,11 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
                         value = unicode(value, self.encoding)
                     except:
                         value = unicode(value, 'iso-8859-1')
-                uattrs.append((unicode(key, self.encoding), value))
+                try:
+                    # Currently, in Python 3 the key is already a str, and cannot be decoded again
+                    uattrs.append((unicode(key, self.encoding), value))
+                except TypeError:
+                    uattrs.append((key, value))
             strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs])
             if self.encoding:
                 try:
@@ -2688,7 +2748,7 @@ class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler
         try:
             assert sys.version.split()[0] >= '2.3.3'
             assert base64 != None
-            user, passw = base64.decodestring(req.headers['Authorization'].split(' ')[1]).split(':')
+            user, passw = _base64decode(req.headers['Authorization'].split(' ')[1]).split(':')
             realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
             self.add_password(realm, host, user, passw)
             retry = self.http_error_auth_reqed('www-authenticate', host, req, headers)
@@ -2757,9 +2817,9 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         # iri support
         try:
             if isinstance(url_file_stream_or_string,unicode):
-                url_file_stream_or_string = url_file_stream_or_string.encode('idna')
+                url_file_stream_or_string = url_file_stream_or_string.encode('idna').decode('utf-8')
             else:
-                url_file_stream_or_string = url_file_stream_or_string.decode('utf-8').encode('idna')
+                url_file_stream_or_string = url_file_stream_or_string.decode('utf-8').encode('idna').decode('utf-8')
         except:
             pass
 
@@ -2774,7 +2834,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
-        return open(url_file_stream_or_string)
+        return open(url_file_stream_or_string, 'rb')
     except:
         pass
 
@@ -2852,9 +2912,15 @@ _iso8601_re = [
     + r'(\.(?P<fracsecond>\d+))?'
     + r'(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?'
     for tmpl in _iso8601_tmpl]
-del tmpl
+try:
+    del tmpl
+except NameError:
+    pass
 _iso8601_matches = [re.compile(regex).match for regex in _iso8601_re]
-del regex
+try:
+    del regex
+except NameError:
+    pass
 def _parse_date_iso8601(dateString):
     '''Parse a variety of ISO-8601-compatible formats like 20040105'''
     m = None
@@ -2928,7 +2994,7 @@ def _parse_date_iso8601(dateString):
     # Python's time.mktime() is a wrapper around the ANSI C mktime(3c)
     # which is guaranteed to normalize d/m/y/h/m/s.
     # Many implementations have bugs, but we'll pretend they don't.
-    return time.localtime(time.mktime(tm))
+    return time.localtime(time.mktime(tuple(tm)))
 registerDateHandler(_parse_date_iso8601)
     
 # 8-bit date handling routines written by ytrewq1.
@@ -3169,8 +3235,8 @@ def _parse_date_w3dtf(dateString):
 
     __date_re = ('(?P<year>\d\d\d\d)'
                  '(?:(?P<dsep>-|)'
-                 '(?:(?P<julian>\d\d\d)'
-                 '|(?P<month>\d\d)(?:(?P=dsep)(?P<day>\d\d))?))?')
+                 '(?:(?P<month>\d\d)(?:(?P=dsep)(?P<day>\d\d))?'
+                 '|(?P<julian>\d\d\d)))?')
     __tzd_re = '(?P<tzd>[-+](?P<tzdhours>\d\d)(?::?(?P<tzdminutes>\d\d))|Z)'
     __tzd_rx = re.compile(__tzd_re)
     __time_re = ('(?P<hours>\d\d)(?P<tsep>:|)(?P<minutes>\d\d)'
@@ -3306,59 +3372,59 @@ def _getCharacterEncoding(http_headers, xml_data):
     sniffed_xml_encoding = ''
     xml_encoding = ''
     true_encoding = ''
-    http_content_type, http_encoding = _parseHTTPContentType(http_headers.get('content-type'))
+    http_content_type, http_encoding = _parseHTTPContentType(http_headers.get('content-type', http_headers.get('Content-type')))
     # Must sniff for non-ASCII-compatible character encodings before
     # searching for XML declaration.  This heuristic is defined in
     # section F of the XML specification:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
     try:
-        if xml_data[:4] == '\x4c\x6f\xa7\x94':
+        if xml_data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
             # EBCDIC
             xml_data = _ebcdic_to_ascii(xml_data)
-        elif xml_data[:4] == '\x00\x3c\x00\x3f':
+        elif xml_data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
             # UTF-16BE
             sniffed_xml_encoding = 'utf-16be'
             xml_data = unicode(xml_data, 'utf-16be').encode('utf-8')
-        elif (len(xml_data) >= 4) and (xml_data[:2] == '\xfe\xff') and (xml_data[2:4] != '\x00\x00'):
+        elif (len(xml_data) >= 4) and (xml_data[:2] == _l2bytes([0xfe, 0xff])) and (xml_data[2:4] != _l2bytes([0x00, 0x00])):
             # UTF-16BE with BOM
             sniffed_xml_encoding = 'utf-16be'
             xml_data = unicode(xml_data[2:], 'utf-16be').encode('utf-8')
-        elif xml_data[:4] == '\x3c\x00\x3f\x00':
+        elif xml_data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
             # UTF-16LE
             sniffed_xml_encoding = 'utf-16le'
             xml_data = unicode(xml_data, 'utf-16le').encode('utf-8')
-        elif (len(xml_data) >= 4) and (xml_data[:2] == '\xff\xfe') and (xml_data[2:4] != '\x00\x00'):
+        elif (len(xml_data) >= 4) and (xml_data[:2] == _l2bytes([0xff, 0xfe])) and (xml_data[2:4] != _l2bytes([0x00, 0x00])):
             # UTF-16LE with BOM
             sniffed_xml_encoding = 'utf-16le'
             xml_data = unicode(xml_data[2:], 'utf-16le').encode('utf-8')
-        elif xml_data[:4] == '\x00\x00\x00\x3c':
+        elif xml_data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
             # UTF-32BE
             sniffed_xml_encoding = 'utf-32be'
             xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
-        elif xml_data[:4] == '\x3c\x00\x00\x00':
+        elif xml_data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
             # UTF-32LE
             sniffed_xml_encoding = 'utf-32le'
             xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
-        elif xml_data[:4] == '\x00\x00\xfe\xff':
+        elif xml_data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
             # UTF-32BE with BOM
             sniffed_xml_encoding = 'utf-32be'
             xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
-        elif xml_data[:4] == '\xff\xfe\x00\x00':
+        elif xml_data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
             # UTF-32LE with BOM
             sniffed_xml_encoding = 'utf-32le'
             xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
-        elif xml_data[:3] == '\xef\xbb\xbf':
+        elif xml_data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
             # UTF-8 with BOM
             sniffed_xml_encoding = 'utf-8'
             xml_data = unicode(xml_data[3:], 'utf-8').encode('utf-8')
         else:
             # ASCII-compatible
             pass
-        xml_encoding_match = re.compile('^<\?.*encoding=[\'"](.*?)[\'"].*\?>').match(xml_data)
+        xml_encoding_match = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>')).match(xml_data)
     except:
         xml_encoding_match = None
     if xml_encoding_match:
-        xml_encoding = xml_encoding_match.groups()[0].lower()
+        xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
         if sniffed_xml_encoding and (xml_encoding in ('iso-10646-ucs-2', 'ucs-2', 'csunicode', 'iso-10646-ucs-4', 'ucs-4', 'csucs4', 'utf-16', 'utf-32', 'utf_16', 'utf_32', 'utf16', 'u16')):
             xml_encoding = sniffed_xml_encoding
     acceptable_content_type = 0
@@ -3374,7 +3440,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         true_encoding = http_encoding or 'us-ascii'
     elif http_content_type.startswith('text/'):
         true_encoding = http_encoding or 'us-ascii'
-    elif http_headers and (not http_headers.has_key('content-type')):
+    elif http_headers and (not (http_headers.has_key('content-type') or http_headers.has_key('Content-type'))):
         true_encoding = xml_encoding or 'iso-8859-1'
     else:
         true_encoding = xml_encoding or 'utf-8'
@@ -3392,35 +3458,35 @@ def _toUTF8(data, encoding):
     '''
     if _debug: sys.stderr.write('entering _toUTF8, trying encoding %s\n' % encoding)
     # strip Byte Order Mark (if present)
-    if (len(data) >= 4) and (data[:2] == '\xfe\xff') and (data[2:4] != '\x00\x00'):
+    if (len(data) >= 4) and (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
         if _debug:
             sys.stderr.write('stripping BOM\n')
             if encoding != 'utf-16be':
                 sys.stderr.write('trying utf-16be instead\n')
         encoding = 'utf-16be'
         data = data[2:]
-    elif (len(data) >= 4) and (data[:2] == '\xff\xfe') and (data[2:4] != '\x00\x00'):
+    elif (len(data) >= 4) and (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
         if _debug:
             sys.stderr.write('stripping BOM\n')
             if encoding != 'utf-16le':
                 sys.stderr.write('trying utf-16le instead\n')
         encoding = 'utf-16le'
         data = data[2:]
-    elif data[:3] == '\xef\xbb\xbf':
+    elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
         if _debug:
             sys.stderr.write('stripping BOM\n')
             if encoding != 'utf-8':
                 sys.stderr.write('trying utf-8 instead\n')
         encoding = 'utf-8'
         data = data[3:]
-    elif data[:4] == '\x00\x00\xfe\xff':
+    elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
         if _debug:
             sys.stderr.write('stripping BOM\n')
             if encoding != 'utf-32be':
                 sys.stderr.write('trying utf-32be instead\n')
         encoding = 'utf-32be'
         data = data[4:]
-    elif data[:4] == '\xff\xfe\x00\x00':
+    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
         if _debug:
             sys.stderr.write('stripping BOM\n')
             if encoding != 'utf-32le':
@@ -3443,31 +3509,31 @@ def _stripDoctype(data):
     rss_version may be 'rss091n' or None
     stripped_data is the same XML document, minus the DOCTYPE
     '''
-    start = re.search('<\w',data)
+    start = re.search(_s2bytes('<\w'), data)
     start = start and start.start() or -1
     head,data = data[:start+1], data[start+1:]
     
-    entity_pattern = re.compile(r'^\s*<!ENTITY([^>]*?)>', re.MULTILINE)
+    entity_pattern = re.compile(_s2bytes(r'^\s*<!ENTITY([^>]*?)>'), re.MULTILINE)
     entity_results=entity_pattern.findall(head)
-    head = entity_pattern.sub('', head)
-    doctype_pattern = re.compile(r'^\s*<!DOCTYPE([^>]*?)>', re.MULTILINE)
+    head = entity_pattern.sub(_s2bytes(''), head)
+    doctype_pattern = re.compile(_s2bytes(r'^\s*<!DOCTYPE([^>]*?)>'), re.MULTILINE)
     doctype_results = doctype_pattern.findall(head)
-    doctype = doctype_results and doctype_results[0] or ''
-    if doctype.lower().count('netscape'):
+    doctype = doctype_results and doctype_results[0] or _s2bytes('')
+    if doctype.lower().count(_s2bytes('netscape')):
         version = 'rss091n'
     else:
         version = None
 
     # only allow in 'safe' inline entity definitions
-    replacement=''
+    replacement=_s2bytes('')
     if len(doctype_results)==1 and entity_results:
-       safe_pattern=re.compile('\s+(\w+)\s+"(&#\w+;|[^&"]*)"')
+       safe_pattern=re.compile(_s2bytes('\s+(\w+)\s+"(&#\w+;|[^&"]*)"'))
        safe_entities=filter(lambda e: safe_pattern.match(e),entity_results)
        if safe_entities:
-           replacement='<!DOCTYPE feed [\n  <!ENTITY %s>\n]>' % '>\n  <!ENTITY '.join(safe_entities)
+           replacement=_s2bytes('<!DOCTYPE feed [\n  <!ENTITY') + _s2bytes('>\n  <!ENTITY ').join(safe_entities) + _s2bytes('>\n]>')
     data = doctype_pattern.sub(replacement, head) + data
 
-    return version, data, dict(replacement and safe_pattern.findall(replacement))
+    return version, data, dict(replacement and [(k.decode('utf-8'), v.decode('utf-8')) for k, v in safe_pattern.findall(replacement)])
     
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[], extra_headers={}):
     '''Parse a feed from a URL, file, stream, or string.
@@ -3480,7 +3546,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['entries'] = []
     if _XML_AVAILABLE:
         result['bozo'] = 0
-    if type(handlers) == types.InstanceType:
+    if not isinstance(handlers, list):
         handlers = [handlers]
     try:
         f = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, extra_headers)
@@ -3515,10 +3581,14 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # save HTTP headers
     if hasattr(f, 'info'):
         info = f.info()
-        etag = info.getheader('ETag')
+        if hasattr(info, 'getheader'):
+            etag = info.getheader('ETag')
+            last_modified = info.getheader('Last-Modified')
+        else:
+            etag = f.headers.get('ETag')
+            last_modified = f.headers.get('Last-Modified')
         if etag:
             result['etag'] = etag
-        last_modified = info.getheader('Last-Modified')
         if last_modified:
             result['modified'] = _parse_date(last_modified)
     if hasattr(f, 'url'):
@@ -3527,7 +3597,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if hasattr(f, 'status'):
         result['status'] = f.status
     if hasattr(f, 'headers'):
-        result['headers'] = f.headers.dict
+        result['headers'] = dict(f.headers)
     if hasattr(f, 'close'):
         f.close()
 
@@ -3540,8 +3610,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['encoding'], http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type = \
         _getCharacterEncoding(http_headers, data)
     if http_headers and (not acceptable_content_type):
-        if http_headers.has_key('content-type'):
-            bozo_message = '%s is not an XML media type' % http_headers['content-type']
+        if http_headers.has_key('content-type') or http_headers.has_key('Content-type'):
+            bozo_message = '%s is not an XML media type' % http_headers.get('content-type', http_headers.get('Content-type'))
         else:
             bozo_message = 'no Content-type specified'
         result['bozo'] = 1
@@ -3550,8 +3620,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if data is not None:
         result['version'], data, entities = _stripDoctype(data)
 
-    baseuri = http_headers.get('content-location', result.get('href'))
-    baselang = http_headers.get('content-language', None)
+    baseuri = http_headers.get('content-location', http_headers.get('Content-Location', result.get('href')))
+    baselang = http_headers.get('content-language', http_headers.get('Content-Language', None))
 
     # if server sent 304, we're done
     if result.get('status', 0) == 304:
