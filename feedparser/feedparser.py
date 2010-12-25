@@ -118,6 +118,22 @@ def _l2bytes(l):
   except NameError:
     return ''.join(map(chr, l))
 
+# If you want feedparser to allow all URL schemes, set this to ()
+# List culled from Python's urlparse documentation at:
+#   http://docs.python.org/library/urlparse.html
+# as well as from "URI scheme" at Wikipedia:
+#   https://secure.wikimedia.org/wikipedia/en/wiki/URI_scheme
+# Many more will likely need to be added!
+ACCEPTABLE_URI_SCHEMES = (
+    'file', 'ftp', 'gopher', 'h323', 'hdl', 'http', 'https', 'imap', 'mailto',
+    'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu', 'sftp',
+    'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet', 'wais',
+    # Additional common-but-unofficial schemes
+    'aim', 'callto', 'cvs', 'facetime', 'feed', 'git', 'gtalk', 'irc', 'ircs',
+    'irc6', 'itms', 'mms', 'msnim', 'skype', 'ssh', 'smb', 'svn', 'ymsg',
+)
+#ACCEPTABLE_URI_SCHEMES = ()
+
 # ---------- required modules (should come with any Python distribution) ----------
 import sgmllib, re, sys, copy, urlparse, time, types, cgi, urllib, urllib2, datetime
 try:
@@ -543,7 +559,12 @@ class _FeedParserMixin:
                 baseuri = unicode(baseuri, self.encoding)
             except:
                 baseuri = unicode(baseuri, 'iso-8859-1')
-        self.baseuri = _urljoin(self.baseuri, baseuri)
+        # ensure that self.baseuri is always an absolute URI that
+        # uses a whitelisted URI scheme (e.g. not `javscript:`)
+        if self.baseuri:
+            self.baseuri = _makeSafeAbsoluteURI(self.baseuri, baseuri) or self.baseuri
+        else:
+            self.baseuri = _urljoin(self.baseuri, baseuri)
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang == '':
             # xml:lang could be explicitly set to '', we need to capture that
@@ -2409,7 +2430,7 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
         self.baseuri = baseuri
 
     def resolveURI(self, uri):
-        return _urljoin(self.baseuri, uri.strip())
+        return _makeSafeAbsoluteURI(_urljoin(self.baseuri, uri.strip()))
     
     def unknown_starttag(self, tag, attrs):
         if _debug:
@@ -2425,6 +2446,21 @@ def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):
     p = _RelativeURIResolver(baseURI, encoding, _type)
     p.feed(htmlSource)
     return p.output()
+
+def _makeSafeAbsoluteURI(base, rel=None):
+    # bail if ACCEPTABLE_URI_SCHEMES is empty
+    if not ACCEPTABLE_URI_SCHEMES:
+        return _urljoin(base, rel or '')
+    if not base:
+        return u''
+    if not rel:
+        if base.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
+            return u''
+        return base
+    uri = _urljoin(base, rel)
+    if uri.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
+        return u''
+    return uri
 
 class _HTMLSanitizer(_BaseHTMLProcessor):
     acceptable_elements = ['a', 'abbr', 'acronym', 'address', 'area', 'article',
@@ -3620,7 +3656,11 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if data is not None:
         result['version'], data, entities = _stripDoctype(data)
 
-    baseuri = http_headers.get('content-location', http_headers.get('Content-Location', result.get('href')))
+    # ensure that baseuri is an absolute uri using an acceptable URI scheme
+    contentloc = http_headers.get('content-location', '')
+    href = result.get('href', '')
+    baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
+
     baselang = http_headers.get('content-language', http_headers.get('Content-Language', None))
 
     # if server sent 304, we're done
