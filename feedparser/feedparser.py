@@ -912,6 +912,10 @@ class _FeedParserMixin:
                 self.entries[-1][element].append(contentparams)
             elif element == 'link':
                 if not self.inimage:
+                    # query variables in urls in link elements are improperly
+                    # converted from `?a=1&b=2` to `?a=1&b;=2` as if they're
+                    # unhandled character references. fix this special case.
+                    output = re.sub("&([A-Za-z0-9_]+);", "&\g<1>", output)
                     self.entries[-1][element] = output
                     if output:
                         self.entries[-1]['links'][-1]['href'] = output
@@ -929,6 +933,9 @@ class _FeedParserMixin:
                 element = 'subtitle'
             context[element] = output
             if element == 'link':
+                # fix query variables; see above for the explanation
+                output = re.sub("&([A-Za-z0-9_]+);", "&\g<1>", output)
+                context[element] = output
                 context['links'][-1]['href'] = output
             elif self.incontent:
                 contentparams = copy.deepcopy(self.contentparams)
