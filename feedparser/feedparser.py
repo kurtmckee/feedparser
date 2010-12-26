@@ -550,6 +550,10 @@ class _FeedParserMixin:
         # normalize attrs
         attrs = [(k.lower(), v) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
+        # the sgml parser doesn't handle entities in attributes, but
+        # strict xml parsers do -- account for this difference
+        if isinstance(self, _LooseFeedParser):
+            attrs = [(k, v.replace('&amp;', '&')) for k, v in attrs]
         
         # track xml:base and xml:lang
         attrsD = dict(attrs)
