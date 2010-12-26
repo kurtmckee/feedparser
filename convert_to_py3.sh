@@ -7,7 +7,7 @@ if [ -e feedparser/sgmllib3.py ]; then
 fi
 
 echo "Using the 2to3 tool to convert feedparser.py and feedparsertest.py to Python 3"
-2to3 -w --no-diffs feedparser/feedparser.py feedparser/feedparsertest.py
+2to3 -w feedparser/feedparser.py feedparser/feedparsertest.py
 
 if [ ! -e feedparser/sgmllib3.py ]; then
     echo "No Python 3 version of sgmllib was found. This is a required library."
