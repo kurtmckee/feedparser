@@ -3671,7 +3671,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['version'], data, entities = _stripDoctype(data)
 
     # ensure that baseuri is an absolute uri using an acceptable URI scheme
-    contentloc = http_headers.get('content-location', '')
+    contentloc = http_headers.get('content-location', http_headers.get('Content-Location', ''))
     href = result.get('href', '')
     baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
 
