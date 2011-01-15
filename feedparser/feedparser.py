@@ -42,7 +42,8 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Kevin Marks <http://epeus.blogspot.com/>",
                     "Sam Ruby <http://intertwingly.net/>",
                     "Ade Oshineye <http://blog.oshineye.com/>",
-                    "Martin Pool <http://sourcefrog.net/>"]
+                    "Martin Pool <http://sourcefrog.net/>",
+                    "Kurt McKee <http://kurtmckee.org/>"]
 _debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
