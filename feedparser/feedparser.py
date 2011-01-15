@@ -1698,6 +1698,17 @@ class _FeedParserMixin:
         context = self._getContext()
         context['media_player']['content'] = value
 
+    def _start_newlocation(self, attrsD):
+        self.push('newlocation', 1)
+
+    def _end_newlocation(self):
+        url = self.pop('newlocation')
+        context = self._getContext()
+        # don't set newlocation if the context isn't right
+        if context is not self.feeddata:
+            return
+        context['newlocation'] = _makeSafeAbsoluteURI(self.baseuri, url.strip())
+
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
@@ -2461,9 +2472,9 @@ def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):
 def _makeSafeAbsoluteURI(base, rel=None):
     # bail if ACCEPTABLE_URI_SCHEMES is empty
     if not ACCEPTABLE_URI_SCHEMES:
-        return _urljoin(base, rel or '')
+        return _urljoin(base, rel or u'')
     if not base:
-        return u''
+        return rel or u''
     if not rel:
         if base.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
             return u''
