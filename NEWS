@@ -1,5 +1,17 @@
-REVISION HISTORY
+5.0 - January XX, 2011
+    * Improved MathML support
+    * Support hcards
+    * Support IRIs
+    * Sanitize CSS
+    * Support SVG
+    * Support inline XML entity declarations
+    * Support unescaped quotes and angle brackets in attributes
+    * Support additional date formats
+    * Officially make Python 2.4 the earliest supported version
+    * Support Python 3
+    * Bug fixes, bug fixes, bug fixes
 
+===============================================================================
 
 1.0 - 9/27/2002 - MAP - fixed namespace processing on prefixed RSS 2.0 elements,
   added Simon Fell's test suite
