@@ -305,7 +305,7 @@
 <title/>
 <para>&feedparser; is a &python; module for downloading and parsing syndicated feeds.  It can handle &rss; 0.90, Netscape &rss; 0.91, Userland &rss; 0.91, &rss; 0.92, &rss; 0.93, &rss; 0.94, &rss; 1.0, &rss; 2.0, &atom; 0.3, &atom; 1.0, and &cdf; feeds.  It also parses several popular extension modules, including Dublin Core and Apple's &itunes; extensions.</para>
 </abstract>
-<para>To use &feedparser;, you will need &python; 2.1 or later.  &feedparser; is not meant to run standalone; it is a module for you to use as part of a larger &python; program.</para>
+<para>To use &feedparser;, you will need &python; 2.4 or later (Python 3 is supported).  &feedparser; is not meant to run standalone; it is a module for you to use as part of a larger &python; program.</para>
 <para>&feedparser; is easy to use; the module is self-contained in a single file, &feedparser_filename;, and it has one primary public function, &parse;.  &parse; takes a number of arguments, but only one is required, and it can be a &url;, a local filename, or a raw string containing feed data in any format.</para>
 <example id="example.parse.remote">
 <title>Parsing a feed from a remote &url;</title>
