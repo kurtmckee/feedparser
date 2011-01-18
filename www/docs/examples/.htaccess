@@ -1,5 +1,5 @@
-Redirect /docs/examples/temporary.xml http://feedparser.org/docs/examples/atom.xml
-Redirect permanent /docs/examples/permanent.xml http://feedparser.org/docs/examples/atom.xml
+Redirect /docs/examples/temporary.xml http://feedparser.org/docs/examples/atom10.xml
+Redirect permanent /docs/examples/permanent.xml http://feedparser.org/docs/examples/atom10.xml
 Redirect gone /docs/examples/gone.xml
 
 <Files "basic_auth.xml">
