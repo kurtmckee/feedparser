@@ -6,12 +6,11 @@ Handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds
 Visit http://feedparser.org/ for the latest version
 Visit http://feedparser.org/docs/ for the latest documentation
 
-Required: Python 2.1 or later
-Recommended: Python 2.3 or later
+Required: Python 2.4 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "4.2-pre-" + "$Revision$"[11:14] + "-svn"
+__version__ = "5.0"
 __license__ = """Copyright (c) 2002-2008, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
