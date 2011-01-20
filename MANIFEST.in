@@ -1,0 +1,7 @@
+recursive-include feedparser/tests *.xml
+include feedparser/feedparsertest.py
+include feedparser/sgmllib3.py
+include LICENSE
+include NEWS
+include README-PYTHON3
+include README-TESTS
