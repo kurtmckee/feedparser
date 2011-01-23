@@ -1,12 +1,16 @@
 5.0 - January XX, 2011
     * Improved MathML support
-    * Support hcards
+    * Support microformats (rel-tag, rel-enclosure, xfn, hcard)
     * Support IRIs
-    * Sanitize CSS
+    * Allow safe CSS through sanitization
+    * Allow safe HTML5 through sanitization
     * Support SVG
     * Support inline XML entity declarations
     * Support unescaped quotes and angle brackets in attributes
     * Support additional date formats
+    * Added the `request_headers` argument to parse()
+    * Added the `response_headers` argument to parse()
+    * Support multiple entry, feed, and source authors
     * Officially make Python 2.4 the earliest supported version
     * Support Python 3
     * Bug fixes, bug fixes, bug fixes
