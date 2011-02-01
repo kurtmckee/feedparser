@@ -747,7 +747,7 @@ class _FeedParserMixin:
 
     def mapContentType(self, contentType):
         contentType = contentType.lower()
-        if contentType == 'text':
+        if contentType == 'text' or contentType == 'plain':
             contentType = 'text/plain'
         elif contentType == 'html':
             contentType = 'text/html'
