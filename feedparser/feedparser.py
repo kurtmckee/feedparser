@@ -10,7 +10,7 @@ Required: Python 2.4 or later
 Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
 """
 
-__version__ = "5.0"
+__version__ = "5.0.1"
 __license__ = """Copyright (c) 2002-2008, Mark Pilgrim, All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,

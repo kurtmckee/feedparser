@@ -1,3 +1,8 @@
+5.0.1 - February 20, 2011
+    * Fix issue 91 (invalid text in XML declaration causes sanitizer to crash)
+    * Fix issue 254 (sanitization can be bypassed by malformed XML comments)
+    * Fix issue 255 (sanitizer doesn't strip unsafe URI schemes)
+
 5.0 - January 25, 2011
     * Improved MathML support
     * Support microformats (rel-tag, rel-enclosure, xfn, hcard)
