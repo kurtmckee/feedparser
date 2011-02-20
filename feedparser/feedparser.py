@@ -2725,6 +2725,18 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
         return ' '.join(clean)
 
+    def parse_comment(self, i, report=1):
+        ret = _BaseHTMLProcessor.parse_comment(self, i, report)
+        if ret >= 0:
+            return ret
+        # if ret == -1, this may be a malicious attempt to circumvent
+        # sanitization, or a page-destroying unclosed comment
+        match = re.compile(r'--[^>]*>').search(self.rawdata, i+4)
+        if match:
+            return match.end()
+        # unclosed comment; deliberately fail to handle_data()
+        return len(self.rawdata)
+
 
 def _sanitizeHTML(htmlSource, encoding, _type):
     p = _HTMLSanitizer(encoding, _type)
