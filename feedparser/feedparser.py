@@ -2667,6 +2667,9 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         for key, value in self.normalize_attrs(attrs):
             if key in acceptable_attributes:
                 key=keymap.get(key,key)
+                # make sure the uri uses an acceptable uri scheme
+                if key == u'href':
+                    value = _makeSafeAbsoluteURI(value)
                 clean_attrs.append((key,value))
             elif key=='style':
                 clean_value = self.sanitize_style(value)
