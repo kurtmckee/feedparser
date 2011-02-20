@@ -2476,9 +2476,10 @@ def _makeSafeAbsoluteURI(base, rel=None):
     if not base:
         return rel or u''
     if not rel:
-        if base.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
-            return u''
-        return base
+        scheme = urlparse.urlparse(base)[0]
+        if not scheme or scheme in ACCEPTABLE_URI_SCHEMES:
+            return base
+        return u''
     uri = _urljoin(base, rel)
     if uri.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
         return u''
