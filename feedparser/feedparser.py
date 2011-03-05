@@ -3650,7 +3650,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
 
     # if feed is gzip-compressed, decompress it
     if f and data and 'headers' in result:
-        if gzip and result['headers'].get('content-encoding') == 'gzip':
+        if gzip and 'gzip' in (result['headers'].get('content-encoding'), result['headers'].get('Content-Encoding')):
             try:
                 data = gzip.GzipFile(fileobj=_StringIO(data)).read()
             except Exception, e:
@@ -3661,7 +3661,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
                 result['bozo'] = 1
                 result['bozo_exception'] = e
                 data = ''
-        elif zlib and result['headers'].get('content-encoding') == 'deflate':
+        elif zlib and 'deflate' in (result['headers'].get('content-encoding'), result['headers'].get('Content-Encoding')):
             try:
                 data = zlib.decompress(data, -zlib.MAX_WBITS)
             except Exception, e:
