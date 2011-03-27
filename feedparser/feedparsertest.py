@@ -93,8 +93,9 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     -->
     """
     path = self.translate_path(self.path)
-    headers = dict([(k.decode('utf-8'), v.decode('utf-8')) for k, v in self.headers_re.findall(open(path, 'rb').read())])
     f = open(path, 'rb')
+    headers = dict([(k.decode('utf-8'), v.decode('utf-8')) for k, v in self.headers_re.findall(f.read())])
+    f.seek(0)
     headers.setdefault('Status', 200)
     self.send_response(int(headers['Status']))
     headers.setdefault('Content-type', self.guess_type(path))
@@ -163,7 +164,7 @@ class TestBuildRequest(unittest.TestCase):
       None, None, None, None,
       {'Cache-Control': 'max-age=0'})
     # nb, urllib2 folds the case of the headers
-    self.assertEquals(
+    self.assertEqual(
       request.get_header('Cache-control'), 'max-age=0')
 
 
