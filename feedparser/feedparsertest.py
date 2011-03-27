@@ -138,17 +138,17 @@ class TestCase(unittest.TestCase):
       env = env.data
     except:
       pass
-    failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
     try:
       if not eval(evalString, env):
+        failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
         raise self.failureException, failure
     except SyntaxError:
       # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
       # which will require the failure message to be updated
       evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
       evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-      failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
       if not eval(evalString, env):
+        failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
         raise self.failureException, failure
 
 
