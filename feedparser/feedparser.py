@@ -139,7 +139,6 @@ import cgi
 import copy
 import datetime
 import re
-import sgmllib
 import sys
 import time
 import types
@@ -184,6 +183,47 @@ except:
         for char, entity in entities:
             data = data.replace(char, entity)
         return data
+
+# sgmllib is not available by default in Python 3; if the end user doesn't have
+# it available then we'll lose illformed XML parsing, content santizing, and
+# microformat support (at least while feedparser depends on BeautifulSoup).
+try:
+    import sgmllib
+except ImportError:
+    # This is probably Python 3, which doesn't include sgmllib anymore
+    _SGML_AVAILABLE = 0
+
+    # Mock sgmllib enough to allow subclassing later on
+    class sgmllib(object):
+        class SGMLParser(object):
+            pass
+else:
+    _SGML_AVAILABLE = 1
+
+    # Override some things in sgmllib
+    sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
+    sgmllib.special = re.compile('<!')
+    sgmllib.charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
+
+    class _EndBracketRegEx:
+        def __init__(self):
+            # Overriding the built-in sgmllib.endbracket regex allows the
+            # parser to find angle brackets embedded in element attributes.
+            self.endbracket = re.compile('''([^'"<>]|"[^"]*"(?=>|/|\s|\w+=)|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])|.*?(?=[<>])''')
+        def search(self, target, index=0):
+            match = self.endbracket.match(target, index)
+            if match is not None:
+                # Returning a new object in the calling thread's context
+                # resolves a thread-safety.
+                return EndBracketMatch(match) 
+            return None
+    class EndBracketMatch:
+        def __init__(self, match):
+            self.match = match
+        def start(self, n):
+            return self.match.end(n)
+    sgmllib.endbracket = _EndBracketRegEx()
+
 
 # cjkcodecs and iconv_codec provide support for more character encodings.
 # Both are available from http://cjkpython.i18n.org/
@@ -234,30 +274,6 @@ class CharacterEncodingOverride(ThingsNobodyCaresAboutButMe): pass
 class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe): pass
 class NonXMLContentType(ThingsNobodyCaresAboutButMe): pass
 class UndeclaredNamespace(Exception): pass
-
-sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
-sgmllib.special = re.compile('<!')
-sgmllib.charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
-
-if sgmllib.endbracket.search(' <').start(0):
-    class EndBracketRegEx:
-        def __init__(self):
-            # Overriding the built-in sgmllib.endbracket regex allows the
-            # parser to find angle brackets embedded in element attributes.
-            self.endbracket = re.compile('''([^'"<>]|"[^"]*"(?=>|/|\s|\w+=)|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])|.*?(?=[<>])''')
-        def search(self,string,index=0):
-            match = self.endbracket.match(string,index)
-            if match is not None:
-                # Returning a new object in the calling thread's context
-                # resolves a thread-safety.
-                return EndBracketMatch(match) 
-            return None
-    class EndBracketMatch:
-        def __init__(self, match):
-            self.match = match
-        def start(self, n):
-            return self.match.end(n)
-    sgmllib.endbracket = EndBracketRegEx()
 
 SUPPORTED_VERSIONS = {'': 'unknown',
                       'rss090': 'RSS 0.90',
@@ -3827,7 +3843,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             result['bozo'] = 1
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
-    if not use_strict_parser:
+    if not use_strict_parser and _SGML_AVAILABLE:
         feedparser = _LooseFeedParser(baseuri, baselang, 'utf-8', entities)
         feedparser.feed(data.decode('utf-8', 'replace'))
     result['feed'] = feedparser.feeddata
