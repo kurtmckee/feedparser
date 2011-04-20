@@ -135,7 +135,17 @@ ACCEPTABLE_URI_SCHEMES = (
 #ACCEPTABLE_URI_SCHEMES = ()
 
 # ---------- required modules (should come with any Python distribution) ----------
-import sgmllib, re, sys, copy, urlparse, time, types, cgi, urllib, urllib2, datetime
+import cgi
+import copy
+import datetime
+import re
+import sgmllib
+import sys
+import time
+import types
+import urllib
+import urllib2
+import urlparse
 try:
     from io import BytesIO as _StringIO
 except ImportError:
