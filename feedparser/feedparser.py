@@ -2498,6 +2498,8 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
 def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):
     if _debug:
         sys.stderr.write('entering _resolveRelativeURIs\n')
+    if not _SGML_AVAILABLE:
+        return htmlSource
 
     p = _RelativeURIResolver(baseURI, encoding, _type)
     p.feed(htmlSource)
@@ -2773,6 +2775,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
 
 def _sanitizeHTML(htmlSource, encoding, _type):
+    if not _SGML_AVAILABLE:
+        return htmlSource
     p = _HTMLSanitizer(encoding, _type)
     htmlSource = htmlSource.replace('<![CDATA[', '&lt;![CDATA[')
     p.feed(htmlSource)
