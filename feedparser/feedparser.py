@@ -2412,7 +2412,11 @@ class _MicroformatsParser:
             segments = path.split('/')
             tag = segments.pop()
             if not tag:
-                tag = segments.pop()
+                if segments:
+                    tag = segments.pop()
+                else:
+                    # there are no tags
+                    continue
             tagscheme = urlparse.urlunparse((urlscheme, domain, '/'.join(segments), '', '', ''))
             if not tagscheme.endswith('/'):
                 tagscheme += '/'
