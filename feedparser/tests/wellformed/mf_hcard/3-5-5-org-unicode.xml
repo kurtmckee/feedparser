@@ -1,0 +1,14 @@
+<!--
+SkipUnless: feedparser.BeautifulSoup
+Description: hcard contains non-ascii character
+Expect: not bozo and entries[0]['vcard'] == u"BEGIN:vCard\nVERSION:3.0\nORG:\u00b4\nEND:vCard"
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <content type="html">
+&lt;div class=&quot;vcard&quot;&gt;
+&lt;span class='org'&gt;&#180;&lt;/span&gt;
+&lt;/div&gt;
+    </content>
+  </entry>
+</feed>

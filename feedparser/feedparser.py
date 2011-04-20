@@ -2385,6 +2385,10 @@ class _MicroformatsParser:
     
             if arLines:
                 arLines = [u'BEGIN:vCard',u'VERSION:3.0'] + arLines + [u'END:vCard']
+                # XXX - this is super ugly; properly fix this with issue 148
+                for i, s in enumerate(arLines):
+                    if not isinstance(s, unicode):
+                        arLines[i] = s.decode('utf-8', 'ignore')
                 sVCards += u'\n'.join(arLines) + u'\n'
     
         return sVCards.strip()
