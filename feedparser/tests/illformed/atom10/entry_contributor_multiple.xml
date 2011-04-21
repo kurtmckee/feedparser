@@ -1,6 +1,6 @@
 <!--
 Description: multiple entry contributors
-Expect:      bozo and entries[0]['contributors'] == [{'name': u'Contributor 1', 'email': u'me@example.com', 'href': u'http://example.com/'}, {'name': u'Contributor 2', 'email': u'you@example.com', 'href': 'http://two.example.com/'}]
+Expect:      bozo and entries[0]['contributors'][0] == {'name': u'Contributor 1', 'email': u'me@example.com', 'href': u'http://example.com/'} and entries[0]['contributors'][1] == {'name': u'Contributor 2', 'email': u'you@example.com', 'href': 'http://two.example.com/'}
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

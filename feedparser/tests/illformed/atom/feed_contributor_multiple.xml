@@ -1,6 +1,6 @@
 <!--
 Description: multiple feed contributors
-Expect:      bozo and feed['contributors'] == [{'name': 'Contributor 1', 'email': 'me@example.com', 'href': 'http://example.com/'}, {'name': 'Contributor 2', 'email': 'you@example.com', 'href': 'http://two.example.com/'}]
+Expect:      bozo and feed['contributors'][0] == {'name': 'Contributor 1', 'email': 'me@example.com', 'href': 'http://example.com/'} and feed['contributors'][1] == {'name': 'Contributor 2', 'email': 'you@example.com', 'href': 'http://two.example.com/'}
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
   <contributor>
