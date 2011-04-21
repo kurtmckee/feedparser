@@ -100,7 +100,7 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     self.send_response(int(headers['Status']))
     headers.setdefault('Content-type', self.guess_type(path))
     self.send_header("Content-type", headers['Content-type'])
-    self.send_header("Content-Length", str(os.fstat(f.fileno())[6]))
+    self.send_header("Content-Length", str(os.stat(f.name)[6]))
     for k, v in headers.items():
       if k not in ('Status', 'Content-type'):
         self.send_header(k, v)
