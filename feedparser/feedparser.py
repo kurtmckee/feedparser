@@ -3395,6 +3395,11 @@ def _parse_date_rfc822(dateString):
         dateString += ' 00:00:00 GMT'
     tm = rfc822.parsedate_tz(dateString)
     if tm:
+        # Jython doesn't adjust for 2-digit years like CPython does,
+        # so account for it by shifting the year so that it's in the
+        # range 1970-2069 (1970 being the year of the Unix epoch).
+        if tm[0] < 100:
+            tm = (tm[0] + (1900, 2000)[tm[0] < 70],) + tm[1:]
         return time.gmtime(rfc822.mktime_tz(tm))
 # rfc822.py defines several time zones, but we define some extra ones.
 # 'ET' is equivalent to 'EST', etc.
