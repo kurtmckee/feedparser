@@ -1746,6 +1746,8 @@ if _XML_AVAILABLE:
             self.decls = {}
         
         def startPrefixMapping(self, prefix, uri):
+            # Jython uses '' instead of None; standardize on None
+            prefix = prefix or None
             self.trackNamespace(prefix, uri)
             if uri == 'http://www.w3.org/1999/xlink':
               self.decls['xmlns:'+prefix] = uri
