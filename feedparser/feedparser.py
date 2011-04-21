@@ -1788,7 +1788,7 @@ if _XML_AVAILABLE:
                          break
             if _debug: sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
 
-            for (namespace, attrlocalname), attrvalue in attrs._attrs.items():
+            for (namespace, attrlocalname), attrvalue in attrs.items():
                 lowernamespace = (namespace or '').lower()
                 prefix = self._matchnamespaces.get(lowernamespace, '')
                 if prefix:
