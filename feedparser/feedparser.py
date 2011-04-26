@@ -1881,11 +1881,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
                 value=value.replace('>','&gt;').replace('<','&lt;').replace('"','&quot;')
                 value = self.bare_ampersand.sub("&amp;", value)
                 # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
-                if type(value) != type(u''):
-                    try:
-                        value = unicode(value, self.encoding)
-                    except:
-                        value = unicode(value, 'iso-8859-1')
+                if not isinstance(value, unicode):
+                    value = value.decode(self.encoding, 'ignore')
                 try:
                     # Currently, in Python 3 the key is already a str, and cannot be decoded again
                     uattrs.append((unicode(key, self.encoding), value))
