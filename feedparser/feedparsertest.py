@@ -219,19 +219,15 @@ if __name__ == "__main__":
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
 #  print allfiles
 #  print sys.argv
-  httpfiles = [f for f in allfiles if f.count('http')]
-  files = httpfiles[:]
-  for f in allfiles:
-    if f not in httpfiles:
-      files.append(f)
+  httpfiles = len([f for f in allfiles if 'http' in f])
   httpd = None
   if httpfiles:
-    httpd = FeedParserTestServer(len(httpfiles))
+    httpd = FeedParserTestServer(httpfiles)
     httpd.daemon = True
     httpd.start()
   try:
     c = 1
-    for xmlfile in files:
+    for xmlfile in allfiles:
       method, description, evalString, skipUnless = getDescription(xmlfile)
       testName = 'test_%06d' % c
       c += 1
