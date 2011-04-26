@@ -378,15 +378,6 @@ class FeedParserDict(dict):
     def __contains__(self, key):
         return self.__has_key(key)
 
-def zopeCompatibilityHack():
-    global FeedParserDict
-    del FeedParserDict
-    def FeedParserDict(aDict=None):
-        rc = {}
-        if aDict:
-            rc.update(aDict)
-        return rc
-
 _ebcdic_to_ascii_map = None
 def _ebcdic_to_ascii(s):
     global _ebcdic_to_ascii_map
@@ -3927,8 +3918,6 @@ if __name__ == '__main__':
             format = 'pprint'
         options = _Options()
         urls = sys.argv[1:]
-
-    zopeCompatibilityHack()
 
     serializer = globals().get(options.format.capitalize() + 'Serializer', Serializer)
     for url in urls:
