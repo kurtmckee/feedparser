@@ -147,6 +147,49 @@ class TestCase(unittest.TestCase):
         failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
         raise self.failureException, failure
 
+class TestLooseParser(unittest.TestCase):
+    def __init__(self, arg):
+        unittest.TestCase.__init__(self, arg)
+        self._xml_available = feedparser._XML_AVAILABLE
+    def setUp(self):
+        feedparser._XML_AVAILABLE = 0
+    def tearDown(self):
+        feedparser._XML_AVAILABLE = self._xml_available
+    def failUnlessEval(self, xmlfile, evalString, msg=None):
+        """Fail unless eval(evalString, f)"""
+
+        f = feedparser.parse(xmlfile)
+        try:
+            if not eval(evalString, f):
+                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(f)))
+                raise self.failureException, failure
+        except SyntaxError:
+            # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
+            # which will require the failure message to be updated
+            evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
+            evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
+            if not eval(evalString, f):
+                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(f)))
+                raise self.failureException, failure
+
+class TestStrictParser(unittest.TestCase):
+    def failUnlessEval(self, xmlfile, evalString, msg=None):
+        """Fail unless eval(evalString, env)"""
+
+        env = feedparser.parse(xmlfile)
+        try:
+            if not eval(evalString, env):
+                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+                raise self.failureException, failure
+        except SyntaxError:
+            # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
+            # which will require the failure message to be updated
+            evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
+            evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
+            if not eval(evalString, env):
+                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+                raise self.failureException, failure
+
 class TestMicroformats(unittest.TestCase):
   def failUnlessEval(self, xmlfile, evalString, msg=None):
     """Fail unless eval(evalString, env)"""
@@ -489,6 +532,7 @@ if __name__ == "__main__":
     sys.argv = [sys.argv[0]] #+ sys.argv[2:]
   else:
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
+    wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
     encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
     microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
 #  print allfiles
@@ -499,6 +543,7 @@ if __name__ == "__main__":
   # and a few `_open_resource`-related tests
   httpcount = 5 + 15 + 2
   httpcount += len([f for f in allfiles if 'http' in f])
+  httpcount += len([f for f in wellformedfiles if 'http' in f])
   httpcount += len([f for f in encodingfiles if 'http' in f])
   try:
     for c, xmlfile in enumerate(allfiles + encodingfiles):
@@ -507,18 +552,25 @@ if __name__ == "__main__":
         addTo = TestEncodings
       elif xmlfile in microformatfiles:
         addTo = TestMicroformats
+      elif xmlfile in wellformedfiles:
+        addTo = (TestStrictParser, TestLooseParser)
       description, evalString, skipUnless = getDescription(xmlfile)
       testName = 'test_%06d' % c
       ishttp = 'http' in xmlfile
       try:
         if not eval(skipUnless): raise NotImplementedError
       except (ImportError, LookupError, NotImplementedError, AttributeError):
-        if ishttp: httpcount -= 1
+        if ishttp:
+          httpcount -= 1 + (xmlfile in wellformedfiles)
         continue
       if ishttp:
         xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
       testFunc = buildTestCase(xmlfile, description, evalString)
-      setattr(addTo, testName, testFunc)
+      if isinstance(addTo, tuple):
+        setattr(addTo[0], testName, testFunc)
+        setattr(addTo[1], testName, testFunc)
+      else:
+        setattr(addTo, testName, testFunc)
     if feedparser.TIDY_MARKUP and feedparser._mxtidy:
       sys.stderr.write('\nWarning: feedparser.TIDY_MARKUP invalidates tests, turning it off temporarily\n\n')
       feedparser.TIDY_MARKUP = 0
@@ -530,6 +582,8 @@ if __name__ == "__main__":
     testsuite = unittest.TestSuite()
     testloader = unittest.TestLoader()
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestStrictParser))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestLooseParser))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
