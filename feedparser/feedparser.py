@@ -515,7 +515,8 @@ class _FeedParserMixin:
     html_types = ['text/html', 'application/xhtml+xml']
 
     def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
-        if _debug: sys.stderr.write('initializing FeedParser\n')
+        if _debug:
+            sys.stderr.write('initializing FeedParser\n')
         if not self._matchnamespaces:
             for k, v in self.namespaces.items():
                 self._matchnamespaces[k.lower()] = v
@@ -551,7 +552,8 @@ class _FeedParserMixin:
             self.feeddata['language'] = baselang.replace('_','-')
 
     def unknown_starttag(self, tag, attrs):
-        if _debug: sys.stderr.write('start %s with %s\n' % (tag, attrs))
+        if _debug:
+            sys.stderr.write('start %s with %s\n' % (tag, attrs))
         # normalize attrs
         attrs = [(k.lower(), v) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
@@ -594,7 +596,8 @@ class _FeedParserMixin:
 
         # track inline content
         if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', 'xml').endswith('xml'):
-            if tag in ['xhtml:div', 'div']: return # typepad does this 10/2007
+            if tag in ['xhtml:div', 'div']:
+                return # typepad does this 10/2007
             # element declared itself as escaped markup, but it isn't really
             self.contentparams['type'] = 'application/xhtml+xml'
         if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
@@ -605,7 +608,8 @@ class _FeedParserMixin:
                     attrs.append(('xmlns',namespace))
                 if tag=='svg' and namespace=='http://www.w3.org/2000/svg':
                     attrs.append(('xmlns',namespace))
-            if tag == 'svg': self.svgOK += 1
+            if tag == 'svg':
+                self.svgOK += 1
             return self.handle_data('<%s%s>' % (tag, self.strattrs(attrs)), escape=0)
 
         # match namespaces
@@ -640,7 +644,8 @@ class _FeedParserMixin:
                 context[unknown_tag] = attrsD
 
     def unknown_endtag(self, tag):
-        if _debug: sys.stderr.write('end %s\n' % tag)
+        if _debug:
+            sys.stderr.write('end %s\n' % tag)
         # match namespaces
         if tag.find(':') <> -1:
             prefix, suffix = tag.split(':', 1)
@@ -649,12 +654,14 @@ class _FeedParserMixin:
         prefix = self.namespacemap.get(prefix, prefix)
         if prefix:
             prefix = prefix + '_'
-        if suffix == 'svg' and self.svgOK: self.svgOK -= 1
+        if suffix == 'svg' and self.svgOK:
+            self.svgOK -= 1
 
         # call special handler (if defined) or default handler
         methodname = '_end_' + prefix + suffix
         try:
-            if self.svgOK: raise AttributeError()
+            if self.svgOK:
+                raise AttributeError()
             method = getattr(self, methodname)
             method()
         except AttributeError:
@@ -663,7 +670,8 @@ class _FeedParserMixin:
         # track inline content
         if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', 'xml').endswith('xml'):
             # element declared itself as escaped markup, but it isn't really
-            if tag in ['xhtml:div', 'div']: return # typepad does this 10/2007
+            if tag in ['xhtml:div', 'div']:
+                return # typepad does this 10/2007
             self.contentparams['type'] = 'application/xhtml+xml'
         if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
             tag = tag.split(':')[-1]
@@ -681,7 +689,8 @@ class _FeedParserMixin:
 
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
-        if not self.elementstack: return
+        if not self.elementstack:
+            return
         ref = ref.lower()
         if ref in ('34', '38', '39', '60', '62', 'x22', 'x26', 'x27', 'x3c', 'x3e'):
             text = '&#%s;' % ref
@@ -695,8 +704,10 @@ class _FeedParserMixin:
 
     def handle_entityref(self, ref):
         # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
-        if not self.elementstack: return
-        if _debug: sys.stderr.write('entering handle_entityref with %s\n' % ref)
+        if not self.elementstack:
+            return
+        if _debug:
+            sys.stderr.write('entering handle_entityref with %s\n' % ref)
         if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
             text = '&%s;' % ref
         elif ref in self.entities.keys():
@@ -712,7 +723,8 @@ class _FeedParserMixin:
     def handle_data(self, text, escape=1):
         # called for each block of plain text, i.e. outside of any tag and
         # not containing any character or entity references
-        if not self.elementstack: return
+        if not self.elementstack:
+            return
         if escape and self.contentparams.get('type') == 'application/xhtml+xml':
             text = _xmlescape(text)
         self.elementstack[-1][2].append(text)
@@ -730,7 +742,8 @@ class _FeedParserMixin:
 
     def parse_declaration(self, i):
         # override internal declaration handler to handle CDATA blocks
-        if _debug: sys.stderr.write('entering parse_declaration\n')
+        if _debug:
+            sys.stderr.write('entering parse_declaration\n')
         if self.rawdata[i:i+9] == '<![CDATA[':
             k = self.rawdata.find(']]>', i)
             if k == -1:
@@ -788,8 +801,10 @@ class _FeedParserMixin:
         self.elementstack.append([element, expectingText, []])
 
     def pop(self, element, stripWhitespace=1):
-        if not self.elementstack: return
-        if self.elementstack[-1][0] != element: return
+        if not self.elementstack:
+            return
+        if self.elementstack[-1][0] != element:
+            return
 
         element, expectingText, pieces = self.elementstack.pop()
 
@@ -807,7 +822,8 @@ class _FeedParserMixin:
                 for piece in pieces[:-1]:
                     if piece.startswith('</'):
                         depth -= 1
-                        if depth == 0: break
+                        if depth == 0:
+                            break
                     elif piece.startswith('<') and not piece.endswith('/>'):
                         depth += 1
                 else:
@@ -821,7 +837,8 @@ class _FeedParserMixin:
         output = ''.join(pieces)
         if stripWhitespace:
             output = output.strip()
-        if not expectingText: return output
+        if not expectingText:
+            return output
 
         # decode base64 content
         if base64 and self.contentparams.get('base64', 0):
@@ -951,7 +968,8 @@ class _FeedParserMixin:
 
     def pushContent(self, tag, attrsD, defaultContentType, expectingText):
         self.incontent += 1
-        if self.lang: self.lang=self.lang.replace('_','-')
+        if self.lang:
+            self.lang=self.lang.replace('_','-')
         self.contentparams = FeedParserDict({
             'type': self.mapContentType(attrsD.get('type', defaultContentType)),
             'language': self.lang,
@@ -972,16 +990,18 @@ class _FeedParserMixin:
     @staticmethod
     def lookslikehtml(s):
         # must have a close tag or a entity reference to qualify
-        if not (re.search(r'</(\w+)>',s) or re.search("&#?\w+;",s)): return
+        if not (re.search(r'</(\w+)>',s) or re.search("&#?\w+;",s)):
+            return
 
         # all tags must be in a restricted subset of valid HTML tags
         if filter(lambda t: t.lower() not in _HTMLSanitizer.acceptable_elements,
-            re.findall(r'</?(\w+)',s)): return
+            re.findall(r'</?(\w+)',s)):
+            return
 
         # all entities must have been defined as valid HTML entities
         from htmlentitydefs import entitydefs
-        if filter(lambda e: e not in entitydefs.keys(),
-            re.findall(r'&(\w+);',s)): return
+        if filter(lambda e: e not in entitydefs.keys(), re.findall(r'&(\w+);', s)):
+            return
 
         return 1
 
@@ -1270,7 +1290,8 @@ class _FeedParserMixin:
                 context[key] = email
         else:
             author, email = context.get(key), None
-            if not author: return
+            if not author:
+                return
             emailmatch = re.search(r'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))(\?subject=\S+)?''', author)
             if emailmatch:
                 email = emailmatch.group(0)
@@ -1397,7 +1418,8 @@ class _FeedParserMixin:
         value = self._getAttribute(attrsD, 'rdf:resource')
         attrsD = FeedParserDict()
         attrsD['rel']='license'
-        if value: attrsD['href']=value
+        if value:
+            attrsD['href']=value
         context.setdefault('links', []).append(attrsD)
 
     def _start_creativecommons_license(self, attrsD):
@@ -1409,7 +1431,8 @@ class _FeedParserMixin:
         context = self._getContext()
         attrsD = FeedParserDict()
         attrsD['rel']='license'
-        if value: attrsD['href']=value
+        if value:
+            attrsD['href'] = value
         context.setdefault('links', []).append(attrsD)
         del context['license']
     _end_creativeCommons_license = _end_creativecommons_license
@@ -1424,13 +1447,15 @@ class _FeedParserMixin:
     def _addTag(self, term, scheme, label):
         context = self._getContext()
         tags = context.setdefault('tags', [])
-        if (not term) and (not scheme) and (not label): return
+        if (not term) and (not scheme) and (not label):
+            return
         value = FeedParserDict({'term': term, 'scheme': scheme, 'label': label})
         if value not in tags:
             tags.append(value)
 
     def _start_category(self, attrsD):
-        if _debug: sys.stderr.write('entering _start_category with %s\n' % repr(attrsD))
+        if _debug:
+            sys.stderr.write('entering _start_category with %s\n' % repr(attrsD))
         term = attrsD.get('term')
         scheme = attrsD.get('scheme', attrsD.get('domain'))
         label = attrsD.get('label')
@@ -1453,7 +1478,8 @@ class _FeedParserMixin:
 
     def _end_category(self):
         value = self.pop('category')
-        if not value: return
+        if not value:
+            return
         context = self._getContext()
         tags = context['tags']
         if value and len(tags) and not tags[-1]['term']:
@@ -1508,15 +1534,18 @@ class _FeedParserMixin:
             self._save('link', value)
 
     def _start_title(self, attrsD):
-        if self.svgOK: return self.unknown_starttag('title', attrsD.items())
+        if self.svgOK:
+            return self.unknown_starttag('title', attrsD.items())
         self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
     _start_media_title = _start_title
 
     def _end_title(self):
-        if self.svgOK: return
+        if self.svgOK:
+            return
         value = self.popContent('title')
-        if not value: return
+        if not value:
+            return
         context = self._getContext()
         self.hasTitle = 1
     _end_dc_title = _end_title
@@ -1712,7 +1741,8 @@ class _FeedParserMixin:
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
-            if _debug: sys.stderr.write('trying StrictFeedParser\n')
+            if _debug:
+                sys.stderr.write('trying StrictFeedParser\n')
             xml.sax.handler.ContentHandler.__init__(self)
             _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
             self.bozo = 0
@@ -1762,7 +1792,8 @@ if _XML_AVAILABLE:
                      if name and value == namespace:
                          localname = name + ':' + localname
                          break
-            if _debug: sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
+            if _debug:
+                sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
 
             for (namespace, attrlocalname), attrvalue in attrs.items():
                 lowernamespace = (namespace or '').lower()
@@ -1815,7 +1846,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def __init__(self, encoding, _type):
         self.encoding = encoding
         self._type = _type
-        if _debug: sys.stderr.write('entering BaseHTMLProcessor, encoding=%s\n' % self.encoding)
+        if _debug:
+            sys.stderr.write('entering BaseHTMLProcessor, encoding=%s\n' % self.encoding)
         sgmllib.SGMLParser.__init__(self)
 
     def reset(self):
@@ -1854,7 +1886,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         sgmllib.SGMLParser.close(self)
 
     def normalize_attrs(self, attrs):
-        if not attrs: return attrs
+        if not attrs:
+            return attrs
         # utility method to be called by descendants
         attrs = dict([(k.lower(), v) for k, v in attrs]).items()
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
@@ -1865,7 +1898,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # called for each start tag
         # attrs is a list of (attr, value) tuples
         # e.g. for <pre class='screen'>, tag='pre', attrs=[('class', 'screen')]
-        if _debug: sys.stderr.write('_BaseHTMLProcessor, unknown_starttag, tag=%s\n' % tag)
+        if _debug:
+            sys.stderr.write('_BaseHTMLProcessor, unknown_starttag, tag=%s\n' % tag)
         uattrs = []
         strattrs=''
         if attrs:
@@ -1922,7 +1956,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # called for each block of plain text, i.e. outside of any tag and
         # not containing any character or entity references
         # Store the original text verbatim.
-        if _debug: sys.stderr.write('_BaseHTMLProcessor, handle_data, text=%s\n' % text)
+        if _debug:
+            sys.stderr.write('_BaseHTMLProcessor, handle_data, text=%s\n' % text)
         self.pieces.append(text)
 
     def handle_comment(self, text):
@@ -2095,12 +2130,18 @@ class _MicroformatsParser:
                 arResults.append(node)
         bFound = (len(arResults) != 0)
         if not bFound:
-            if bAllowMultiple: return []
-            elif iPropertyType == self.STRING: return ''
-            elif iPropertyType == self.DATE: return None
-            elif iPropertyType == self.URI: return ''
-            elif iPropertyType == self.NODE: return None
-            else: return None
+            if bAllowMultiple:
+                return []
+            elif iPropertyType == self.STRING:
+                return ''
+            elif iPropertyType == self.DATE:
+                return None
+            elif iPropertyType == self.URI:
+                return ''
+            elif iPropertyType == self.NODE:
+                return None
+            else:
+                return None
         arValues = []
         for elmResult in arResults:
             sValue = None
@@ -2120,9 +2161,12 @@ class _MicroformatsParser:
             if sValue:
                 sValue = bNormalize and self.normalize(sValue) or sValue.strip()
             if (not sValue) and (iPropertyType == self.URI):
-                if sNodeName == 'a': sValue = elmResult.get('href')
-                elif sNodeName == 'img': sValue = elmResult.get('src')
-                elif sNodeName == 'object': sValue = elmResult.get('data')
+                if sNodeName == 'a':
+                    sValue = elmResult.get('href')
+                elif sNodeName == 'img':
+                    sValue = elmResult.get('src')
+                elif sNodeName == 'object':
+                    sValue = elmResult.get('data')
             if sValue:
                 sValue = bNormalize and self.normalize(sValue) or sValue.strip()
             if (not sValue) and (sNodeName == 'img'):
@@ -2136,7 +2180,8 @@ class _MicroformatsParser:
                 sValue = sValue.replace('\r', '\n')
             if sValue:
                 sValue = bNormalize and self.normalize(sValue) or sValue.strip()
-            if not sValue: continue
+            if not sValue:
+                continue
             if iPropertyType == self.DATE:
                 sValue = _parse_date_iso8601(sValue)
             if bAllowMultiple:
@@ -2368,14 +2413,16 @@ class _MicroformatsParser:
 
     def isProbablyDownloadable(self, elm):
         attrsD = elm.attrMap
-        if not attrsD.has_key('href'): return 0
+        if not attrsD.has_key('href'):
+            return 0
         linktype = attrsD.get('type', '').strip()
         if linktype.startswith('audio/') or \
            linktype.startswith('video/') or \
            (linktype.startswith('application/') and not linktype.endswith('xml')):
             return 1
         path = urlparse.urlparse(attrsD['href'])[2]
-        if path.find('.') == -1: return 0
+        if path.find('.') == -1:
+            return 0
         fileext = path.split('.').pop().lower()
         return fileext in self.known_binary_extensions
 
@@ -2383,7 +2430,8 @@ class _MicroformatsParser:
         all = lambda x: 1
         for elm in self.document(all, {'rel': re.compile(r'\btag\b')}):
             href = elm.get('href')
-            if not href: continue
+            if not href:
+                continue
             urlscheme, domain, path, params, query, fragment = \
                        urlparse.urlparse(_urljoin(self.baseuri, href))
             segments = path.split('/')
@@ -2403,7 +2451,8 @@ class _MicroformatsParser:
         all = lambda x: 1
         enclosure_match = re.compile(r'\benclosure\b')
         for elm in self.document(all, {'href': re.compile(r'.+')}):
-            if not enclosure_match.search(elm.get('rel', '')) and not self.isProbablyDownloadable(elm): continue
+            if not enclosure_match.search(elm.get('rel', '')) and not self.isProbablyDownloadable(elm):
+                continue
             if elm.attrMap not in self.enclosures:
                 self.enclosures.append(elm.attrMap)
                 if elm.string and not elm.get('title'):
@@ -2421,8 +2470,10 @@ class _MicroformatsParser:
                 self.xfn.append({"relationships": xfn_rels, "href": elm.get('href', ''), "name": elm.string})
 
 def _parseMicroformats(htmlSource, baseURI, encoding):
-    if not BeautifulSoup: return
-    if _debug: sys.stderr.write('entering _parseMicroformats\n')
+    if not BeautifulSoup:
+        return
+    if _debug:
+        sys.stderr.write('entering _parseMicroformats\n')
     try:
         p = _MicroformatsParser(htmlSource, baseURI, encoding)
     except UnicodeEncodeError:
@@ -2690,7 +2741,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                 clean_attrs.append((key,value))
             elif key=='style':
                 clean_value = self.sanitize_style(value)
-                if clean_value: clean_attrs.append((key,clean_value))
+                if clean_value:
+                    clean_attrs.append((key,clean_value))
         _BaseHTMLProcessor.unknown_starttag(self, tag, clean_attrs)
 
     def unknown_endtag(self, tag):
@@ -2698,10 +2750,12 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if tag in self.unacceptable_elements_with_end_tag:
                 self.unacceptablestack -= 1
             if self.mathmlOK and tag in self.mathml_elements:
-                if tag == 'math' and self.mathmlOK: self.mathmlOK -= 1
+                if tag == 'math' and self.mathmlOK:
+                    self.mathmlOK -= 1
             elif self.svgOK and tag in self.svg_elements:
                 tag = self.svg_elem_map.get(tag,tag)
-                if tag == 'svg' and self.svgOK: self.svgOK -= 1
+                if tag == 'svg' and self.svgOK:
+                    self.svgOK -= 1
             else:
                 return
         _BaseHTMLProcessor.unknown_endtag(self, tag)
@@ -2721,24 +2775,27 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         style=re.compile('url\s*\(\s*[^\s)]+?\s*\)\s*').sub(' ',style)
 
         # gauntlet
-        if not re.match("""^([:,;#%.\sa-zA-Z0-9!]|\w-\w|'[\s\w]+'|"[\s\w]+"|\([\d,\s]+\))*$""", style): return ''
+        if not re.match("""^([:,;#%.\sa-zA-Z0-9!]|\w-\w|'[\s\w]+'|"[\s\w]+"|\([\d,\s]+\))*$""", style):
+            return ''
         # This replaced a regexp that used re.match and was prone to pathological back-tracking.
-        if re.sub("\s*[-\w]+\s*:\s*[^:;]*;?", '', style).strip(): return ''
+        if re.sub("\s*[-\w]+\s*:\s*[^:;]*;?", '', style).strip():
+            return ''
 
         clean = []
         for prop,value in re.findall("([-\w]+)\s*:\s*([^:;]*)",style):
-          if not value: continue
-          if prop.lower() in self.acceptable_css_properties:
-              clean.append(prop + ': ' + value + ';')
-          elif prop.split('-')[0].lower() in ['background','border','margin','padding']:
-              for keyword in value.split():
-                  if not keyword in self.acceptable_css_keywords and \
-                      not self.valid_css_values.match(keyword):
-                      break
-              else:
-                  clean.append(prop + ': ' + value + ';')
-          elif self.svgOK and prop.lower() in self.acceptable_svg_properties:
-              clean.append(prop + ': ' + value + ';')
+            if not value:
+                continue
+            if prop.lower() in self.acceptable_css_properties:
+                clean.append(prop + ': ' + value + ';')
+            elif prop.split('-')[0].lower() in ['background','border','margin','padding']:
+                for keyword in value.split():
+                    if not keyword in self.acceptable_css_keywords and \
+                        not self.valid_css_values.match(keyword):
+                        break
+                else:
+                    clean.append(prop + ': ' + value + ';')
+            elif self.svgOK and prop.lower() in self.acceptable_svg_properties:
+                clean.append(prop + ': ' + value + ';')
 
         return ' '.join(clean)
 
@@ -3030,9 +3087,12 @@ def _parse_date_iso8601(dateString):
     m = None
     for _iso8601_match in _iso8601_matches:
         m = _iso8601_match(dateString)
-        if m: break
-    if not m: return
-    if m.span() == (0, 0): return
+        if m:
+            break
+    if not m:
+        return
+    if m.span() == (0, 0):
+        return
     params = m.groupdict()
     ordinal = params.get('ordinal', 0)
     if ordinal:
@@ -3117,19 +3177,22 @@ _korean_nate_date_re = \
 def _parse_date_onblog(dateString):
     '''Parse a string according to the OnBlog 8-bit date format'''
     m = _korean_onblog_date_re.match(dateString)
-    if not m: return
+    if not m:
+        return
     w3dtfdate = '%(year)s-%(month)s-%(day)sT%(hour)s:%(minute)s:%(second)s%(zonediff)s' % \
                 {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
                  'hour': m.group(4), 'minute': m.group(5), 'second': m.group(6),\
                  'zonediff': '+09:00'}
-    if _debug: sys.stderr.write('OnBlog date parsed as: %s\n' % w3dtfdate)
+    if _debug:
+        sys.stderr.write('OnBlog date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_onblog)
 
 def _parse_date_nate(dateString):
     '''Parse a string according to the Nate 8-bit date format'''
     m = _korean_nate_date_re.match(dateString)
-    if not m: return
+    if not m:
+        return
     hour = int(m.group(5))
     ampm = m.group(4)
     if (ampm == _korean_pm):
@@ -3141,7 +3204,8 @@ def _parse_date_nate(dateString):
                 {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
                  'hour': hour, 'minute': m.group(6), 'second': m.group(7),\
                  'zonediff': '+09:00'}
-    if _debug: sys.stderr.write('Nate date parsed as: %s\n' % w3dtfdate)
+    if _debug:
+        sys.stderr.write('Nate date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_nate)
 
@@ -3150,12 +3214,14 @@ _mssql_date_re = \
 def _parse_date_mssql(dateString):
     '''Parse a string according to the MS SQL date format'''
     m = _mssql_date_re.match(dateString)
-    if not m: return
+    if not m:
+        return
     w3dtfdate = '%(year)s-%(month)s-%(day)sT%(hour)s:%(minute)s:%(second)s%(zonediff)s' % \
                 {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
                  'hour': m.group(4), 'minute': m.group(5), 'second': m.group(6),\
                  'zonediff': '+09:00'}
-    if _debug: sys.stderr.write('MS SQL date parsed as: %s\n' % w3dtfdate)
+    if _debug:
+        sys.stderr.write('MS SQL date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_mssql)
 
@@ -3200,7 +3266,8 @@ _greek_date_format_re = \
 def _parse_date_greek(dateString):
     '''Parse a string according to a Greek 8-bit date format.'''
     m = _greek_date_format_re.match(dateString)
-    if not m: return
+    if not m:
+        return
     try:
         wday = _greek_wdays[m.group(1)]
         month = _greek_months[m.group(3)]
@@ -3210,7 +3277,8 @@ def _parse_date_greek(dateString):
                  {'wday': wday, 'day': m.group(2), 'month': month, 'year': m.group(4),\
                   'hour': m.group(5), 'minute': m.group(6), 'second': m.group(7),\
                   'zonediff': m.group(8)}
-    if _debug: sys.stderr.write('Greek date parsed as: %s\n' % rfc822date)
+    if _debug:
+        sys.stderr.write('Greek date parsed as: %s\n' % rfc822date)
     return _parse_date_rfc822(rfc822date)
 registerDateHandler(_parse_date_greek)
 
@@ -3250,7 +3318,8 @@ def _parse_date_hungarian(dateString):
                 {'year': m.group(1), 'month': month, 'day': day,\
                  'hour': hour, 'minute': m.group(5),\
                  'zonediff': m.group(6)}
-    if _debug: sys.stderr.write('Hungarian date parsed as: %s\n' % w3dtfdate)
+    if _debug:
+        sys.stderr.write('Hungarian date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_hungarian)
 
@@ -3347,9 +3416,11 @@ def _parse_date_w3dtf(dateString):
     __datetime_re = '%s(?:T%s)?' % (__date_re, __time_re)
     __datetime_rx = re.compile(__datetime_re)
     m = __datetime_rx.match(dateString)
-    if (m is None) or (m.group() != dateString): return
+    if (m is None) or (m.group() != dateString):
+        return
     gmt = __extract_date(m) + __extract_time(m) + (0, 0, 0)
-    if gmt[0] == 0: return
+    if gmt[0] == 0:
+        return
     return time.gmtime(time.mktime(gmt) + __extract_tzd(m) - time.timezone)
 registerDateHandler(_parse_date_w3dtf)
 
@@ -3564,7 +3635,8 @@ def _toUTF8(data, encoding):
     data is a raw sequence of bytes (not Unicode) that is presumed to be in %encoding already
     encoding is a string recognized by encodings.aliases
     '''
-    if _debug: sys.stderr.write('entering _toUTF8, trying encoding %s\n' % encoding)
+    if _debug:
+        sys.stderr.write('entering _toUTF8, trying encoding %s\n' % encoding)
     # strip Byte Order Mark (if present)
     if (len(data) >= 4) and (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
         if _debug:
@@ -3602,7 +3674,8 @@ def _toUTF8(data, encoding):
         encoding = 'utf-32le'
         data = data[4:]
     newdata = unicode(data, encoding)
-    if _debug: sys.stderr.write('successfully converted %s data to unicode\n' % encoding)
+    if _debug:
+        sys.stderr.write('successfully converted %s data to unicode\n' % encoding)
     declmatch = re.compile('^<\?xml[^>]*?>')
     newdecl = '''<?xml version='1.0' encoding='utf-8'?>'''
     if declmatch.search(newdata):
@@ -3760,8 +3833,10 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     tried_encodings = []
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
     for proposed_encoding in (result['encoding'], xml_encoding, sniffed_xml_encoding):
-        if not proposed_encoding: continue
-        if proposed_encoding in tried_encodings: continue
+        if not proposed_encoding:
+            continue
+        if proposed_encoding in tried_encodings:
+            continue
         tried_encodings.append(proposed_encoding)
         try:
             data = _toUTF8(data, proposed_encoding)
@@ -3867,14 +3942,18 @@ class TextSerializer(Serializer):
         self._writer(stream, self.results, '')
 
     def _writer(self, stream, node, prefix):
-        if not node: return
+        if not node:
+            return
         if hasattr(node, 'keys'):
             keys = node.keys()
             keys.sort()
             for k in keys:
-                if k in ('description', 'link'): continue
-                if node.has_key(k + '_detail'): continue
-                if node.has_key(k + '_parsed'): continue
+                if k in ('description', 'link'):
+                    continue
+                if node.has_key(k + '_detail'):
+                    continue
+                if node.has_key(k + '_parsed'):
+                    continue
                 self._writer(stream, node[k], prefix + k + '.')
         elif type(node) == types.ListType:
             index = 0
