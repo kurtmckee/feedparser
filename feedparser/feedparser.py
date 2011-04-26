@@ -309,10 +309,10 @@ class FeedParserDict(dict):
             return dict.__getitem__(self, 'tags')[0]['term']
         if key == 'enclosures':
             norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
-            return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']=='enclosure']
+            return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']==u'enclosure']
         if key == 'license':
             for link in dict.__getitem__(self, 'links'):
-                if link['rel']=='license' and link.has_key('href'):
+                if link['rel']==u'license' and link.has_key('href'):
                     return link['href']
         if key == 'categories':
             return [(tag['scheme'], tag['term']) for tag in dict.__getitem__(self, 'tags')]
@@ -1411,7 +1411,7 @@ class _FeedParserMixin:
         context = self._getContext()
         value = self._getAttribute(attrsD, 'rdf:resource')
         attrsD = FeedParserDict()
-        attrsD['rel']='license'
+        attrsD['rel'] = u'license'
         if value:
             attrsD['href']=value
         context.setdefault('links', []).append(attrsD)
@@ -1424,7 +1424,7 @@ class _FeedParserMixin:
         value = self.pop('license')
         context = self._getContext()
         attrsD = FeedParserDict()
-        attrsD['rel']='license'
+        attrsD['rel'] = u'license'
         if value:
             attrsD['href'] = value
         context.setdefault('links', []).append(attrsD)
@@ -1487,8 +1487,8 @@ class _FeedParserMixin:
         self._getContext()['cloud'] = FeedParserDict(attrsD)
 
     def _start_link(self, attrsD):
-        attrsD.setdefault('rel', 'alternate')
-        if attrsD['rel'] == 'self':
+        attrsD.setdefault('rel', u'alternate')
+        if attrsD['rel'] == u'self':
             attrsD.setdefault('type', u'application/atom+xml')
         else:
             attrsD.setdefault('type', u'text/html')
@@ -1502,7 +1502,7 @@ class _FeedParserMixin:
             context['links'].append(FeedParserDict(attrsD))
         if attrsD.has_key('href'):
             expectingText = 0
-            if (attrsD.get('rel') == 'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
+            if (attrsD.get('rel') == u'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
                 context['link'] = attrsD['href']
         else:
             self.push('link', expectingText)
@@ -1626,7 +1626,7 @@ class _FeedParserMixin:
     def _start_enclosure(self, attrsD):
         attrsD = self._itsAnHrefDamnIt(attrsD)
         context = self._getContext()
-        attrsD['rel']='enclosure'
+        attrsD['rel'] = u'enclosure'
         context.setdefault('links', []).append(FeedParserDict(attrsD))
 
     def _start_source(self, attrsD):
@@ -2433,7 +2433,7 @@ class _MicroformatsParser:
         all = lambda x: 1
         enclosure_match = re.compile(r'\benclosure\b')
         for elm in self.document(all, {'href': re.compile(r'.+')}):
-            if not enclosure_match.search(elm.get('rel', '')) and not self.isProbablyDownloadable(elm):
+            if not enclosure_match.search(elm.get('rel', u'')) and not self.isProbablyDownloadable(elm):
                 continue
             if elm.attrMap not in self.enclosures:
                 self.enclosures.append(elm.attrMap)
@@ -2443,7 +2443,7 @@ class _MicroformatsParser:
     def findXFN(self):
         all = lambda x: 1
         for elm in self.document(all, {'rel': re.compile('.+'), 'href': re.compile('.+')}):
-            rels = elm.get('rel', '').split()
+            rels = elm.get('rel', u'').split()
             xfn_rels = []
             for rel in rels:
                 if rel in self.known_xfn_relationships:
