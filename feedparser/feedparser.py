@@ -3658,8 +3658,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result = FeedParserDict()
     result['feed'] = FeedParserDict()
     result['entries'] = []
-    if _XML_AVAILABLE:
-        result['bozo'] = 0
+    result['bozo'] = 0
     if not isinstance(handlers, list):
         handlers = [handlers]
     try:
