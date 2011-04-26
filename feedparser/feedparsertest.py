@@ -77,9 +77,15 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     -->
     """
     path = self.translate_path(self.path)
+    # the compression tests' filenames determine the header sent
+    if self.path.startswith('/tests/compression'):
+      if self.path.endswith('gz'):
+        headers = {'Content-Encoding': 'gzip'}
+      else:
+        headers = {'Content-Encoding': 'deflate'}
+    else:
+      headers = dict([(k.decode('utf-8'), v.decode('utf-8')) for k, v in self.headers_re.findall(open(path, 'rb').read())])
     f = open(path, 'rb')
-    headers = dict([(k.decode('utf-8'), v.decode('utf-8')) for k, v in self.headers_re.findall(f.read())])
-    f.seek(0)
     headers.setdefault('Status', 200)
     self.send_response(int(headers['Status']))
     headers.setdefault('Content-type', self.guess_type(path))
@@ -131,6 +137,20 @@ class TestCase(unittest.TestCase):
       if not eval(evalString, env):
         failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
         raise self.failureException, failure
+
+class TestCompression(unittest.TestCase):
+    def test_gzip_good(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
+        self.assertEqual(f.version, 'atom10')
+    def test_gzip_bad(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/gzip-error.gz')
+        self.assertEqual(f.bozo, 1)
+    def test_zlib_good(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/deflate.z')
+        self.assertEqual(f.version, 'atom10')
+    def test_zlib_bad(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/deflate-error.z')
+        self.assertEqual(f.bozo, 1)
 
 class TestEncodings(unittest.TestCase):
   def failUnlessEval(self, xmlfile, evalString, msg=None):
@@ -337,7 +357,9 @@ if __name__ == "__main__":
 #  print allfiles
 #  print sys.argv
   httpd = None
-  httpcount = len([f for f in allfiles if 'http' in f])
+  # there are four compression test cases that must be accounted for
+  httpcount = 4
+  httpcount += len([f for f in allfiles if 'http' in f])
   httpcount += len([f for f in encodingfiles if 'http' in f])
   try:
     for c, xmlfile in enumerate(allfiles + encodingfiles):
@@ -375,6 +397,7 @@ if __name__ == "__main__":
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
