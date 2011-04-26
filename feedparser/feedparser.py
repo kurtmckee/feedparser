@@ -238,7 +238,7 @@ else:
 # Both are available from http://cjkpython.i18n.org/
 try:
     import cjkcodecs.aliases
-except:
+except ImportError:
     pass
 try:
     import iconv_codec
