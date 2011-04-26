@@ -147,7 +147,7 @@ import urllib
 import urllib2
 import urlparse
 
-from htmlentitydefs import name2codepoint, codepoint2name
+from htmlentitydefs import name2codepoint, codepoint2name, entitydefs
 
 try:
     from io import BytesIO as _StringIO
@@ -987,7 +987,6 @@ class _FeedParserMixin:
             return
 
         # all entities must have been defined as valid HTML entities
-        from htmlentitydefs import entitydefs
         if filter(lambda e: e not in entitydefs.keys(), re.findall(r'&(\w+);', s)):
             return
 
