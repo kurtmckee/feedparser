@@ -392,8 +392,8 @@ if __name__ == "__main__":
       testName = 'test_%06d' % c
       ishttp = 'http' in xmlfile
       try:
-        if not eval(skipUnless): raise Exception
-      except:
+        if not eval(skipUnless): raise NotImplementedError
+      except (ImportError, LookupError, NotImplementedError, AttributeError):
         if ishttp: httpcount -= 1
         continue
       if ishttp:
