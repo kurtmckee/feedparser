@@ -138,6 +138,24 @@ class TestCase(unittest.TestCase):
         failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
         raise self.failureException, failure
 
+class TestMicroformats(unittest.TestCase):
+  def failUnlessEval(self, xmlfile, evalString, msg=None):
+    """Fail unless eval(evalString, env)"""
+    
+    env = feedparser.parse(xmlfile)
+    failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+    try:
+      if not eval(evalString, env):
+        raise self.failureException, failure
+    except SyntaxError:
+      # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
+      # which will require the failure message to be updated
+      evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
+      evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
+      failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+      if not eval(evalString, env):
+        raise self.failureException, failure
+
 class TestCompression(unittest.TestCase):
     def test_gzip_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
@@ -354,6 +372,7 @@ if __name__ == "__main__":
   else:
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
     encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
+    microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
 #  print allfiles
 #  print sys.argv
   httpd = None
@@ -366,6 +385,8 @@ if __name__ == "__main__":
       addTo = TestCase
       if xmlfile in encodingfiles:
         addTo = TestEncodings
+      elif xmlfile in microformatfiles:
+        addTo = TestMicroformats
       description, evalString, skipUnless = getDescription(xmlfile)
       testName = 'test_%06d' % c
       ishttp = 'http' in xmlfile
@@ -398,6 +419,7 @@ if __name__ == "__main__":
     testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
