@@ -187,6 +187,28 @@ class TestMicroformats(BaseTestCase):
 class TestEncodings(BaseTestCase):
     pass
 
+class TestFeedParserDict(unittest.TestCase):
+    def setUp(self):
+        self.d = feedparser.FeedParserDict()
+    def test_empty(self):
+        # test neutral key
+        self.assertTrue('a' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'a'))
+        # test one-to-one target key
+        self.assertTrue('entries' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'entries'))
+        # test one-to-one mapped key
+        self.assertTrue('items' not in self.d)
+        self.assertTrue(hasattr(self.d, 'items')) # dict.items() exists
+        # test one-to-many target keys
+        self.assertTrue('summary' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'summary'))
+        self.assertTrue('subtitle' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'subtitle'))
+        # test one-to-many mapped key
+        self.assertTrue('description' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'description'))
+
 class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
         r = feedparser._open_resource(sys.stdin, '', '', '', '', [], {})
@@ -552,6 +574,7 @@ if __name__ == "__main__":
     testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
