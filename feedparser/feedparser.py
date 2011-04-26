@@ -3233,17 +3233,15 @@ _hungarian_date_format_re = \
 def _parse_date_hungarian(dateString):
     '''Parse a string according to a Hungarian 8-bit date format.'''
     m = _hungarian_date_format_re.match(dateString)
-    if not m: return
-    try:
-        month = _hungarian_months[m.group(2)]
-        day = m.group(3)
-        if len(day) == 1:
-            day = '0' + day
-        hour = m.group(4)
-        if len(hour) == 1:
-            hour = '0' + hour
-    except:
-        return
+    if not m or m.group(2) not in _hungarian_months:
+        return None
+    month = _hungarian_months[m.group(2)]
+    day = m.group(3)
+    if len(day) == 1:
+        day = '0' + day
+    hour = m.group(4)
+    if len(hour) == 1:
+        hour = '0' + hour
     w3dtfdate = '%(year)s-%(month)s-%(day)sT%(hour)s:%(minute)s%(zonediff)s' % \
                 {'year': m.group(1), 'month': month, 'day': day,\
                  'hour': hour, 'minute': m.group(5),\
