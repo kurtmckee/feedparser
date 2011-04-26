@@ -132,6 +132,25 @@ class TestCase(unittest.TestCase):
         failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
         raise self.failureException, failure
 
+class TestEncodings(unittest.TestCase):
+  def failUnlessEval(self, xmlfile, evalString, msg=None):
+    """Fail unless eval(evalString, env)"""
+    
+    env = feedparser.parse(xmlfile)
+    env['feedparser'] = feedparser
+    failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+    try:
+      if not eval(evalString, env):
+        raise self.failureException, failure
+    except SyntaxError:
+      # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
+      # which will require the failure message to be updated
+      evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
+      evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
+      failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+      if not eval(evalString, env):
+        raise self.failureException, failure
+
 
 #---------- additional api unit tests, not backed by files
 
@@ -214,12 +233,17 @@ if __name__ == "__main__":
     sys.argv = [sys.argv[0]] #+ sys.argv[2:]
   else:
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
+    encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
 #  print allfiles
 #  print sys.argv
   httpd = None
   httpcount = len([f for f in allfiles if 'http' in f])
+  httpcount += len([f for f in encodingfiles if 'http' in f])
   try:
-    for c, xmlfile in enumerate(allfiles):
+    for c, xmlfile in enumerate(allfiles + encodingfiles):
+      addTo = TestCase
+      if xmlfile in encodingfiles:
+        addTo = TestEncodings
       description, evalString, skipUnless = getDescription(xmlfile)
       testName = 'test_%06d' % c
       ishttp = 'http' in xmlfile
@@ -231,7 +255,7 @@ if __name__ == "__main__":
       if ishttp:
         xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
       testFunc = buildTestCase(xmlfile, description, evalString)
-      setattr(TestCase, testName, testFunc)
+      setattr(addTo, testName, testFunc)
     if feedparser._debug and not _debug:
       sys.stderr.write('\nWarning: feedparser._debug is on, turning it off temporarily\n\n')
       feedparser._debug = 0
@@ -248,6 +272,7 @@ if __name__ == "__main__":
     testsuite = unittest.TestSuite()
     testloader = unittest.TestLoader()
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
