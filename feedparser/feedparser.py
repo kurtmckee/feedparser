@@ -325,47 +325,42 @@ class FeedParserDict(dict):
             return dict.__getitem__(self, key)
         return dict.__getitem__(self, realkey)
 
-    def __setitem__(self, key, value):
-        for k in self.keymap.keys():
-            if key == k:
-                key = self.keymap[k]
-                if isinstance(key, list):
-                    key = key[0]
-        return dict.__setitem__(self, key, value)
+    def __contains__(self, key):
+        try:
+            self.__getitem__(key)
+        except KeyError:
+            return False
+        else:
+            return True
+
+    has_key = __contains__
 
     def get(self, key, default=None):
-        if self.has_key(key):
-            return self[key]
-        else:
+        try:
+            return self.__getitem__(key)
+        except KeyError:
             return default
 
+    def __setitem__(self, key, value):
+        key = self.keymap.get(key, key)
+        if isinstance(key, list):
+            key = key[0]
+        return dict.__setitem__(self, key, value)
+
     def setdefault(self, key, value):
-        if not self.has_key(key):
+        if key not in self:
             self[key] = value
+            return value
         return self[key]
 
-    def has_key(self, key):
-        try:
-            return hasattr(self, key) or dict.__contains__(self, key)
-        except AttributeError:
-            return False
-    # This alias prevents the 2to3 tool from changing the semantics of the
-    # __contains__ function below and exhausting the maximum recursion depth
-    __has_key = has_key
-
     def __getattr__(self, key):
+        # __getattribute__() is called first; this will be called
+        # only if an attribute was not already found
         try:
-            return self.__dict__[key]
-        except KeyError:
-            pass
-        try:
-            assert not key.startswith('_')
             return self.__getitem__(key)
-        except (AssertionError, KeyError):
+        except KeyError:
             raise AttributeError, "object has no attribute '%s'" % key
 
-    def __contains__(self, key):
-        return self.__has_key(key)
 
 _ebcdic_to_ascii_map = None
 def _ebcdic_to_ascii(s):
