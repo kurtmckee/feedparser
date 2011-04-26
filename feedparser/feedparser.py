@@ -3388,8 +3388,10 @@ def _parse_date_perforce(aDateString):
     _my_date_pattern = re.compile( \
         r'(\w{,3}), (\d{,4})/(\d{,2})/(\d{2}) (\d{,2}):(\d{2}):(\d{2}) (\w{,3})')
 
-    dow, year, month, day, hour, minute, second, tz = \
-        _my_date_pattern.search(aDateString).groups()
+    m = _my_date_pattern.search(aDateString)
+    if m is None:
+        return None
+    dow, year, month, day, hour, minute, second, tz = m.groups()
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     dateString = "%s, %s %s %s %s:%s:%s %s" % (dow, day, months[int(month) - 1], year, hour, minute, second, tz)
     tm = rfc822.parsedate_tz(dateString)
