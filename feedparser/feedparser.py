@@ -317,7 +317,7 @@ class FeedParserDict(dict):
         if key == 'categories':
             return [(tag['scheme'], tag['term']) for tag in dict.__getitem__(self, 'tags')]
         realkey = self.keymap.get(key, key)
-        if type(realkey) == types.ListType:
+        if isinstance(realkey, list):
             for k in realkey:
                 if dict.__contains__(self, k):
                     return dict.__getitem__(self, k)
@@ -329,7 +329,7 @@ class FeedParserDict(dict):
         for k in self.keymap.keys():
             if key == k:
                 key = self.keymap[k]
-                if type(key) == types.ListType:
+                if isinstance(key, list):
                     key = key[0]
         return dict.__setitem__(self, key, value)
 
@@ -904,7 +904,7 @@ class _FeedParserMixin:
                 pass
 
         # map win-1252 extensions to the proper code points
-        if type(output) == type(u''):
+        if isinstance(output, unicode):
             output = u''.join([c in _cp1252.keys() and _cp1252[c] or c for c in output])
 
         # categories/tags/keywords/whatever are handled in _end_category
@@ -1859,7 +1859,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
                 raise NameError
             self.encoding = self.encoding + '_INVALID_PYTHON_3'
         except NameError:
-            if self.encoding and type(data) == type(u''):
+            if self.encoding and isinstance(data, unicode):
                 data = data.encode(self.encoding)
         sgmllib.SGMLParser.feed(self, data)
         sgmllib.SGMLParser.close(self)
@@ -2033,7 +2033,7 @@ class _MicroformatsParser:
         self.document = BeautifulSoup.BeautifulSoup(data)
         self.baseuri = baseuri
         self.encoding = encoding
-        if type(data) == type(u''):
+        if isinstance(data, unicode):
             data = data.encode(encoding)
         self.tags = []
         self.enclosures = []
@@ -2041,7 +2041,7 @@ class _MicroformatsParser:
         self.vcard = None
 
     def vcardEscape(self, s):
-        if type(s) in (type(''), type(u'')):
+        if isinstance(s, basestring):
             s = s.replace(',', '\\,').replace(';', '\\;').replace('\n', '\\n')
         return s
 
@@ -2808,7 +2808,7 @@ def _sanitizeHTML(htmlSource, encoding, _type):
             except:
                 pass
         if _tidy:
-            utf8 = type(data) == type(u'')
+            utf8 = isinstance(data, unicode)
             if utf8:
                 data = data.encode('utf-8')
             data = _tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding="utf8")
@@ -2976,7 +2976,7 @@ def _build_urllib2_request(url, agent, etag, modified, referrer, auth, request_h
     request.add_header('User-Agent', agent)
     if etag:
         request.add_header('If-None-Match', etag)
-    if type(modified) == type(''):
+    if isinstance(modified, basestring):
         modified = _parse_date(modified)
     elif isinstance(modified, datetime.datetime):
         modified = modified.utctimetuple()
