@@ -249,11 +249,12 @@ except ImportError:
 # Download from http://chardet.feedparser.org/
 try:
     import chardet
+except ImportError:
+    chardet = None
+else:
     if _debug:
         import chardet.constants
         chardet.constants._debug = 1
-except:
-    chardet = None
 
 # BeautifulSoup parser used for parsing microformats from embedded HTML content
 # http://www.crummy.com/software/BeautifulSoup/
