@@ -3402,17 +3402,14 @@ registerDateHandler(_parse_date_perforce)
 def _parse_date(dateString):
     '''Parses a variety of date formats into a 9-tuple in GMT'''
     for handler in _date_handlers:
-        try:
-            date9tuple = handler(dateString)
-            if not date9tuple: continue
-            if len(date9tuple) != 9:
-                if _debug: sys.stderr.write('date handler function must return 9-tuple\n')
-                raise ValueError
-            map(int, date9tuple)
-            return date9tuple
-        except Exception, e:
-            if _debug: sys.stderr.write('%s raised %s\n' % (handler.__name__, repr(e)))
-            pass
+        date9tuple = handler(dateString)
+        if not date9tuple:
+            continue
+        if len(date9tuple) != 9:
+            if _debug:
+                sys.stderr.write('date handler function must return 9-tuple\n')
+            continue
+        return date9tuple
     return None
 
 def _getCharacterEncoding(http_headers, xml_data):
