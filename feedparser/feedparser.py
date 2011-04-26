@@ -544,15 +544,21 @@ class _FeedParserMixin:
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
 
-    def unknown_starttag(self, tag, attrs):
-        # normalize attrs
-        attrs = [(k.lower(), v) for k, v in attrs]
-        attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
+    def _normalize_attributes(self, kv):
+        k = kv[0].lower()
+        v = k in ('rel', 'type') and kv[1].lower() or kv[1]
         # the sgml parser doesn't handle entities in attributes, nor
         # does it pass the attribute values through as unicode, while
         # strict xml parsers do -- account for this difference
         if isinstance(self, _LooseFeedParser):
-            attrs = [(k, v.replace('&amp;', '&').decode('utf-8')) for k, v in attrs]
+            v = v.replace('&amp;', '&')
+            if not isinstance(v, unicode):
+                v = v.decode('utf-8')
+        return (k, v)
+
+    def unknown_starttag(self, tag, attrs):
+        # normalize attrs
+        attrs = map(self._normalize_attributes, attrs)
 
         # track xml:base and xml:lang
         attrsD = dict(attrs)
