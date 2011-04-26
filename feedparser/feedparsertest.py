@@ -31,7 +31,9 @@ if not feedparser._XML_AVAILABLE:
   sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
   sys.exit(1)
 import SimpleHTTPServer, BaseHTTPServer
+import struct
 import threading
+import zlib
 
 _debug = 0
 try:
@@ -161,15 +163,21 @@ class TestCompression(unittest.TestCase):
     def test_gzip_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
         self.assertEqual(f.version, 'atom10')
-    def test_gzip_bad(self):
-        f = feedparser.parse('http://localhost:8097/tests/compression/gzip-error.gz')
+    def test_gzip_not_gzipped(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/gzip-not-gzipped.gz')
         self.assertEqual(f.bozo, 1)
+        self.assertTrue(isinstance(f.bozo_exception, IOError))
+    def test_gzip_struct_error(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/gzip-struct-error.gz')
+        self.assertEqual(f.bozo, 1)
+        self.assertTrue(isinstance(f.bozo_exception, struct.error))
     def test_zlib_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate.z')
         self.assertEqual(f.version, 'atom10')
     def test_zlib_bad(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate-error.z')
         self.assertEqual(f.bozo, 1)
+        self.assertTrue(isinstance(f.bozo_exception, zlib.error))
 
 class TestEncodings(unittest.TestCase):
   def failUnlessEval(self, xmlfile, evalString, msg=None):
@@ -378,7 +386,7 @@ if __name__ == "__main__":
 #  print sys.argv
   httpd = None
   # there are four compression test cases that must be accounted for
-  httpcount = 4
+  httpcount = 5
   httpcount += len([f for f in allfiles if 'http' in f])
   httpcount += len([f for f in encodingfiles if 'http' in f])
   try:

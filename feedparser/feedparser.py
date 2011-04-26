@@ -140,6 +140,7 @@ import cgi
 import copy
 import datetime
 import re
+import struct
 import sys
 import time
 import types
@@ -1892,7 +1893,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
             if self.encoding:
                 try:
                     strattrs = strattrs.encode(self.encoding)
-                except UnicodeEncodeError:
+                except (UnicodeEncodeError, LookupError):
                     pass
         if tag in self.elements_no_end_tag:
             self.pieces.append('<%(tag)s%(strattrs)s />' % locals())
@@ -3672,21 +3673,23 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         if gzip and 'gzip' in (result['headers'].get('content-encoding'), result['headers'].get('Content-Encoding')):
             try:
                 data = gzip.GzipFile(fileobj=_StringIO(data)).read()
-            except Exception, e:
+            except (IOError, struct.error), e:
+                # IOError can occur if the gzip header is bad
+                # struct.error can occur if the data is damaged
                 # Some feeds claim to be gzipped but they're not, so
                 # we get garbage.  Ideally, we should re-request the
                 # feed without the 'Accept-encoding: gzip' header,
                 # but we don't.
                 result['bozo'] = 1
                 result['bozo_exception'] = e
-                data = _s2bytes('')
+                data = None
         elif zlib and 'deflate' in (result['headers'].get('content-encoding'), result['headers'].get('Content-Encoding')):
             try:
                 data = zlib.decompress(data)
             except zlib.error, e:
                 result['bozo'] = 1
                 result['bozo_exception'] = e
-                data = _s2bytes('')
+                data = None
 
     # save HTTP headers
     if 'headers' in result:
@@ -3705,6 +3708,9 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['status'] = f.status
     if hasattr(f, 'close'):
         f.close()
+
+    if data is None:
+        return result
 
     # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
