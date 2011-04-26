@@ -444,11 +444,11 @@ _cp1252 = {
 _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
     uri = _urifixer.sub(r'\1\3', uri)
-    try:
-        return urlparse.urljoin(base, uri)
-    except:
-        uri = urlparse.urlunparse([urllib.quote(part) for part in urlparse.urlparse(uri)])
-        return urlparse.urljoin(base, uri)
+    #try:
+    return urlparse.urljoin(base, uri)
+    #except:
+    #    uri = urlparse.urlunparse([urllib.quote(part) for part in urlparse.urlparse(uri)])
+    #    return urlparse.urljoin(base, uri)
 
 class _FeedParserMixin:
     namespaces = {'': '',
