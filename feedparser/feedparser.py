@@ -307,23 +307,24 @@ class FeedParserDict(dict):
     def __getitem__(self, key):
         if key == 'category':
             return dict.__getitem__(self, 'tags')[0]['term']
-        if key == 'enclosures':
+        elif key == 'enclosures':
             norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
             return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']==u'enclosure']
-        if key == 'license':
+        elif key == 'license':
             for link in dict.__getitem__(self, 'links'):
                 if link['rel']==u'license' and link.has_key('href'):
                     return link['href']
-        if key == 'categories':
+        elif key == 'categories':
             return [(tag['scheme'], tag['term']) for tag in dict.__getitem__(self, 'tags')]
-        realkey = self.keymap.get(key, key)
-        if isinstance(realkey, list):
-            for k in realkey:
-                if dict.__contains__(self, k):
-                    return dict.__getitem__(self, k)
-        if dict.__contains__(self, key):
-            return dict.__getitem__(self, key)
-        return dict.__getitem__(self, realkey)
+        else:
+            realkey = self.keymap.get(key, key)
+            if isinstance(realkey, list):
+                for k in realkey:
+                    if dict.__contains__(self, k):
+                        return dict.__getitem__(self, k)
+            elif dict.__contains__(self, realkey):
+                return dict.__getitem__(self, realkey)
+        return dict.__getitem__(self, key)
 
     def __contains__(self, key):
         try:
