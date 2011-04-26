@@ -3717,7 +3717,9 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # save HTTP headers
     if 'headers' in result:
         if 'etag' in result['headers'] or 'ETag' in result['headers']:
-            etag = result['headers'].get('etag', result['headers'].get('ETag'))
+            etag = result['headers'].get('etag', result['headers'].get('ETag', u''))
+            if not isinstance(etag, unicode):
+                etag = etag.decode('utf-8', 'ignore')
             if etag:
                 result['etag'] = etag
         if 'last-modified' in result['headers'] or 'Last-Modified' in result['headers']:
