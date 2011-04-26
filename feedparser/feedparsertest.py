@@ -31,7 +31,7 @@ if not feedparser._XML_AVAILABLE:
   sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
   sys.exit(1)
 import SimpleHTTPServer, BaseHTTPServer
-from threading import *
+import threading
 
 _debug = 0
 try:
@@ -94,13 +94,13 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
   def log_request(self, *args):
     pass
 
-class FeedParserTestServer(Thread):
+class FeedParserTestServer(threading.Thread):
   """HTTP Server that runs in a thread and handles a predetermined number of requests"""
   
   def __init__(self, requests):
-    Thread.__init__(self)
+    threading.Thread.__init__(self)
     self.requests = requests
-    self.ready = Event()
+    self.ready = threading.Event()
     
   def run(self):
     self.httpd = BaseHTTPServer.HTTPServer(('', _PORT), FeedParserTestRequestHandler)
