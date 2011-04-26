@@ -219,23 +219,19 @@ if __name__ == "__main__":
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
 #  print allfiles
 #  print sys.argv
-  httpfiles = len([f for f in allfiles if 'http' in f])
   httpd = None
-  if httpfiles:
-    httpd = FeedParserTestServer(httpfiles)
-    httpd.daemon = True
-    httpd.start()
+  httpcount = len([f for f in allfiles if 'http' in f])
   try:
     c = 1
     for xmlfile in allfiles:
       method, description, evalString, skipUnless = getDescription(xmlfile)
       testName = 'test_%06d' % c
       c += 1
-      ishttp = xmlfile.count('http')
+      ishttp = 'http' in xmlfile
       try:
         if not eval(skipUnless): raise Exception
       except:
-        if ishttp: httpd.requests = httpd.requests - 1
+        if ishttp: httpcount -= 1
         continue
       if ishttp:
         xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
@@ -249,7 +245,10 @@ if __name__ == "__main__":
     if feedparser.TIDY_MARKUP and feedparser._mxtidy:
       sys.stderr.write('\nWarning: feedparser.TIDY_MARKUP invalidates tests, turning it off temporarily\n\n')
       feedparser.TIDY_MARKUP = 0
-    if httpd:
+    if httpcount:
+      httpd = FeedParserTestServer(httpcount)
+      httpd.daemon = True
+      httpd.start()
       httpd.ready.wait()
     unittest.main()
   finally:
