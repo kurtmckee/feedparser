@@ -2799,33 +2799,24 @@ def _sanitizeHTML(htmlSource, encoding, _type):
 
 class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandler):
     def http_error_default(self, req, fp, code, msg, headers):
-        if ((code / 100) == 3) and (code != 304):
-            return self.http_error_302(req, fp, code, msg, headers)
-        infourl = urllib.addinfourl(fp, headers, req.get_full_url())
-        infourl.status = code
-        return infourl
+        # The default implementation just raises HTTPError.
+        # Forget that.
+        fp.status = code
+        return fp
 
-    def http_error_302(self, req, fp, code, msg, headers):
-        if headers.dict.has_key('location'):
-            infourl = urllib2.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
-        else:
-            infourl = urllib.addinfourl(fp, headers, req.get_full_url())
-        if not hasattr(infourl, 'status'):
-            infourl.status = code
-        return infourl
-
-    def http_error_301(self, req, fp, code, msg, headers):
-        if headers.dict.has_key('location'):
-            infourl = urllib2.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, headers)
-        else:
-            infourl = urllib.addinfourl(fp, headers, req.get_full_url())
-        if not hasattr(infourl, 'status'):
-            infourl.status = code
-        return infourl
-
-    http_error_300 = http_error_302
-    http_error_303 = http_error_302
-    http_error_307 = http_error_302
+    def http_error_301(self, req, fp, code, msg, hdrs):
+        result = urllib2.HTTPRedirectHandler.http_error_301(self, req, fp,
+                                                            code, msg, hdrs)
+        result.status = code
+        result.newurl = result.geturl()
+        return result
+    # The default implementations in urllib2.HTTPRedirectHandler
+    # are identical, so hardcoding a http_error_301 call above
+    # won't affect anything
+    http_error_300 = http_error_301
+    http_error_302 = http_error_301
+    http_error_303 = http_error_301
+    http_error_307 = http_error_301
 
     def http_error_401(self, req, fp, code, msg, headers):
         # Check if
