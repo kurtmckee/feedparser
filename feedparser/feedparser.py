@@ -145,6 +145,9 @@ import types
 import urllib
 import urllib2
 import urlparse
+
+from htmlentitydefs import name2codepoint, codepoint2name
+
 try:
     from io import BytesIO as _StringIO
 except ImportError:
@@ -245,18 +248,6 @@ try:
         chardet.constants._debug = 1
 except:
     chardet = None
-
-# reversable htmlentitydefs mappings for Python 2.2
-try:
-  from htmlentitydefs import name2codepoint, codepoint2name
-except:
-  import htmlentitydefs
-  name2codepoint={}
-  codepoint2name={}
-  for (name,codepoint) in htmlentitydefs.entitydefs.iteritems():
-    if codepoint.startswith('&#'): codepoint=unichr(int(codepoint[2:-1]))
-    name2codepoint[name]=ord(codepoint)
-    codepoint2name[ord(codepoint)]=name
 
 # BeautifulSoup parser used for parsing microformats from embedded HTML content
 # http://www.crummy.com/software/BeautifulSoup/
