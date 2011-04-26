@@ -507,7 +507,7 @@ class _FeedParserMixin:
     can_be_relative_uri = ['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'href', 'comments', 'icon', 'logo']
     can_contain_relative_uris = ['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description']
     can_contain_dangerous_markup = ['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description']
-    html_types = ['text/html', 'application/xhtml+xml']
+    html_types = [u'text/html', u'application/xhtml+xml']
 
     def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
         if not self._matchnamespaces:
@@ -593,12 +593,12 @@ class _FeedParserMixin:
                 self.trackNamespace(None, uri)
 
         # track inline content
-        if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', 'xml').endswith('xml'):
+        if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', u'xml').endswith(u'xml'):
             if tag in ['xhtml:div', 'div']:
                 return # typepad does this 10/2007
             # element declared itself as escaped markup, but it isn't really
-            self.contentparams['type'] = 'application/xhtml+xml'
-        if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
+            self.contentparams['type'] = u'application/xhtml+xml'
+        if self.incontent and self.contentparams.get('type') == u'application/xhtml+xml':
             if tag.find(':') <> -1:
                 prefix, tag = tag.split(':', 1)
                 namespace = self.namespacesInUse.get(prefix, '')
@@ -664,12 +664,12 @@ class _FeedParserMixin:
             self.pop(prefix + suffix)
 
         # track inline content
-        if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', 'xml').endswith('xml'):
+        if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', u'xml').endswith(u'xml'):
             # element declared itself as escaped markup, but it isn't really
             if tag in ['xhtml:div', 'div']:
                 return # typepad does this 10/2007
-            self.contentparams['type'] = 'application/xhtml+xml'
-        if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
+            self.contentparams['type'] = u'application/xhtml+xml'
+        if self.incontent and self.contentparams.get('type') == u'application/xhtml+xml':
             tag = tag.split(':')[-1]
             self.handle_data('</%s>' % tag, escape=0)
 
@@ -722,7 +722,7 @@ class _FeedParserMixin:
         # not containing any character or entity references
         if not self.elementstack:
             return
-        if escape and self.contentparams.get('type') == 'application/xhtml+xml':
+        if escape and self.contentparams.get('type') == u'application/xhtml+xml':
             text = _xmlescape(text)
         self.elementstack[-1][2].append(text)
 
@@ -758,11 +758,11 @@ class _FeedParserMixin:
     def mapContentType(self, contentType):
         contentType = contentType.lower()
         if contentType == 'text' or contentType == 'plain':
-            contentType = 'text/plain'
+            contentType = u'text/plain'
         elif contentType == 'html':
-            contentType = 'text/html'
+            contentType = u'text/html'
         elif contentType == 'xhtml':
-            contentType = 'application/xhtml+xml'
+            contentType = u'application/xhtml+xml'
         return contentType
 
     def trackNamespace(self, prefix, uri):
@@ -803,7 +803,7 @@ class _FeedParserMixin:
 
         element, expectingText, pieces = self.elementstack.pop()
 
-        if self.version == u'atom10' and self.contentparams.get('type','text') == 'application/xhtml+xml':
+        if self.version == u'atom10' and self.contentparams.get('type', u'text') == u'application/xhtml+xml':
             # remove enclosing child element, but only if it is a <div> and
             # only if all the remaining content is nested underneath it.
             # This means that the divs would be retained in the following:
@@ -858,9 +858,9 @@ class _FeedParserMixin:
 
         # some feed formats require consumers to guess
         # whether the content is html or plain text
-        if not self.version.startswith(u'atom') and self.contentparams.get('type') == 'text/plain':
+        if not self.version.startswith(u'atom') and self.contentparams.get('type') == u'text/plain':
             if self.lookslikehtml(output):
-                self.contentparams['type'] = 'text/html'
+                self.contentparams['type'] = u'text/html'
 
         # remove temporary cruft from contentparams
         try:
@@ -872,11 +872,11 @@ class _FeedParserMixin:
         except KeyError:
             pass
 
-        is_htmlish = self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types
+        is_htmlish = self.mapContentType(self.contentparams.get('type', u'text/html')) in self.html_types
         # resolve relative URIs within embedded markup
         if is_htmlish and RESOLVE_RELATIVE_URIS:
             if element in self.can_contain_relative_uris:
-                output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
+                output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', u'text/html'))
 
         # parse microformats
         # (must do this before sanitizing because some microformats
@@ -897,7 +897,7 @@ class _FeedParserMixin:
         # sanitize embedded markup
         if is_htmlish and SANITIZE_HTML:
             if element in self.can_contain_dangerous_markup:
-                output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
+                output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', u'text/html'))
 
         if self.encoding and not isinstance(output, unicode):
             output = output.decode(self.encoding, 'ignore')
@@ -1014,11 +1014,11 @@ class _FeedParserMixin:
     def _isBase64(self, attrsD, contentparams):
         if attrsD.get('mode', '') == 'base64':
             return 1
-        if self.contentparams['type'].startswith('text/'):
+        if self.contentparams['type'].startswith(u'text/'):
             return 0
-        if self.contentparams['type'].endswith('+xml'):
+        if self.contentparams['type'].endswith(u'+xml'):
             return 0
-        if self.contentparams['type'].endswith('/xml'):
+        if self.contentparams['type'].endswith(u'/xml'):
             return 0
         return 1
 
@@ -1308,7 +1308,7 @@ class _FeedParserMixin:
                 context['%s_detail' % key]['email'] = email
 
     def _start_subtitle(self, attrsD):
-        self.pushContent('subtitle', attrsD, 'text/plain', 1)
+        self.pushContent('subtitle', attrsD, u'text/plain', 1)
     _start_tagline = _start_subtitle
     _start_itunes_subtitle = _start_subtitle
 
@@ -1318,7 +1318,7 @@ class _FeedParserMixin:
     _end_itunes_subtitle = _end_subtitle
 
     def _start_rights(self, attrsD):
-        self.pushContent('rights', attrsD, 'text/plain', 1)
+        self.pushContent('rights', attrsD, u'text/plain', 1)
     _start_dc_rights = _start_rights
     _start_copyright = _start_rights
 
@@ -1489,9 +1489,9 @@ class _FeedParserMixin:
     def _start_link(self, attrsD):
         attrsD.setdefault('rel', 'alternate')
         if attrsD['rel'] == 'self':
-            attrsD.setdefault('type', 'application/atom+xml')
+            attrsD.setdefault('type', u'application/atom+xml')
         else:
-            attrsD.setdefault('type', 'text/html')
+            attrsD.setdefault('type', u'text/html')
         context = self._getContext()
         attrsD = self._itsAnHrefDamnIt(attrsD)
         if attrsD.has_key('href'):
@@ -1528,7 +1528,7 @@ class _FeedParserMixin:
     def _start_title(self, attrsD):
         if self.svgOK:
             return self.unknown_starttag('title', attrsD.items())
-        self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
+        self.pushContent('title', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
     _start_media_title = _start_title
 
@@ -1553,11 +1553,11 @@ class _FeedParserMixin:
             self._summaryKey = 'content'
             self._start_content(attrsD)
         else:
-            self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
+            self.pushContent('description', attrsD, u'text/html', self.infeed or self.inentry or self.insource)
     _start_dc_description = _start_description
 
     def _start_abstract(self, attrsD):
-        self.pushContent('description', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
+        self.pushContent('description', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_description(self):
         if self._summaryKey == 'content':
@@ -1569,7 +1569,7 @@ class _FeedParserMixin:
     _end_dc_description = _end_description
 
     def _start_info(self, attrsD):
-        self.pushContent('info', attrsD, 'text/plain', 1)
+        self.pushContent('info', attrsD, u'text/plain', 1)
     _start_feedburner_browserfriendly = _start_info
 
     def _end_info(self):
@@ -1612,7 +1612,7 @@ class _FeedParserMixin:
             self._start_content(attrsD)
         else:
             self._summaryKey = 'summary'
-            self.pushContent(self._summaryKey, attrsD, 'text/plain', 1)
+            self.pushContent(self._summaryKey, attrsD, u'text/plain', 1)
     _start_itunes_summary = _start_summary
 
     def _end_summary(self):
@@ -1646,25 +1646,25 @@ class _FeedParserMixin:
         self.sourcedata.clear()
 
     def _start_content(self, attrsD):
-        self.pushContent('content', attrsD, 'text/plain', 1)
+        self.pushContent('content', attrsD, u'text/plain', 1)
         src = attrsD.get('src')
         if src:
             self.contentparams['src'] = src
         self.push('content', 1)
 
     def _start_prodlink(self, attrsD):
-        self.pushContent('content', attrsD, 'text/html', 1)
+        self.pushContent('content', attrsD, u'text/html', 1)
 
     def _start_body(self, attrsD):
-        self.pushContent('content', attrsD, 'application/xhtml+xml', 1)
+        self.pushContent('content', attrsD, u'application/xhtml+xml', 1)
     _start_xhtml_body = _start_body
 
     def _start_content_encoded(self, attrsD):
-        self.pushContent('content', attrsD, 'text/html', 1)
+        self.pushContent('content', attrsD, u'text/html', 1)
     _start_fullitem = _start_content_encoded
 
     def _end_content(self):
-        copyToSummary = self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types)
+        copyToSummary = self.mapContentType(self.contentparams.get('type')) in ([u'text/plain'] + self.html_types)
         value = self.popContent('content')
         if copyToSummary:
             self._save('summary', value)
@@ -2015,7 +2015,7 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
         data = data.replace('&#x22;', '&quot;')
         data = data.replace('&#39;', '&apos;')
         data = data.replace('&#x27;', '&apos;')
-        if self.contentparams.has_key('type') and not self.contentparams.get('type', 'xml').endswith('xml'):
+        if self.contentparams.has_key('type') and not self.contentparams.get('type', u'xml').endswith(u'xml'):
             data = data.replace('&lt;', '<')
             data = data.replace('&gt;', '>')
             data = data.replace('&amp;', '&')
@@ -3571,17 +3571,17 @@ def _getCharacterEncoding(http_headers, xml_data):
         if sniffed_xml_encoding and (xml_encoding in ('iso-10646-ucs-2', 'ucs-2', 'csunicode', 'iso-10646-ucs-4', 'ucs-4', 'csucs4', 'utf-16', 'utf-32', 'utf_16', 'utf_32', 'utf16', 'u16')):
             xml_encoding = sniffed_xml_encoding
     acceptable_content_type = 0
-    application_content_types = ('application/xml', 'application/xml-dtd', 'application/xml-external-parsed-entity')
-    text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
+    application_content_types = (u'application/xml', u'application/xml-dtd', u'application/xml-external-parsed-entity')
+    text_content_types = (u'text/xml', u'text/xml-external-parsed-entity')
     if (http_content_type in application_content_types) or \
-       (http_content_type.startswith('application/') and http_content_type.endswith('+xml')):
+       (http_content_type.startswith(u'application/') and http_content_type.endswith(u'+xml')):
         acceptable_content_type = 1
         true_encoding = http_encoding or xml_encoding or 'utf-8'
     elif (http_content_type in text_content_types) or \
-         (http_content_type.startswith('text/')) and http_content_type.endswith('+xml'):
+         (http_content_type.startswith(u'text/')) and http_content_type.endswith(u'+xml'):
         acceptable_content_type = 1
         true_encoding = http_encoding or 'us-ascii'
-    elif http_content_type.startswith('text/'):
+    elif http_content_type.startswith(u'text/'):
         true_encoding = http_encoding or 'us-ascii'
     elif http_headers and (not (http_headers.has_key('content-type') or http_headers.has_key('Content-type'))):
         true_encoding = xml_encoding or 'iso-8859-1'
