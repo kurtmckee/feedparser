@@ -162,7 +162,7 @@ except ImportError:
 # gzip is included with most Python distributions, but may not be available if you compiled your own
 try:
     import gzip
-except:
+except ImportError:
     gzip = None
 try:
     import zlib
