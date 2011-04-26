@@ -25,7 +25,7 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE."""
 
-import feedparser, unittest, os, sys, glob, re, urllib, posixpath, time, codecs, pprint
+import feedparser, unittest, os, sys, glob, re, urllib, posixpath, codecs, pprint
 if not feedparser._XML_AVAILABLE:
   sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
   sys.exit(1)
@@ -99,15 +99,15 @@ class FeedParserTestServer(Thread):
   def __init__(self, requests):
     Thread.__init__(self)
     self.requests = requests
-    self.ready = 0
+    self.ready = Event()
     
   def run(self):
     self.httpd = BaseHTTPServer.HTTPServer(('', _PORT), FeedParserTestRequestHandler)
-    self.ready = 1
+    self.ready.set()
     while self.requests:
       self.httpd.handle_request()
       self.requests -= 1
-    self.ready = 0
+    self.ready.clear()
 
 #---------- dummy test case class (test methods are added dynamically) ----------
 unicode1_re = re.compile(_s2bytes(" u'"))
@@ -253,8 +253,7 @@ if __name__ == "__main__":
       sys.stderr.write('\nWarning: feedparser.TIDY_MARKUP invalidates tests, turning it off temporarily\n\n')
       feedparser.TIDY_MARKUP = 0
     if httpd:
-      while not httpd.ready:
-        time.sleep(0.1)
+      httpd.ready.wait()
     unittest.main()
   finally:
     if httpd:
