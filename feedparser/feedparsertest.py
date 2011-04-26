@@ -129,25 +129,30 @@ class FeedParserTestServer(threading.Thread):
 unicode1_re = re.compile(_s2bytes(" u'"))
 unicode2_re = re.compile(_s2bytes(' u"'))
 
-class TestCase(unittest.TestCase):
-  def failUnlessEval(self, xmlfile, evalString, msg=None):
+def failUnlessEval(self, xmlfile, evalString, msg=None):
     """Fail unless eval(evalString, env)"""
-    
     env = feedparser.parse(xmlfile)
+    env['feedparser'] = feedparser
     try:
-      if not eval(evalString, env):
-        failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-        raise self.failureException, failure
+        if not eval(evalString, env):
+            failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+            raise self.failureException, failure
     except SyntaxError:
-      # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
-      # which will require the failure message to be updated
-      evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
-      evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-      if not eval(evalString, env):
-        failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-        raise self.failureException, failure
+        # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
+        # which will require the failure message to be updated
+        evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
+        evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
+        if not eval(evalString, env):
+            failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+            raise self.failureException, failure
 
-class TestLooseParser(unittest.TestCase):
+class BaseTestCase(unittest.TestCase):
+    failUnlessEval = failUnlessEval
+
+class TestCase(BaseTestCase):
+    pass
+
+class TestLooseParser(BaseTestCase):
     def __init__(self, arg):
         unittest.TestCase.__init__(self, arg)
         self._xml_available = feedparser._XML_AVAILABLE
@@ -155,58 +160,15 @@ class TestLooseParser(unittest.TestCase):
         feedparser._XML_AVAILABLE = 0
     def tearDown(self):
         feedparser._XML_AVAILABLE = self._xml_available
-    def failUnlessEval(self, xmlfile, evalString, msg=None):
-        """Fail unless eval(evalString, f)"""
 
-        f = feedparser.parse(xmlfile)
-        try:
-            if not eval(evalString, f):
-                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(f)))
-                raise self.failureException, failure
-        except SyntaxError:
-            # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
-            # which will require the failure message to be updated
-            evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
-            evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-            if not eval(evalString, f):
-                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(f)))
-                raise self.failureException, failure
+class TestStrictParser(BaseTestCase):
+    pass
 
-class TestStrictParser(unittest.TestCase):
-    def failUnlessEval(self, xmlfile, evalString, msg=None):
-        """Fail unless eval(evalString, env)"""
+class TestMicroformats(BaseTestCase):
+    pass
 
-        env = feedparser.parse(xmlfile)
-        try:
-            if not eval(evalString, env):
-                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-                raise self.failureException, failure
-        except SyntaxError:
-            # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
-            # which will require the failure message to be updated
-            evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
-            evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-            if not eval(evalString, env):
-                failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-                raise self.failureException, failure
-
-class TestMicroformats(unittest.TestCase):
-  def failUnlessEval(self, xmlfile, evalString, msg=None):
-    """Fail unless eval(evalString, env)"""
-    
-    env = feedparser.parse(xmlfile)
-    failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-    try:
-      if not eval(evalString, env):
-        raise self.failureException, failure
-    except SyntaxError:
-      # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
-      # which will require the failure message to be updated
-      evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
-      evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-      failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-      if not eval(evalString, env):
-        raise self.failureException, failure
+class TestEncodings(BaseTestCase):
+    pass
 
 class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
@@ -321,25 +283,6 @@ class TestHTTPStatus(unittest.TestCase):
     def test_9001(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_9001.xml')
         self.assertEqual(f.bozo, 1)
-
-class TestEncodings(unittest.TestCase):
-  def failUnlessEval(self, xmlfile, evalString, msg=None):
-    """Fail unless eval(evalString, env)"""
-    
-    env = feedparser.parse(xmlfile)
-    env['feedparser'] = feedparser
-    failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-    try:
-      if not eval(evalString, env):
-        raise self.failureException, failure
-    except SyntaxError:
-      # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
-      # which will require the failure message to be updated
-      evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
-      evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-      failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-      if not eval(evalString, env):
-        raise self.failureException, failure
 
 class TestDateParsers(unittest.TestCase):
     def _check_date(self, func, dtstring, dttuple):
