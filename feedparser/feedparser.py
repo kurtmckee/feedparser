@@ -571,11 +571,8 @@ class _FeedParserMixin:
         # track xml:base and xml:lang
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
-        if type(baseuri) != type(u''):
-            try:
-                baseuri = unicode(baseuri, self.encoding)
-            except:
-                baseuri = unicode(baseuri, 'iso-8859-1')
+        if not isinstance(baseuri, unicode):
+            baseuri = baseuri.decode(self.encoding, 'ignore')
         # ensure that self.baseuri is always an absolute URI that
         # uses a whitelisted URI scheme (e.g. not `javscript:`)
         if self.baseuri:
