@@ -900,10 +900,10 @@ class _FeedParserMixin:
 
         # address common error where people take data that is already
         # utf-8, presume that it is iso-8859-1, and re-encode it.
-        if self.encoding in ('utf-8', 'utf-8_INVALID_PYTHON_3') and type(output) == type(u''):
+        if self.encoding in ('utf-8', 'utf-8_INVALID_PYTHON_3') and isinstance(output, unicode):
             try:
-                output = unicode(output.encode('iso-8859-1'), 'utf-8')
-            except:
+                output = output.encode('iso-8859-1').decode('utf-8')
+            except (UnicodeEncodeError, UnicodeDecodeError):
                 pass
 
         # map win-1252 extensions to the proper code points
