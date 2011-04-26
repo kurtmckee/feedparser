@@ -25,6 +25,7 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE."""
 
+import datetime
 import feedparser, unittest, os, sys, glob, re, urllib, posixpath, codecs, pprint
 import operator
 if not feedparser._XML_AVAILABLE:
@@ -33,6 +34,7 @@ if not feedparser._XML_AVAILABLE:
 import SimpleHTTPServer, BaseHTTPServer
 import struct
 import threading
+import time
 import zlib
 
 _debug = 0
@@ -87,9 +89,14 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
       else:
         headers = {'Content-Encoding': 'deflate'}
     else:
-      headers = dict([(k.decode('utf-8'), v.decode('utf-8')) for k, v in self.headers_re.findall(open(path, 'rb').read())])
+      headers = dict([(k.decode('utf-8'), v.decode('utf-8').strip()) for k, v in self.headers_re.findall(open(path, 'rb').read())])
     f = open(path, 'rb')
-    headers.setdefault('Status', 200)
+    if (self.headers.get('if-modified-since') == headers.get('Last-Modified', 'nom')) \
+        or (self.headers.get('if-none-match') == headers.get('ETag', 'nomatch')):
+        status = 304
+    else:
+        status = 200
+    headers.setdefault('Status', status)
     self.send_response(int(headers['Status']))
     headers.setdefault('Content-type', self.guess_type(path))
     self.send_header("Content-type", headers['Content-type'])
@@ -178,6 +185,54 @@ class TestCompression(unittest.TestCase):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate-error.z')
         self.assertEqual(f.bozo, 1)
         self.assertTrue(isinstance(f.bozo_exception, zlib.error))
+
+class TestHTTPStatus(unittest.TestCase):
+    def test_301(self):
+        f = feedparser.parse('http://localhost:8097/tests/http/http_status_301.xml')
+        self.assertEqual(f.status, 301)
+        self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.entries[0].title, 'target')
+    def test_302(self):
+        f = feedparser.parse('http://localhost:8097/tests/http/http_status_302.xml')
+        self.assertEqual(f.status, 302)
+        self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.entries[0].title, 'target')
+    def test_303(self):
+        f = feedparser.parse('http://localhost:8097/tests/http/http_status_303.xml')
+        self.assertEqual(f.status, 303)
+        self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.entries[0].title, 'target')
+    def test_307(self):
+        f = feedparser.parse('http://localhost:8097/tests/http/http_status_307.xml')
+        self.assertEqual(f.status, 307)
+        self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.entries[0].title, 'target')
+    def test_304(self):
+        # first retrieve the url
+        u = 'http://localhost:8097/tests/http/http_status_304.xml'
+        f = feedparser.parse(u)
+        self.assertEqual(f.status, 200)
+        self.assertEqual(f.entries[0].title, 'title 304')
+        # extract the etag and last-modified headers
+        e = [v for k, v in f.headers.items() if k.lower() == 'etag'][0]
+        ms = [v for k, v in f.headers.items() if k.lower() == 'last-modified'][0]
+        mt = f.updated
+        md = datetime.datetime(*mt[0:7])
+        self.assertTrue(isinstance(ms, basestring))
+        self.assertTrue(isinstance(mt, time.struct_time))
+        self.assertTrue(isinstance(md, datetime.datetime))
+        # test that sending back the etag results in a 304
+        f = feedparser.parse(u, etag=e)
+        self.assertEqual(f.status, 304)
+        # test that sending back last-modified (string) results in a 304
+        f = feedparser.parse(u, modified=ms)
+        self.assertEqual(f.status, 304)
+        # test that sending back last-modified (9-tuple) results in a 304
+        f = feedparser.parse(u, modified=mt)
+        self.assertEqual(f.status, 304)
+        # test that sending back last-modified (datetime) results in a 304
+        f = feedparser.parse(u, modified=md)
+        self.assertEqual(f.status, 304)
 
 class TestEncodings(unittest.TestCase):
   def failUnlessEval(self, xmlfile, evalString, msg=None):
@@ -385,8 +440,9 @@ if __name__ == "__main__":
 #  print allfiles
 #  print sys.argv
   httpd = None
-  # there are four compression test cases that must be accounted for
-  httpcount = 5
+  # there are several compression test cases that must be accounted for
+  # as well as a number of http status tests that redirect to a target
+  httpcount = 5 + 13
   httpcount += len([f for f in allfiles if 'http' in f])
   httpcount += len([f for f in encodingfiles if 'http' in f])
   try:
@@ -427,6 +483,7 @@ if __name__ == "__main__":
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
