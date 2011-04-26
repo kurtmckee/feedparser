@@ -2839,7 +2839,6 @@ class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler
         # Check if
         # - server requires digest auth, AND
         # - we tried (unsuccessfully) with basic auth, AND
-        # - we're using Python 2.3.3 or later (digest auth is irreparably broken in earlier versions)
         # If all conditions hold, parse authentication information
         # out of the Authorization header we sent the first time
         # (for the username and password) and the WWW-Authenticate
@@ -2848,7 +2847,6 @@ class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler
         # This evil genius hack has been brought to you by Aaron Swartz.
         host = urlparse.urlparse(req.get_full_url())[1]
         try:
-            assert sys.version.split()[0] >= '2.3.3'
             assert base64 != None
             user, passw = _base64decode(req.headers['Authorization'].split(' ')[1]).split(':')
             realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
