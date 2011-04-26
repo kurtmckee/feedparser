@@ -2846,16 +2846,16 @@ class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler
         # the request with the appropriate digest auth headers instead.
         # This evil genius hack has been brought to you by Aaron Swartz.
         host = urlparse.urlparse(req.get_full_url())[1]
-        try:
-            assert base64 != None
-            user, passw = _base64decode(req.headers['Authorization'].split(' ')[1]).split(':')
-            realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
-            self.add_password(realm, host, user, passw)
-            retry = self.http_error_auth_reqed('www-authenticate', host, req, headers)
-            self.reset_retry_count()
-            return retry
-        except:
+        if base64 is None or 'Authorization' not in req.headers \
+                          or 'WWW-Authenticate' not in headers:
             return self.http_error_default(req, fp, code, msg, headers)
+        auth = _base64decode(req.headers['Authorization'].split(' ')[1])
+        user, passw = auth.split(':')
+        realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
+        self.add_password(realm, host, user, passw)
+        retry = self.http_error_auth_reqed('www-authenticate', host, req, headers)
+        self.reset_retry_count()
+        return retry
 
 def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers):
     """URL, filename, or string --> stream
