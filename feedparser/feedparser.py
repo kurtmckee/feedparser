@@ -3829,7 +3829,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             saxparser._ns_stack.append({'http://www.w3.org/XML/1998/namespace':'xml'})
         try:
             saxparser.parse(source)
-        except Exception, e:
+        except xml.sax.SAXParseException, e:
             if _debug:
                 import traceback
                 traceback.print_stack()
