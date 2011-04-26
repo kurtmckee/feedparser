@@ -285,7 +285,6 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       'atom10': u'Atom 1.0',
                       'atom': u'Atom (unknown version)',
                       'cdf': u'CDF',
-                      'hotrss': u'Hot RSS'
                       }
 
 class FeedParserDict(dict):
@@ -1057,13 +1056,9 @@ class _FeedParserMixin:
             else:
                 self.version = u'rss'
 
-    def _start_dlhottitles(self, attrsD):
-        self.version = u'hotrss'
-
     def _start_channel(self, attrsD):
         self.infeed = 1
         self._cdf_common(attrsD)
-    _start_feedinfo = _start_channel
 
     def _cdf_common(self, attrsD):
         if attrsD.has_key('lastmod'):
@@ -1335,7 +1330,6 @@ class _FeedParserMixin:
             context['id'] = id
         self._cdf_common(attrsD)
     _start_entry = _start_item
-    _start_product = _start_item
 
     def _end_item(self):
         self.pop('item')
@@ -1502,12 +1496,10 @@ class _FeedParserMixin:
                 context['link'] = attrsD['href']
         else:
             self.push('link', expectingText)
-    _start_producturl = _start_link
 
     def _end_link(self):
         value = self.pop('link')
         context = self._getContext()
-    _end_producturl = _end_link
 
     def _start_guid(self, attrsD):
         self.guidislink = (attrsD.get('ispermalink', 'true') == 'true')
@@ -1648,9 +1640,6 @@ class _FeedParserMixin:
             self.contentparams['src'] = src
         self.push('content', 1)
 
-    def _start_prodlink(self, attrsD):
-        self.pushContent('content', attrsD, u'text/html', 1)
-
     def _start_body(self, attrsD):
         self.pushContent('content', attrsD, u'application/xhtml+xml', 1)
     _start_xhtml_body = _start_body
@@ -1669,7 +1658,6 @@ class _FeedParserMixin:
     _end_xhtml_body = _end_content
     _end_content_encoded = _end_content
     _end_fullitem = _end_content
-    _end_prodlink = _end_content
 
     def _start_itunes_image(self, attrsD):
         self.push('itunes_image', 0)
