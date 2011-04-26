@@ -93,10 +93,11 @@ except (NameError, AttributeError):
 # base64 support for Atom feeds that contain embedded binary data
 try:
     import base64, binascii
+except ImportError:
+    base64 = binascii = None
+else:
     # Python 3.1 deprecates decodestring in favor of decodebytes
     _base64decode = getattr(base64, 'decodebytes', base64.decodestring)
-except:
-    base64 = binascii = None
 
 def _s2bytes(s):
   # Convert a UTF-8 str to bytes if the interpreter is Python 3
