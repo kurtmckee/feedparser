@@ -773,9 +773,9 @@ class _FeedParserMixin:
             self.version = u'rss10'
         if loweruri == 'http://www.w3.org/2005/atom' and not self.version:
             self.version = u'atom10'
-        if loweruri.find('backend.userland.com/rss') <> -1:
+        if loweruri.find(u'backend.userland.com/rss') <> -1:
             # match any backend.userland.com namespace
-            uri = 'http://backend.userland.com/rss'
+            uri = u'http://backend.userland.com/rss'
             loweruri = uri
         if self._matchnamespaces.has_key(loweruri):
             self.namespacemap[prefix] = self._matchnamespaces[loweruri]
@@ -1749,9 +1749,9 @@ if _XML_AVAILABLE:
         def startElementNS(self, name, qname, attrs):
             namespace, localname = name
             lowernamespace = str(namespace or '').lower()
-            if lowernamespace.find('backend.userland.com/rss') <> -1:
+            if lowernamespace.find(u'backend.userland.com/rss') <> -1:
                 # match any backend.userland.com namespace
-                namespace = 'http://backend.userland.com/rss'
+                namespace = u'http://backend.userland.com/rss'
                 lowernamespace = namespace
             if qname and qname.find(':') > 0:
                 givenprefix = qname.split(':')[0]
