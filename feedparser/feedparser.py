@@ -432,7 +432,10 @@ _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
     uri = _urifixer.sub(r'\1\3', uri)
     #try:
-    return urlparse.urljoin(base, uri) or u''
+    uri = urlparse.urljoin(base, uri)
+    if not isinstance(uri, unicode):
+        return uri.decode('utf-8', 'ignore')
+    return uri
     #except:
     #    uri = urlparse.urlunparse([urllib.quote(part) for part in urlparse.urlparse(uri)])
     #    return urlparse.urljoin(base, uri)
