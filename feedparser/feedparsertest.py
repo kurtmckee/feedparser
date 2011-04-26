@@ -115,13 +115,10 @@ unicode1_re = re.compile(_s2bytes(" u'"))
 unicode2_re = re.compile(_s2bytes(' u"'))
 
 class TestCase(unittest.TestCase):
-  def failUnlessEval(self, evalString, env, msg=None):
+  def failUnlessEval(self, xmlfile, evalString, msg=None):
     """Fail unless eval(evalString, env)"""
     
-    try:
-      env = env.data
-    except:
-      pass
+    env = feedparser.parse(xmlfile)
     try:
       if not eval(evalString, env):
         failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
@@ -172,16 +169,16 @@ def getDescription(xmlfile):
   if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
     data = feedparser._ebcdic_to_ascii(data)
   elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
-    if not _utf32_available: return None, None, None, '0'
+    if not _utf32_available: return None, None, '0'
     data = unicode(data, 'utf-32be').encode('utf-8')
   elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
-    if not _utf32_available: return None, None, None, '0'
+    if not _utf32_available: return None, None, '0'
     data = unicode(data, 'utf-32le').encode('utf-8')
   elif data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
-    if not _utf32_available: return None, None, None, '0'
+    if not _utf32_available: return None, None, '0'
     data = unicode(data, 'utf-32be').encode('utf-8')
   elif data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
-    if not _utf32_available: return None, None, None, '0'
+    if not _utf32_available: return None, None, '0'
     data = unicode(data, 'utf-32le').encode('utf-8')
   elif data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
     data = unicode(data, 'utf-16be').encode('utf-8')
@@ -203,11 +200,11 @@ def getDescription(xmlfile):
     raise RuntimeError, "can't parse %s" % xmlfile
   description, evalString = map(lambda s: s.strip(), list(search_results.groups()))
   description = xmlfile + ": " + unicode(description, 'utf8')
-  return TestCase.failUnlessEval, description, evalString, skipUnless
+  return description, evalString, skipUnless
 
-def buildTestCase(xmlfile, description, method, evalString):
-  func = lambda self, xmlfile=xmlfile, method=method, evalString=evalString: \
-       method(self, evalString, feedparser.parse(xmlfile))
+def buildTestCase(xmlfile, description, evalString):
+  func = lambda self, xmlfile=xmlfile, evalString=evalString: \
+       self.failUnlessEval(xmlfile, evalString)
   func.__doc__ = description
   return func
 
@@ -223,7 +220,7 @@ if __name__ == "__main__":
   httpcount = len([f for f in allfiles if 'http' in f])
   try:
     for c, xmlfile in enumerate(allfiles):
-      method, description, evalString, skipUnless = getDescription(xmlfile)
+      description, evalString, skipUnless = getDescription(xmlfile)
       testName = 'test_%06d' % c
       ishttp = 'http' in xmlfile
       try:
@@ -233,7 +230,7 @@ if __name__ == "__main__":
         continue
       if ishttp:
         xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
-      testFunc = buildTestCase(xmlfile, description, method, evalString)
+      testFunc = buildTestCase(xmlfile, description, evalString)
       setattr(TestCase, testName, testFunc)
     if feedparser._debug and not _debug:
       sys.stderr.write('\nWarning: feedparser._debug is on, turning it off temporarily\n\n')
