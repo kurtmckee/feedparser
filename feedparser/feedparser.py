@@ -1465,10 +1465,10 @@ class _FeedParserMixin:
 
     def _end_itunes_keywords(self):
         for term in self.pop('itunes_keywords').split():
-            self._addTag(term, 'http://www.itunes.com/', None)
+            self._addTag(term, u'http://www.itunes.com/', None)
 
     def _start_itunes_category(self, attrsD):
-        self._addTag(attrsD.get('text'), 'http://www.itunes.com/', None)
+        self._addTag(attrsD.get('text'), u'http://www.itunes.com/', None)
         self.push('category', 1)
 
     def _end_category(self):
