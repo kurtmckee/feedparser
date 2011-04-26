@@ -37,7 +37,6 @@ import threading
 import time
 import zlib
 
-_debug = 0
 try:
     codecs.lookup('utf-32be')
 except LookupError:
@@ -520,11 +519,6 @@ if __name__ == "__main__":
         xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
       testFunc = buildTestCase(xmlfile, description, evalString)
       setattr(addTo, testName, testFunc)
-    if feedparser._debug and not _debug:
-      sys.stderr.write('\nWarning: feedparser._debug is on, turning it off temporarily\n\n')
-      feedparser._debug = 0
-    elif _debug:
-      feedparser._debug = 1
     if feedparser.TIDY_MARKUP and feedparser._mxtidy:
       sys.stderr.write('\nWarning: feedparser.TIDY_MARKUP invalidates tests, turning it off temporarily\n\n')
       feedparser.TIDY_MARKUP = 0

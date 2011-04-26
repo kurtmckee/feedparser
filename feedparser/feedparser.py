@@ -43,7 +43,6 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Ade Oshineye <http://blog.oshineye.com/>",
                     "Martin Pool <http://sourcefrog.net/>",
                     "Kurt McKee <http://kurtmckee.org/>"]
-_debug = 0
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -252,10 +251,6 @@ try:
     import chardet
 except ImportError:
     chardet = None
-else:
-    if _debug:
-        import chardet.constants
-        chardet.constants._debug = 1
 
 # BeautifulSoup parser used for parsing microformats from embedded HTML content
 # http://www.crummy.com/software/BeautifulSoup/
@@ -515,8 +510,6 @@ class _FeedParserMixin:
     html_types = ['text/html', 'application/xhtml+xml']
 
     def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
-        if _debug:
-            sys.stderr.write('initializing FeedParser\n')
         if not self._matchnamespaces:
             for k, v in self.namespaces.items():
                 self._matchnamespaces[k.lower()] = v
@@ -552,8 +545,6 @@ class _FeedParserMixin:
             self.feeddata['language'] = baselang.replace('_','-')
 
     def unknown_starttag(self, tag, attrs):
-        if _debug:
-            sys.stderr.write('start %s with %s\n' % (tag, attrs))
         # normalize attrs
         attrs = [(k.lower(), v) for k, v in attrs]
         attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
@@ -644,8 +635,6 @@ class _FeedParserMixin:
                 context[unknown_tag] = attrsD
 
     def unknown_endtag(self, tag):
-        if _debug:
-            sys.stderr.write('end %s\n' % tag)
         # match namespaces
         if tag.find(':') <> -1:
             prefix, suffix = tag.split(':', 1)
@@ -706,8 +695,6 @@ class _FeedParserMixin:
         # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
         if not self.elementstack:
             return
-        if _debug:
-            sys.stderr.write('entering handle_entityref with %s\n' % ref)
         if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
             text = '&%s;' % ref
         elif ref in self.entities.keys():
@@ -742,8 +729,6 @@ class _FeedParserMixin:
 
     def parse_declaration(self, i):
         # override internal declaration handler to handle CDATA blocks
-        if _debug:
-            sys.stderr.write('entering parse_declaration\n')
         if self.rawdata[i:i+9] == '<![CDATA[':
             k = self.rawdata.find(']]>', i)
             if k == -1:
@@ -1454,8 +1439,6 @@ class _FeedParserMixin:
             tags.append(value)
 
     def _start_category(self, attrsD):
-        if _debug:
-            sys.stderr.write('entering _start_category with %s\n' % repr(attrsD))
         term = attrsD.get('term')
         scheme = attrsD.get('scheme', attrsD.get('domain'))
         label = attrsD.get('label')
@@ -1741,8 +1724,6 @@ class _FeedParserMixin:
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
-            if _debug:
-                sys.stderr.write('trying StrictFeedParser\n')
             xml.sax.handler.ContentHandler.__init__(self)
             _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
             self.bozo = 0
@@ -1792,8 +1773,6 @@ if _XML_AVAILABLE:
                      if name and value == namespace:
                          localname = name + ':' + localname
                          break
-            if _debug:
-                sys.stderr.write('startElementNS: qname = %s, namespace = %s, givenprefix = %s, prefix = %s, attrs = %s, localname = %s\n' % (qname, namespace, givenprefix, prefix, attrs.items(), localname))
 
             for (namespace, attrlocalname), attrvalue in attrs.items():
                 lowernamespace = (namespace or '').lower()
@@ -1846,8 +1825,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def __init__(self, encoding, _type):
         self.encoding = encoding
         self._type = _type
-        if _debug:
-            sys.stderr.write('entering BaseHTMLProcessor, encoding=%s\n' % self.encoding)
         sgmllib.SGMLParser.__init__(self)
 
     def reset(self):
@@ -1898,8 +1875,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # called for each start tag
         # attrs is a list of (attr, value) tuples
         # e.g. for <pre class='screen'>, tag='pre', attrs=[('class', 'screen')]
-        if _debug:
-            sys.stderr.write('_BaseHTMLProcessor, unknown_starttag, tag=%s\n' % tag)
         uattrs = []
         strattrs=''
         if attrs:
@@ -1956,8 +1931,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # called for each block of plain text, i.e. outside of any tag and
         # not containing any character or entity references
         # Store the original text verbatim.
-        if _debug:
-            sys.stderr.write('_BaseHTMLProcessor, handle_data, text=%s\n' % text)
         self.pieces.append(text)
 
     def handle_comment(self, text):
@@ -2472,8 +2445,6 @@ class _MicroformatsParser:
 def _parseMicroformats(htmlSource, baseURI, encoding):
     if not BeautifulSoup:
         return
-    if _debug:
-        sys.stderr.write('entering _parseMicroformats\n')
     try:
         p = _MicroformatsParser(htmlSource, baseURI, encoding)
     except UnicodeEncodeError:
@@ -2521,15 +2492,11 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
         return _makeSafeAbsoluteURI(_urljoin(self.baseuri, uri.strip()))
 
     def unknown_starttag(self, tag, attrs):
-        if _debug:
-            sys.stderr.write('tag: [%s] with attributes: [%s]\n' % (tag, str(attrs)))
         attrs = self.normalize_attrs(attrs)
         attrs = [(key, ((tag, key) in self.relative_uris) and self.resolveURI(value) or value) for key, value in attrs]
         _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
 
 def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):
-    if _debug:
-        sys.stderr.write('entering _resolveRelativeURIs\n')
     if not _SGML_AVAILABLE:
         return htmlSource
 
@@ -3183,8 +3150,6 @@ def _parse_date_onblog(dateString):
                 {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
                  'hour': m.group(4), 'minute': m.group(5), 'second': m.group(6),\
                  'zonediff': '+09:00'}
-    if _debug:
-        sys.stderr.write('OnBlog date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_onblog)
 
@@ -3204,8 +3169,6 @@ def _parse_date_nate(dateString):
                 {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
                  'hour': hour, 'minute': m.group(6), 'second': m.group(7),\
                  'zonediff': '+09:00'}
-    if _debug:
-        sys.stderr.write('Nate date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_nate)
 
@@ -3220,8 +3183,6 @@ def _parse_date_mssql(dateString):
                 {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
                  'hour': m.group(4), 'minute': m.group(5), 'second': m.group(6),\
                  'zonediff': '+09:00'}
-    if _debug:
-        sys.stderr.write('MS SQL date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_mssql)
 
@@ -3277,8 +3238,6 @@ def _parse_date_greek(dateString):
                  {'wday': wday, 'day': m.group(2), 'month': month, 'year': m.group(4),\
                   'hour': m.group(5), 'minute': m.group(6), 'second': m.group(7),\
                   'zonediff': m.group(8)}
-    if _debug:
-        sys.stderr.write('Greek date parsed as: %s\n' % rfc822date)
     return _parse_date_rfc822(rfc822date)
 registerDateHandler(_parse_date_greek)
 
@@ -3318,8 +3277,6 @@ def _parse_date_hungarian(dateString):
                 {'year': m.group(1), 'month': month, 'day': day,\
                  'hour': hour, 'minute': m.group(5),\
                  'zonediff': m.group(6)}
-    if _debug:
-        sys.stderr.write('Hungarian date parsed as: %s\n' % w3dtfdate)
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_hungarian)
 
@@ -3483,8 +3440,6 @@ def _parse_date(dateString):
         if not date9tuple:
             continue
         if len(date9tuple) != 9:
-            if _debug:
-                sys.stderr.write('date handler function must return 9-tuple\n')
             continue
         return date9tuple
     return None
@@ -3635,47 +3590,23 @@ def _toUTF8(data, encoding):
     data is a raw sequence of bytes (not Unicode) that is presumed to be in %encoding already
     encoding is a string recognized by encodings.aliases
     '''
-    if _debug:
-        sys.stderr.write('entering _toUTF8, trying encoding %s\n' % encoding)
     # strip Byte Order Mark (if present)
     if (len(data) >= 4) and (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
-        if _debug:
-            sys.stderr.write('stripping BOM\n')
-            if encoding != 'utf-16be':
-                sys.stderr.write('trying utf-16be instead\n')
         encoding = 'utf-16be'
         data = data[2:]
     elif (len(data) >= 4) and (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
-        if _debug:
-            sys.stderr.write('stripping BOM\n')
-            if encoding != 'utf-16le':
-                sys.stderr.write('trying utf-16le instead\n')
         encoding = 'utf-16le'
         data = data[2:]
     elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
-        if _debug:
-            sys.stderr.write('stripping BOM\n')
-            if encoding != 'utf-8':
-                sys.stderr.write('trying utf-8 instead\n')
         encoding = 'utf-8'
         data = data[3:]
     elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
-        if _debug:
-            sys.stderr.write('stripping BOM\n')
-            if encoding != 'utf-32be':
-                sys.stderr.write('trying utf-32be instead\n')
         encoding = 'utf-32be'
         data = data[4:]
     elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
-        if _debug:
-            sys.stderr.write('stripping BOM\n')
-            if encoding != 'utf-32le':
-                sys.stderr.write('trying utf-32le instead\n')
         encoding = 'utf-32le'
         data = data[4:]
     newdata = unicode(data, encoding)
-    if _debug:
-        sys.stderr.write('successfully converted %s data to unicode\n' % encoding)
     declmatch = re.compile('^<\?xml[^>]*?>')
     newdecl = '''<?xml version='1.0' encoding='utf-8'?>'''
     if declmatch.search(newdata):
@@ -3916,11 +3847,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         try:
             saxparser.parse(source)
         except xml.sax.SAXParseException, e:
-            if _debug:
-                import traceback
-                traceback.print_stack()
-                traceback.print_exc()
-                sys.stderr.write('xml parsing failed\n')
             result['bozo'] = 1
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
@@ -3995,10 +3921,7 @@ if __name__ == '__main__':
         optionParser.add_option("-t", "--etag", dest="etag", metavar="TAG", help="ETag/If-None-Match for HTTP URLs")
         optionParser.add_option("-m", "--last-modified", dest="modified", metavar="DATE", help="Last-modified/If-Modified-Since for HTTP URLs (any supported date format)")
         optionParser.add_option("-f", "--format", dest="format", metavar="FORMAT", help="output results in FORMAT (text, pprint)")
-        optionParser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="write debugging information to stderr")
         (options, urls) = optionParser.parse_args()
-        if options.verbose:
-            _debug = 1
         if not urls:
             optionParser.print_help()
             sys.exit(0)
