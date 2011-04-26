@@ -25,11 +25,7 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE."""
 
-import feedparser, unittest, os, sys, glob, re, urllib, string, posixpath, time, codecs, pprint
-try:
-  string.strip
-except AttributeError:
-  string.strip = lambda s: s.strip()
+import feedparser, unittest, os, sys, glob, re, urllib, posixpath, time, codecs, pprint
 if not feedparser._XML_AVAILABLE:
   sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
   sys.exit(1)
@@ -210,7 +206,7 @@ def getDescription(xmlfile):
   search_results = desc_re.search(data)
   if not search_results:
     raise RuntimeError, "can't parse %s" % xmlfile
-  description, evalString = map(string.strip, list(search_results.groups()))
+  description, evalString = map(lambda s: s.strip(), list(search_results.groups()))
   description = xmlfile + ": " + unicode(description, 'utf8')
   return TestCase.failUnlessEval, description, evalString, skipUnless
 
