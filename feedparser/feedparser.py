@@ -829,7 +829,7 @@ class _FeedParserMixin:
             if not isinstance(v, unicode):
                 pieces[i] = v.decode('utf-8')
 
-        output = ''.join(pieces)
+        output = u''.join(pieces)
         if stripWhitespace:
             output = output.strip()
         if not expectingText:
