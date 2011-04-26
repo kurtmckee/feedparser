@@ -166,7 +166,7 @@ except ImportError:
     gzip = None
 try:
     import zlib
-except:
+except ImportError:
     zlib = None
 
 # If a real XML parser is available, feedparser will attempt to use it.  feedparser has
