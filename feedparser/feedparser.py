@@ -306,7 +306,10 @@ class FeedParserDict(dict):
               'tagline_detail': 'subtitle_detail'}
     def __getitem__(self, key):
         if key == 'category':
-            return dict.__getitem__(self, 'tags')[0]['term']
+            try:
+                return dict.__getitem__(self, 'tags')[0]['term']
+            except IndexError:
+                raise KeyError, "object doesn't have key 'category'"
         elif key == 'enclosures':
             norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
             return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']==u'enclosure']

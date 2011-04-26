@@ -245,6 +245,23 @@ class TestFeedParserDict(unittest.TestCase):
             pass
         self.d['links'].append({'rel': 'license', 'href': 'http://dom.test/'})
         self.assertEqual(self.d['license'], 'http://dom.test/')
+    def test_category(self):
+        self.d['tags'] = []
+        try:
+            self.d['category']
+            self.assertTrue(False)
+        except KeyError:
+            pass
+        self.d['tags'] = [{}]
+        try:
+            self.d['category']
+            self.assertTrue(False)
+        except KeyError:
+            pass
+        self.d['tags'] = [{'term': 'cat'}]
+        self.assertEqual(self.d['category'], 'cat')
+        self.d['tags'].append({'term': 'dog'})
+        self.assertEqual(self.d['category'], 'cat')
 
 class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
