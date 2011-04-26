@@ -3706,14 +3706,14 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
                 # but we don't.
                 result['bozo'] = 1
                 result['bozo_exception'] = e
-                data = ''
+                data = _s2bytes('')
         elif zlib and 'deflate' in (result['headers'].get('content-encoding'), result['headers'].get('Content-Encoding')):
             try:
-                data = zlib.decompress(data, -zlib.MAX_WBITS)
-            except Exception, e:
+                data = zlib.decompress(data)
+            except zlib.error, e:
                 result['bozo'] = 1
                 result['bozo_exception'] = e
-                data = ''
+                data = _s2bytes('')
 
     # save HTTP headers
     if 'headers' in result:
