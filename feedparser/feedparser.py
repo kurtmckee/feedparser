@@ -702,9 +702,12 @@ class _FeedParserMixin:
             if text.startswith('&#') and text.endswith(';'):
                 return self.handle_entityref(text)
         else:
-            try: name2codepoint[ref]
-            except KeyError: text = '&%s;' % ref
-            else: text = unichr(name2codepoint[ref]).encode('utf-8')
+            try:
+                name2codepoint[ref]
+            except KeyError:
+                text = '&%s;' % ref
+            else:
+                text = unichr(name2codepoint[ref]).encode('utf-8')
         self.elementstack[-1][2].append(text)
 
     def handle_data(self, text, escape=1):
