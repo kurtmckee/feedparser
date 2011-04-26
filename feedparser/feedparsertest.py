@@ -151,6 +151,85 @@ class TestEncodings(unittest.TestCase):
       if not eval(evalString, env):
         raise self.failureException, failure
 
+class TestDateParsers(unittest.TestCase):
+    def _check_date(self, func, dtstring, dttuple):
+        tup = func(dtstring)
+        self.assertEqual(tup, dttuple)
+        self.assertEqual(tup, feedparser._parse_date(dtstring))
+
+date_tests = {
+    feedparser._parse_date_greek: (
+        (u'\u039a\u03c5\u03c1, 11 \u0399\u03bf\u03cd\u03bb 2004 12:00:00 EST', (2004, 7, 11, 17, 0, 0, 6, 193, 0)),
+    ),
+    feedparser._parse_date_hungarian: (
+        (u'2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)), 
+    ),
+    feedparser._parse_date_iso8601: (
+        (u'-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only variant
+        (u'031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only, no hyphens
+        (u'03-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only
+        (u'-03-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only
+        (u'03335', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/ordinal, no hyphens
+        (u'2003-12-31T10:14:55.1234Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # fractional seconds
+        # Special case for Google's extra zero in the month
+        (u'2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
+    ),
+    feedparser._parse_date_mssql: (
+        (u'2004-07-08 23:56:58', (2004, 7, 8, 14, 56, 58, 3, 190, 0)), # no fractional second
+        (u'2004-07-08 23:56:58.0', (2004, 7, 8, 14, 56, 58, 3, 190, 0)), # with fractional second
+    ),
+    feedparser._parse_date_nate: (
+        (u'2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
+    ),
+    feedparser._parse_date_onblog: (
+        (u'2004\ub144 05\uc6d4 28\uc77c  01:31:15', (2004, 5, 27, 16, 31, 15, 3, 148, 0)),
+    ),
+    feedparser._parse_date_perforce: (
+        (u'Fri, 2006/09/15 08:19:53 EDT', (2006, 9, 15, 12, 19, 53, 4, 258, 0)),
+    ),
+    feedparser._parse_date_rfc822: (
+        (u'Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
+        (u'Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year
+        (u'Thu, 31 Jun 2004 19:48:21 GMT', (2004, 7, 1, 19, 48, 21, 3, 183, 0)), # rollover june 31st
+        (u'Wed, 19 Aug 2009 18:28:00 Etc/GMT', (2009, 8, 19, 18, 28, 0, 2, 231, 0)), # etc/gmt timezone
+        (u'Thu, 01 Jan 2004 00:00 GMT', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no seconds
+        (u'Thu, 01 Jan 2004', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no time
+        # Test asctime-style dates and times
+        (u'Sun Jan  4 16:29:06 PST 2004', (2004, 1, 5, 0, 29, 6, 0, 5, 0)),
+        # Additional tests to handle Disney's long month names and invalid timezones
+        (u'Mon, 26 January 2004 16:31:00 AT', (2004, 1, 26, 20, 31, 0, 0, 26, 0)), 
+        (u'Mon, 26 January 2004 16:31:00 ET', (2004, 1, 26, 21, 31, 0, 0, 26, 0)),
+        (u'Mon, 26 January 2004 16:31:00 CT', (2004, 1, 26, 22, 31, 0, 0, 26, 0)),
+        (u'Mon, 26 January 2004 16:31:00 MT', (2004, 1, 26, 23, 31, 0, 0, 26, 0)),
+        (u'Mon, 26 January 2004 16:31:00 PT', (2004, 1, 27, 0, 31, 0, 1, 27, 0)),
+    ),
+    feedparser._parse_date_w3dtf: (
+        (u'2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # UTC
+        (u'2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)), # San Francisco timezone
+        (u'2003-12-31T18:14:55+08:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # Tokyo timezone
+        (u'2007-04-23T23:25:47.538+10:00', (2007, 4, 23, 13, 25, 47, 0, 113, 0)), # fractional seconds
+        (u'2003-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # year/month/day only
+        (u'20031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # year/month/day only, no hyphens
+        (u'2003-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # year/month only
+        (u'2003', (2003, 1, 1, 0, 0, 0, 2, 1, 0)), # year only
+        # Special cases for out-of-range times
+        (u'2003-12-31T25:14:55Z', (2004, 1, 1, 1, 14, 55, 3, 1, 0)), # invalid (25 hours)
+        (u'2003-12-31T10:61:55Z', (2003, 12, 31, 11, 1, 55, 2, 365, 0)), # invalid (61 minutes)
+        (u'2003-12-31T10:14:61Z', (2003, 12, 31, 10, 15, 1, 2, 365, 0)), # invalid (61 seconds)
+        # Special cases for rollovers in leap years
+        (u'2004-02-28T18:14:55-08:00', (2004, 2, 29, 2, 14, 55, 6, 60, 0)), # feb 28 in leap year
+        (u'2003-02-28T18:14:55-08:00', (2003, 3, 1, 2, 14, 55, 5, 60, 0)), # feb 28 in non-leap year
+        (u'2000-02-28T18:14:55-08:00', (2000, 2, 29, 2, 14, 55, 1, 60, 0)), # feb 28 in leap year on century divisible by 400
+    )
+}
+
+def make_date_test(f, s, t):
+    return lambda self: self._check_date(f, s, t)
+
+for func, items in date_tests.iteritems():
+    for i, (dtstring, dttuple) in enumerate(items):
+        uniqfunc = make_date_test(func, dtstring, dttuple)
+        setattr(TestDateParsers, 'test_%s_%02i' % (func.__name__, i), uniqfunc)
 
 #---------- additional api unit tests, not backed by files
 
@@ -273,6 +352,7 @@ if __name__ == "__main__":
     testloader = unittest.TestLoader()
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
