@@ -3335,6 +3335,8 @@ registerDateHandler(_parse_date_w3dtf)
 def _parse_date_rfc822(dateString):
     '''Parse an RFC822, RFC1123, RFC2822, or asctime-style date'''
     data = dateString.split()
+    if not data:
+        return None
     if data[0][-1] in (',', '.') or data[0].lower() in rfc822._daynames:
         del data[0]
     if len(data) == 4:

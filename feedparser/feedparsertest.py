@@ -267,12 +267,15 @@ class TestDateParsers(unittest.TestCase):
 
 date_tests = {
     feedparser._parse_date_greek: (
+        (u'', None), # empty string
         (u'\u039a\u03c5\u03c1, 11 \u0399\u03bf\u03cd\u03bb 2004 12:00:00 EST', (2004, 7, 11, 17, 0, 0, 6, 193, 0)),
     ),
     feedparser._parse_date_hungarian: (
+        (u'', None), # empty string
         (u'2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)), 
     ),
     feedparser._parse_date_iso8601: (
+        (u'', None), # empty string
         (u'-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only variant
         (u'031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only, no hyphens
         (u'03-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only
@@ -283,19 +286,24 @@ date_tests = {
         (u'2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
     ),
     feedparser._parse_date_mssql: (
+        (u'', None), # empty string
         (u'2004-07-08 23:56:58', (2004, 7, 8, 14, 56, 58, 3, 190, 0)), # no fractional second
         (u'2004-07-08 23:56:58.0', (2004, 7, 8, 14, 56, 58, 3, 190, 0)), # with fractional second
     ),
     feedparser._parse_date_nate: (
+        (u'', None), # empty string
         (u'2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
     ),
     feedparser._parse_date_onblog: (
+        (u'', None), # empty string
         (u'2004\ub144 05\uc6d4 28\uc77c  01:31:15', (2004, 5, 27, 16, 31, 15, 3, 148, 0)),
     ),
     feedparser._parse_date_perforce: (
+        (u'', None), # empty string
         (u'Fri, 2006/09/15 08:19:53 EDT', (2006, 9, 15, 12, 19, 53, 4, 258, 0)),
     ),
     feedparser._parse_date_rfc822: (
+        (u'', None), # empty string
         (u'Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
         (u'Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year
         (u'Thu, 31 Jun 2004 19:48:21 GMT', (2004, 7, 1, 19, 48, 21, 3, 183, 0)), # rollover june 31st
@@ -312,6 +320,7 @@ date_tests = {
         (u'Mon, 26 January 2004 16:31:00 PT', (2004, 1, 27, 0, 31, 0, 1, 27, 0)),
     ),
     feedparser._parse_date_w3dtf: (
+        (u'', None), # empty string
         (u'2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # UTC
         (u'2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)), # San Francisco timezone
         (u'2003-12-31T18:14:55+08:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # Tokyo timezone
