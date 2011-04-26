@@ -2920,7 +2920,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
                 url_file_stream_or_string = url_file_stream_or_string.encode('idna').decode('utf-8')
             else:
                 url_file_stream_or_string = url_file_stream_or_string.decode('utf-8').encode('idna').decode('utf-8')
-        except:
+        except UnicodeError:
             pass
 
         # try to open with urllib2 (to use optional headers)
