@@ -35,10 +35,11 @@ import threading
 
 _debug = 0
 try:
-  codecs.lookup('utf-32be')
-  _utf32_available = 1
-except:
-  _utf32_available = 0
+    codecs.lookup('utf-32be')
+except LookupError:
+    _utf32_available = 0
+else:
+    _utf32_available = 1
   
 def _s2bytes(s):
   # Convert a UTF-8 str to bytes if the interpreter is Python 3
