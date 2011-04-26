@@ -190,108 +190,46 @@ class TestEncodings(BaseTestCase):
 class TestFeedParserDict(unittest.TestCase):
     def setUp(self):
         self.d = feedparser.FeedParserDict()
+    def _check_key(self, k):
+        self.assertTrue(k in self.d)
+        self.assertTrue(hasattr(self.d, k))
+        self.assertEqual(self.d[k], 1)
+        self.assertEqual(getattr(self.d, k), 1)
+    def _check_no_key(self, k):
+        self.assertTrue(k not in self.d)
+        self.assertTrue(not hasattr(self.d, k))
     def test_empty(self):
-        # test neutral key
-        self.assertTrue('a' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'a'))
-        # test one-to-one target key
-        self.assertTrue('entries' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'entries'))
-        self.assertTrue('id' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'id'))
-        # test one-to-one mapped key
+        keys = (
+            'a','entries', 'id', 'guid', 'summary', 'subtitle', 'description',
+            'category', 'enclosures', 'license', 'categories',
+        )
+        for k in keys:
+            self._check_no_key('a')
         self.assertTrue('items' not in self.d)
         self.assertTrue(hasattr(self.d, 'items')) # dict.items() exists
-        self.assertTrue('guid' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'guid'))
-        # test one-to-many target keys
-        self.assertTrue('summary' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'summary'))
-        self.assertTrue('subtitle' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'subtitle'))
-        # test one-to-many mapped key
-        self.assertTrue('description' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'description'))
-        # test helper keys
-        self.assertTrue('category' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'category'))
-        self.assertTrue('enclosures' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'enclosures'))
-        self.assertTrue('license' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'license'))
-        self.assertTrue('categories' not in self.d)
-        self.assertTrue(not hasattr(self.d, 'categories'))
     def test_neutral(self):
         self.d['a'] = 1
-        self.assertTrue('a' in self.d)
-        self.assertTrue(hasattr(self.d, 'a'))
-        self.assertEqual(self.d['a'], 1)
-        self.assertEqual(self.d.a, 1)
+        self._check_key('a')
     def test_single_mapping_target(self):
-        # set the target key
         self.d['id'] = 1
-        # check the target key
-        self.assertTrue('id' in self.d)
-        self.assertTrue(hasattr(self.d, 'id'))
-        self.assertEqual(self.d['id'], 1)
-        self.assertEqual(self.d.id, 1)
-        # check the mapped key
-        self.assertTrue('guid' in self.d)
-        self.assertTrue(hasattr(self.d, 'guid'))
-        self.assertEqual(self.d['guid'], 1)
-        self.assertEqual(self.d.guid, 1)
+        self._check_key('id')
+        self._check_key('guid')
     def test_single_mapping_target(self):
-        # set the mapped key
         self.d['guid'] = 1
-        # check the target key
-        self.assertTrue('id' in self.d)
-        self.assertTrue(hasattr(self.d, 'id'))
-        self.assertEqual(self.d['id'], 1)
-        self.assertEqual(self.d.id, 1)
-        # check the mapped key
-        self.assertTrue('guid' in self.d)
-        self.assertTrue(hasattr(self.d, 'guid'))
-        self.assertEqual(self.d['guid'], 1)
-        self.assertEqual(self.d.guid, 1)
+        self._check_key('id')
+        self._check_key('guid')
     def test_multiple_mapping_target_1(self):
-        # set one of the target keys
         self.d['summary'] = 1
-        # check the target key
-        self.assertTrue('summary' in self.d)
-        self.assertTrue(hasattr(self.d, 'summary'))
-        self.assertEqual(self.d['summary'], 1)
-        self.assertEqual(self.d.summary, 1)
-        # check the mapped key
-        self.assertTrue('description' in self.d)
-        self.assertTrue(hasattr(self.d, 'description'))
-        self.assertEqual(self.d['description'], 1)
-        self.assertEqual(self.d.description, 1)
+        self._check_key('summary')
+        self._check_key('description')
     def test_multiple_mapping_target_2(self):
-        # set another target key
         self.d['subtitle'] = 1
-        # check the target key
-        self.assertTrue('subtitle' in self.d)
-        self.assertTrue(hasattr(self.d, 'subtitle'))
-        self.assertEqual(self.d['subtitle'], 1)
-        self.assertEqual(self.d.subtitle, 1)
-        # check the mapped key
-        self.assertTrue('description' in self.d)
-        self.assertTrue(hasattr(self.d, 'description'))
-        self.assertEqual(self.d['description'], 1)
-        self.assertEqual(self.d.description, 1)
+        self._check_key('subtitle')
+        self._check_key('description')
     def test_multiple_mapping_mapped_key(self):
-        # finally, test by setting the mapped key
         self.d['description'] = 1
-        # check the first target key
-        self.assertTrue('summary' in self.d)
-        self.assertTrue(hasattr(self.d, 'summary'))
-        self.assertEqual(self.d['summary'], 1)
-        self.assertEqual(self.d.summary, 1)
-        # check the mapped key
-        self.assertTrue('description' in self.d)
-        self.assertTrue(hasattr(self.d, 'description'))
-        self.assertEqual(self.d['description'], 1)
-        self.assertEqual(self.d.description, 1)
+        self._check_key('summary')
+        self._check_key('description')
 
 class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
