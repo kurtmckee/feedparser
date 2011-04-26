@@ -3765,6 +3765,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
 
     baselang = http_headers.get('content-language', http_headers.get('Content-Language', None))
+    if not isinstance(baselang, unicode) and baselang is not None:
+        baselang = baselang.decode('utf-8', 'ignore')
 
     # if server sent 304, we're done
     if result.get('status', 0) == 304:
