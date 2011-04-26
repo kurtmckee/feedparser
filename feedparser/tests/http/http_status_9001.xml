@@ -1,0 +1,6 @@
+<!--
+Header:      Status: 9001
+Description: http status 9001 (bogus)
+Expect:      0
+-->
+<feed xmlns="http://www.w3.org/2005/Atom"></feed>

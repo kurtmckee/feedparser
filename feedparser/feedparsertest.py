@@ -233,6 +233,12 @@ class TestHTTPStatus(unittest.TestCase):
         # test that sending back last-modified (datetime) results in a 304
         f = feedparser.parse(u, modified=md)
         self.assertEqual(f.status, 304)
+    def test_404(self):
+        f = feedparser.parse('http://localhost:8097/tests/http/http_status_404.xml')
+        self.assertEqual(f.status, 404)
+    def test_9001(self):
+        f = feedparser.parse('http://localhost:8097/tests/http/http_status_9001.xml')
+        self.assertEqual(f.bozo, 1)
 
 class TestEncodings(unittest.TestCase):
   def failUnlessEval(self, xmlfile, evalString, msg=None):
@@ -442,7 +448,7 @@ if __name__ == "__main__":
   httpd = None
   # there are several compression test cases that must be accounted for
   # as well as a number of http status tests that redirect to a target
-  httpcount = 5 + 13
+  httpcount = 5 + 15
   httpcount += len([f for f in allfiles if 'http' in f])
   httpcount += len([f for f in encodingfiles if 'http' in f])
   try:
