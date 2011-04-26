@@ -895,11 +895,8 @@ class _FeedParserMixin:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
 
-        if self.encoding and type(output) != type(u''):
-            try:
-                output = unicode(output, self.encoding)
-            except:
-                pass
+        if self.encoding and not isinstance(output, unicode):
+            output = output.decode(self.encoding, 'ignore')
 
         # address common error where people take data that is already
         # utf-8, presume that it is iso-8859-1, and re-encode it.
