@@ -365,7 +365,7 @@ class FeedParserDict(dict):
         try:
             assert not key.startswith('_')
             return self.__getitem__(key)
-        except:
+        except (AssertionError, KeyError):
             raise AttributeError, "object has no attribute '%s'" % key
 
     def __setattr__(self, key, value):
