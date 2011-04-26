@@ -129,6 +129,22 @@ class FeedParserTestServer(threading.Thread):
 unicode1_re = re.compile(_s2bytes(" u'"))
 unicode2_re = re.compile(_s2bytes(' u"'))
 
+def everythingIsUnicode(d):
+    """Takes a dictionary, recursively verifies that every value is unicode"""
+    for k, v in d.iteritems():
+        if isinstance(v, dict) and k != 'headers':
+            if not everythingIsUnicode(v):
+                return False
+        elif isinstance(v, list):
+            for i in v:
+                if isinstance(i, dict) and not everythingIsUnicode(i):
+                    return False
+                elif isinstance(v, basestring) and not isinstance(i, unicode):
+                    return False
+        elif isinstance(v, basestring) and not isinstance(v, unicode):
+            return False
+    return True
+
 def failUnlessEval(self, xmlfile, evalString, msg=None):
     """Fail unless eval(evalString, env)"""
     env = feedparser.parse(xmlfile)
@@ -136,6 +152,8 @@ def failUnlessEval(self, xmlfile, evalString, msg=None):
         if not eval(evalString, globals(), env):
             failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
             raise self.failureException, failure
+        if not everythingIsUnicode(env):
+            raise self.failureException, "not everything is unicode \nWITH env(%s)" % (pprint.pformat(env), )
     except SyntaxError:
         # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
         # which will require the failure message to be updated
