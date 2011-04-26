@@ -1191,7 +1191,7 @@ class _FeedParserMixin:
         value = self.pop('width')
         try:
             value = int(value)
-        except:
+        except ValueError:
             value = 0
         if self.inimage:
             context = self._getContext()
