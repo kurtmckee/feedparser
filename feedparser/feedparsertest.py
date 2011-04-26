@@ -569,6 +569,7 @@ if __name__ == "__main__":
   else:
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
     wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
+    illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
     encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
     microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
 #  print allfiles
@@ -580,9 +581,10 @@ if __name__ == "__main__":
   httpcount = 5 + 15 + 2
   httpcount += len([f for f in allfiles if 'http' in f])
   httpcount += len([f for f in wellformedfiles if 'http' in f])
+  httpcount += len([f for f in illformedfiles if 'http' in f])
   httpcount += len([f for f in encodingfiles if 'http' in f])
   try:
-    for c, xmlfile in enumerate(allfiles + encodingfiles):
+    for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles):
       addTo = TestCase
       if xmlfile in encodingfiles:
         addTo = TestEncodings
