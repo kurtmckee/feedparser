@@ -3895,7 +3895,7 @@ class PprintSerializer(Serializer):
 if __name__ == '__main__':
     try:
         from optparse import OptionParser
-    except:
+    except ImportError:
         OptionParser = None
 
     if OptionParser:
