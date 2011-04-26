@@ -29,14 +29,8 @@ import feedparser, unittest, os, sys, glob, re, urllib, posixpath, time, codecs,
 if not feedparser._XML_AVAILABLE:
   sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
   sys.exit(1)
-# This line appears to be unnecessary
-#from UserDict import UserDict
 import SimpleHTTPServer, BaseHTTPServer
 from threading import *
-try:
-  dict
-except NameError:
-  from feedparser import dict
 
 _debug = 0
 try:
