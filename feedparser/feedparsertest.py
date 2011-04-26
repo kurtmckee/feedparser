@@ -230,6 +230,21 @@ class TestFeedParserDict(unittest.TestCase):
         self.d['description'] = 1
         self._check_key('summary')
         self._check_key('description')
+    def test_license(self):
+        self.d['links'] = []
+        try:
+            self.d['license']
+            self.assertTrue(False)
+        except KeyError:
+            pass
+        self.d['links'].append({'rel': 'license'})
+        try:
+            self.d['license']
+            self.assertTrue(False)
+        except KeyError:
+            pass
+        self.d['links'].append({'rel': 'license', 'href': 'http://dom.test/'})
+        self.assertEqual(self.d['license'], 'http://dom.test/')
 
 class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
