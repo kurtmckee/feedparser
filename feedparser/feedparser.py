@@ -509,7 +509,7 @@ class _FeedParserMixin:
     can_contain_dangerous_markup = ['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description']
     html_types = [u'text/html', u'application/xhtml+xml']
 
-    def __init__(self, baseuri=None, baselang=None, encoding='utf-8'):
+    def __init__(self, baseuri=None, baselang=None, encoding=u'utf-8'):
         if not self._matchnamespaces:
             for k, v in self.namespaces.items():
                 self._matchnamespaces[k.lower()] = v
@@ -904,7 +904,7 @@ class _FeedParserMixin:
 
         # address common error where people take data that is already
         # utf-8, presume that it is iso-8859-1, and re-encode it.
-        if self.encoding in ('utf-8', 'utf-8_INVALID_PYTHON_3') and isinstance(output, unicode):
+        if self.encoding in (u'utf-8', u'utf-8_INVALID_PYTHON_3') and isinstance(output, unicode):
             try:
                 output = output.encode('iso-8859-1').decode('utf-8')
             except (UnicodeEncodeError, UnicodeDecodeError):
@@ -1864,7 +1864,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
             bytes
             if bytes is str:
                 raise NameError
-            self.encoding = self.encoding + '_INVALID_PYTHON_3'
+            self.encoding = self.encoding + u'_INVALID_PYTHON_3'
         except NameError:
             if self.encoding and isinstance(data, unicode):
                 data = data.encode(self.encoding)
@@ -3510,11 +3510,14 @@ def _getCharacterEncoding(http_headers, xml_data):
         '''
         content_type = content_type or ''
         content_type, params = cgi.parse_header(content_type)
-        return content_type, params.get('charset', '').replace("'", '')
+        charset = params.get('charset', '').replace("'", "")
+        if not isinstance(charset, unicode):
+            charset = charset.decode('utf-8', 'ignore')
+        return content_type, charset
 
-    sniffed_xml_encoding = ''
-    xml_encoding = ''
-    true_encoding = ''
+    sniffed_xml_encoding = u''
+    xml_encoding = u''
+    true_encoding = u''
     http_content_type, http_encoding = _parseHTTPContentType(http_headers.get('content-type', http_headers.get('Content-type')))
     # Must sniff for non-ASCII-compatible character encodings before
     # searching for XML declaration.  This heuristic is defined in
@@ -3526,39 +3529,39 @@ def _getCharacterEncoding(http_headers, xml_data):
             xml_data = _ebcdic_to_ascii(xml_data)
         elif xml_data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
             # UTF-16BE
-            sniffed_xml_encoding = 'utf-16be'
+            sniffed_xml_encoding = u'utf-16be'
             xml_data = unicode(xml_data, 'utf-16be').encode('utf-8')
         elif (len(xml_data) >= 4) and (xml_data[:2] == _l2bytes([0xfe, 0xff])) and (xml_data[2:4] != _l2bytes([0x00, 0x00])):
             # UTF-16BE with BOM
-            sniffed_xml_encoding = 'utf-16be'
+            sniffed_xml_encoding = u'utf-16be'
             xml_data = unicode(xml_data[2:], 'utf-16be').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
             # UTF-16LE
-            sniffed_xml_encoding = 'utf-16le'
+            sniffed_xml_encoding = u'utf-16le'
             xml_data = unicode(xml_data, 'utf-16le').encode('utf-8')
         elif (len(xml_data) >= 4) and (xml_data[:2] == _l2bytes([0xff, 0xfe])) and (xml_data[2:4] != _l2bytes([0x00, 0x00])):
             # UTF-16LE with BOM
-            sniffed_xml_encoding = 'utf-16le'
+            sniffed_xml_encoding = u'utf-16le'
             xml_data = unicode(xml_data[2:], 'utf-16le').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
             # UTF-32BE
-            sniffed_xml_encoding = 'utf-32be'
+            sniffed_xml_encoding = u'utf-32be'
             xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
             # UTF-32LE
-            sniffed_xml_encoding = 'utf-32le'
+            sniffed_xml_encoding = u'utf-32le'
             xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
             # UTF-32BE with BOM
-            sniffed_xml_encoding = 'utf-32be'
+            sniffed_xml_encoding = u'utf-32be'
             xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
             # UTF-32LE with BOM
-            sniffed_xml_encoding = 'utf-32le'
+            sniffed_xml_encoding = u'utf-32le'
             xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
         elif xml_data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
             # UTF-8 with BOM
-            sniffed_xml_encoding = 'utf-8'
+            sniffed_xml_encoding = u'utf-8'
             xml_data = unicode(xml_data[3:], 'utf-8').encode('utf-8')
         else:
             # ASCII-compatible
@@ -3568,7 +3571,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         xml_encoding_match = None
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
-        if sniffed_xml_encoding and (xml_encoding in ('iso-10646-ucs-2', 'ucs-2', 'csunicode', 'iso-10646-ucs-4', 'ucs-4', 'csucs4', 'utf-16', 'utf-32', 'utf_16', 'utf_32', 'utf16', 'u16')):
+        if sniffed_xml_encoding and (xml_encoding in (u'iso-10646-ucs-2', u'ucs-2', u'csunicode', u'iso-10646-ucs-4', u'ucs-4', u'csucs4', u'utf-16', u'utf-32', u'utf_16', u'utf_32', u'utf16', u'u16')):
             xml_encoding = sniffed_xml_encoding
     acceptable_content_type = 0
     application_content_types = (u'application/xml', u'application/xml-dtd', u'application/xml-external-parsed-entity')
@@ -3576,21 +3579,21 @@ def _getCharacterEncoding(http_headers, xml_data):
     if (http_content_type in application_content_types) or \
        (http_content_type.startswith(u'application/') and http_content_type.endswith(u'+xml')):
         acceptable_content_type = 1
-        true_encoding = http_encoding or xml_encoding or 'utf-8'
+        true_encoding = http_encoding or xml_encoding or u'utf-8'
     elif (http_content_type in text_content_types) or \
          (http_content_type.startswith(u'text/')) and http_content_type.endswith(u'+xml'):
         acceptable_content_type = 1
-        true_encoding = http_encoding or 'us-ascii'
+        true_encoding = http_encoding or u'us-ascii'
     elif http_content_type.startswith(u'text/'):
-        true_encoding = http_encoding or 'us-ascii'
+        true_encoding = http_encoding or u'us-ascii'
     elif http_headers and (not (http_headers.has_key('content-type') or http_headers.has_key('Content-type'))):
-        true_encoding = xml_encoding or 'iso-8859-1'
+        true_encoding = xml_encoding or u'iso-8859-1'
     else:
-        true_encoding = xml_encoding or 'utf-8'
+        true_encoding = xml_encoding or u'utf-8'
     # some feeds claim to be gb2312 but are actually gb18030.
     # apparently MSIE and Firefox both do the following switch:
-    if true_encoding.lower() == 'gb2312':
-        true_encoding = 'gb18030'
+    if true_encoding.lower() == u'gb2312':
+        true_encoding = u'gb18030'
     return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type
 
 def _toUTF8(data, encoding):
@@ -3796,28 +3799,31 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             else:
                 known_encoding = use_strict_parser = 1
     # if still no luck and we haven't tried utf-8 yet, try that
-    if (not known_encoding) and ('utf-8' not in tried_encodings):
-        tried_encodings.append('utf-8')
+    if (not known_encoding) and (u'utf-8' not in tried_encodings):
+        proposed_encoding = u'utf-8'
+        tried_encodings.append(proposed_encoding)
         try:
-            data = _toUTF8(data, 'utf-8')
+            data = _toUTF8(data, proposed_encoding)
         except UnicodeDecodeError:
             pass
         else:
             known_encoding = use_strict_parser = 1
     # if still no luck and we haven't tried windows-1252 yet, try that
-    if (not known_encoding) and ('windows-1252' not in tried_encodings):
-        tried_encodings.append('windows-1252')
+    if (not known_encoding) and (u'windows-1252' not in tried_encodings):
+        proposed_encoding = u'windows-1252'
+        tried_encodings.append(proposed_encoding)
         try:
-            data = _toUTF8(data, 'windows-1252')
+            data = _toUTF8(data, proposed_encoding)
         except UnicodeDecodeError:
             pass
         else:
             known_encoding = use_strict_parser = 1
     # if still no luck and we haven't tried iso-8859-2 yet, try that.
-    if (not known_encoding) and ('iso-8859-2' not in tried_encodings):
-        tried_encodings.append('iso-8859-2')
+    if (not known_encoding) and (u'iso-8859-2' not in tried_encodings):
+        proposed_encoding = u'iso-8859-2'
+        tried_encodings.append(proposed_encoding)
         try:
-            data = _toUTF8(data, 'iso-8859-2')
+            data = _toUTF8(data, proposed_encoding)
         except UnicodeDecodeError:
             pass
         else:
@@ -3829,7 +3835,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             'document encoding unknown, I tried ' + \
             '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' % \
             (result['encoding'], xml_encoding))
-        result['encoding'] = ''
+        result['encoding'] = u''
     elif proposed_encoding != result['encoding']:
         result['bozo'] = 1
         result['bozo_exception'] = CharacterEncodingOverride( \
