@@ -1,8 +1,8 @@
 <!--
-Description: parsed item expirationDate
+Description: item expirationDate with multiple values
 Expect:      not bozo and entries[0]['expired_parsed'] == (2004, 1, 1, 19, 48, 21, 3, 1, 0)
 -->
-<rss version="2.0">
+<rss version="0.93">
 <channel>
 <item>
 <expirationDate>Wed, 01 Dec 2010 19:48:21 GMT</expirationDate>

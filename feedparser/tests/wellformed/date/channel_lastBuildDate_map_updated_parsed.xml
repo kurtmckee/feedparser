@@ -1,5 +1,5 @@
 <!--
-Description: rss channel lastbuilddate
+Description: channel lastBuildDate parsed
 Expect: not bozo and feed['updated_parsed'] == (2002, 9, 7, 0, 0, 1, 5, 250, 0)
 -->
 <rss version="2.0">
