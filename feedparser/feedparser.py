@@ -3782,13 +3782,13 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             known_encoding = use_strict_parser = 1
     # if still no luck and we haven't tried windows-1252 yet, try that
     if (not known_encoding) and ('windows-1252' not in tried_encodings):
+        tried_encodings.append('windows-1252')
         try:
-            proposed_encoding = 'windows-1252'
-            tried_encodings.append(proposed_encoding)
-            data = _toUTF8(data, proposed_encoding)
-            known_encoding = use_strict_parser = 1
-        except:
+            data = _toUTF8(data, 'windows-1252')
+        except UnicodeDecodeError:
             pass
+        else:
+            known_encoding = use_strict_parser = 1
     # if still no luck and we haven't tried iso-8859-2 yet, try that.
     if (not known_encoding) and ('iso-8859-2' not in tried_encodings):
         try:
