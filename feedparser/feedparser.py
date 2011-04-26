@@ -1891,8 +1891,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
             strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs])
             if self.encoding:
                 try:
-                    strattrs=strattrs.encode(self.encoding)
-                except:
+                    strattrs = strattrs.encode(self.encoding)
+                except UnicodeEncodeError:
                     pass
         if tag in self.elements_no_end_tag:
             self.pieces.append('<%(tag)s%(strattrs)s />' % locals())
