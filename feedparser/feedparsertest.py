@@ -26,6 +26,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE."""
 
 import feedparser, unittest, os, sys, glob, re, urllib, posixpath, codecs, pprint
+import operator
 if not feedparser._XML_AVAILABLE:
   sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
   sys.exit(1)
@@ -212,7 +213,6 @@ def buildTestCase(xmlfile, description, method, evalString):
 
 if __name__ == "__main__":
   if sys.argv[1:]:
-    import operator
     allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
     sys.argv = [sys.argv[0]] #+ sys.argv[2:]
   else:
