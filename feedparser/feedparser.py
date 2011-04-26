@@ -242,7 +242,7 @@ except ImportError:
     pass
 try:
     import iconv_codec
-except:
+except ImportError:
     pass
 
 # chardet library auto-detects character encodings
