@@ -269,23 +269,23 @@ class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe): pass
 class NonXMLContentType(ThingsNobodyCaresAboutButMe): pass
 class UndeclaredNamespace(Exception): pass
 
-SUPPORTED_VERSIONS = {'': 'unknown',
-                      'rss090': 'RSS 0.90',
-                      'rss091n': 'RSS 0.91 (Netscape)',
-                      'rss091u': 'RSS 0.91 (Userland)',
-                      'rss092': 'RSS 0.92',
-                      'rss093': 'RSS 0.93',
-                      'rss094': 'RSS 0.94',
-                      'rss20': 'RSS 2.0',
-                      'rss10': 'RSS 1.0',
-                      'rss': 'RSS (unknown version)',
-                      'atom01': 'Atom 0.1',
-                      'atom02': 'Atom 0.2',
-                      'atom03': 'Atom 0.3',
-                      'atom10': 'Atom 1.0',
-                      'atom': 'Atom (unknown version)',
-                      'cdf': 'CDF',
-                      'hotrss': 'Hot RSS'
+SUPPORTED_VERSIONS = {'': u'unknown',
+                      'rss090': u'RSS 0.90',
+                      'rss091n': u'RSS 0.91 (Netscape)',
+                      'rss091u': u'RSS 0.91 (Userland)',
+                      'rss092': u'RSS 0.92',
+                      'rss093': u'RSS 0.93',
+                      'rss094': u'RSS 0.94',
+                      'rss20': u'RSS 2.0',
+                      'rss10': u'RSS 1.0',
+                      'rss': u'RSS (unknown version)',
+                      'atom01': u'Atom 0.1',
+                      'atom02': u'Atom 0.2',
+                      'atom03': u'Atom 0.3',
+                      'atom10': u'Atom 1.0',
+                      'atom': u'Atom (unknown version)',
+                      'cdf': u'CDF',
+                      'hotrss': u'Hot RSS'
                       }
 
 class FeedParserDict(dict):
@@ -516,7 +516,7 @@ class _FeedParserMixin:
         self.feeddata = FeedParserDict() # feed-level data
         self.encoding = encoding # character encoding
         self.entries = [] # list of entry-level data
-        self.version = '' # feed type/version, see SUPPORTED_VERSIONS
+        self.version = u'' # feed type/version, see SUPPORTED_VERSIONS
         self.namespacesInUse = {} # dictionary of namespaces defined by the feed
 
         # the following are used internally to track state;
@@ -768,11 +768,11 @@ class _FeedParserMixin:
     def trackNamespace(self, prefix, uri):
         loweruri = uri.lower()
         if (prefix, loweruri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
-            self.version = 'rss090'
+            self.version = u'rss090'
         if loweruri == 'http://purl.org/rss/1.0/' and not self.version:
-            self.version = 'rss10'
+            self.version = u'rss10'
         if loweruri == 'http://www.w3.org/2005/atom' and not self.version:
-            self.version = 'atom10'
+            self.version = u'atom10'
         if loweruri.find('backend.userland.com/rss') <> -1:
             # match any backend.userland.com namespace
             uri = 'http://backend.userland.com/rss'
@@ -803,7 +803,7 @@ class _FeedParserMixin:
 
         element, expectingText, pieces = self.elementstack.pop()
 
-        if self.version == 'atom10' and self.contentparams.get('type','text') == 'application/xhtml+xml':
+        if self.version == u'atom10' and self.contentparams.get('type','text') == 'application/xhtml+xml':
             # remove enclosing child element, but only if it is a <div> and
             # only if all the remaining content is nested underneath it.
             # This means that the divs would be retained in the following:
@@ -858,7 +858,7 @@ class _FeedParserMixin:
 
         # some feed formats require consumers to guess
         # whether the content is html or plain text
-        if not self.version.startswith('atom') and self.contentparams.get('type') == 'text/plain':
+        if not self.version.startswith(u'atom') and self.contentparams.get('type') == 'text/plain':
             if self.lookslikehtml(output):
                 self.contentparams['type'] = 'text/html'
 
@@ -1044,25 +1044,25 @@ class _FeedParserMixin:
             context.setdefault(key, value)
 
     def _start_rss(self, attrsD):
-        versionmap = {'0.91': 'rss091u',
-                      '0.92': 'rss092',
-                      '0.93': 'rss093',
-                      '0.94': 'rss094'}
+        versionmap = {'0.91': u'rss091u',
+                      '0.92': u'rss092',
+                      '0.93': u'rss093',
+                      '0.94': u'rss094'}
         #If we're here then this is an RSS feed.
         #If we don't have a version or have a version that starts with something
         #other than RSS then there's been a mistake. Correct it.
-        if not self.version or not self.version.startswith('rss'):
+        if not self.version or not self.version.startswith(u'rss'):
             attr_version = attrsD.get('version', '')
             version = versionmap.get(attr_version)
             if version:
                 self.version = version
             elif attr_version.startswith('2.'):
-                self.version = 'rss20'
+                self.version = u'rss20'
             else:
-                self.version = 'rss'
+                self.version = u'rss'
 
     def _start_dlhottitles(self, attrsD):
-        self.version = 'hotrss'
+        self.version = u'hotrss'
 
     def _start_channel(self, attrsD):
         self.infeed = 1
@@ -1081,16 +1081,16 @@ class _FeedParserMixin:
 
     def _start_feed(self, attrsD):
         self.infeed = 1
-        versionmap = {'0.1': 'atom01',
-                      '0.2': 'atom02',
-                      '0.3': 'atom03'}
+        versionmap = {'0.1': u'atom01',
+                      '0.2': u'atom02',
+                      '0.3': u'atom03'}
         if not self.version:
             attr_version = attrsD.get('version')
             version = versionmap.get(attr_version)
             if version:
                 self.version = version
             else:
-                self.version = 'atom'
+                self.version = u'atom'
 
     def _end_channel(self):
         self.infeed = 0
@@ -3641,7 +3641,7 @@ def _stripDoctype(data):
     doctype_results = doctype_pattern.findall(head)
     doctype = doctype_results and doctype_results[0] or _s2bytes('')
     if doctype.lower().count(_s2bytes('netscape')):
-        version = 'rss091n'
+        version = u'rss091n'
     else:
         version = None
 
@@ -3757,7 +3757,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
 
     # if server sent 304, we're done
     if result.get('status', 0) == 304:
-        result['version'] = ''
+        result['version'] = u''
         result['debug_message'] = 'The feed has not changed since you last checked, ' + \
             'so the server sent no data.  This is a feature, not a bug!'
         return result
