@@ -221,6 +221,77 @@ class TestFeedParserDict(unittest.TestCase):
         self.assertTrue(not hasattr(self.d, 'license'))
         self.assertTrue('categories' not in self.d)
         self.assertTrue(not hasattr(self.d, 'categories'))
+    def test_neutral(self):
+        self.d['a'] = 1
+        self.assertTrue('a' in self.d)
+        self.assertTrue(hasattr(self.d, 'a'))
+        self.assertEqual(self.d['a'], 1)
+        self.assertEqual(self.d.a, 1)
+    def test_single_mapping_target(self):
+        # set the target key
+        self.d['id'] = 1
+        # check the target key
+        self.assertTrue('id' in self.d)
+        self.assertTrue(hasattr(self.d, 'id'))
+        self.assertEqual(self.d['id'], 1)
+        self.assertEqual(self.d.id, 1)
+        # check the mapped key
+        self.assertTrue('guid' in self.d)
+        self.assertTrue(hasattr(self.d, 'guid'))
+        self.assertEqual(self.d['guid'], 1)
+        self.assertEqual(self.d.guid, 1)
+    def test_single_mapping_target(self):
+        # set the mapped key
+        self.d['guid'] = 1
+        # check the target key
+        self.assertTrue('id' in self.d)
+        self.assertTrue(hasattr(self.d, 'id'))
+        self.assertEqual(self.d['id'], 1)
+        self.assertEqual(self.d.id, 1)
+        # check the mapped key
+        self.assertTrue('guid' in self.d)
+        self.assertTrue(hasattr(self.d, 'guid'))
+        self.assertEqual(self.d['guid'], 1)
+        self.assertEqual(self.d.guid, 1)
+    def test_multiple_mapping_target_1(self):
+        # set one of the target keys
+        self.d['summary'] = 1
+        # check the target key
+        self.assertTrue('summary' in self.d)
+        self.assertTrue(hasattr(self.d, 'summary'))
+        self.assertEqual(self.d['summary'], 1)
+        self.assertEqual(self.d.summary, 1)
+        # check the mapped key
+        self.assertTrue('description' in self.d)
+        self.assertTrue(hasattr(self.d, 'description'))
+        self.assertEqual(self.d['description'], 1)
+        self.assertEqual(self.d.description, 1)
+    def test_multiple_mapping_target_2(self):
+        # set another target key
+        self.d['subtitle'] = 1
+        # check the target key
+        self.assertTrue('subtitle' in self.d)
+        self.assertTrue(hasattr(self.d, 'subtitle'))
+        self.assertEqual(self.d['subtitle'], 1)
+        self.assertEqual(self.d.subtitle, 1)
+        # check the mapped key
+        self.assertTrue('description' in self.d)
+        self.assertTrue(hasattr(self.d, 'description'))
+        self.assertEqual(self.d['description'], 1)
+        self.assertEqual(self.d.description, 1)
+    def test_multiple_mapping_mapped_key(self):
+        # finally, test by setting the mapped key
+        self.d['description'] = 1
+        # check the first target key
+        self.assertTrue('summary' in self.d)
+        self.assertTrue(hasattr(self.d, 'summary'))
+        self.assertEqual(self.d['summary'], 1)
+        self.assertEqual(self.d.summary, 1)
+        # check the mapped key
+        self.assertTrue('description' in self.d)
+        self.assertTrue(hasattr(self.d, 'description'))
+        self.assertEqual(self.d['description'], 1)
+        self.assertEqual(self.d.description, 1)
 
 class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
