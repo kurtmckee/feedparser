@@ -227,6 +227,7 @@ if __name__ == "__main__":
   httpd = None
   if httpfiles:
     httpd = FeedParserTestServer(len(httpfiles))
+    httpd.daemon = True
     httpd.start()
   try:
     c = 1
