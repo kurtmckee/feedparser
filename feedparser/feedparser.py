@@ -3762,14 +3762,15 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             break
     # if no luck and we have auto-detection library, try that
     if (not known_encoding) and chardet:
-        try:
-            proposed_encoding = chardet.detect(data)['encoding']
-            if proposed_encoding and (proposed_encoding not in tried_encodings):
-                tried_encodings.append(proposed_encoding)
+        proposed_encoding = chardet.detect(data)['encoding']
+        if proposed_encoding and (proposed_encoding not in tried_encodings):
+            tried_encodings.append(proposed_encoding)
+            try:
                 data = _toUTF8(data, proposed_encoding)
+            except (UnicodeDecodeError, LookupError):
+                pass
+            else:
                 known_encoding = use_strict_parser = 1
-        except:
-            pass
     # if still no luck and we haven't tried utf-8 yet, try that
     if (not known_encoding) and ('utf-8' not in tried_encodings):
         try:
