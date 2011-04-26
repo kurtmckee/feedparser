@@ -231,6 +231,27 @@ for func, items in date_tests.iteritems():
         uniqfunc = make_date_test(func, dtstring, dttuple)
         setattr(TestDateParsers, 'test_%s_%02i' % (func.__name__, i), uniqfunc)
 
+
+class TestHTMLGuessing(unittest.TestCase):
+    def _mktest(text, expect, doc):
+        def fn(self):
+            value = bool(feedparser._FeedParserMixin.lookslikehtml(text))
+            self.assertEqual(value, expect)
+        fn.__doc__ = doc
+        return fn
+
+    test_text_1 = _mktest(u'plain text', False, u'plain text')
+    test_text_2 = _mktest(u'2 < 3', False, u'plain text with angle bracket')
+    test_html_1 = _mktest(u'<a href="">a</a>', True, u'anchor tag')
+    test_html_2 = _mktest(u'<i>i</i>', True, u'italics tag')
+    test_html_3 = _mktest(u'<b>b</b>', True, u'bold tag')
+    test_html_4 = _mktest(u'<code>', False, u'allowed tag, no end tag')
+    test_html_5 = _mktest(u'<rss> .. </rss>', False, u'disallowed tag')
+    test_entity_1 = _mktest(u'AT&T', False, u'corporation name')
+    test_entity_2 = _mktest(u'&copy;', True, u'named entity reference')
+    test_entity_3 = _mktest(u'&#169;', True, u'numeric entity reference')
+    test_entity_4 = _mktest(u'&#xA9;', True, u'hex numeric entity reference')
+
 #---------- additional api unit tests, not backed by files
 
 class TestBuildRequest(unittest.TestCase):
@@ -353,6 +374,7 @@ if __name__ == "__main__":
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
