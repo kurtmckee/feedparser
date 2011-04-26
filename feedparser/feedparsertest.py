@@ -166,6 +166,32 @@ class TestMicroformats(unittest.TestCase):
       if not eval(evalString, env):
         raise self.failureException, failure
 
+class TestOpenResource(unittest.TestCase):
+    def test_fileobj(self):
+        r = feedparser._open_resource(sys.stdin, '', '', '', '', [], {})
+        self.assertTrue(r is sys.stdin)
+    def test_stdin(self):
+        r = feedparser._open_resource('-', '', '', '', '', [], {})
+        self.assertTrue(r is sys.stdin)
+    def test_feed(self):
+        f = feedparser.parse(u'feed://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.href, u'http://localhost:8097/tests/http/target.xml')
+    def test_feed_http(self):
+        f = feedparser.parse(u'feed:http://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.href, u'http://localhost:8097/tests/http/target.xml')
+    def test_string(self):
+        s = '<feed><item><title>text</title></item></feed>'
+        r = feedparser._open_resource(s, '', '', '', '', [], {})
+        self.assertEqual(s.encode('utf-8'), r.read())
+    def test_unicode_1(self):
+        s = u'<feed><item><title>text</title></item></feed>'
+        r = feedparser._open_resource(s, '', '', '', '', [], {})
+        self.assertEqual(s.encode('utf-8'), r.read())
+    def test_unicode_2(self):
+        s = u'<feed><item><title>t\u00e9xt</title></item></feed>'
+        r = feedparser._open_resource(s, '', '', '', '', [], {})
+        self.assertEqual(s.encode('utf-8'), r.read())
+
 class TestConvertToIdn(unittest.TestCase):
     # this is the greek test domain
     hostname = u'\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
@@ -471,7 +497,8 @@ if __name__ == "__main__":
   httpd = None
   # there are several compression test cases that must be accounted for
   # as well as a number of http status tests that redirect to a target
-  httpcount = 5 + 15
+  # and a few `_open_resource`-related tests
+  httpcount = 5 + 15 + 2
   httpcount += len([f for f in allfiles if 'http' in f])
   httpcount += len([f for f in encodingfiles if 'http' in f])
   try:
@@ -516,6 +543,7 @@ if __name__ == "__main__":
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure

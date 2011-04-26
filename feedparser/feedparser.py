@@ -2917,7 +2917,9 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         pass
 
     # treat url_file_stream_or_string as string
-    return _StringIO(str(url_file_stream_or_string))
+    if isinstance(url_file_stream_or_string, unicode):
+        return _StringIO(url_file_stream_or_string.encode('utf-8'))
+    return _StringIO(url_file_stream_or_string)
 
 def _convert_to_idn(url):
     """Convert a URL to IDN notation"""
