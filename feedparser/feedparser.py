@@ -3725,7 +3725,10 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             if modified:
                 result['modified'] = _parse_date(modified)
     if hasattr(f, 'url'):
-        result['href'] = f.url
+        if not isinstance(f.url, unicode):
+            result['href'] = f.url.decode('utf-8', 'ignore')
+        else:
+            result['href'] = f.url
         result['status'] = 200
     if hasattr(f, 'status'):
         result['status'] = f.status
