@@ -3524,7 +3524,7 @@ def _getCharacterEncoding(http_headers, xml_data):
             # ASCII-compatible
             pass
         xml_encoding_match = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>')).match(xml_data)
-    except:
+    except UnicodeDecodeError:
         xml_encoding_match = None
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
