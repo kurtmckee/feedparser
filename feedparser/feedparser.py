@@ -3200,7 +3200,7 @@ def _parse_date_greek(dateString):
     try:
         wday = _greek_wdays[m.group(1)]
         month = _greek_months[m.group(3)]
-    except:
+    except KeyError:
         return
     rfc822date = '%(wday)s, %(day)s %(month)s %(year)s %(hour)s:%(minute)s:%(second)s %(zonediff)s' % \
                  {'wday': wday, 'day': m.group(2), 'month': month, 'year': m.group(4),\
