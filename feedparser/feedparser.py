@@ -175,10 +175,8 @@ except ImportError:
 # versions of FreeBSD), feedparser will quietly fall back on regex-based parsing.
 try:
     import xml.sax
-    xml.sax.make_parser(PREFERRED_XML_PARSERS) # test for valid parsers
     from xml.sax.saxutils import escape as _xmlescape
-    _XML_AVAILABLE = 1
-except:
+except ImportError:
     _XML_AVAILABLE = 0
     def _xmlescape(data,entities={}):
         data = data.replace('&', '&amp;')
@@ -187,6 +185,13 @@ except:
         for char, entity in entities:
             data = data.replace(char, entity)
         return data
+else:
+    try:
+        xml.sax.make_parser(PREFERRED_XML_PARSERS) # test for valid parsers
+    except xml.sax.SAXReaderNotAvailable:
+        _XML_AVAILABLE = 0
+    else:
+        _XML_AVAILABLE = 1
 
 # sgmllib is not available by default in Python 3; if the end user doesn't have
 # it available then we'll lose illformed XML parsing, content santizing, and
