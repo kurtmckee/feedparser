@@ -1,8 +1,0 @@
-<!--
-Description: RSS version 1.0
-Expect:      bozo and version == 'rss10'
--->
-<rdf:RDF xmlns:rss="http://purl.org/rss/1.0/">
-<rss:channel rdf:about="http://www.osswatch.ac.uk/rss/summary.rss">
-</rss:channel>
-</rdf:RDF
