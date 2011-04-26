@@ -294,18 +294,7 @@ SUPPORTED_VERSIONS = {'': 'unknown',
                       'hotrss': 'Hot RSS'
                       }
 
-try:
-    UserDict = dict
-except NameError:
-    # Python 2.1 does not have dict
-    from UserDict import UserDict
-    def dict(aList):
-        rc = {}
-        for k, v in aList:
-            rc[k] = v
-        return rc
-
-class FeedParserDict(UserDict):
+class FeedParserDict(dict):
     keymap = {'channel': 'feed',
               'items': 'entries',
               'guid': 'id',
@@ -323,24 +312,24 @@ class FeedParserDict(UserDict):
               'tagline_detail': 'subtitle_detail'}
     def __getitem__(self, key):
         if key == 'category':
-            return UserDict.__getitem__(self, 'tags')[0]['term']
+            return dict.__getitem__(self, 'tags')[0]['term']
         if key == 'enclosures':
             norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
-            return [norel(link) for link in UserDict.__getitem__(self, 'links') if link['rel']=='enclosure']
+            return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']=='enclosure']
         if key == 'license':
-            for link in UserDict.__getitem__(self, 'links'):
+            for link in dict.__getitem__(self, 'links'):
                 if link['rel']=='license' and link.has_key('href'):
                     return link['href']
         if key == 'categories':
-            return [(tag['scheme'], tag['term']) for tag in UserDict.__getitem__(self, 'tags')]
+            return [(tag['scheme'], tag['term']) for tag in dict.__getitem__(self, 'tags')]
         realkey = self.keymap.get(key, key)
         if type(realkey) == types.ListType:
             for k in realkey:
-                if UserDict.__contains__(self, k):
-                    return UserDict.__getitem__(self, k)
-        if UserDict.__contains__(self, key):
-            return UserDict.__getitem__(self, key)
-        return UserDict.__getitem__(self, realkey)
+                if dict.__contains__(self, k):
+                    return dict.__getitem__(self, k)
+        if dict.__contains__(self, key):
+            return dict.__getitem__(self, key)
+        return dict.__getitem__(self, realkey)
 
     def __setitem__(self, key, value):
         for k in self.keymap.keys():
@@ -348,7 +337,7 @@ class FeedParserDict(UserDict):
                 key = self.keymap[k]
                 if type(key) == types.ListType:
                     key = key[0]
-        return UserDict.__setitem__(self, key, value)
+        return dict.__setitem__(self, key, value)
 
     def get(self, key, default=None):
         if self.has_key(key):
@@ -363,7 +352,7 @@ class FeedParserDict(UserDict):
         
     def has_key(self, key):
         try:
-            return hasattr(self, key) or UserDict.__contains__(self, key)
+            return hasattr(self, key) or dict.__contains__(self, key)
         except AttributeError:
             return False
     # This alias prevents the 2to3 tool from changing the semantics of the
