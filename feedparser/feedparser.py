@@ -826,7 +826,7 @@ class _FeedParserMixin:
 
         # Ensure each piece is a str for Python 3
         for (i, v) in enumerate(pieces):
-            if not isinstance(v, basestring):
+            if not isinstance(v, unicode):
                 pieces[i] = v.decode('utf-8')
 
         output = ''.join(pieces)
@@ -1277,7 +1277,7 @@ class _FeedParserMixin:
             name = detail.get('name')
             email = detail.get('email')
             if name and email:
-                context[key] = '%s (%s)' % (name, email)
+                context[key] = u'%s (%s)' % (name, email)
             elif name:
                 context[key] = name
             elif email:
@@ -1286,18 +1286,18 @@ class _FeedParserMixin:
             author, email = context.get(key), None
             if not author:
                 return
-            emailmatch = re.search(r'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))(\?subject=\S+)?''', author)
+            emailmatch = re.search(ur'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))(\?subject=\S+)?''', author)
             if emailmatch:
                 email = emailmatch.group(0)
                 # probably a better way to do the following, but it passes all the tests
-                author = author.replace(email, '')
-                author = author.replace('()', '')
-                author = author.replace('<>', '')
-                author = author.replace('&lt;&gt;', '')
+                author = author.replace(email, u'')
+                author = author.replace(u'()', u'')
+                author = author.replace(u'<>', u'')
+                author = author.replace(u'&lt;&gt;', u'')
                 author = author.strip()
-                if author and (author[0] == '('):
+                if author and (author[0] == u'('):
                     author = author[1:]
-                if author and (author[-1] == ')'):
+                if author and (author[-1] == u')'):
                     author = author[:-1]
                 author = author.strip()
             if author or email:
