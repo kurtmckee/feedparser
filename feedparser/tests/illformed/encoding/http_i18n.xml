@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+Note:         text/xml defaults to us-ascii, in conflict with the XML declaration of utf-8
 Header:       Content-type: text/xml
-Description:  text/xml with no charset (this one is harder than the others)
-Expect:       bozo
+Description:  Content-type with no charset (text/xml defaults to us-ascii)
+Expect:       bozo and isinstance(bozo_exception, feedparser.CharacterEncodingOverride)
 -->
 
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
   <title>Iñtërnâtiônàlizætiøn</title>
-  <link rel='alternate' type='text/html' href='http://example.com/'/>
-  <modified>2004-06-02T19:07:55-04:00</modified>
-  <tagline>If your parser thinks this is well-formed, your parser is broken.</tagline>
 </feed>
