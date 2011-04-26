@@ -154,7 +154,7 @@ try:
 except ImportError:
     try:
         from cStringIO import StringIO as _StringIO
-    except:
+    except ImportError:
         from StringIO import StringIO as _StringIO
 
 # ---------- optional modules (feedparser will work without these, but with reduced functionality) ----------
