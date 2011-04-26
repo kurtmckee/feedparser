@@ -197,9 +197,13 @@ class TestFeedParserDict(unittest.TestCase):
         # test one-to-one target key
         self.assertTrue('entries' not in self.d)
         self.assertTrue(not hasattr(self.d, 'entries'))
+        self.assertTrue('id' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'id'))
         # test one-to-one mapped key
         self.assertTrue('items' not in self.d)
         self.assertTrue(hasattr(self.d, 'items')) # dict.items() exists
+        self.assertTrue('guid' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'guid'))
         # test one-to-many target keys
         self.assertTrue('summary' not in self.d)
         self.assertTrue(not hasattr(self.d, 'summary'))
@@ -208,6 +212,15 @@ class TestFeedParserDict(unittest.TestCase):
         # test one-to-many mapped key
         self.assertTrue('description' not in self.d)
         self.assertTrue(not hasattr(self.d, 'description'))
+        # test helper keys
+        self.assertTrue('category' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'category'))
+        self.assertTrue('enclosures' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'enclosures'))
+        self.assertTrue('license' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'license'))
+        self.assertTrue('categories' not in self.d)
+        self.assertTrue(not hasattr(self.d, 'categories'))
 
 class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
