@@ -868,8 +868,11 @@ class _FeedParserMixin:
         if not self.contentparams.get('base64', 0):
             output = self.decodeEntities(element, output)
 
-        if self.lookslikehtml(output):
-            self.contentparams['type']='text/html'
+        # some feed formats require consumers to guess
+        # whether the content is html or plain text
+        if not self.version.startswith('atom') and self.contentparams.get('type') == 'text/plain':
+            if self.lookslikehtml(output):
+                self.contentparams['type'] = 'text/html'
 
         # remove temporary cruft from contentparams
         try:
@@ -993,10 +996,8 @@ class _FeedParserMixin:
     # text, but this is routinely ignored.  This is an attempt to detect
     # the most common cases.  As false positives often result in silent
     # data loss, this function errs on the conservative side.
-    def lookslikehtml(self, s):
-        if self.version.startswith('atom'): return
-        if self.contentparams.get('type','text/html') != 'text/plain': return
-
+    @staticmethod
+    def lookslikehtml(s):
         # must have a close tag or a entity reference to qualify
         if not (re.search(r'</(\w+)>',s) or re.search("&#?\w+;",s)): return
 
