@@ -222,11 +222,9 @@ if __name__ == "__main__":
   httpd = None
   httpcount = len([f for f in allfiles if 'http' in f])
   try:
-    c = 1
-    for xmlfile in allfiles:
+    for c, xmlfile in enumerate(allfiles):
       method, description, evalString, skipUnless = getDescription(xmlfile)
       testName = 'test_%06d' % c
-      c += 1
       ishttp = 'http' in xmlfile
       try:
         if not eval(skipUnless): raise Exception
