@@ -2898,13 +2898,8 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
                     auth = base64.standard_b64encode(user_passwd).strip()
 
         # iri support
-        try:
-            if isinstance(url_file_stream_or_string,unicode):
-                url_file_stream_or_string = url_file_stream_or_string.encode('idna').decode('utf-8')
-            else:
-                url_file_stream_or_string = url_file_stream_or_string.decode('utf-8').encode('idna').decode('utf-8')
-        except UnicodeError:
-            pass
+        if isinstance(url_file_stream_or_string, unicode):
+            url_file_stream_or_string = _convert_to_idn(url_file_stream_or_string)
 
         # try to open with urllib2 (to use optional headers)
         request = _build_urllib2_request(url_file_stream_or_string, agent, etag, modified, referrer, auth, request_headers)
@@ -2923,6 +2918,30 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
 
     # treat url_file_stream_or_string as string
     return _StringIO(str(url_file_stream_or_string))
+
+def _convert_to_idn(url):
+    """Convert a URL to IDN notation"""
+    # this function should only be called with a unicode string
+    # strategy: if the host cannot be encoded in ascii, then
+    # it'll be necessary to encode it in idn form
+    parts = list(urlparse.urlsplit(url))
+    try:
+        parts[1].encode('ascii')
+    except UnicodeEncodeError:
+        # the url needs to be converted to idn notation
+        host = parts[1].rsplit(':', 1)
+        newhost = []
+        port = u''
+        if len(host) == 2:
+            port = host.pop()
+        for h in host[0].split('.'):
+            newhost.append(h.encode('idna').decode('utf-8'))
+        parts[1] = '.'.join(newhost)
+        if port:
+            parts[1] += ':' + port
+        return urlparse.urlunsplit(parts)
+    else:
+        return url
 
 def _build_urllib2_request(url, agent, etag, modified, referrer, auth, request_headers):
     request = urllib2.Request(url)

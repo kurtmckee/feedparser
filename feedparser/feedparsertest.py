@@ -166,6 +166,20 @@ class TestMicroformats(unittest.TestCase):
       if not eval(evalString, env):
         raise self.failureException, failure
 
+class TestConvertToIdn(unittest.TestCase):
+    # this is the greek test domain
+    hostname = u'\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
+    hostname += u'.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
+    def test_control(self):
+        r = feedparser._convert_to_idn(u'http://example.test/')
+        self.assertEqual(r, u'http://example.test/')
+    def test_idn(self):
+        r = feedparser._convert_to_idn(u'http://%s/' % (self.hostname,))
+        self.assertEqual(r, u'http://xn--hxajbheg2az3al.xn--jxalpdlp/')
+    def test_port(self):
+        r = feedparser._convert_to_idn(u'http://%s:8080/' % (self.hostname,))
+        self.assertEqual(r, u'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
+
 class TestCompression(unittest.TestCase):
     def test_gzip_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
@@ -500,6 +514,7 @@ if __name__ == "__main__":
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
