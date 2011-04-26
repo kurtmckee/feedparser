@@ -245,7 +245,13 @@ if __name__ == "__main__":
       httpd.daemon = True
       httpd.start()
       httpd.ready.wait()
-    unittest.main()
+    testsuite = unittest.TestSuite()
+    testloader = unittest.TestLoader()
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
+    testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
+
+    # Return 0 if successful, 1 if there was a failure
+    sys.exit(not testresults.wasSuccessful())
   finally:
     if httpd:
       if httpd.requests:
