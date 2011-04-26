@@ -25,13 +25,6 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE."""
 
-try:
-  import new
-except:
-  class New:
-    def instancemethod(self, a, b, c):
-      return a
-  new = New()
 import feedparser, unittest, os, sys, glob, re, urllib, string, posixpath, time, codecs, pprint
 try:
   string.strip
@@ -260,8 +253,7 @@ if __name__ == "__main__":
       if ishttp:
         xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
       testFunc = buildTestCase(xmlfile, description, method, evalString)
-      instanceMethod = new.instancemethod(testFunc, None, TestCase)
-      setattr(TestCase, testName, instanceMethod)
+      setattr(TestCase, testName, testFunc)
     if feedparser._debug and not _debug:
       sys.stderr.write('\nWarning: feedparser._debug is on, turning it off temporarily\n\n')
       feedparser._debug = 0
