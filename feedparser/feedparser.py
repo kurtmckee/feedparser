@@ -432,7 +432,7 @@ _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
     uri = _urifixer.sub(r'\1\3', uri)
     #try:
-    return urlparse.urljoin(base, uri)
+    return urlparse.urljoin(base, uri) or u''
     #except:
     #    uri = urlparse.urlunparse([urllib.quote(part) for part in urlparse.urlparse(uri)])
     #    return urlparse.urljoin(base, uri)
@@ -537,7 +537,7 @@ class _FeedParserMixin:
         self.elementstack = []
         self.basestack = []
         self.langstack = []
-        self.baseuri = baseuri or ''
+        self.baseuri = baseuri or u''
         self.lang = baselang or None
         self.svgOK = 0
         self.hasTitle = 0
@@ -784,7 +784,7 @@ class _FeedParserMixin:
             self.namespacesInUse[prefix or ''] = uri
 
     def resolveURI(self, uri):
-        return _urljoin(self.baseuri or '', uri)
+        return _urljoin(self.baseuri or u'', uri)
 
     def decodeEntities(self, element, data):
         return data
@@ -3749,8 +3749,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['version'], data, entities = _stripDoctype(data)
 
     # ensure that baseuri is an absolute uri using an acceptable URI scheme
-    contentloc = http_headers.get('content-location', http_headers.get('Content-Location', ''))
-    href = result.get('href', '')
+    contentloc = http_headers.get('content-location', http_headers.get('Content-Location', u''))
+    href = result.get('href', u'')
     baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
 
     baselang = http_headers.get('content-language', http_headers.get('Content-Language', None))
