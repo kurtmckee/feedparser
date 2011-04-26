@@ -364,12 +364,6 @@ class FeedParserDict(dict):
         except (AssertionError, KeyError):
             raise AttributeError, "object has no attribute '%s'" % key
 
-    def __setattr__(self, key, value):
-        if key.startswith('_') or key == 'data':
-            self.__dict__[key] = value
-        else:
-            return self.__setitem__(key, value)
-
     def __contains__(self, key):
         return self.__has_key(key)
 
