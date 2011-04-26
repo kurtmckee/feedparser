@@ -1457,7 +1457,7 @@ class _FeedParserMixin:
     _start_keywords = _start_category
 
     def _start_media_category(self, attrsD):
-        attrsD.setdefault('scheme', 'http://search.yahoo.com/mrss/category_schema')
+        attrsD.setdefault('scheme', u'http://search.yahoo.com/mrss/category_schema')
         self._start_category(attrsD)
 
     def _end_itunes_keywords(self):
