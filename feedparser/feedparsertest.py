@@ -132,9 +132,8 @@ unicode2_re = re.compile(_s2bytes(' u"'))
 def failUnlessEval(self, xmlfile, evalString, msg=None):
     """Fail unless eval(evalString, env)"""
     env = feedparser.parse(xmlfile)
-    env['feedparser'] = feedparser
     try:
-        if not eval(evalString, env):
+        if not eval(evalString, globals(), env):
             failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
             raise self.failureException, failure
     except SyntaxError:
@@ -142,7 +141,7 @@ def failUnlessEval(self, xmlfile, evalString, msg=None):
         # which will require the failure message to be updated
         evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
         evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-        if not eval(evalString, env):
+        if not eval(evalString, globals(), env):
             failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
             raise self.failureException, failure
 
