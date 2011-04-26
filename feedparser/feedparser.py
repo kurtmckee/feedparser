@@ -263,7 +263,7 @@ else:
 # patch and modify the compatibility statement accordingly.
 try:
     import BeautifulSoup
-except:
+except ImportError:
     BeautifulSoup = None
 
 # ---------- don't touch these ----------
