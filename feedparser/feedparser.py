@@ -2895,7 +2895,8 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     if url_file_stream_or_string == '-':
         return sys.stdin
 
-    if urlparse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
+    if isinstance(url_file_stream_or_string, basestring) \
+       and urlparse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
         # Deal with the feed URI scheme
         if url_file_stream_or_string.startswith('feed:http'):
             url_file_stream_or_string = url_file_stream_or_string[5:]

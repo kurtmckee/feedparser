@@ -276,6 +276,10 @@ class TestOpenResource(unittest.TestCase):
     def test_feed_http(self):
         f = feedparser.parse(u'feed:http://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.href, u'http://localhost:8097/tests/http/target.xml')
+    def test_bytes(self):
+        s = '<feed><item><title>text</title></item></feed>'.encode('utf-8')
+        r = feedparser._open_resource(s, '', '', '', '', [], {})
+        self.assertEqual(s, r.read())
     def test_string(self):
         s = '<feed><item><title>text</title></item></feed>'
         r = feedparser._open_resource(s, '', '', '', '', [], {})
