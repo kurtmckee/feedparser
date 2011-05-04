@@ -3644,12 +3644,20 @@ def _stripDoctype(data):
 
     return version, data, dict(replacement and [(k.decode('utf-8'), v.decode('utf-8')) for k, v in safe_pattern.findall(replacement)])
 
-def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=[], request_headers={}, response_headers={}):
+def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
     '''Parse a feed from a URL, file, stream, or string.
 
     request_headers, if given, is a dict from http header name to value to add
     to the request; this overrides internally generated values.
     '''
+
+    if handlers is None:
+        handlers = []
+    if request_headers is None:
+        request_headers = {}
+    if response_headers is None:
+        response_headers = {}
+
     result = FeedParserDict()
     result['feed'] = FeedParserDict()
     result['entries'] = []
