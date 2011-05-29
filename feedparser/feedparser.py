@@ -205,7 +205,10 @@ except ImportError:
     # Mock sgmllib enough to allow subclassing later on
     class sgmllib(object):
         class SGMLParser(object):
-            pass
+            def goahead(self, i):
+                pass
+            def parse_starttag(self, i):
+                pass
 else:
     _SGML_AVAILABLE = 1
 
