@@ -216,7 +216,6 @@ else:
     # methods are copied into _BaseHTMLProcessor so that they execute in
     # feedparser's scope instead of sgmllib's scope.
     charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
-    special = re.compile('<!')
     tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
 
     # Unfortunately, these must be copied over to prevent NameError exceptions
