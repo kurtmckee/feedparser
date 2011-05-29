@@ -209,10 +209,24 @@ except ImportError:
 else:
     _SGML_AVAILABLE = 1
 
-    # Override some things in sgmllib
-    sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
-    sgmllib.special = re.compile('<!')
-    sgmllib.charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
+    # sgmllib defines a number of module-level regular expressions that are
+    # insufficient for the XML parsing feedparser needs. Rather than modify
+    # the variables directly in sgmllib, they're defined here using the same
+    # names, and the compiled code objects of several sgmllib.SGMLParser
+    # methods are copied into _BaseHTMLProcessor so that they execute in
+    # feedparser's scope instead of sgmllib's scope.
+    charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
+    special = re.compile('<!')
+    tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
+
+    # Unfortunately, these must be copied over to prevent NameError exceptions
+    attrfind = sgmllib.attrfind
+    entityref = sgmllib.entityref
+    incomplete = sgmllib.incomplete
+    interesting = sgmllib.interesting
+    shorttag = sgmllib.shorttag
+    shorttagopen = sgmllib.shorttagopen
+    starttagopen = sgmllib.starttagopen
 
     class _EndBracketRegEx:
         def __init__(self):
@@ -231,7 +245,7 @@ else:
             self.match = match
         def start(self, n):
             return self.match.end(n)
-    sgmllib.endbracket = _EndBracketRegEx()
+    endbracket = _EndBracketRegEx()
 
 
 # cjkcodecs and iconv_codec provide support for more character encodings.
@@ -1831,8 +1845,21 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         else:
             return '<' + tag + '></' + tag + '>'
 
+    # By declaring these methods and overriding their compiled code
+    # with the code from sgmllib, the original code will execute in
+    # feedparser's scope instead of sgmllib's. This means that the
+    # `tagfind` and `charref` regular expressions will be found as
+    # they're declared above, not as they're declared in sgmllib.
+    def goahead(self, i):
+        pass
+    goahead.func_code = sgmllib.SGMLParser.goahead.func_code
+
+    def __parse_starttag(self, i):
+        pass
+    __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
+
     def parse_starttag(self,i):
-        j=sgmllib.SGMLParser.parse_starttag(self, i)
+        j = self.__parse_starttag(i)
         if self._type == 'application/xhtml+xml':
             if j>2 and self.rawdata[j-2:j]=='/>':
                 self.unknown_endtag(self.lasttag)
