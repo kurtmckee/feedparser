@@ -385,7 +385,7 @@ class TestDateParsers(unittest.TestCase):
     def _check_date(self, func, dtstring, dttuple):
         try:
             tup = func(dtstring)
-        except OverflowError:
+        except (OverflowError, ValueError):
             tup = None
         self.assertEqual(tup, dttuple)
         self.assertEqual(tup, feedparser._parse_date(dtstring))
@@ -430,6 +430,7 @@ date_tests = {
     feedparser._parse_date_rfc822: (
         (u'', None), # empty string
         (u'Sun, 31 Dec 9999 23:59:59 -9999', None), # wildly out-of-range, catch OverflowError
+        (u'Mon, 11 Aug 0307 00:01:00 +0200', None), # wildly out-of-range, catch ValueError
         (u'Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
         (u'Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year
         (u'Thu, 31 Jun 2004 19:48:21 GMT', (2004, 7, 1, 19, 48, 21, 3, 183, 0)), # rollover june 31st
