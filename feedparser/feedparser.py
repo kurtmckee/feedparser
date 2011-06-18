@@ -3457,6 +3457,8 @@ registerDateHandler(_parse_date_perforce)
 
 def _parse_date(dateString):
     '''Parses a variety of date formats into a 9-tuple in GMT'''
+    if not dateString:
+        return None
     for handler in _date_handlers:
         try:
             date9tuple = handler(dateString)

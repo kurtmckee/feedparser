@@ -382,6 +382,8 @@ class TestHTTPStatus(unittest.TestCase):
         self.assertEqual(f.bozo, 1)
 
 class TestDateParsers(unittest.TestCase):
+    def test_None(self):
+        self.assertTrue(feedparser._parse_date(None) is None)
     def _check_date(self, func, dtstring, dttuple):
         try:
             tup = func(dtstring)
