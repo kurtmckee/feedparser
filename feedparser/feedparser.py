@@ -1740,6 +1740,8 @@ if _XML_AVAILABLE:
             self.decls = {}
 
         def startPrefixMapping(self, prefix, uri):
+            if not uri:
+                return
             # Jython uses '' instead of None; standardize on None
             prefix = prefix or None
             self.trackNamespace(prefix, uri)
