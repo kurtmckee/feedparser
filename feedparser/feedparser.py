@@ -1745,8 +1745,8 @@ if _XML_AVAILABLE:
             # Jython uses '' instead of None; standardize on None
             prefix = prefix or None
             self.trackNamespace(prefix, uri)
-            if uri == 'http://www.w3.org/1999/xlink':
-              self.decls['xmlns:'+prefix] = uri
+            if prefix and uri == 'http://www.w3.org/1999/xlink':
+                self.decls['xmlns:' + prefix] = uri
 
         def startElementNS(self, name, qname, attrs):
             namespace, localname = name
