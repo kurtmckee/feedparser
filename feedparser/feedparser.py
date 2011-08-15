@@ -1820,6 +1820,9 @@ if _XML_AVAILABLE:
             self.bozo = 1
             self.exc = exc
 
+        # drv_libxml2 calls warning() in some cases
+        warning = error
+
         def fatalError(self, exc):
             self.error(exc)
             raise exc
@@ -3883,6 +3886,11 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         feedparser = _StrictFeedParser(baseuri, baselang, 'utf-8')
         saxparser = xml.sax.make_parser(PREFERRED_XML_PARSERS)
         saxparser.setFeature(xml.sax.handler.feature_namespaces, 1)
+        try:
+            # disable downloading external doctype references, if possible
+            saxparser.setFeature(xml.sax.handler.feature_external_ges, 0)
+        except xml.sax.SAXNotSupportedException:
+            pass
         saxparser.setContentHandler(feedparser)
         saxparser.setErrorHandler(feedparser)
         source = xml.sax.xmlreader.InputSource()
