@@ -220,9 +220,12 @@ else:
     # feedparser's scope instead of sgmllib's scope.
     charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
     tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
+    attrfind = re.compile(
+        r'\s*([a-zA-Z_][-:.a-zA-Z_0-9]*)[$]?(\s*=\s*'
+        r'(\'[^\']*\'|"[^"]*"|[][\-a-zA-Z0-9./,:;+*%?!&$\(\)_#=~\'"@]*))?'
+    )
 
     # Unfortunately, these must be copied over to prevent NameError exceptions
-    attrfind = sgmllib.attrfind
     entityref = sgmllib.entityref
     incomplete = sgmllib.incomplete
     interesting = sgmllib.interesting
