@@ -532,7 +532,7 @@ def getDescription(xmlfile):
 
   data = open(xmlfile, 'rb').read()
   if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
-    data = feedparser._ebcdic_to_ascii(data)
+    data = unicode(data, 'cp037').encode('utf-8')
   elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
     if not _utf32_available: return None, None, '0'
     data = unicode(data, 'utf-32be').encode('utf-8')
