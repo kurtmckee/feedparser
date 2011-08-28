@@ -2446,10 +2446,7 @@ class _MicroformatsParser:
         all = lambda x: 1
         for elm in self.document(all, {'rel': re.compile('.+'), 'href': re.compile('.+')}):
             rels = elm.get('rel', u'').split()
-            xfn_rels = []
-            for rel in rels:
-                if rel in self.known_xfn_relationships:
-                    xfn_rels.append(rel)
+            xfn_rels = [r for r in rels if r in self.known_xfn_relationships]
             if xfn_rels:
                 self.xfn.append({"relationships": xfn_rels, "href": elm.get('href', ''), "name": elm.string})
 
