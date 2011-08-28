@@ -979,7 +979,7 @@ class _FeedParserMixin:
     # data loss, this function errs on the conservative side.
     @staticmethod
     def lookslikehtml(s):
-        # must have a close tag or a entity reference to qualify
+        # must have a close tag or an entity reference to qualify
         if not (re.search(r'</(\w+)>',s) or re.search("&#?\w+;",s)):
             return
 
