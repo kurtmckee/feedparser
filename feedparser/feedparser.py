@@ -761,17 +761,18 @@ class _FeedParserMixin:
 
     def trackNamespace(self, prefix, uri):
         loweruri = uri.lower()
-        if (prefix, loweruri) == (None, 'http://my.netscape.com/rdf/simple/0.9/') and not self.version:
-            self.version = u'rss090'
-        if loweruri == 'http://purl.org/rss/1.0/' and not self.version:
-            self.version = u'rss10'
-        if loweruri == 'http://www.w3.org/2005/atom' and not self.version:
-            self.version = u'atom10'
+        if not self.version:
+            if (prefix, loweruri) == (None, 'http://my.netscape.com/rdf/simple/0.9/'):
+                self.version = u'rss090'
+            elif loweruri == 'http://purl.org/rss/1.0/':
+                self.version = u'rss10'
+            elif loweruri == 'http://www.w3.org/2005/atom':
+                self.version = u'atom10'
         if loweruri.find(u'backend.userland.com/rss') <> -1:
             # match any backend.userland.com namespace
             uri = u'http://backend.userland.com/rss'
             loweruri = uri
-        if self._matchnamespaces.has_key(loweruri):
+        if loweruri in self._matchnamespaces:
             self.namespacemap[prefix] = self._matchnamespaces[loweruri]
             self.namespacesInUse[self._matchnamespaces[loweruri]] = uri
         else:
