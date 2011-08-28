@@ -338,7 +338,7 @@ class FeedParserDict(dict):
             return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']==u'enclosure']
         elif key == 'license':
             for link in dict.__getitem__(self, 'links'):
-                if link['rel']==u'license' and link.has_key('href'):
+                if link['rel']==u'license' and 'href' in link:
                     return link['href']
         elif key == 'categories':
             return [(tag['scheme'], tag['term']) for tag in dict.__getitem__(self, 'tags')]
@@ -587,8 +587,8 @@ class _FeedParserMixin:
                 self.trackNamespace(None, uri)
 
         # track inline content
-        if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', u'xml').endswith(u'xml'):
-            if tag in ['xhtml:div', 'div']:
+        if self.incontent and not self.contentparams.get('type', u'xml').endswith(u'xml'):
+            if tag in ('xhtml:div', 'div'):
                 return # typepad does this 10/2007
             # element declared itself as escaped markup, but it isn't really
             self.contentparams['type'] = u'application/xhtml+xml'
@@ -658,9 +658,9 @@ class _FeedParserMixin:
             self.pop(prefix + suffix)
 
         # track inline content
-        if self.incontent and self.contentparams.has_key('type') and not self.contentparams.get('type', u'xml').endswith(u'xml'):
+        if self.incontent and not self.contentparams.get('type', u'xml').endswith(u'xml'):
             # element declared itself as escaped markup, but it isn't really
-            if tag in ['xhtml:div', 'div']:
+            if tag in ('xhtml:div', 'div'):
                 return # typepad does this 10/2007
             self.contentparams['type'] = u'application/xhtml+xml'
         if self.incontent and self.contentparams.get('type') == u'application/xhtml+xml':
@@ -698,7 +698,7 @@ class _FeedParserMixin:
             return
         if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
             text = '&%s;' % ref
-        elif ref in self.entities.keys():
+        elif ref in self.entities:
             text = self.entities[ref]
             if text.startswith('&#') and text.endswith(';'):
                 return self.handle_entityref(text)
@@ -1061,11 +1061,11 @@ class _FeedParserMixin:
         self._cdf_common(attrsD)
 
     def _cdf_common(self, attrsD):
-        if attrsD.has_key('lastmod'):
+        if 'lastmod' in attrsD:
             self._start_modified({})
             self.elementstack[-1][-1] = attrsD['lastmod']
             self._end_modified()
-        if attrsD.has_key('href'):
+        if 'href' in attrsD:
             self._start_link({})
             self.elementstack[-1][-1] = attrsD['href']
             self._end_link()
@@ -1238,7 +1238,7 @@ class _FeedParserMixin:
     def _getContext(self):
         if self.insource:
             context = self.sourcedata
-        elif self.inimage and self.feeddata.has_key('image'):
+        elif self.inimage and 'image' in self.feeddata:
             context = self.feeddata['image']
         elif self.intextinput:
             context = self.feeddata['textinput']
@@ -1484,13 +1484,13 @@ class _FeedParserMixin:
             attrsD.setdefault('type', u'text/html')
         context = self._getContext()
         attrsD = self._itsAnHrefDamnIt(attrsD)
-        if attrsD.has_key('href'):
+        if 'href' in attrsD:
             attrsD['href'] = self.resolveURI(attrsD['href'])
         expectingText = self.infeed or self.inentry or self.insource
         context.setdefault('links', [])
         if not (self.inentry and self.inimage):
             context['links'].append(FeedParserDict(attrsD))
-        if attrsD.has_key('href'):
+        if 'href' in attrsD:
             expectingText = 0
             if (attrsD.get('rel') == u'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
                 context['link'] = attrsD['href']
@@ -1507,7 +1507,7 @@ class _FeedParserMixin:
 
     def _end_guid(self):
         value = self.pop('id')
-        self._save('guidislink', self.guidislink and not self._getContext().has_key('link'))
+        self._save('guidislink', self.guidislink and 'link' not in self._getContext())
         if self.guidislink:
             # guid acts as link, but only if 'ispermalink' is not present or is 'true',
             # and only if the item doesn't already have a link element
@@ -1537,7 +1537,7 @@ class _FeedParserMixin:
 
     def _start_description(self, attrsD):
         context = self._getContext()
-        if context.has_key('summary'):
+        if 'summary' in context:
             self._summaryKey = 'content'
             self._start_content(attrsD)
         else:
@@ -1567,7 +1567,7 @@ class _FeedParserMixin:
     def _start_generator(self, attrsD):
         if attrsD:
             attrsD = self._itsAnHrefDamnIt(attrsD)
-            if attrsD.has_key('href'):
+            if 'href' in attrsD:
                 attrsD['href'] = self.resolveURI(attrsD['href'])
         self._getContext()['generator_detail'] = FeedParserDict(attrsD)
         self.push('generator', 1)
@@ -1575,7 +1575,7 @@ class _FeedParserMixin:
     def _end_generator(self):
         value = self.pop('generator')
         context = self._getContext()
-        if context.has_key('generator_detail'):
+        if 'generator_detail' in context:
             context['generator_detail']['name'] = value
 
     def _start_admin_generatoragent(self, attrsD):
@@ -1595,7 +1595,7 @@ class _FeedParserMixin:
 
     def _start_summary(self, attrsD):
         context = self._getContext()
-        if context.has_key('summary'):
+        if 'summary' in context:
             self._summaryKey = 'content'
             self._start_content(attrsD)
         else:
@@ -1691,7 +1691,7 @@ class _FeedParserMixin:
         url = self.pop('url')
         context = self._getContext()
         if url != None and len(url.strip()) != 0:
-            if not context['media_thumbnail'][-1].has_key('url'):
+            if 'url' not in context['media_thumbnail'][-1]:
                 context['media_thumbnail'][-1]['url'] = url
 
     def _start_media_player(self, attrsD):
@@ -1744,7 +1744,7 @@ if _XML_AVAILABLE:
             else:
                 givenprefix = None
             prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
-            if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and not self.namespacesInUse.has_key(givenprefix):
+            if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and givenprefix not in self.namespacesInUse:
                     raise UndeclaredNamespace, "'%s' is not associated with a namespace" % givenprefix
             localname = str(localname).lower()
 
@@ -1933,7 +1933,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def handle_entityref(self, ref):
         # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
         # Reconstruct the original entity reference.
-        if name2codepoint.has_key(ref):
+        if ref in name2codepoint:
             self.pieces.append('&%(ref)s;' % locals())
         else:
             self.pieces.append('&amp;%(ref)s' % locals())
@@ -2017,7 +2017,7 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
         data = data.replace('&#x22;', '&quot;')
         data = data.replace('&#39;', '&apos;')
         data = data.replace('&#x27;', '&apos;')
-        if self.contentparams.has_key('type') and not self.contentparams.get('type', u'xml').endswith(u'xml'):
+        if not self.contentparams.get('type', u'xml').endswith(u'xml'):
             data = data.replace('&lt;', '<')
             data = data.replace('&gt;', '>')
             data = data.replace('&amp;', '&')
@@ -2397,7 +2397,7 @@ class _MicroformatsParser:
 
     def isProbablyDownloadable(self, elm):
         attrsD = elm.attrMap
-        if not attrsD.has_key('href'):
+        if 'href' not in attrsD:
             return 0
         linktype = attrsD.get('type', '').strip()
         if linktype.startswith('audio/') or \
@@ -3109,7 +3109,7 @@ def _parse_date_iso8601(dateString):
         day = int(day)
     # special case of the century - is the first year of the 21st century
     # 2000 or 2001 ? The debate goes on...
-    if 'century' in params.keys():
+    if 'century' in params:
         year = (int(params['century']) - 1) * 100 + 1
     # in ISO 8601 most fields are optional
     for field in ['hour', 'minute', 'second', 'tzhour', 'tzmin']:
@@ -3593,7 +3593,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         true_encoding = http_encoding or u'us-ascii'
     elif http_content_type.startswith(u'text/'):
         true_encoding = http_encoding or u'us-ascii'
-    elif http_headers and (not (http_headers.has_key('content-type') or http_headers.has_key('Content-type'))):
+    elif http_headers and (not ('content-type' in http_headers or 'Content-type' not in http_headers)):
         true_encoding = xml_encoding or u'iso-8859-1'
     else:
         true_encoding = xml_encoding or u'utf-8'
@@ -3761,7 +3761,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['encoding'], http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type = \
         _getCharacterEncoding(http_headers, data)
     if http_headers and (not acceptable_content_type):
-        if http_headers.has_key('content-type') or http_headers.has_key('Content-type'):
+        if 'content-type' in http_headers or 'Content-type' in http_headers:
             bozo_message = '%s is not an XML media type' % http_headers.get('content-type', http_headers.get('Content-type'))
         else:
             bozo_message = 'no Content-type specified'
