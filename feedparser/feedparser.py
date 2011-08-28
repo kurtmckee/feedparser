@@ -3520,7 +3520,7 @@ def _getCharacterEncoding(http_headers, xml_data):
     sniffed_xml_encoding = u''
     xml_encoding = u''
     true_encoding = u''
-    http_content_type, http_encoding = _parseHTTPContentType(http_headers.get('content-type', http_headers.get('Content-type')))
+    http_content_type, http_encoding = _parseHTTPContentType(http_headers.get('content-type'))
     # Must sniff for non-ASCII-compatible character encodings before
     # searching for XML declaration.  This heuristic is defined in
     # section F of the XML specification:
@@ -3590,7 +3590,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         true_encoding = http_encoding or u'us-ascii'
     elif http_content_type.startswith(u'text/'):
         true_encoding = http_encoding or u'us-ascii'
-    elif http_headers and (not ('content-type' in http_headers or 'Content-type' not in http_headers)):
+    elif http_headers and 'content-type' not in http_headers:
         true_encoding = xml_encoding or u'iso-8859-1'
     else:
         true_encoding = xml_encoding or u'utf-8'
@@ -3700,9 +3700,15 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     elif response_headers:
         result['headers'] = copy.deepcopy(response_headers)
 
+    # lowercase all of the HTTP headers for comparisons per RFC 2616
+    if 'headers' in result:
+        http_headers = dict((k.lower(), v) for k, v in result['headers'].items())
+    else:
+        http_headers = {}
+
     # if feed is gzip-compressed, decompress it
-    if f and data and 'headers' in result:
-        if gzip and 'gzip' in (result['headers'].get('content-encoding'), result['headers'].get('Content-Encoding')):
+    if f and data and http_headers:
+        if gzip and 'gzip' in http_headers.get('content-encoding', ''):
             try:
                 data = gzip.GzipFile(fileobj=_StringIO(data)).read()
             except (IOError, struct.error), e:
@@ -3715,7 +3721,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
                 result['bozo'] = 1
                 result['bozo_exception'] = e
                 data = None
-        elif zlib and 'deflate' in (result['headers'].get('content-encoding'), result['headers'].get('Content-Encoding')):
+        elif zlib and 'deflate' in http_headers.get('content-encoding', ''):
             try:
                 data = zlib.decompress(data)
             except zlib.error, e:
@@ -3724,15 +3730,15 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
                 data = None
 
     # save HTTP headers
-    if 'headers' in result:
-        if 'etag' in result['headers'] or 'ETag' in result['headers']:
-            etag = result['headers'].get('etag', result['headers'].get('ETag', u''))
+    if http_headers:
+        if 'etag' in http_headers:
+            etag = http_headers.get('etag', u'')
             if not isinstance(etag, unicode):
                 etag = etag.decode('utf-8', 'ignore')
             if etag:
                 result['etag'] = etag
-        if 'last-modified' in result['headers'] or 'Last-Modified' in result['headers']:
-            modified = result['headers'].get('last-modified', result['headers'].get('Last-Modified'))
+        if 'last-modified' in http_headers:
+            modified = http_headers.get('last-modified', u'')
             if modified:
                 result['modified'] = _parse_date(modified)
     if hasattr(f, 'url'):
@@ -3754,12 +3760,11 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # - xml_encoding is the encoding declared in the <?xml declaration
     # - sniffed_encoding is the encoding sniffed from the first 4 bytes of the XML data
     # - result['encoding'] is the actual encoding, as per RFC 3023 and a variety of other conflicting specifications
-    http_headers = result.get('headers', {})
     result['encoding'], http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type = \
         _getCharacterEncoding(http_headers, data)
     if http_headers and (not acceptable_content_type):
-        if 'content-type' in http_headers or 'Content-type' in http_headers:
-            bozo_message = '%s is not an XML media type' % http_headers.get('content-type', http_headers.get('Content-type'))
+        if 'content-type' in http_headers:
+            bozo_message = '%s is not an XML media type' % http_headers['content-type']
         else:
             bozo_message = 'no Content-type specified'
         result['bozo'] = 1
@@ -3769,11 +3774,11 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['version'], data, entities = _stripDoctype(data)
 
     # ensure that baseuri is an absolute uri using an acceptable URI scheme
-    contentloc = http_headers.get('content-location', http_headers.get('Content-Location', u''))
+    contentloc = http_headers.get('content-location', u'')
     href = result.get('href', u'')
     baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
 
-    baselang = http_headers.get('content-language', http_headers.get('Content-Language', None))
+    baselang = http_headers.get('content-language', None)
     if not isinstance(baselang, unicode) and baselang is not None:
         baselang = baselang.decode('utf-8', 'ignore')
 
