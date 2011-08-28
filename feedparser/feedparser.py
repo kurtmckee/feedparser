@@ -75,6 +75,10 @@ RESOLVE_RELATIVE_URIS = 1
 # HTML content, set this to 1.
 SANITIZE_HTML = 1
 
+# If you want feedparser to automatically parse microformat content embedded
+# in entry contents, set this to 1
+PARSE_MICROFORMATS = 1
+
 # ---------- Python 3 modules (make it work if possible) ----------
 try:
     import rfc822
@@ -280,6 +284,7 @@ try:
     import BeautifulSoup
 except ImportError:
     BeautifulSoup = None
+    PARSE_MICROFORMATS = False
 
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
@@ -896,7 +901,7 @@ class _FeedParserMixin:
         # parse microformats
         # (must do this before sanitizing because some microformats
         # rely on elements that we sanitize)
-        if is_htmlish and element in ['content', 'description', 'summary']:
+        if PARSE_MICROFORMATS and is_htmlish and element in ['content', 'description', 'summary']:
             mfresults = _parseMicroformats(output, self.baseuri, self.encoding)
             if mfresults:
                 for tag in mfresults.get('tags', []):
