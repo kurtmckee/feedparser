@@ -411,33 +411,34 @@ def _ebcdic_to_ascii(s):
     return s.translate(_ebcdic_to_ascii_map)
 
 _cp1252 = {
-  unichr(128): unichr(8364), # euro sign
-  unichr(130): unichr(8218), # single low-9 quotation mark
-  unichr(131): unichr( 402), # latin small letter f with hook
-  unichr(132): unichr(8222), # double low-9 quotation mark
-  unichr(133): unichr(8230), # horizontal ellipsis
-  unichr(134): unichr(8224), # dagger
-  unichr(135): unichr(8225), # double dagger
-  unichr(136): unichr( 710), # modifier letter circumflex accent
-  unichr(137): unichr(8240), # per mille sign
-  unichr(138): unichr( 352), # latin capital letter s with caron
-  unichr(139): unichr(8249), # single left-pointing angle quotation mark
-  unichr(140): unichr( 338), # latin capital ligature oe
-  unichr(142): unichr( 381), # latin capital letter z with caron
-  unichr(145): unichr(8216), # left single quotation mark
-  unichr(146): unichr(8217), # right single quotation mark
-  unichr(147): unichr(8220), # left double quotation mark
-  unichr(148): unichr(8221), # right double quotation mark
-  unichr(149): unichr(8226), # bullet
-  unichr(150): unichr(8211), # en dash
-  unichr(151): unichr(8212), # em dash
-  unichr(152): unichr( 732), # small tilde
-  unichr(153): unichr(8482), # trade mark sign
-  unichr(154): unichr( 353), # latin small letter s with caron
-  unichr(155): unichr(8250), # single right-pointing angle quotation mark
-  unichr(156): unichr( 339), # latin small ligature oe
-  unichr(158): unichr( 382), # latin small letter z with caron
-  unichr(159): unichr( 376)} # latin capital letter y with diaeresis
+    128: unichr(8364), # euro sign
+    130: unichr(8218), # single low-9 quotation mark
+    131: unichr( 402), # latin small letter f with hook
+    132: unichr(8222), # double low-9 quotation mark
+    133: unichr(8230), # horizontal ellipsis
+    134: unichr(8224), # dagger
+    135: unichr(8225), # double dagger
+    136: unichr( 710), # modifier letter circumflex accent
+    137: unichr(8240), # per mille sign
+    138: unichr( 352), # latin capital letter s with caron
+    139: unichr(8249), # single left-pointing angle quotation mark
+    140: unichr( 338), # latin capital ligature oe
+    142: unichr( 381), # latin capital letter z with caron
+    145: unichr(8216), # left single quotation mark
+    146: unichr(8217), # right single quotation mark
+    147: unichr(8220), # left double quotation mark
+    148: unichr(8221), # right double quotation mark
+    149: unichr(8226), # bullet
+    150: unichr(8211), # en dash
+    151: unichr(8212), # em dash
+    152: unichr( 732), # small tilde
+    153: unichr(8482), # trade mark sign
+    154: unichr( 353), # latin small letter s with caron
+    155: unichr(8250), # single right-pointing angle quotation mark
+    156: unichr( 339), # latin small ligature oe
+    158: unichr( 382), # latin small letter z with caron
+    159: unichr( 376), # latin capital letter y with diaeresis
+}
 
 _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
@@ -926,7 +927,7 @@ class _FeedParserMixin:
 
         # map win-1252 extensions to the proper code points
         if isinstance(output, unicode):
-            output = u''.join([c in _cp1252.keys() and _cp1252[c] or c for c in output])
+            output = output.translate(_cp1252)
 
         # categories/tags/keywords/whatever are handled in _end_category
         if element == 'category':
@@ -1940,11 +1941,11 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
         # Reconstruct the original character reference.
         if ref.startswith('x'):
-            value = unichr(int(ref[1:],16))
+            value = int(ref[1:], 16)
         else:
-            value = unichr(int(ref))
+            value = int(ref)
 
-        if value in _cp1252.keys():
+        if value in _cp1252:
             self.pieces.append('&#%s;' % hex(ord(_cp1252[value]))[1:])
         else:
             self.pieces.append('&#%(ref)s;' % locals())
