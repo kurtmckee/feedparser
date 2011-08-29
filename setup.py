@@ -1,16 +1,15 @@
-from distutils.core import setup
-import imp
-import os.path
+from setuptools import setup
+import sys
 
-path = os.path.join('feedparser', 'feedparser.py')
-feedparser = imp.load_source('feedparser', path)
+extra = {}
+if sys.version_info >= (3, ):
+    extra['use_2to3'] = True
 
 setup(
     name = 'feedparser',
-    version = feedparser.__version__,
+    version = '5.1pre',
     description = 'Universal feed parser, handles RSS 0.9x, RSS 1.0, '
                   'RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
-    long_description = feedparser.__doc__.strip(),
     author = 'Mark Pilgrim',
     author_email = 'mark@diveintomark.org',
     url = 'http://feedparser.org/',
@@ -36,5 +35,6 @@ setup(
         'Programming Language :: Python :: 3.2',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Markup :: XML',
-    ]
+    ],
+    **extra
 )
