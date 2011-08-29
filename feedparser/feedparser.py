@@ -1503,6 +1503,7 @@ class _FeedParserMixin:
     def _start_guid(self, attrsD):
         self.guidislink = (attrsD.get('ispermalink', 'true') == 'true')
         self.push('id', 1)
+    _start_id = _start_guid
 
     def _end_guid(self):
         value = self.pop('id')
@@ -1511,6 +1512,7 @@ class _FeedParserMixin:
             # guid acts as link, but only if 'ispermalink' is not present or is 'true',
             # and only if the item doesn't already have a link element
             self._save('link', value)
+    _end_id = _end_guid
 
     def _start_title(self, attrsD):
         if self.svgOK:
