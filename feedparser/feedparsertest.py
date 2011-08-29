@@ -267,9 +267,6 @@ class TestOpenResource(unittest.TestCase):
     def test_fileobj(self):
         r = feedparser._open_resource(sys.stdin, '', '', '', '', [], {})
         self.assertTrue(r is sys.stdin)
-    def test_stdin(self):
-        r = feedparser._open_resource('-', '', '', '', '', [], {})
-        self.assertTrue(r is sys.stdin)
     def test_feed(self):
         f = feedparser.parse(u'feed://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.href, u'http://localhost:8097/tests/http/target.xml')

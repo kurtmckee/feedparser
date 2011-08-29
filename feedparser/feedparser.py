@@ -144,7 +144,6 @@ import copy
 import datetime
 import re
 import struct
-import sys
 import time
 import types
 import urllib
@@ -2906,9 +2905,6 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
 
     if hasattr(url_file_stream_or_string, 'read'):
         return url_file_stream_or_string
-
-    if url_file_stream_or_string == '-':
-        return sys.stdin
 
     if isinstance(url_file_stream_or_string, basestring) \
        and urlparse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
