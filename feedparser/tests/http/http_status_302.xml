@@ -1,6 +1,6 @@
 <!--
 Header:      Status: 302
-Header:      Location: /tests/http/target.xml
+Header:      Location: http://localhost:8097/tests/http/target.xml
 Description: http status 302 (found)
 Expect:      0
 -->

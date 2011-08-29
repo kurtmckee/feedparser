@@ -1,6 +1,6 @@
 <!--
 Header:      Status: 307
-Header:      Location: /tests/http/target.xml
+Header:      Location: http://localhost:8097/tests/http/target.xml
 Description: http status 307 (moved permanently)
 Expect:      0
 -->
