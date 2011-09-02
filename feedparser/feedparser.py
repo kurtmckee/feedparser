@@ -383,6 +383,8 @@ class FeedParserDict(dict):
         except KeyError:
             raise AttributeError, "object has no attribute '%s'" % key
 
+    def __hash__(self):
+        return id(self)
 
 _cp1252 = {
     128: unichr(8364), # euro sign
@@ -532,8 +534,15 @@ class _FeedParserMixin:
         self.lang = baselang or None
         self.svgOK = 0
         self.hasTitle = 0
+        self.depth = 0
+        self.sortedvalues = {} # Maps "contexts" to values tied to depths
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
+
+    def complete(self):
+        for context, elements in self.sortedvalues.items():
+            for element, vals in elements.items():
+                context[element] = vals[sorted(vals)[0]]
 
     def _normalize_attributes(self, kv):
         k = kv[0].lower()
@@ -932,7 +941,7 @@ class _FeedParserMixin:
             else:
                 if element == 'description':
                     element = 'summary'
-                self.entries[-1][element] = output
+                self.sortedvalues.setdefault(self.entries[-1], {}).setdefault(element, {})[self.depth] = output
                 if self.incontent:
                     contentparams = copy.deepcopy(self.contentparams)
                     contentparams['value'] = output
@@ -1732,6 +1741,7 @@ if _XML_AVAILABLE:
                 self.decls['xmlns:' + prefix] = uri
 
         def startElementNS(self, name, qname, attrs):
+            self.depth += 1
             namespace, localname = name
             lowernamespace = str(namespace or '').lower()
             if lowernamespace.find(u'backend.userland.com/rss') <> -1:
@@ -1798,6 +1808,7 @@ if _XML_AVAILABLE:
                          break
             localname = str(localname).lower()
             self.unknown_endtag(localname)
+            self.depth -= 1
 
         def error(self, exc):
             self.bozo = 1
@@ -1809,6 +1820,9 @@ if _XML_AVAILABLE:
         def fatalError(self, exc):
             self.error(exc)
             raise exc
+
+        def endDocument(self):
+            self.complete()
 
 class _BaseHTMLProcessor(sgmllib.SGMLParser):
     special = re.compile('''[<>'"]''')
@@ -2026,6 +2040,10 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
 
     def strattrs(self, attrs):
         return ''.join([' %s="%s"' % (n,v.replace('"','&quot;')) for n,v in attrs])
+    
+    def feed(self, *args, **kwargs):
+        _BaseHTMLProcessor.feed(self, *args, **kwargs)
+        self.complete()
 
 class _MicroformatsParser:
     STRING = 1
