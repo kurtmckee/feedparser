@@ -7,7 +7,7 @@ Visit http://feedparser.org/ for the latest version
 Visit http://feedparser.org/docs/ for the latest documentation
 
 Required: Python 2.4 or later
-Recommended: CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>
+Recommended: iconv_codec <http://cjkpython.i18n.org/>
 """
 
 __version__ = "5.0.1"
@@ -256,12 +256,8 @@ else:
     endbracket = _EndBracketRegEx()
 
 
-# cjkcodecs and iconv_codec provide support for more character encodings.
-# Both are available from http://cjkpython.i18n.org/
-try:
-    import cjkcodecs.aliases
-except ImportError:
-    pass
+# iconv_codec provides support for more character encodings.
+# It's available from http://cjkpython.i18n.org/
 try:
     import iconv_codec
 except ImportError:
@@ -3496,8 +3492,8 @@ def _getCharacterEncoding(http_headers, xml_data):
 
     Of course, none of this guarantees that we will be able to parse the
     feed in the declared character encoding (assuming it was declared
-    correctly, which many are not).  CJKCodecs and iconv_codec help a lot;
-    you should definitely install them if you can.
+    correctly, which many are not).  iconv_codec can help a lot;
+    you should definitely install it if you can.
     http://cjkpython.i18n.org/
     '''
 
