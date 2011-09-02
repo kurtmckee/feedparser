@@ -532,6 +532,7 @@ class _FeedParserMixin:
         self.lang = baselang or None
         self.svgOK = 0
         self.hasTitle = 0
+        self.hasTitleBeforeImage = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
 
@@ -1089,12 +1090,14 @@ class _FeedParserMixin:
         if not self.inentry:
             context.setdefault('image', FeedParserDict())
         self.inimage = 1
+        self.hasTitleBeforeImage = self.hasTitle
         self.hasTitle = 0
         self.push('image', 0)
 
     def _end_image(self):
         self.pop('image')
         self.inimage = 0
+        self.hasTitle = self.hasTitleBeforeImage
 
     def _start_textinput(self, attrsD):
         context = self._getContext()
