@@ -149,6 +149,7 @@ import types
 import urllib
 import urllib2
 import urlparse
+from collections import defaultdict
 
 from htmlentitydefs import name2codepoint, codepoint2name, entitydefs
 
@@ -383,6 +384,8 @@ class FeedParserDict(dict):
         except KeyError:
             raise AttributeError, "object has no attribute '%s'" % key
 
+    def __hash__(self):
+        return id(self)
 
 _cp1252 = {
     128: unichr(8364), # euro sign
@@ -532,8 +535,18 @@ class _FeedParserMixin:
         self.lang = baselang or None
         self.svgOK = 0
         self.hasTitle = 0
+        self.depth = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
+
+        # A map of the following form:
+        #     {
+        #         object_that_value_is_set_on: {
+        #             property_name: depth_of_node_property_was_extracted_from,
+        #             other_property: depth_of_node_property_was_extracted_from,
+        #         },
+        #     }
+        self.property_depth_map = defaultdict(dict)
 
     def _normalize_attributes(self, kv):
         k = kv[0].lower()
@@ -548,6 +561,9 @@ class _FeedParserMixin:
         return (k, v)
 
     def unknown_starttag(self, tag, attrs):
+        # increment depth counter
+        self.depth += 1
+        
         # normalize attrs
         attrs = map(self._normalize_attributes, attrs)
 
@@ -673,6 +689,8 @@ class _FeedParserMixin:
             self.langstack.pop()
             if self.langstack: # and (self.langstack[-1] is not None):
                 self.lang = self.langstack[-1]
+        
+        self.depth -= 1
 
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
@@ -932,7 +950,10 @@ class _FeedParserMixin:
             else:
                 if element == 'description':
                     element = 'summary'
-                self.entries[-1][element] = output
+                old_value_depth = self.property_depth_map[self.entries[-1]].get(element)
+                if old_value_depth is None or self.depth <= old_value_depth:
+                    self.property_depth_map[self.entries[-1]][element] = self.depth
+                    self.entries[-1][element] = output
                 if self.incontent:
                     contentparams = copy.deepcopy(self.contentparams)
                     contentparams['value'] = output
