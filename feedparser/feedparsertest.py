@@ -424,11 +424,6 @@ date_tests = {
         # Special case for Google's extra zero in the month
         (u'2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
     ),
-    feedparser._parse_date_mssql: (
-        (u'', None), # empty string
-        (u'2004-07-08 23:56:58', (2004, 7, 8, 14, 56, 58, 3, 190, 0)), # no fractional second
-        (u'2004-07-08 23:56:58.0', (2004, 7, 8, 14, 56, 58, 3, 190, 0)), # with fractional second
-    ),
     feedparser._parse_date_nate: (
         (u'', None), # empty string
         (u'2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
@@ -470,6 +465,10 @@ date_tests = {
         (u'20031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # year/month/day only, no hyphens
         (u'2003-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # year/month only
         (u'2003', (2003, 1, 1, 0, 0, 0, 2, 1, 0)), # year only
+        # MSSQL-style dates
+        (u'2004-07-08 23:56:58 -00:20', (2004, 7, 9, 0, 16, 58, 4, 191, 0)), # with timezone
+        (u'2004-07-08 23:56:58', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # without timezone
+        (u'2004-07-08 23:56:58.0', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # with fractional second
         # Special cases for out-of-range times
         (u'2003-12-31T25:14:55Z', (2004, 1, 1, 1, 14, 55, 3, 1, 0)), # invalid (25 hours)
         (u'2003-12-31T10:61:55Z', (2003, 12, 31, 11, 1, 55, 2, 365, 0)), # invalid (61 minutes)

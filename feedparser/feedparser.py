@@ -3177,20 +3177,6 @@ def _parse_date_nate(dateString):
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_nate)
 
-_mssql_date_re = \
-    re.compile('(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})(\.\d+)?')
-def _parse_date_mssql(dateString):
-    '''Parse a string according to the MS SQL date format'''
-    m = _mssql_date_re.match(dateString)
-    if not m:
-        return
-    w3dtfdate = '%(year)s-%(month)s-%(day)sT%(hour)s:%(minute)s:%(second)s%(zonediff)s' % \
-                {'year': m.group(1), 'month': m.group(2), 'day': m.group(3),\
-                 'hour': m.group(4), 'minute': m.group(5), 'second': m.group(6),\
-                 'zonediff': '+09:00'}
-    return _parse_date_w3dtf(w3dtfdate)
-registerDateHandler(_parse_date_mssql)
-
 # Unicode strings for Greek date strings
 _greek_months = \
   { \
@@ -3286,6 +3272,9 @@ registerDateHandler(_parse_date_hungarian)
 # Drake and licensed under the Python license.  Removed all range checking
 # for month, day, hour, minute, and second, since mktime will normalize
 # these later
+# Modified to also support MSSQL-style datetimes as defined at:
+# http://msdn.microsoft.com/en-us/library/ms186724.aspx
+# (which basically means allowing a space as a date/time/timezone separator)
 def _parse_date_w3dtf(dateString):
     def __extract_date(m):
         year = int(m.group('year'))
@@ -3367,11 +3356,11 @@ def _parse_date_w3dtf(dateString):
                  '(?:(?P<dsep>-|)'
                  '(?:(?P<month>\d\d)(?:(?P=dsep)(?P<day>\d\d))?'
                  '|(?P<julian>\d\d\d)))?')
-    __tzd_re = '(?P<tzd>[-+](?P<tzdhours>\d\d)(?::?(?P<tzdminutes>\d\d))|Z)'
+    __tzd_re = ' ?(?P<tzd>[-+](?P<tzdhours>\d\d)(?::?(?P<tzdminutes>\d\d))|Z)?'
     __time_re = ('(?P<hours>\d\d)(?P<tsep>:|)(?P<minutes>\d\d)'
                  '(?:(?P=tsep)(?P<seconds>\d\d)(?:[.,]\d+)?)?'
                  + __tzd_re)
-    __datetime_re = '%s(?:T%s)?' % (__date_re, __time_re)
+    __datetime_re = '%s(?:[T ]%s)?' % (__date_re, __time_re)
     __datetime_rx = re.compile(__datetime_re)
     m = __datetime_rx.match(dateString)
     if (m is None) or (m.group() != dateString):
