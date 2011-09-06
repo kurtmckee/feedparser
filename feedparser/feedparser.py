@@ -102,25 +102,25 @@ else:
     # Python 3.1 deprecates decodestring in favor of decodebytes
     _base64decode = getattr(base64, 'decodebytes', base64.decodestring)
 
-def _s2bytes(s):
-  # Convert a UTF-8 str to bytes if the interpreter is Python 3
-  try:
-    return bytes(s, 'utf8')
-  except (NameError, TypeError):
-    # In Python 2.5 and below, bytes doesn't exist (NameError)
-    # In Python 2.6 and above, bytes and str are the same (TypeError)
-    return s
-
-def _l2bytes(l):
-  # Convert a list of ints to bytes if the interpreter is Python 3
-  try:
-    if bytes is not str:
-      # In Python 2.6 and above, this call won't raise an exception
-      # but it will return bytes([65]) as '[65]' instead of 'A'
-      return bytes(l)
-    raise NameError
-  except NameError:
-    return ''.join(map(chr, l))
+# _s2bytes: convert a UTF-8 str to bytes if the interpreter is Python 3
+# _l2bytes: convert a list of ints to bytes if the interpreter is Python 3
+try:
+    if bytes is str:
+        # In Python 2.5 and below, bytes doesn't exist (NameError)
+        # In Python 2.6 and above, bytes and str are the same type
+        raise NameError
+except NameError:
+    # Python 2
+    def _s2bytes(s):
+        return s
+    def _l2bytes(l):
+        return ''.join(map(chr, l))
+else:
+    # Python 3
+    def _s2bytes(s):
+        return bytes(s, 'utf8')
+    def _l2bytes(l):
+        return bytes(l)
 
 # If you want feedparser to allow all URL schemes, set this to ()
 # List culled from Python's urlparse documentation at:
