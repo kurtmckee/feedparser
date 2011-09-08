@@ -335,8 +335,6 @@ class FeedParserDict(dict):
             for link in dict.__getitem__(self, 'links'):
                 if link['rel']==u'license' and 'href' in link:
                     return link['href']
-        elif key == 'categories':
-            return [(tag['scheme'], tag['term']) for tag in dict.__getitem__(self, 'tags')]
         else:
             realkey = self.keymap.get(key, key)
             if isinstance(realkey, list):
