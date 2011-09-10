@@ -173,7 +173,7 @@ except ImportError:
     zlib = None
 
 # If a real XML parser is available, feedparser will attempt to use it.  feedparser has
-# been tested with the built-in SAX parser, PyXML, and libxml2.  On platforms where the
+# been tested with the built-in SAX parser and libxml2.  On platforms where the
 # Python distribution does not come with an XML parser (such as Mac OS X 10.2 and some
 # versions of FreeBSD), feedparser will quietly fall back on regex-based parsing.
 try:
