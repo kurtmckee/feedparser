@@ -3865,10 +3865,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         saxparser.setErrorHandler(feedparser)
         source = xml.sax.xmlreader.InputSource()
         source.setByteStream(_StringIO(data))
-        if hasattr(saxparser, '_ns_stack'):
-            # work around bug in built-in SAX parser (doesn't recognize xml: namespace)
-            # PyXML doesn't have this problem, and it doesn't have _ns_stack either
-            saxparser._ns_stack.append({'http://www.w3.org/XML/1998/namespace':'xml'})
         try:
             saxparser.parse(source)
         except xml.sax.SAXParseException, e:
