@@ -1,3 +1,37 @@
+5.1 - ?? ??, 2011
+    * Extensive, extensive unit test refactoring
+    * Support Jython somewhat (almost all unit tests pass)
+    * Support Python 3.2
+    * Fix Python 3 issues exposed by improved unit tests
+    * Fix international domain name issues exposed by improved unit tests
+    * Issue 148 (loose parser doesn't always return unicode strings)
+    * Issue 247 (mssql date parser uses hardcoded tokyo timezone)
+    * Issue 249 (KeyboardInterrupt and SystemExit exceptions being caught)
+    * Issue 252 (running setup.py in Python 3 fails due to missing sgmllib)
+    * Issue 260 (Python 3 doesn't decompress gzip'ed or deflate'd content)
+    * Issue 261 (popping from empty tag list)
+    * Issue 264 (vcard parser crashes on non-ascii characters)
+    * Issue 265 (http header comparisons are case sensitive)
+    * Issue 271 (monkey-patching sgmllib breaks other libraries)
+    * Issue 272 (can't pass bytes or str to `parse()` in Python 3)
+    * Issue 275 (`_parse_date()` doesn't catch OverflowError)
+    * Issue 276 (mutable types used as default values in `parse()`)
+    * Issue 277 (`python3 setup.py install` fails)
+    * Issue 281 (`_parse_date()` doesn't catch ValueError)
+    * Issue 282 (`_parse_date()` crashes when passed `None`)
+    * Issue 285 (crash on empty xmlns attribute)
+    * Issue 289 (add an option to disable microformat parsing)
+    * Issue 290 (Blogger's invalid img tags are unparseable)
+    * Issue 292 (atom id element not explicitly supported)
+    * Issue 294 ('categories' key exists but raises KeyError)
+    * Issue 297 (unresolvable external doctype causes crash)
+    * Issue 300 (performance improvements)
+    * Issue 303 (unicode characters cause crash during relative uri resolution)
+    * Remove "Hot RSS" support since the format doesn't actually exist
+    * Remove the feedparser command line interface
+    * Remove the Zope interoperability hack
+    * Remove extraneous whitespace
+
 5.0.1 - February 20, 2011
     * Fix issue 91 (invalid text in XML declaration causes sanitizer to crash)
     * Fix issue 254 (sanitization can be bypassed by malformed XML comments)
