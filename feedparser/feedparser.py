@@ -3,7 +3,7 @@
 
 Handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds
 
-Visit http://feedparser.org/ for the latest version
+Visit https://code.google.com/p/feedparser/ for the latest version
 Visit http://feedparser.org/docs/ for the latest documentation
 
 Required: Python 2.4 or later
@@ -47,7 +47,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
 # change this to your application name and URL.
-USER_AGENT = "UniversalFeedParser/%s +http://feedparser.org/" % __version__
+USER_AGENT = "UniversalFeedParser/%s +https://code.google.com/p/feedparser/" % __version__
 
 # HTTP "Accept" header to send to servers when downloading feeds.  If you don't
 # want to send an Accept header, set this to None.
