@@ -270,11 +270,9 @@ try:
 except ImportError:
     chardet = None
 
-# BeautifulSoup parser used for parsing microformats from embedded HTML content
+# BeautifulSoup is used to extract microformat content from HTML
+# feedparser is tested using BeautifulSoup 3.2.0
 # http://www.crummy.com/software/BeautifulSoup/
-# feedparser is tested with BeautifulSoup 3.0.x, but it might work with the
-# older 2.x series.  If it doesn't, and you can figure out why, I'll accept a
-# patch and modify the compatibility statement accordingly.
 try:
     import BeautifulSoup
 except ImportError:
