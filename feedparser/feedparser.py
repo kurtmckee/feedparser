@@ -3720,7 +3720,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         if 'last-modified' in http_headers:
             modified = http_headers.get('last-modified', u'')
             if modified:
-                result['modified'] = _parse_date(modified)
+                result['modified'] = modified
+                result['modified_parsed'] = _parse_date(modified)
     if hasattr(f, 'url'):
         if not isinstance(f.url, unicode):
             result['href'] = f.url.decode('utf-8', 'ignore')

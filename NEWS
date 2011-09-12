@@ -7,6 +7,7 @@
     * Issue 148 (loose parser doesn't always return unicode strings)
     * Issue 247 (mssql date parser uses hardcoded tokyo timezone)
     * Issue 249 (KeyboardInterrupt and SystemExit exceptions being caught)
+    * Issue 250 (`updated` can be a 9-tuple or a string, depending on context)
     * Issue 252 (running setup.py in Python 3 fails due to missing sgmllib)
     * Issue 260 (Python 3 doesn't decompress gzip'ed or deflate'd content)
     * Issue 261 (popping from empty tag list)

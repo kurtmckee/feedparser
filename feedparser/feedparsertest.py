@@ -363,9 +363,11 @@ class TestHTTPStatus(unittest.TestCase):
         self.assertEqual(f.entries[0].title, 'title 304')
         # extract the etag and last-modified headers
         e = [v for k, v in f.headers.items() if k.lower() == 'etag'][0]
-        ms = [v for k, v in f.headers.items() if k.lower() == 'last-modified'][0]
-        mt = f.updated
+        mh = [v for k, v in f.headers.items() if k.lower() == 'last-modified'][0]
+        ms = f.updated
+        mt = f.updated_parsed
         md = datetime.datetime(*mt[0:7])
+        self.assertTrue(isinstance(mh, basestring))
         self.assertTrue(isinstance(ms, basestring))
         self.assertTrue(isinstance(mt, time.struct_time))
         self.assertTrue(isinstance(md, datetime.datetime))
