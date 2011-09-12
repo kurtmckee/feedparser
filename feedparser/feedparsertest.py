@@ -25,17 +25,29 @@ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE."""
 
+import codecs
 import datetime
-import feedparser, unittest, os, sys, glob, re, urllib, posixpath, codecs, pprint
+import glob
 import operator
-if not feedparser._XML_AVAILABLE:
-  sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
-  sys.exit(1)
-import SimpleHTTPServer, BaseHTTPServer
+import os
+import posixpath
+import pprint
+import re
 import struct
+import sys
 import threading
 import time
+import unittest
+import urllib
 import zlib
+import BaseHTTPServer
+import SimpleHTTPServer
+
+import feedparser
+
+if not feedparser._XML_AVAILABLE:
+    sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
+    sys.exit(1)
 
 try:
     codecs.lookup('utf-32be')
