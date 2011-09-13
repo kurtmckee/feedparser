@@ -1928,7 +1928,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def handle_entityref(self, ref):
         # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
         # Reconstruct the original entity reference.
-        if ref in name2codepoint:
+        if ref in name2codepoint or ref == 'apos':
             self.pieces.append('&%s;' % ref)
         else:
             self.pieces.append('&amp;%s' % ref)

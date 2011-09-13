@@ -21,6 +21,7 @@
     * Issue 281 (`_parse_date()` doesn't catch ValueError)
     * Issue 282 (`_parse_date()` crashes when passed `None`)
     * Issue 285 (crash on empty xmlns attribute)
+    * Issue 286 ('apos' character entity not handled properly)
     * Issue 289 (add an option to disable microformat parsing)
     * Issue 290 (Blogger's invalid img tags are unparseable)
     * Issue 292 (atom id element not explicitly supported)
