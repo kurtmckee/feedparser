@@ -534,7 +534,7 @@ class _FeedParserMixin:
         self.baseuri = baseuri or u''
         self.lang = baselang or None
         self.svgOK = 0
-        self.hasTitle = 0
+        self.title_depth = -1
         self.depth = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
@@ -928,7 +928,7 @@ class _FeedParserMixin:
         if element == 'category':
             return output
 
-        if element == 'title' and self.hasTitle:
+        if element == 'title' and -1 < self.title_depth <= self.depth:
             return output
 
         # store output in appropriate place(s)
@@ -1110,7 +1110,7 @@ class _FeedParserMixin:
         if not self.inentry:
             context.setdefault('image', FeedParserDict())
         self.inimage = 1
-        self.hasTitle = 0
+        self.title_depth = -1
         self.push('image', 0)
 
     def _end_image(self):
@@ -1121,7 +1121,7 @@ class _FeedParserMixin:
         context = self._getContext()
         context.setdefault('textinput', FeedParserDict())
         self.intextinput = 1
-        self.hasTitle = 0
+        self.title_depth = -1
         self.push('textinput', 0)
     _start_textInput = _start_textinput
 
@@ -1341,7 +1341,7 @@ class _FeedParserMixin:
         self.push('item', 0)
         self.inentry = 1
         self.guidislink = 0
-        self.hasTitle = 0
+        self.title_depth = -1
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1547,13 +1547,13 @@ class _FeedParserMixin:
         if not value:
             return
         context = self._getContext()
-        self.hasTitle = 1
+        self.title_depth = self.depth
     _end_dc_title = _end_title
 
     def _end_media_title(self):
-        hasTitle = self.hasTitle
+        title_depth = self.title_depth
         self._end_title()
-        self.hasTitle = hasTitle
+        self.title_depth = title_depth
 
     def _start_description(self, attrsD):
         context = self._getContext()
@@ -1643,7 +1643,7 @@ class _FeedParserMixin:
           self.sourcedata['href'] = attrsD[u'url']
         self.push('source', 1)
         self.insource = 1
-        self.hasTitle = 0
+        self.title_depth = -1
 
     def _end_source(self):
         self.insource = 0
