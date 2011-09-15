@@ -149,7 +149,6 @@ import types
 import urllib
 import urllib2
 import urlparse
-from collections import defaultdict
 
 from htmlentitydefs import name2codepoint, codepoint2name, entitydefs
 
@@ -546,7 +545,7 @@ class _FeedParserMixin:
         #             other_property: depth_of_node_property_was_extracted_from,
         #         },
         #     }
-        self.property_depth_map = defaultdict(dict)
+        self.property_depth_map = {}
 
     def _normalize_attributes(self, kv):
         k = kv[0].lower()
@@ -950,7 +949,7 @@ class _FeedParserMixin:
             else:
                 if element == 'description':
                     element = 'summary'
-                old_value_depth = self.property_depth_map[self.entries[-1]].get(element)
+                old_value_depth = self.property_depth_map.setdefault(self.entries[-1], {}).get(element)
                 if old_value_depth is None or self.depth <= old_value_depth:
                     self.property_depth_map[self.entries[-1]][element] = self.depth
                     self.entries[-1][element] = output
