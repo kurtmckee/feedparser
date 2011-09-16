@@ -379,6 +379,8 @@ class FeedParserDict(dict):
         except KeyError:
             raise AttributeError, "object has no attribute '%s'" % key
 
+    def __hash__(self):
+        return id(self)
 
 _cp1252 = {
     128: unichr(8364), # euro sign
@@ -528,9 +530,19 @@ class _FeedParserMixin:
         self.baseuri = baseuri or u''
         self.lang = baselang or None
         self.svgOK = 0
-        self.hasTitle = 0
+        self.title_depth = -1
+        self.depth = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
+
+        # A map of the following form:
+        #     {
+        #         object_that_value_is_set_on: {
+        #             property_name: depth_of_node_property_was_extracted_from,
+        #             other_property: depth_of_node_property_was_extracted_from,
+        #         },
+        #     }
+        self.property_depth_map = {}
 
     def _normalize_attributes(self, kv):
         k = kv[0].lower()
@@ -545,6 +557,9 @@ class _FeedParserMixin:
         return (k, v)
 
     def unknown_starttag(self, tag, attrs):
+        # increment depth counter
+        self.depth += 1
+        
         # normalize attrs
         attrs = map(self._normalize_attributes, attrs)
 
@@ -670,6 +685,8 @@ class _FeedParserMixin:
             self.langstack.pop()
             if self.langstack: # and (self.langstack[-1] is not None):
                 self.lang = self.langstack[-1]
+        
+        self.depth -= 1
 
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
@@ -907,7 +924,7 @@ class _FeedParserMixin:
         if element == 'category':
             return output
 
-        if element == 'title' and self.hasTitle:
+        if element == 'title' and -1 < self.title_depth <= self.depth:
             return output
 
         # store output in appropriate place(s)
@@ -929,7 +946,10 @@ class _FeedParserMixin:
             else:
                 if element == 'description':
                     element = 'summary'
-                self.entries[-1][element] = output
+                old_value_depth = self.property_depth_map.setdefault(self.entries[-1], {}).get(element)
+                if old_value_depth is None or self.depth <= old_value_depth:
+                    self.property_depth_map[self.entries[-1]][element] = self.depth
+                    self.entries[-1][element] = output
                 if self.incontent:
                     contentparams = copy.deepcopy(self.contentparams)
                     contentparams['value'] = output
@@ -1086,7 +1106,7 @@ class _FeedParserMixin:
         if not self.inentry:
             context.setdefault('image', FeedParserDict())
         self.inimage = 1
-        self.hasTitle = 0
+        self.title_depth = -1
         self.push('image', 0)
 
     def _end_image(self):
@@ -1097,7 +1117,7 @@ class _FeedParserMixin:
         context = self._getContext()
         context.setdefault('textinput', FeedParserDict())
         self.intextinput = 1
-        self.hasTitle = 0
+        self.title_depth = -1
         self.push('textinput', 0)
     _start_textInput = _start_textinput
 
@@ -1317,7 +1337,7 @@ class _FeedParserMixin:
         self.push('item', 0)
         self.inentry = 1
         self.guidislink = 0
-        self.hasTitle = 0
+        self.title_depth = -1
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1523,13 +1543,13 @@ class _FeedParserMixin:
         if not value:
             return
         context = self._getContext()
-        self.hasTitle = 1
+        self.title_depth = self.depth
     _end_dc_title = _end_title
 
     def _end_media_title(self):
-        hasTitle = self.hasTitle
+        title_depth = self.title_depth
         self._end_title()
-        self.hasTitle = hasTitle
+        self.title_depth = title_depth
 
     def _start_description(self, attrsD):
         context = self._getContext()
@@ -1619,7 +1639,7 @@ class _FeedParserMixin:
           self.sourcedata['href'] = attrsD[u'url']
         self.push('source', 1)
         self.insource = 1
-        self.hasTitle = 0
+        self.title_depth = -1
 
     def _end_source(self):
         self.insource = 0

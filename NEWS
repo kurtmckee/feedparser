@@ -27,6 +27,7 @@
     * Issue 292 (atom id element not explicitly supported)
     * Issue 294 ('categories' key exists but raises KeyError)
     * Issue 297 (unresolvable external doctype causes crash)
+    * Issue 298 (nested nodes clobber actual values)
     * Issue 300 (performance improvements)
     * Issue 303 (unicode characters cause crash during relative uri resolution)
     * Remove "Hot RSS" support since the format doesn't actually exist
