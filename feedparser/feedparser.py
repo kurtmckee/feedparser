@@ -1513,7 +1513,6 @@ class _FeedParserMixin:
 
     def _end_link(self):
         value = self.pop('link')
-        context = self._getContext()
 
     def _start_guid(self, attrsD):
         self.guidislink = (attrsD.get('ispermalink', 'true') == 'true')
@@ -1542,7 +1541,6 @@ class _FeedParserMixin:
         value = self.popContent('title')
         if not value:
             return
-        context = self._getContext()
         self.title_depth = self.depth
     _end_dc_title = _end_title
 
