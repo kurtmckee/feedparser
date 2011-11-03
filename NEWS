@@ -5,6 +5,7 @@
     * Fix Python 3 issues exposed by improved unit tests
     * Fix international domain name issues exposed by improved unit tests
     * Issue 148 (loose parser doesn't always return unicode strings)
+    * Issue 204 (FeedParserDict behavior should not be controlled by `assert`)
     * Issue 247 (mssql date parser uses hardcoded tokyo timezone)
     * Issue 249 (KeyboardInterrupt and SystemExit exceptions being caught)
     * Issue 250 (`updated` can be a 9-tuple or a string, depending on context)
