@@ -17,6 +17,6 @@ Changes in version 4.2
 
 - Ability to :ref:`disable relative URI resolution <advanced.base.disable>`.
 
-- :ref:`Command-line arguments and alternate serializers <commandline>`, for manipulating :program:`Universal Feed Parser` from shell scripts or other non-Python sources.
+- Command-line arguments and alternate serializers, for manipulating :program:`Universal Feed Parser` from shell scripts or other non-Python sources.
 
 - More robust parsing of author email addresses, misencoded win-1252 content, rel=self links, and better detection of HTML content in elements with ambiguous content types.

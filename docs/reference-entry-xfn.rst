@@ -3,9 +3,8 @@
 :py:attr:`entries[i].xfn`
 =========================
 
-A list of :ref:`:abbr:`XFN (XHTML Friends Network)` relationships
-<advanced.microformats.xfn>` found in this entry's :abbr:`HTML (HyperText
-Markup Language)` content.
+A list of :ref:`XFN relationships <advanced.microformats.xfn>` found in this
+entry's :abbr:`HTML (HyperText Markup Language)` content.
 
 
 .. rubric:: Comes from

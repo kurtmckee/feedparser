@@ -72,7 +72,7 @@ do any parsing or normalization of language codes.
 attribute, or it may inherit from a parent element's xml:lang, or the
 :mailheader:`Content-Language` :abbr:`HTTP (Hypertext Transfer Protocol)`
 header.  If the feed does not specify a language,
-:py:attr:`~entries[i].content[j].language` will be :keyword:`None`, the
+:py:attr:`~entries[i].content[j].language` will be ``None``, the
 :program:`Python` null value.
 
 

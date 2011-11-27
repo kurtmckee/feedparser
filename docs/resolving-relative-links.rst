@@ -16,53 +16,30 @@ Which Values Are :abbr:`URI (Uniform Resource Identifier)`\s
 These feed elements are treated as :abbr:`URI (Uniform Resource Identifier)`\s,
 and resolved if they are relative:
 
-- :ref:`reference.feed.link`
-
-- :ref:`reference.feed.links.href`
-
-- :ref:`reference.feed.generator_detail.href`
-
-- :ref:`reference.feed.id`
-
-- :ref:`reference.feed.image.href`
-
-- :ref:`reference.feed.image.link`
-
-- :ref:`reference.feed.textinput.link`
-
-- :ref:`reference.feed.author_detail.href`
-
-- :ref:`reference.feed.publisher_detail.href`
-
-- :ref:`reference.feed.contributors.href`
-
-- :ref:`reference.feed.docs`
-
-- :ref:`reference.feed.license`
-
-- :ref:`reference.entry.link`
-
-- :ref:`reference.entry.links.href`
-
-- :ref:`reference.entry.id`
-
-- :ref:`reference.entry.author_detail.href`
-
-- :ref:`reference.entry.publisher_detail.href`
-
-- :ref:`reference.entry.contributors.href`
-
-- :ref:`reference.entry.enclosures.href`
-
-- :ref:`reference.entry.source.author_detail.href`
-
-- :ref:`reference.entry.source.contributors.href`
-
-- :ref:`reference.entry.source.links.href`
-
-- :ref:`reference.entry.comments`
-
-- :ref:`reference.entry.license`
+* :ref:`reference.entry.author_detail.href`
+* :ref:`reference.entry.comments`
+* :ref:`reference.entry.contributors.href`
+* :ref:`reference.entry.enclosures.href`
+* :ref:`reference.entry.id`
+* :ref:`reference.entry.license`
+* :ref:`reference.entry.link`
+* :ref:`reference.entry.links.href`
+* :ref:`reference.entry.publisher_detail.href`
+* :ref:`reference.entry.source.author_detail.href`
+* :ref:`reference.entry.source.contributors.href`
+* :ref:`reference.entry.source.links.href`
+* :ref:`reference.feed.author_detail.href`
+* :ref:`reference.feed.contributors.href`
+* :ref:`reference.feed.docs`
+* :ref:`reference.feed.generator_detail.href`
+* :ref:`reference.feed.id`
+* :ref:`reference.feed.image.href`
+* :ref:`reference.feed.image.link`
+* :ref:`reference.feed.license`
+* :ref:`reference.feed.link`
+* :ref:`reference.feed.links.href`
+* :ref:`reference.feed.publisher_detail.href`
+* :ref:`reference.feed.textinput.link`
 
 In addition, several feed elements may contain :abbr:`HTML (HyperText Markup Language)`
 or :abbr:`XHTML (Extensible HyperText Markup Language)` markup. Certain elements and
@@ -79,19 +56,13 @@ depends on the value of the type attribute.  In :abbr:`RSS (Rich Site Summary)`
 feeds, these values are always treated as :abbr:`HTML (HyperText Markup Language)`.
 
 
-- :ref:`reference.feed.title` (:ref:`reference.feed.title_detail.value`)
-
-- :ref:`reference.feed.subtitle` (:ref:`reference.feed.subtitle_detail.value`))
-
-- :ref:`reference.feed.info` (:ref:`reference.feed.info_detail.value`)
-
-- :ref:`reference.feed.rights` (:ref:`reference.feed.rights_detail.value`)
-
-- :ref:`reference.entry.title` (:ref:`reference.entry.title_detail.value`)
-
-- :ref:`reference.entry.summary` (:ref:`reference.entry.summary_detail.value`)
-
-- :ref:`reference.entry.content.value`
+* :ref:`reference.entry.content.value`
+* :ref:`reference.entry.summary` (:ref:`reference.entry.summary_detail.value`)
+* :ref:`reference.entry.title` (:ref:`reference.entry.title_detail.value`)
+* :ref:`reference.feed.info` (:ref:`reference.feed.info_detail.value`)
+* :ref:`reference.feed.rights` (:ref:`reference.feed.rights_detail.value`)
+* :ref:`reference.feed.subtitle` (:ref:`reference.feed.subtitle_detail.value`)
+* :ref:`reference.feed.title` (:ref:`reference.feed.title_detail.value`)
 
 
 When any of these feed elements contains :abbr:`HTML (HyperText Markup Language)`
@@ -101,55 +72,31 @@ following :abbr:`HTML (HyperText Markup Language)` elements are treated as
 relative:
 
 
-- <a href="...">
-
-- <applet codebase="...">
-
-- <area href="...">
-
-- <blockquote cite="...">
-
-- <body background="...">
-
-- <del cite="...">
-
-- <form action="...">
-
-- <frame longdesc="...">
-
-- <frame src="...">
-
-- <iframe longdesc="...">
-
-- <iframe src="...">
-
-- <head profile="...">
-
-- <img longdesc="...">
-
-- <img src="...">
-
-- <img usemap="...">
-
-- <input src="...">
-
-- <input usemap="...">
-
-- <ins cite="...">
-
-- <link href="...">
-
-- <object classid="...">
-
-- <object codebase="...">
-
-- <object data="...">
-
-- <object usemap="...">
-
-- <q cite="...">
-
-- <script src="...">
+* <a href="...">
+* <applet codebase="...">
+* <area href="...">
+* <blockquote cite="...">
+* <body background="...">
+* <del cite="...">
+* <form action="...">
+* <frame longdesc="...">
+* <frame src="...">
+* <head profile="...">
+* <iframe longdesc="...">
+* <iframe src="...">
+* <img longdesc="...">
+* <img src="...">
+* <img usemap="...">
+* <input src="...">
+* <input usemap="...">
+* <ins cite="...">
+* <link href="...">
+* <object classid="...">
+* <object codebase="...">
+* <object data="...">
+* <object usemap="...">
+* <q cite="...">
+* <script src="...">
 
 
 How Relative :abbr:`URI (Uniform Resource Identifier)`\s Are Resolved
@@ -290,8 +237,8 @@ Feed :abbr:`URL (Uniform Resource Locator)` as default base :abbr:`URI (Uniform 
 
 .. _advanced.base.disable:
 
-Disabling Relative :abbr:`URI (Uniform Resource Identifier)`s Resolution
-------------------------------------------------------------------------
+Disabling Relative :abbr:`URI (Uniform Resource Identifier)`\s Resolution
+-------------------------------------------------------------------------
 
 Though not recommended, it is possible to disable :program:`Universal Feed Parser`\'s relative
 :abbr:`URI (Uniform Resource Identifier)` resolution by setting feedparser.RESOLVE_RELATIVE_URIS to ``0``.
