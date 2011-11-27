@@ -1,41 +1,58 @@
-:program:`Universal Feed Parser` attempts to autodetect the type and version of the feeds it parses.  There are many subtle and not-so-subtle differences between the different versions of :abbr:`RSS (Rich Site Summary)`, and applications may choose to handle different feed types in different ways.
-
 Feed Type and Version Detection
 ===============================
 
+:program:`Universal Feed Parser` attempts to autodetect the type and version of
+the feeds it parses.  There are many subtle and not-so-subtle differences
+between the different versions of :abbr:`RSS (Rich Site Summary)`, and
+applications may choose to handle different feed types in different ways.
+
 Accessing feed version
 ----------------------
+
 ::
 
-
-    ``>>>````d = feedparser.parse('`http://feedparser.org/docs/examples/atom10.xml <http://feedparser.org/docs/examples/atom10.xml>`_')````>>>````d.version``'atom10'``>>>````d = feedparser.parse('`http://feedparser.org/docs/examples/atom03.xml <http://feedparser.org/docs/examples/atom03.xml>`_')````>>>````d.version``'atom03'``>>>````d = feedparser.parse('`http://feedparser.org/docs/examples/rss20.xml <http://feedparser.org/docs/examples/rss20.xml>`_')````>>>````d.version``'rss20'``>>>````d = feedparser.parse('`http://feedparser.org/docs/examples/rss20dc.xml <http://feedparser.org/docs/examples/rss20dc.xml>`_')````>>>````d.version``'rss20'``>>>````d = feedparser.parse('`http://feedparser.org/docs/examples/rss10.rdf <http://feedparser.org/docs/examples/rss10.rdf>`_')````>>>````d.version``'rss10'
+    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d.version
+    'atom10'
+    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom03.xml')
+    >>> d.version
+    'atom03'
+    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
+    >>> d.version
+    'rss20'
+    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20dc.xml')
+    >>> d.version
+    'rss20'
+    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss10.rdf')
+    >>> d.version
+    'rss10'
 
 
 Here is the complete list of known feed types and versions that may be returned in ``version``:
 
 ``rss090``
-    `:abbr:`RSS (Rich Site Summary)` 0.90 <http://www.purplepages.ie/RSS/netscape/rss0.90.html>`_
+    `RSS 0.90 <http://www.purplepages.ie/RSS/netscape/rss0.90.html>`_
 
 ``rss091n``
-    `Netscape :abbr:`RSS (Rich Site Summary)` 0.91 <http://my.netscape.com/publish/formats/rss-spec-0.91.html>`_
+    `Netscape RSS 0.91 <http://my.netscape.com/publish/formats/rss-spec-0.91.html>`_
 
 ``rss091u``
-    `Userland :abbr:`RSS (Rich Site Summary)` 0.91 <http://backend.userland.com/rss091>`_ (`differences from Netscape :abbr:`RSS (Rich Site Summary)` 0.91 <http://diveintomark.org/archives/2004/02/04/incompatible-rss#example3>`_)
+    `Userland RSS 0.91 <http://backend.userland.com/rss091>`_ (`differences from Netscape RSS 0.91 <http://diveintomark.org/archives/2004/02/04/incompatible-rss#example3>`_)
 
 ``rss10``
-    `:abbr:`RSS (Rich Site Summary)` 1.0 <http://purl.org/rss/1.0/>`_
+    `RSS 1.0 <http://purl.org/rss/1.0/>`_
 
 ``rss092``
-    `:abbr:`RSS (Rich Site Summary)` 0.92 <http://backend.userland.com/rss092>`_
+    `RSS 0.92 <http://backend.userland.com/rss092>`_
 
 ``rss093``
-    `:abbr:`RSS (Rich Site Summary)` 0.93 <http://backend.userland.com/rss093>`_
+    `RSS 0.93 <http://backend.userland.com/rss093>`_
 
 ``rss094``
     :abbr:`RSS (Rich Site Summary)` 0.94 (no accurate specification is known to exist)
 
 ``rss20``
-    `:abbr:`RSS (Rich Site Summary)` 2.0 <http://blogs.law.harvard.edu/tech/rss>`_
+    `RSS 2.0 <http://blogs.law.harvard.edu/tech/rss>`_
 
 ``rss``
     :abbr:`RSS (Rich Site Summary)` (unknown or unrecognized version)
@@ -56,9 +73,6 @@ Here is the complete list of known feed types and versions that may be returned 
     Atom (unknown or unrecognized version)
 
 ``cdf``
-    `:abbr:`CDF (Channel Definition Format)` <http://www.w3.org/TR/NOTE-CDFsubmit.html>`_
-
-``hotrss``
-    `Hot :abbr:`RSS (Rich Site Summary)` <http://diveintomark.org/archives/2004/04/14/hot-rss>`_
+    `CDF <http://www.w3.org/TR/NOTE-CDFsubmit.html>`_
 
 If the feed type is completely unknown, ``version`` will be an empty string.
