@@ -44,7 +44,39 @@ meet any of the following conditions:
 * type attribute starts with audio/
 * type attribute starts with video/
 * type attribute starts with application/ but does not end with xml
-* href attribute ends with one of the following file extensions: :file:`.7z`, :file:`.avi`, :file:`.bin`, :file:`.bz2`, :file:`.bz2`, :file:`.deb`, :file:`.dmg`, :file:`.exe`, :file:`.gz`, :file:`.hqx`, :file:`.img`, :file:`.iso`, :file:`.jar`, :file:`.m4a`, :file:`.m4v`, :file:`.mp2`, :file:`.mp3`, :file:`.mp4`, :file:`.msi`, :file:`.ogg`, :file:`.ogm`, :file:`.rar`, :file:`.rar`, :file:`.rpm`, :file:`.sit`, :file:`.sitx`, :file:`.tar`, :file:`.tbz2`, :file:`.tgz`, :file:`.wma`, :file:`.wmv` :file:`.z`, :file:`.zip`,
+* href attribute ends with one of the following file extensions:
+  :file:`.7z`,
+  :file:`.avi`,
+  :file:`.bin`,
+  :file:`.bz2`,
+  :file:`.bz2`,
+  :file:`.deb`,
+  :file:`.dmg`,
+  :file:`.exe`,
+  :file:`.gz`,
+  :file:`.hqx`,
+  :file:`.img`,
+  :file:`.iso`,
+  :file:`.jar`,
+  :file:`.m4a`,
+  :file:`.m4v`,
+  :file:`.mp2`,
+  :file:`.mp3`,
+  :file:`.mp4`,
+  :file:`.msi`,
+  :file:`.ogg`,
+  :file:`.ogm`,
+  :file:`.rar`,
+  :file:`.rpm`,
+  :file:`.sit`,
+  :file:`.sitx`,
+  :file:`.tar`,
+  :file:`.tbz2`,
+  :file:`.tgz`,
+  :file:`.wma`,
+  :file:`.wmv`,
+  :file:`.z`,
+  :file:`.zip`
 
 
 When :program:`Universal Feed Parser` finds a link that satisfies any of these
