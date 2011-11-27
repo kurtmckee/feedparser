@@ -1,18 +1,12 @@
 Changes in version 2.7.x
 ========================
 
-
-
-
 The 2.7 series was a brief but necessary transition towards some of the core ideas in version 3.0.
-Changes in version 2.7.6
 
 :program:`Ultra-liberal Feed Parser` 2.7.6 was released on January 16, 2004.
 
 - fixed bug with :file:`StringIO` importing
 
-
-Changes in version 2.7.5
 
 :program:`Ultra-liberal Feed Parser` 2.7.5 was released on January 15, 2004.
 
@@ -20,8 +14,6 @@ Changes in version 2.7.5
 
 - added ``_debug`` variable
 
-
-Changes in version 2.7.4
 
 :program:`Ultra-liberal Feed Parser` 2.7.4 was released on January 14, 2004.
 
@@ -36,21 +28,15 @@ Changes in version 2.7.4
 - added :file:`base64` support
 
 
-Changes in version 2.7.3
-
 :program:`Ultra-liberal Feed Parser` 2.7.3 was released on January 14, 2004.
 
 - reverted all changes made in 2.7.2
 
 
-Changes in version 2.7.2
-
 :program:`Ultra-liberal Feed Parser` 2.7.2 was released on January 13, 2004.
 
 - "Version 2.7.2 of my feed parser, released today, will by default refuse to parse `this feed <http://intertwingly.net/stories/2004/01/12/broken.rss>`_.  It does a first-pass check for wellformedness, and when that fails it sets the 'bozo' bit in the result to ``1`` and immediately terminates.  You can revert to the previous behavior by passing ``disableWellFormedCheck=1``, but it will print arrogant warning messages to stderr to the effect that anyone who can't create a well-formed :abbr:`XML (Extensible Markup Language)` feed is a bozo and an incompetent fool." `source <http://intertwingly.net/blog/2004/01/12/Scientific-Method#c1074047818>`_
 
-
-Changes in version 2.7.1
 
 :program:`Ultra-liberal Feed Parser` 2.7.1 was released on January 9, 2004.
 
@@ -64,8 +50,6 @@ Changes in version 2.7.1
 
 - :program:`Python` 2.1 ``dict`` support (MarekK)
 
-
-Changes in version 2.7
 
 :program:`Ultra-liberal Feed Parser` 2.7 was released on January 5, 2004.
 
