@@ -1,12 +1,9 @@
 Changes in version 4.2
 ======================
 
-
-
-
 :program:`Universal Feed Parser` 4.2 was released on 2008-03-12.
 
-- Support for :ref:`parsing microformats <advanced.microformats>`, including :ref:`rel=enclosure <advanced.microformats.relenclosure>`, :ref:`rel=tag <advanced.microformats.reltag>`, :ref:`:abbr:`XFN (XHTML Friends Network)` <advanced.microformats.xfn>`, and :ref:`hCard <advanced.microformats.hcard>`.
+- Support for :ref:`parsing microformats <advanced.microformats>`, including :ref:`rel=enclosure <advanced.microformats.relenclosure>`, :ref:`rel=tag <advanced.microformats.reltag>`, :ref:`XFN <advanced.microformats.xfn>`, and :ref:`hCard <advanced.microformats.hcard>`.
 
 - Updated the whitelist of :ref:`acceptable HTML elements and attributes <advanced.sanitization.html>` based on the latest draft of the :abbr:`HTML (HyperText Markup Language)` 5 specification.
 
@@ -18,9 +15,7 @@ Changes in version 4.2
 
 - :abbr:`IRI (International Resource Identifier)` support for every element that can contain a :abbr:`URI (Uniform Resource Identifier)`.
 
-- Ability to :ref:`disable relative :abbr:`URI (Uniform Resource Identifier)` resolution <advanced.base.disable>`.
-
-- TODO<listitem><para>Ability to <link linkend="advanced.sanitization.disable">disable &html; sanitizing</link>.</para></listitem>
+- Ability to :ref:`disable relative URI resolution <advanced.base.disable>`.
 
 - :ref:`Command-line arguments and alternate serializers <commandline>`, for manipulating :program:`Universal Feed Parser` from shell scripts or other non-Python sources.
 
