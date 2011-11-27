@@ -7,7 +7,7 @@ Parser` |version|.  It does not claim to describe the behavior of any other vers
 
 This documentation lives at `http://feedparser.org/docs/
 <http://feedparser.org/docs/>`_.  If you're reading it somewhere else, you may
-not have the latest version.RSSAtomCDFXMLfeedparserPython
+not have the latest version.
 
 This documentation is provided by the author "as is" without any express or
 implied warranties.  See :ref:`license` for more details.
