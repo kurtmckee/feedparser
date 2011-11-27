@@ -23,9 +23,12 @@ These elements are sanitized by default:
 
 .. note::
 
-    The unit tests for :abbr:`HTML (HyperText Markup Language)` sanitizing show
-    many different examples of dangerous markup that :program:`Universal Feed
-    Parser` sanitizes by default.
+    If the content is declared to be (or is determined to be)
+    :mimetype:`text/plain`, it will not be sanitized. This is to avoid data loss.
+    It is recommended that you check the content type in e.g.
+    :py:attr:`entries[i].summary_detail.type`. If it is :mimetype:`text/plain` then
+    it has not been sanitized (and you should perform HTML escaping before
+    rendering the content).
 
 
 .. _advanced.sanitization.html:
