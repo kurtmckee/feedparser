@@ -1,71 +1,49 @@
-feed.textinput
-==============
-
-
-
+:py:attr:`feed.textinput`
+=========================
 
 A text input form.  No one actually uses this.  Why are you?
-
-- Comes from
-
-- /rss/channel/textInput
-
-- /rss/channel/textinput
-
-- /rdf:RDF/rdf:textinput
-
-
-
 
 
 .. _reference.feed.textinput.title:
 
+:py:attr:`feed.textinput.title`
+-------------------------------
 
-
-feed.textinput.title
---------------------
-
-The title of the text input form, which would go in the value attribute of the form's submit button.
-
+The title of the text input form, which would go in the value attribute of the
+form's submit button.
 
 
 .. _reference.feed.textinput.link:
 
+:py:attr:`feed.textinput.link`
+------------------------------
 
+The link of the script which processes the text input form, which would go in
+the action attirbute of the form.
 
-feed.textinput.link
--------------------
-
-The link of the script which processes the text input form, which would go in the action attirbute of the form.
-
-If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is :ref:`resolved according to a set of rules <advanced.base>`.
-
+If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
+:ref:`resolved according to a set of rules <advanced.base>`.
 
 
 .. _reference.feed.textinput.name:
 
+:py:attr:`feed.textinput.name`
+------------------------------
 
-
-feed.textinput.name
--------------------
-
-The name of the text input box in the form, which would go in the name attribute of the form's input box.
-
+The name of the text input box in the form, which would go in the name
+attribute of the form's input box.
 
 
 .. _reference.feed.textinput.description:
 
+:py:attr:`feed.textinput.description`
+-------------------------------------
+
+A short description of the text input form, which would go in the label element
+of the form.
 
 
-feed.textinput.description
---------------------------
-
-A short description of the text input form, which would go in the label element of the form.
-
-
-
-Annotated example
------------------
+.. rubric:: Annotated example
 
 This is a text input in a feed:
 ::
@@ -88,3 +66,10 @@ This is how it could be rendered in :abbr:`HTML (HyperText Markup Language)`:
     <input type="text" id="keyword" name="keyword" value="">
     <input type="submit" value="Go!">
     </form>
+
+
+.. rubric:: Comes from
+
+* /rdf:RDF/rdf:textinput
+* /rss/channel/textInput
+* /rss/channel/textinput

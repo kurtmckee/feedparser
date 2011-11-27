@@ -1,15 +1,10 @@
 .. _reference.feed.errorreportsto:
 
-
-
-feed.errorreportsto
-===================
-
-
-
+:py:attr:`feed.errorreportsto`
+==============================
 
 An email address for reporting errors in the feed itself.
 
-- Comes from
+.. rubric:: Comes from
 
-- /rdf:RDF/admin:errorReportsTo/@rdf:resource
+* /rdf:RDF/admin:errorReportsTo/@rdf:resource

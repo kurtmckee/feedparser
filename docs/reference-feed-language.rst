@@ -1,31 +1,15 @@
 .. _reference.feed.language:
 
-
-
-feed.language
-=============
-
-
-
+:py:attr:`feed.language`
+========================
 
 The primary language of the feed.
 
-- Comes from
 
-- /atom10:feed/@xml:lang
+.. rubric:: Comes from
 
-- /atom03:feed/@xml:lang
-
-- /rss/channel/language
-
-- /rss/channel/dc:language
-
-- /rdf:RDF/rdf:channel/dc:language
-
-
-
-.. COMMENT: xxx
-            <note>
-            <title/>
-            <para>See <xref linkend="advanced.lang"/> for more details on language elements, attributes, and inheritance.</para>
-            </note>
+* /atom03:feed/@xml:lang
+* /atom10:feed/@xml:lang
+* /rdf:RDF/rdf:channel/dc:language
+* /rss/channel/dc:language
+* /rss/channel/language

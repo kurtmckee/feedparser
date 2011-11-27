@@ -1,27 +1,19 @@
 .. _reference.feed.generator:
 
-
-
-feed.generator
-==============
-
-
-
+:py:attr:`feed.generator`
+=========================
 
 A human-readable name of the application used to generate the feed.
 
-- Comes from
 
-- /atom10:feed/atom10:generator
+.. rubric:: Comes from
 
-- /atom03:feed/atom03:generator
-
-- /rss/channel/generator
-
-- /rdf:RDF/rdf:channel/admin:generatorAgent/@rdf:resource
+* /atom03:feed/atom03:generator
+* /atom10:feed/atom10:generator
+* /rdf:RDF/rdf:channel/admin:generatorAgent/@rdf:resource
+* /rss/channel/generator
 
 
+.. seealso::
 
-- See also
-
-- :ref:`reference.feed.generator_detail`
+    * :ref:`reference.feed.generator_detail`

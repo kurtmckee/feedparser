@@ -1,27 +1,19 @@
 .. _reference.feed.publisher:
 
-
-
-feed.publisher
-==============
-
-
-
+:py:attr:`feed.publisher`
+=========================
 
 The publisher of the feed.
 
-- Comes from
 
-- /rss/channel/webMaster
+.. rubric:: Comes from
 
-- /rss/channel/dc:publisher
-
-- /rss/channel/itunes:owner
-
-- /rdf:RDF/rdf:channel/dc:publisher
+* /rdf:RDF/rdf:channel/dc:publisher
+* /rss/channel/dc:publisher
+* /rss/channel/itunes:owner
+* /rss/channel/webMaster
 
 
+.. seealso::
 
-- See also
-
-- :ref:`reference.feed.publisher_detail`
+    * :ref:`reference.feed.publisher_detail`
