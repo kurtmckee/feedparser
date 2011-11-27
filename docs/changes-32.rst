@@ -28,6 +28,6 @@ Changes in version 3.2
 
 - fixed crashing bug if no :abbr:`XML (Extensible Markup Language)` parsers are available
 
-- added support for 'Content-encoding: deflate'
+- added support for ``Content-encoding: deflate``
 
-- send blank 'Accept-encoding: ' header if neither :file:`gzip` nor :file:`zlib` modules are available
+- send blank ``Accept-encoding`` header if neither :file:`gzip` nor :file:`zlib` modules are available
