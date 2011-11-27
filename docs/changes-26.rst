@@ -1,9 +1,6 @@
 Changes in version 2.6
 ======================
 
-
-
-
 :program:`Ultra-liberal Feed Parser` 2.6 was released on January 1, 2004.
 
 - dc:author support (MarekK)
@@ -22,7 +19,7 @@ Changes in version 2.6
 
 - added support for multiple category/dc:subject (MartijnP)
 
-- normalize content model: ``description`` gets description (which can come from <description>, <summary>, or full content if no <description>), ``content`` gets dict of ``base``/``language``/``type``/``value`` (which can come from <content:encoded>, <xhtml:body, <content, or <fullitem>)
+- normalize content model: ``description`` gets description (which can come from ``<description>``, ``<summary>``, or full content if no ``<description>``), ``content`` gets dict of ``base``/``language``/``type``/``value`` (which can come from ``<content:encoded>``, ``<xhtml:body>``, ``<content>``, or ``<fullitem>``)
 
 - fixed bug matching arbitrary Userland namespaces
 
@@ -30,10 +27,10 @@ Changes in version 2.6
 
 - fixed bug tracking unknown tags
 
-- fixed bug tracking content when <content> element is not in default namespace (like Pocketsoap feed)
+- fixed bug tracking content when ``<content>`` element is not in default namespace (like Pocketsoap feed)
 
-- resolve relative URLs in <link>, <guid>, <docs>, <url>, <comments>, <wfw:comment>, <wfw:commentRSS>
+- resolve relative URLs in ``<link>``, ``<guid>``, ``<docs>``, ``<url>``, ``<comments>``, ``<wfw:comment>``, ``<wfw:commentRSS>``
 
-- resolve relative :abbr:`URI (Uniform Resource Identifier)`s within embedded :abbr:`HTML (HyperText Markup Language)` markup in <description>, <xhtml:body>, <content>, <content:encoded>, <title>, <subtitle>, <summary>, <info>, <tagline>, and <copyright>
+- resolve relative :abbr:`URI (Uniform Resource Identifier)`s within embedded :abbr:`HTML (HyperText Markup Language)` markup in ``<description>``, ``<xhtml:body>``, ``<content>``, ``<content:encoded>``, ``<title>``, ``<subtitle>``, ``<summary>``, ``<info>``, ``<tagline>``, and ``<copyright>``
 
 - added support for pingback and trackback namespaces
