@@ -15,7 +15,10 @@ Parsing a feed from a remote :abbr:`URL (Uniform Resource Locator)`
 ::
 
 
-    ``>>>````import feedparser````>>>````d = feedparser.parse('`http://feedparser.org/docs/examples/atom10.xml <http://feedparser.org/docs/examples/atom10.xml>`_')````>>>````d['feed']['title']``u'Sample Feed'
+    >>> import feedparser
+    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d['feed']['title']
+    u'Sample Feed'
 
 
 The following example assumes you are on Windows, and that you have saved a feed at :file:`c:\incoming\atom10.xml`.
@@ -27,7 +30,10 @@ Parsing a feed from a local file
 ::
 
 
-    ``>>>````import feedparser````>>>````d = feedparser.parse(r'c:\\incoming\\atom10.xml')````>>>````d['feed']['title']``u'Sample Feed'
+    >>> import feedparser
+    >>> d = feedparser.parse(r'c:\\incoming\\atom10.xml')
+    >>> d['feed']['title']
+    u'Sample Feed'
 
 
 :program:`Universal Feed Parser` can also parse a feed in memory.
@@ -37,15 +43,19 @@ Parsing a feed from a string
 ::
 
 
-    ``>>>````import feedparser````>>>````rawdata = """<rss version="2.0">
+    >>> import feedparser
+    >>> rawdata = """<rss version="2.0">
     <channel>
     <title>Sample Feed</title>
     </channel>
-    </rss>"""````>>>````d = feedparser.parse(rawdata)````>>>````d['feed']['title']``u'Sample Feed'
+    </rss>"""
+    >>> d = feedparser.parse(rawdata)
+    >>> d['feed']['title']
+    u'Sample Feed'
 
 
 Values are returned as :program:`Python` Unicode strings (except when they're not -- see :ref:`advanced.encoding` for all the gory details).
 
-- Elsewhere
+.. seealso::
 
-- `Introduction to :program:`Python` Unicode strings <http://docs.python.org/tut/node5.html#SECTION005130000000000000000>`_
+   `Introduction to Python Unicode strings <http://docs.python.org/tut/node5.html#SECTION005130000000000000000>`_
