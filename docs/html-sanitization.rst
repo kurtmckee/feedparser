@@ -4,27 +4,21 @@ Sanitization
 ============
 
 Most feeds embed :abbr:`HTML (HyperText Markup Language)` markup within feed
-elements.  Some feeds even embed other types of markup, such as
-:abbr:`SVG (Scalable Vector Graphics)` or :abbr:`MathML (Mathematical Markup Language)`.
+elements.  Some feeds even embed other types of markup, such as :abbr:`SVG
+(Scalable Vector Graphics)` or :abbr:`MathML (Mathematical Markup Language)`.
 Since many feed aggregators use a web browser (or browser component) to display
 content, :program:`Universal Feed Parser` sanitizes embedded markup to remove
 things that could pose security risks.
 
 These elements are sanitized by default:
 
-- :ref:`reference.feed.title`
-
-- :ref:`reference.feed.subtitle`
-
-- :ref:`reference.feed.info`
-
-- :ref:`reference.feed.rights`
-
-- :ref:`reference.entry.title`
-
-- :ref:`reference.entry.summary`
-
-- :ref:`reference.entry.content`
+* :ref:`reference.entry.content`
+* :ref:`reference.entry.summary`
+* :ref:`reference.entry.title`
+* :ref:`reference.feed.info`
+* :ref:`reference.feed.rights`
+* :ref:`reference.feed.subtitle`
+* :ref:`reference.feed.title`
 
 
 .. note::
@@ -39,7 +33,8 @@ These elements are sanitized by default:
 :abbr:`HTML (HyperText Markup Language)` Sanitization
 -----------------------------------------------------
 
-The following :abbr:`HTML (HyperText Markup Language)` elements are allowed by default (all others are stripped):
+The following :abbr:`HTML (HyperText Markup Language)` elements are allowed by
+default (all others are stripped):
 
 .. hlist::
    :columns: 3
@@ -145,7 +140,8 @@ The following :abbr:`HTML (HyperText Markup Language)` elements are allowed by d
    * video
 
 
-The following :abbr:`HTML (HyperText Markup Language)` attributes are allowed by default (all others are stripped):
+The following :abbr:`HTML (HyperText Markup Language)` attributes are allowed
+by default (all others are stripped):
 
 .. hlist::
    :columns: 3
@@ -337,7 +333,8 @@ The following SVG elements are allowed by default (all others are stripped):
    * use
 
 
-The following :abbr:`SVG (Scalable Vector Graphics)` attributes are allowed by default (all others are stripped):
+The following :abbr:`SVG (Scalable Vector Graphics)` attributes are allowed by
+default (all others are stripped):
 
 .. hlist::
    :columns: 3
@@ -489,7 +486,8 @@ The following :abbr:`SVG (Scalable Vector Graphics)` attributes are allowed by d
 :abbr:`MathML (Mathematical Markup Language)` Sanitization
 ----------------------------------------------------------
 
-The following :abbr:`MathML (Mathematical Markup Language)` elements are allowed by default (all others are stripped):
+The following :abbr:`MathML (Mathematical Markup Language)` elements are
+allowed by default (all others are stripped):
 
 .. hlist::
    :columns: 3
@@ -527,7 +525,8 @@ The following :abbr:`MathML (Mathematical Markup Language)` elements are allowed
    * semantics
 
 
-The following :abbr:`MathML (Mathematical Markup Language)` attributes are allowed by default (all others are stripped):
+The following :abbr:`MathML (Mathematical Markup Language)` attributes are
+allowed by default (all others are stripped):
 
 .. hlist::
    :columns: 3
@@ -535,8 +534,6 @@ The following :abbr:`MathML (Mathematical Markup Language)` attributes are allow
    * actiontype
    * align
    * close
-   * columnalign
-   * columnalign
    * columnalign
    * columnlines
    * columnspacing
@@ -557,13 +554,10 @@ The following :abbr:`MathML (Mathematical Markup Language)` attributes are allow
    * mathbackground
    * mathcolor
    * mathvariant
-   * mathvariant
    * maxsize
    * minsize
    * open
    * other
-   * rowalign
-   * rowalign
    * rowalign
    * rowlines
    * rowspacing
@@ -574,7 +568,6 @@ The following :abbr:`MathML (Mathematical Markup Language)` attributes are allow
    * separator
    * separators
    * stretchy
-   * width
    * width
    * xlink:href
    * xlink:show
@@ -588,7 +581,8 @@ The following :abbr:`MathML (Mathematical Markup Language)` attributes are allow
 :abbr:`CSS (Cascading Style Sheets)` Sanitization
 -------------------------------------------------
 
-The following :abbr:`CSS (Cascading Style Sheets)` properties are allowed by default in style attributes (all others are stripped):
+The following :abbr:`CSS (Cascading Style Sheets)` properties are allowed by
+default in style attributes (all others are stripped):
 
 .. hlist::
    :columns: 3
@@ -653,22 +647,19 @@ The following :abbr:`CSS (Cascading Style Sheets)` properties are allowed by def
 Whitelist, Don't Blacklist
 --------------------------
 
-I am often asked why :program:`Universal Feed Parser` is so hard-assed about :abbr:`HTML (HyperText Markup Language)` and :abbr:`CSS (Cascading Style Sheets)` sanitizing.  To illustrate the problem, here is an incomplete list of potentially dangerous :abbr:`HTML (HyperText Markup Language)` tags and attributes:
+I am often asked why :program:`Universal Feed Parser` is so hard-assed about
+:abbr:`HTML (HyperText Markup Language)` and :abbr:`CSS (Cascading Style
+Sheets)` sanitizing.  To illustrate the problem, here is an incomplete list of
+potentially dangerous :abbr:`HTML (HyperText Markup Language)` tags and
+attributes:
 
-- script, which can contain malicious script
+* script, which can contain malicious script
+* applet, embed, and object, which can automatically download and execute malicious code
+* meta, which can contain malicious redirects
+* onload, onunload, and all other on* attributes, which can contain malicious script
+* style, link, and the style attribute, which can contain malicious script
 
-- applet, embed, and object, which can automatically download and execute malicious code
-
-- meta, which can contain malicious redirects
-
-- onload, onunload, and all other on* attributes, which can contain malicious script
-
-- style, link, and the style attribute, which can contain malicious script
-
-
-
-
-*style?* Yes, style.  :abbr:`CSS (Cascading Style Sheets)` definitions can contain executable code.
+*style?* Yes, style. :abbr:`CSS (Cascading Style Sheets)` definitions can contain executable code.
 
 
 Embedding Javascript in :abbr:`CSS (Cascading Style Sheets)`
@@ -684,7 +675,8 @@ This sample is taken from `http://feedparser.org/docs/examples/rss20.xml <http:/
     nasty tricks&lt;/span&gt;</description>
 
 
-This sample is more advanced, and does not contain the keyword javascript: that many naive :abbr:`HTML (HyperText Markup Language)` sanitizers scan for:
+This sample is more advanced, and does not contain the keyword javascript: that
+many naive :abbr:`HTML (HyperText Markup Language)` sanitizers scan for:
 
 .. sourcecode:: html
 
@@ -696,6 +688,7 @@ This sample is more advanced, and does not contain the keyword javascript: that 
 Internet Explorer for Windows will execute the Javascript in both of these examples.
 
 Now consider that in :abbr:`HTML (HyperText Markup Language)`, attribute values may be entity-encoded in several different ways.
+
 
 Embedding encoded Javascript in :abbr:`CSS (Cascading Style Sheets)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -730,9 +723,17 @@ which is the same as this (without the line breaks):
     &#x72;&#x67;&#x2f;&#x27;&#x29;">
 
 
-And so on, plus several other variations, plus every combination of every variation.
+And so on, plus several other variations, plus every combination of every
+variation.
 
-The more I investigate, the more cases I find where Internet Explorer for Windows will treat seemingly innocuous markup as code and blithely execute it.  This is why :program:`Universal Feed Parser` uses a whitelist and not a blacklist.   I am reasonably confident that none of the elements or attributes on the whitelist are security risks.  I am not at all confident about elements or attributes that I have not explicitly investigated.  And I have no confidence at all in my ability to detect strings within attribute values that Internet Explorer for Windows will treat as executable code.
+The more I investigate, the more cases I find where Internet Explorer for
+Windows will treat seemingly innocuous markup as code and blithely execute it.
+This is why :program:`Universal Feed Parser` uses a whitelist and not a
+blacklist. I am reasonably confident that none of the elements or attributes on
+the whitelist are security risks. I am not at all confident about elements or
+attributes that I have not explicitly investigated. And I have no confidence at
+all in my ability to detect strings within attribute values that Internet
+Explorer for Windows will treat as executable code.
 
 .. seealso::
 
