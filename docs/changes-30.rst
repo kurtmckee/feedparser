@@ -1,11 +1,6 @@
-Changes in version 3.0 and the 26 betas that preceded it
-========================================================
-
-
-
-
-This got a little out of hand.
 Changes in version 3.0
+======================
+
 
 :program:`Universal Feed Parser` 3.0 was released on June 21, 2004.
 
@@ -13,8 +8,6 @@ Changes in version 3.0
 
 - fixed regression that could cause the same encoding to be tried twice (even if it failed the first time)
 
-
-Changes in version 3.0fc3
 
 :program:`Universal Feed Parser` 3.0fc3 was released on June 18, 2004.
 
@@ -37,16 +30,12 @@ Changes in version 3.0fc3
 - send ``Accept`` header
 
 
-Changes in version 3.0fc2
-
 :program:`Universal Feed Parser` 3.0fc2 was released on May 10, 2004.
 
 - added and passed Sam's amp tests
 
 - added and passed my blink tag tests
 
-
-Changes in version 3.0fc1
 
 :program:`Universal Feed Parser` 3.0fc1 was released on April 23, 2004.
 
@@ -59,8 +48,6 @@ Changes in version 3.0fc1
 - better textinput and image tracking in illformed :abbr:`RSS (Rich Site Summary)` 1.0 feeds
 
 
-Changes in version 3.0b23
-
 :program:`Universal Feed Parser` 3.0b23 was released on April 21, 2004.
 
 - fixed ``UnicodeDecodeError`` for feeds that contain high-bit characters in attributes in embedded :abbr:`HTML (HyperText Markup Language)` in description (thanks Thijs van de Vossen)
@@ -69,8 +56,6 @@ Changes in version 3.0b23
 
 - tweaked FeedParserDict.has_key to return ``True`` if asking about a mapped key
 
-
-Changes in version 3.0b22
 
 :program:`Universal Feed Parser` 3.0b22 was released on April 19, 2004.
 
@@ -89,21 +74,15 @@ Changes in version 3.0b22
 - convert each value in results to Unicode (if possible), even if using regex-based parsing
 
 
-Changes in version 3.0b21
-
 :program:`Universal Feed Parser` 3.0b21 was released on April 14, 2004.
 
 - added Hot RSS support
 
 
-Changes in version 3.0b20
-
 :program:`Universal Feed Parser` 3.0b20 was released on April 7, 2004.
 
 - added :abbr:`CDF (Channel Definition Format)` support
 
-
-Changes in version 3.0b19
 
 :program:`Universal Feed Parser` 3.0b19 was released on March 15, 2004.
 
@@ -116,8 +95,6 @@ Changes in version 3.0b19
 - support for textinput/textInput
 
 
-Changes in version 3.0b18
-
 :program:`Universal Feed Parser` 3.0b18 was released on February 17, 2004.
 
 - always map description to ``summary_detail`` (Andrei)
@@ -125,21 +102,15 @@ Changes in version 3.0b18
 - use :file:`libxml2` (if available)
 
 
-Changes in version 3.0b17
-
 :program:`Universal Feed Parser` 3.0b17 was released on February 13, 2004.
 
 - determine character encoding as per `RFC 3023 <http://www.ietf.org/rfc/rfc3023.txt>`_
 
 
-Changes in version 3.0b16
-
 :program:`Universal Feed Parser` 3.0b16 was released on February 12, 2004.
 
 - fixed support for :abbr:`RSS (Rich Site Summary)` 0.90 (broken in b15)
 
-
-Changes in version 3.0b15
 
 :program:`Universal Feed Parser` 3.0b15 was released on February 11, 2004.
 
@@ -158,21 +129,15 @@ Changes in version 3.0b15
 - fixed namespace handling under :program:`Python` 2.1
 
 
-Changes in version 3.0b14
-
 :program:`Universal Feed Parser` 3.0b14 was released on February 8, 2004.
 
 - fixed CDATA handling in non-wellformed feeds under :program:`Python` 2.1
 
 
-Changes in version 3.0b13
-
 :program:`Universal Feed Parser` 3.0b13 was released on February 8, 2004.
 
 - better handling of empty :abbr:`HTML (HyperText Markup Language)` tags (br, hr, img, etc.) in embedded markup, in either :abbr:`HTML (HyperText Markup Language)` or :abbr:`XHTML (Extensible HyperText Markup Language)` form (<br>, <br/>, <br />)
 
-
-Changes in version 3.0b12
 
 :program:`Universal Feed Parser` 3.0b12 was released on February 6, 2004.
 
@@ -185,8 +150,6 @@ Changes in version 3.0b12
 - better sanitizing of dangerous :abbr:`HTML (HyperText Markup Language)` elements with end tags (script, frameset)
 
 
-Changes in version 3.0b11
-
 :program:`Universal Feed Parser` 3.0b11 was released on February 2, 2004.
 
 - added rights to list of elements that can contain dangerous markup
@@ -196,14 +159,10 @@ Changes in version 3.0b11
 - liberalized date parsing even further
 
 
-Changes in version 3.0b10
-
 :program:`Universal Feed Parser` 3.0b10 was released on January 31, 2004.
 
 - incorporated ISO-8601 date parsing routines from :file:`xml.util.iso8601`
 
-
-Changes in version 3.0b9
 
 :program:`Universal Feed Parser` 3.0b9 was released on January 29, 2004.
 
@@ -212,14 +171,10 @@ Changes in version 3.0b9
 - added support for summary
 
 
-Changes in version 3.0b8
-
 :program:`Universal Feed Parser` 3.0b8 was released on January 28, 2004.
 
 - added support for contributor
 
-
-Changes in version 3.0b7
 
 :program:`Universal Feed Parser` 3.0b7 was released on January 28, 2004.
 
@@ -227,8 +182,6 @@ Changes in version 3.0b7
 
 - map ``author`` to ``author_detail`` if ``author`` contains name + email address
 
-
-Changes in version 3.0b6
 
 :program:`Universal Feed Parser` 3.0b6 was released on January 27, 2004.
 
@@ -241,14 +194,10 @@ Changes in version 3.0b6
 - fixed bug with gzip encoding (not always telling server we support it when we do)
 
 
-Changes in version 3.0b5
-
 :program:`Universal Feed Parser` 3.0b5 was released on January 26, 2004.
 
 - fixed bug parsing multiple links at feed level
 
-
-Changes in version 3.0b4
 
 :program:`Universal Feed Parser` 3.0b4 was released on January 26, 2004.
 
@@ -256,8 +205,6 @@ Changes in version 3.0b4
 
 - fixed multiple bugs tracking xml:base :abbr:`URI (Uniform Resource Identifier)`, one for documents that don't define one explicitly and one for documents that define an outer and an inner xml:base that goes out of scope before the end of the document
 
-
-Changes in version 3.0b3
 
 :program:`Universal Feed Parser` 3.0b3 was released on January 23, 2004.
 
@@ -275,7 +222,5 @@ Changes in version 3.0b3
 
 - added support for expirationDate
 
-
-Changes in version 3.0b2 and 3.0b1
 
 :program:`Universal Feed Parser` 3.0b2 and 3.0b1 have been lost in the mists of time.
