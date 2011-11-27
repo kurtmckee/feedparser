@@ -20,6 +20,5 @@ implied warranties.  See :ref:`license` for more details.
    http
    annotated-examples
    history
-   command-line
    microformats
    reference
