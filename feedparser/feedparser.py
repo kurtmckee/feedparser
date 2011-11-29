@@ -4,7 +4,7 @@
 Handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds
 
 Visit https://code.google.com/p/feedparser/ for the latest version
-Visit http://feedparser.org/docs/ for the latest documentation
+Visit http://packages.python.org/feedparser/ for the latest documentation
 
 Required: Python 2.4 or later
 Recommended: iconv_codec <http://cjkpython.i18n.org/>
