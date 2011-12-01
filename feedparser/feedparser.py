@@ -10,7 +10,10 @@ Recommended: iconv_codec <http://cjkpython.i18n.org/>
 """
 
 __version__ = "5.0.1"
-__license__ = """Copyright (c) 2002-2008, Mark Pilgrim, All rights reserved.
+__license__ = """
+Copyright (c) 2010-2011 Kurt McKee <contactme@kurtmckee.org>
+Copyright (c) 2002-2008 Mark Pilgrim
+All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
