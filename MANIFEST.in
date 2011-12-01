@@ -1,4 +1,5 @@
 recursive-include feedparser/tests *.xml
+recursive-include docs *.rst *.py *.css
 include feedparser/feedparsertest.py
 include feedparser/sgmllib3.py
 include LICENSE
