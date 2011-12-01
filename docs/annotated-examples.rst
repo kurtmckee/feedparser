@@ -1,3 +1,5 @@
+.. _annotated:
+
 Annotated Examples
 ##################
 
