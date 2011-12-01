@@ -1,5 +1,8 @@
 5.1 - ?? ??, 2011
     * Extensive, extensive unit test refactoring
+    * Convert the Docbook documentation to ReST
+    * Include the documentation in the source distribution
+    * Consolidate the disparate README files into one
     * Support Jython somewhat (almost all unit tests pass)
     * Support Python 3.2
     * Fix Python 3 issues exposed by improved unit tests
@@ -13,6 +16,7 @@
     * Issue 253 (document that text/plain content isn't sanitized)
     * Issue 260 (Python 3 doesn't decompress gzip'ed or deflate'd content)
     * Issue 261 (popping from empty tag list)
+    * Issue 262 (docs are missing from distribution files)
     * Issue 264 (vcard parser crashes on non-ascii characters)
     * Issue 265 (http header comparisons are case sensitive)
     * Issue 271 (monkey-patching sgmllib breaks other libraries)
@@ -33,6 +37,7 @@
     * Issue 300 (performance improvements)
     * Issue 303 (unicode characters cause crash during relative uri resolution)
     * Remove "Hot RSS" support since the format doesn't actually exist
+    * Remove the old feedparser.org website files from the source
     * Remove the feedparser command line interface
     * Remove the Zope interoperability hack
     * Remove extraneous whitespace
