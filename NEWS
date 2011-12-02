@@ -1,4 +1,4 @@
-5.1 - ?? ??, 2011
+5.1 - December 2, 2011
     * Extensive, extensive unit test refactoring
     * Convert the Docbook documentation to ReST
     * Include the documentation in the source distribution
