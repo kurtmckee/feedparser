@@ -10,7 +10,7 @@ This documentation lives at `http://packages.python.org/feedparser/
 not have the latest version.
 
 This documentation is provided by the author "as is" without any express or
-implied warranties.  See :ref:`license` for more details.
+implied warranties.  See :ref:`the documentation license <license>` for more details.
 
 .. toctree::
    :maxdepth: 2
@@ -22,3 +22,4 @@ implied warranties.  See :ref:`license` for more details.
    history
    microformats
    reference
+   license
