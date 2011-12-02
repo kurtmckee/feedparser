@@ -7,12 +7,12 @@ if sys.version_info >= (3, ):
 
 setup(
     name = 'feedparser',
-    version = '5.1pre',
+    version = '5.1',
     description = 'Universal feed parser, handles RSS 0.9x, RSS 1.0, '
                   'RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
-    author = 'Mark Pilgrim',
-    author_email = 'mark@diveintomark.org',
-    url = 'http://feedparser.org/',
+    author = 'Kurt McKee',
+    author_email = 'contactme@kurtmckee.org',
+    url = 'http://code.google.com/p/feedparser/',
     download_url = 'http://code.google.com/p/feedparser/',
     platforms = ['POSIX', 'Windows'],
     package_dir = {'': 'feedparser'},
