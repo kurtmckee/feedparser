@@ -1,3 +1,6 @@
+Changes coming in the next release:
+    * Fix issue 309 (itunes:keywords should be split by commas, not whitespace)
+
 5.1 - December 2, 2011
     * Extensive, extensive unit test refactoring
     * Convert the Docbook documentation to ReST
