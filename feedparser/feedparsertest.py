@@ -584,7 +584,7 @@ def buildTestCase(xmlfile, description, evalString):
     func.__doc__ = description
     return func
 
-if __name__ == "__main__":
+def runtests():
     if sys.argv[1:]:
         allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
         sys.argv = [sys.argv[0]] #+ sys.argv[2:]
@@ -668,3 +668,6 @@ if __name__ == "__main__":
                 if httpd.ready:
                     urllib.urlopen('http://127.0.0.1:8097/tests/wellformed/rss/aaa_wellformed.xml').read()
             httpd.join(0)
+
+if __name__ == "__main__":
+    runtests()
