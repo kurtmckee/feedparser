@@ -58,7 +58,7 @@ except LookupError:
     _utf32_available = 0
 else:
     _utf32_available = 1
-  
+
 _s2bytes = feedparser._s2bytes
 _l2bytes = feedparser._l2bytes
 
@@ -67,61 +67,61 @@ _l2bytes = feedparser._l2bytes
 _PORT = 8097 # not really configurable, must match hardcoded port in tests
 
 class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-  headers_re = re.compile(_s2bytes(r"^Header:\s+([^:]+):(.+)$"), re.MULTILINE)
-  
-  def send_head(self):
-    """Send custom headers defined in test case
+    headers_re = re.compile(_s2bytes(r"^Header:\s+([^:]+):(.+)$"), re.MULTILINE)
 
-    Example:
-    <!--
-    Header:   Content-type: application/atom+xml
-    Header:   X-Foo: bar
-    -->
-    """
-    path = self.translate_path(self.path)
-    # the compression tests' filenames determine the header sent
-    if self.path.startswith('/tests/compression'):
-      if self.path.endswith('gz'):
-        headers = {'Content-Encoding': 'gzip'}
-      else:
-        headers = {'Content-Encoding': 'deflate'}
-    else:
-      headers = dict([(k.decode('utf-8'), v.decode('utf-8').strip()) for k, v in self.headers_re.findall(open(path, 'rb').read())])
-    f = open(path, 'rb')
-    if (self.headers.get('if-modified-since') == headers.get('Last-Modified', 'nom')) \
-        or (self.headers.get('if-none-match') == headers.get('ETag', 'nomatch')):
-        status = 304
-    else:
-        status = 200
-    headers.setdefault('Status', status)
-    self.send_response(int(headers['Status']))
-    headers.setdefault('Content-type', self.guess_type(path))
-    self.send_header("Content-type", headers['Content-type'])
-    self.send_header("Content-Length", str(os.stat(f.name)[6]))
-    for k, v in headers.items():
-      if k not in ('Status', 'Content-type'):
-        self.send_header(k, v)
-    self.end_headers()
-    return f
+    def send_head(self):
+        """Send custom headers defined in test case
 
-  def log_request(self, *args):
-    pass
+        Example:
+        <!--
+        Header:   Content-type: application/atom+xml
+        Header:   X-Foo: bar
+        -->
+        """
+        path = self.translate_path(self.path)
+        # the compression tests' filenames determine the header sent
+        if self.path.startswith('/tests/compression'):
+            if self.path.endswith('gz'):
+                headers = {'Content-Encoding': 'gzip'}
+            else:
+                headers = {'Content-Encoding': 'deflate'}
+        else:
+            headers = dict([(k.decode('utf-8'), v.decode('utf-8').strip()) for k, v in self.headers_re.findall(open(path, 'rb').read())])
+        f = open(path, 'rb')
+        if (self.headers.get('if-modified-since') == headers.get('Last-Modified', 'nom')) \
+            or (self.headers.get('if-none-match') == headers.get('ETag', 'nomatch')):
+            status = 304
+        else:
+            status = 200
+        headers.setdefault('Status', status)
+        self.send_response(int(headers['Status']))
+        headers.setdefault('Content-type', self.guess_type(path))
+        self.send_header("Content-type", headers['Content-type'])
+        self.send_header("Content-Length", str(os.stat(f.name)[6]))
+        for k, v in headers.items():
+            if k not in ('Status', 'Content-type'):
+                self.send_header(k, v)
+        self.end_headers()
+        return f
+
+    def log_request(self, *args):
+        pass
 
 class FeedParserTestServer(threading.Thread):
-  """HTTP Server that runs in a thread and handles a predetermined number of requests"""
-  
-  def __init__(self, requests):
-    threading.Thread.__init__(self)
-    self.requests = requests
-    self.ready = threading.Event()
-    
-  def run(self):
-    self.httpd = BaseHTTPServer.HTTPServer(('', _PORT), FeedParserTestRequestHandler)
-    self.ready.set()
-    while self.requests:
-      self.httpd.handle_request()
-      self.requests -= 1
-    self.ready.clear()
+    """HTTP Server that runs in a thread and handles a predetermined number of requests"""
+
+    def __init__(self, requests):
+        threading.Thread.__init__(self)
+        self.requests = requests
+        self.ready = threading.Event()
+
+    def run(self):
+        self.httpd = BaseHTTPServer.HTTPServer(('', _PORT), FeedParserTestRequestHandler)
+        self.ready.set()
+        while self.requests:
+            self.httpd.handle_request()
+            self.requests -= 1
+        self.ready.clear()
 
 #---------- dummy test case class (test methods are added dynamically) ----------
 unicode1_re = re.compile(_s2bytes(" u'"))
@@ -411,7 +411,7 @@ date_tests = {
     ),
     feedparser._parse_date_hungarian: (
         (u'', None), # empty string
-        (u'2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)), 
+        (u'2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)),
     ),
     feedparser._parse_date_iso8601: (
         (u'', None), # empty string
@@ -449,7 +449,7 @@ date_tests = {
         # Test asctime-style dates and times
         (u'Sun Jan  4 16:29:06 PST 2004', (2004, 1, 5, 0, 29, 6, 0, 5, 0)),
         # Additional tests to handle Disney's long month names and invalid timezones
-        (u'Mon, 26 January 2004 16:31:00 AT', (2004, 1, 26, 20, 31, 0, 0, 26, 0)), 
+        (u'Mon, 26 January 2004 16:31:00 AT', (2004, 1, 26, 20, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 ET', (2004, 1, 26, 21, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 CT', (2004, 1, 26, 22, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 MT', (2004, 1, 26, 23, 31, 0, 0, 26, 0)),
@@ -512,17 +512,17 @@ class TestHTMLGuessing(unittest.TestCase):
 #---------- additional api unit tests, not backed by files
 
 class TestBuildRequest(unittest.TestCase):
-  def test_extra_headers(self):
-    """You can pass in extra headers and they go into the request object."""
+    def test_extra_headers(self):
+        """You can pass in extra headers and they go into the request object."""
 
-    request = feedparser._build_urllib2_request(
-      'http://example.com/feed',
-      'agent-name',
-      None, None, None, None,
-      {'Cache-Control': 'max-age=0'})
-    # nb, urllib2 folds the case of the headers
-    self.assertEqual(
-      request.get_header('Cache-control'), 'max-age=0')
+        request = feedparser._build_urllib2_request(
+          'http://example.com/feed',
+          'agent-name',
+          None, None, None, None,
+          {'Cache-Control': 'max-age=0'})
+        # nb, urllib2 folds the case of the headers
+        self.assertEqual(
+          request.get_header('Cache-control'), 'max-age=0')
 
 
 #---------- parse test files and create test methods ----------
@@ -530,143 +530,143 @@ class TestBuildRequest(unittest.TestCase):
 skip_re = re.compile(_s2bytes("SkipUnless:\s*(.*?)\n"))
 desc_re = re.compile(_s2bytes("Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->"))
 def getDescription(xmlfile):
-  """Extract test data
+    """Extract test data
 
-  Each test case is an XML file which contains not only a test feed
-  but also the description of the test, i.e. the condition that we
-  would expect the parser to create when it parses the feed.  Example:
-  <!--
-  Description: feed title
-  Expect:      feed['title'] == u'Example feed'
-  -->
-  """
+    Each test case is an XML file which contains not only a test feed
+    but also the description of the test, i.e. the condition that we
+    would expect the parser to create when it parses the feed.  Example:
+    <!--
+    Description: feed title
+    Expect:      feed['title'] == u'Example feed'
+    -->
+    """
 
-  data = open(xmlfile, 'rb').read()
-  if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
-    data = unicode(data, 'cp037').encode('utf-8')
-  elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
-    if not _utf32_available: return None, None, '0'
-    data = unicode(data, 'utf-32be').encode('utf-8')
-  elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
-    if not _utf32_available: return None, None, '0'
-    data = unicode(data, 'utf-32le').encode('utf-8')
-  elif data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
-    if not _utf32_available: return None, None, '0'
-    data = unicode(data, 'utf-32be').encode('utf-8')
-  elif data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
-    if not _utf32_available: return None, None, '0'
-    data = unicode(data, 'utf-32le').encode('utf-8')
-  elif data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
-    data = unicode(data, 'utf-16be').encode('utf-8')
-  elif data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
-    data = unicode(data, 'utf-16le').encode('utf-8')
-  elif (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
-    data = unicode(data[2:], 'utf-16be').encode('utf-8')
-  elif (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
-    data = unicode(data[2:], 'utf-16le').encode('utf-8')
-  elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
-    data = data[3:]
-  skip_results = skip_re.search(data)
-  if skip_results:
-    skipUnless = skip_results.group(1).strip()
-  else:
-    skipUnless = '1'
-  search_results = desc_re.search(data)
-  if not search_results:
-    raise RuntimeError, "can't parse %s" % xmlfile
-  description, evalString = map(lambda s: s.strip(), list(search_results.groups()))
-  description = xmlfile + ": " + unicode(description, 'utf8')
-  return description, evalString, skipUnless
+    data = open(xmlfile, 'rb').read()
+    if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
+        data = unicode(data, 'cp037').encode('utf-8')
+    elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
+        if not _utf32_available: return None, None, '0'
+        data = unicode(data, 'utf-32be').encode('utf-8')
+    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
+        if not _utf32_available: return None, None, '0'
+        data = unicode(data, 'utf-32le').encode('utf-8')
+    elif data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
+        if not _utf32_available: return None, None, '0'
+        data = unicode(data, 'utf-32be').encode('utf-8')
+    elif data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
+        if not _utf32_available: return None, None, '0'
+        data = unicode(data, 'utf-32le').encode('utf-8')
+    elif data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
+        data = unicode(data, 'utf-16be').encode('utf-8')
+    elif data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
+        data = unicode(data, 'utf-16le').encode('utf-8')
+    elif (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+        data = unicode(data[2:], 'utf-16be').encode('utf-8')
+    elif (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+        data = unicode(data[2:], 'utf-16le').encode('utf-8')
+    elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
+        data = data[3:]
+    skip_results = skip_re.search(data)
+    if skip_results:
+        skipUnless = skip_results.group(1).strip()
+    else:
+        skipUnless = '1'
+    search_results = desc_re.search(data)
+    if not search_results:
+        raise RuntimeError, "can't parse %s" % xmlfile
+    description, evalString = map(lambda s: s.strip(), list(search_results.groups()))
+    description = xmlfile + ": " + unicode(description, 'utf8')
+    return description, evalString, skipUnless
 
 def buildTestCase(xmlfile, description, evalString):
-  func = lambda self, xmlfile=xmlfile, evalString=evalString: \
-       self.failUnlessEval(xmlfile, evalString)
-  func.__doc__ = description
-  return func
+    func = lambda self, xmlfile=xmlfile, evalString=evalString: \
+         self.failUnlessEval(xmlfile, evalString)
+    func.__doc__ = description
+    return func
 
 if __name__ == "__main__":
-  if sys.argv[1:]:
-    allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
-    sys.argv = [sys.argv[0]] #+ sys.argv[2:]
-  else:
-    allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
-    wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
-    illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
-    encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
-    microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
+    if sys.argv[1:]:
+        allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
+        sys.argv = [sys.argv[0]] #+ sys.argv[2:]
+    else:
+        allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
+        wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
+        illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
+        encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
+        microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
 #  print allfiles
 #  print sys.argv
-  httpd = None
-  # there are several compression test cases that must be accounted for
-  # as well as a number of http status tests that redirect to a target
-  # and a few `_open_resource`-related tests
-  httpcount = 5 + 15 + 2
-  httpcount += len([f for f in allfiles if 'http' in f])
-  httpcount += len([f for f in wellformedfiles if 'http' in f])
-  httpcount += len([f for f in illformedfiles if 'http' in f])
-  httpcount += len([f for f in encodingfiles if 'http' in f])
-  try:
-    for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles):
-      addTo = TestCase
-      if xmlfile in encodingfiles:
-        addTo = TestEncodings
-      elif xmlfile in microformatfiles:
-        addTo = TestMicroformats
-      elif xmlfile in wellformedfiles:
-        addTo = (TestStrictParser, TestLooseParser)
-      description, evalString, skipUnless = getDescription(xmlfile)
-      testName = 'test_%06d' % c
-      ishttp = 'http' in xmlfile
-      try:
-        if not eval(skipUnless): raise NotImplementedError
-      except (ImportError, LookupError, NotImplementedError, AttributeError):
-        if ishttp:
-          httpcount -= 1 + (xmlfile in wellformedfiles)
-        continue
-      if ishttp:
-        xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
-      testFunc = buildTestCase(xmlfile, description, evalString)
-      if isinstance(addTo, tuple):
-        setattr(addTo[0], testName, testFunc)
-        setattr(addTo[1], testName, testFunc)
-      else:
-        setattr(addTo, testName, testFunc)
-    if feedparser.TIDY_MARKUP and feedparser._mxtidy:
-      sys.stderr.write('\nWarning: feedparser.TIDY_MARKUP invalidates tests, turning it off temporarily\n\n')
-      feedparser.TIDY_MARKUP = 0
-    if httpcount:
-      httpd = FeedParserTestServer(httpcount)
-      httpd.daemon = True
-      httpd.start()
-      httpd.ready.wait()
-    testsuite = unittest.TestSuite()
-    testloader = unittest.TestLoader()
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestStrictParser))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestLooseParser))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
-    testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
+    httpd = None
+    # there are several compression test cases that must be accounted for
+    # as well as a number of http status tests that redirect to a target
+    # and a few `_open_resource`-related tests
+    httpcount = 5 + 15 + 2
+    httpcount += len([f for f in allfiles if 'http' in f])
+    httpcount += len([f for f in wellformedfiles if 'http' in f])
+    httpcount += len([f for f in illformedfiles if 'http' in f])
+    httpcount += len([f for f in encodingfiles if 'http' in f])
+    try:
+        for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles):
+            addTo = TestCase
+            if xmlfile in encodingfiles:
+                addTo = TestEncodings
+            elif xmlfile in microformatfiles:
+                addTo = TestMicroformats
+            elif xmlfile in wellformedfiles:
+                addTo = (TestStrictParser, TestLooseParser)
+            description, evalString, skipUnless = getDescription(xmlfile)
+            testName = 'test_%06d' % c
+            ishttp = 'http' in xmlfile
+            try:
+                if not eval(skipUnless): raise NotImplementedError
+            except (ImportError, LookupError, NotImplementedError, AttributeError):
+                if ishttp:
+                    httpcount -= 1 + (xmlfile in wellformedfiles)
+                continue
+            if ishttp:
+                xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
+            testFunc = buildTestCase(xmlfile, description, evalString)
+            if isinstance(addTo, tuple):
+                setattr(addTo[0], testName, testFunc)
+                setattr(addTo[1], testName, testFunc)
+            else:
+                setattr(addTo, testName, testFunc)
+        if feedparser.TIDY_MARKUP and feedparser._mxtidy:
+            sys.stderr.write('\nWarning: feedparser.TIDY_MARKUP invalidates tests, turning it off temporarily\n\n')
+            feedparser.TIDY_MARKUP = 0
+        if httpcount:
+            httpd = FeedParserTestServer(httpcount)
+            httpd.daemon = True
+            httpd.start()
+            httpd.ready.wait()
+        testsuite = unittest.TestSuite()
+        testloader = unittest.TestLoader()
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestStrictParser))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestLooseParser))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
+        testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
-    # Return 0 if successful, 1 if there was a failure
-    sys.exit(not testresults.wasSuccessful())
-  finally:
-    if httpd:
-      if httpd.requests:
-        # Should never get here unless something went horribly wrong, like the
-        # user hitting Ctrl-C.  Tell our HTTP server that it's done, then do
-        # one more request to flush it.  This rarely works; the combination of
-        # threading, self-terminating HTTP servers, and unittest is really
-        # quite flaky.  Just what you want in a testing framework, no?
-        httpd.requests = 0
-        if httpd.ready:
-          urllib.urlopen('http://127.0.0.1:8097/tests/wellformed/rss/aaa_wellformed.xml').read()
-      httpd.join(0)
+        # Return 0 if successful, 1 if there was a failure
+        sys.exit(not testresults.wasSuccessful())
+    finally:
+        if httpd:
+            if httpd.requests:
+                # Should never get here unless something went horribly wrong, like the
+                # user hitting Ctrl-C.  Tell our HTTP server that it's done, then do
+                # one more request to flush it.  This rarely works; the combination of
+                # threading, self-terminating HTTP servers, and unittest is really
+                # quite flaky.  Just what you want in a testing framework, no?
+                httpd.requests = 0
+                if httpd.ready:
+                    urllib.urlopen('http://127.0.0.1:8097/tests/wellformed/rss/aaa_wellformed.xml').read()
+            httpd.join(0)
