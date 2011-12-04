@@ -248,7 +248,7 @@ else:
             if match is not None:
                 # Returning a new object in the calling thread's context
                 # resolves a thread-safety.
-                return EndBracketMatch(match) 
+                return EndBracketMatch(match)
             return None
     class EndBracketMatch:
         def __init__(self, match):
@@ -561,7 +561,7 @@ class _FeedParserMixin:
     def unknown_starttag(self, tag, attrs):
         # increment depth counter
         self.depth += 1
-        
+
         # normalize attrs
         attrs = map(self._normalize_attributes, attrs)
 
@@ -687,7 +687,7 @@ class _FeedParserMixin:
             self.langstack.pop()
             if self.langstack: # and (self.langstack[-1] is not None):
                 self.lang = self.langstack[-1]
-        
+
         self.depth -= 1
 
     def handle_charref(self, ref):
@@ -1636,8 +1636,8 @@ class _FeedParserMixin:
 
     def _start_source(self, attrsD):
         if 'url' in attrsD:
-          # This means that we're processing a source element from an RSS 2.0 feed
-          self.sourcedata['href'] = attrsD[u'url']
+            # This means that we're processing a source element from an RSS 2.0 feed
+            self.sourcedata['href'] = attrsD[u'url']
         self.push('source', 1)
         self.insource = 1
         self.title_depth = -1
@@ -1646,7 +1646,7 @@ class _FeedParserMixin:
         self.insource = 0
         value = self.pop('source')
         if value:
-          self.sourcedata['title'] = value
+            self.sourcedata['title'] = value
         self._getContext()['source'] = copy.deepcopy(self.sourcedata)
         self.sourcedata.clear()
 
@@ -1762,7 +1762,7 @@ if _XML_AVAILABLE:
                 givenprefix = None
             prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
             if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and givenprefix not in self.namespacesInUse:
-                    raise UndeclaredNamespace, "'%s' is not associated with a namespace" % givenprefix
+                raise UndeclaredNamespace, "'%s' is not associated with a namespace" % givenprefix
             localname = str(localname).lower()
 
             # qname implementation is horribly broken in Python 2.1 (it
@@ -1782,9 +1782,9 @@ if _XML_AVAILABLE:
                 localname = prefix.lower() + ':' + localname
             elif namespace and not qname: #Expat
                 for name,value in self.namespacesInUse.items():
-                     if name and value == namespace:
-                         localname = name + ':' + localname
-                         break
+                    if name and value == namespace:
+                        localname = name + ':' + localname
+                        break
 
             for (namespace, attrlocalname), attrvalue in attrs.items():
                 lowernamespace = (namespace or '').lower()
@@ -1811,9 +1811,9 @@ if _XML_AVAILABLE:
                 localname = prefix + ':' + localname
             elif namespace and not qname: #Expat
                 for name,value in self.namespacesInUse.items():
-                     if name and value == namespace:
-                         localname = name + ':' + localname
-                         break
+                    if name and value == namespace:
+                        localname = name + ':' + localname
+                        break
             localname = str(localname).lower()
             self.unknown_endtag(localname)
 
@@ -3317,7 +3317,7 @@ def _parse_date_w3dtf(dateString):
                         day = 31
                 elif jday < julian:
                     if day + diff < 28:
-                       day = day + diff
+                        day = day + diff
                     else:
                         month = month + 1
             return year, month, day
@@ -3656,10 +3656,10 @@ def _stripDoctype(data):
     # only allow in 'safe' inline entity definitions
     replacement=_s2bytes('')
     if len(doctype_results)==1 and entity_results:
-       safe_pattern=re.compile(_s2bytes('\s+(\w+)\s+"(&#\w+;|[^&"]*)"'))
-       safe_entities=filter(lambda e: safe_pattern.match(e),entity_results)
-       if safe_entities:
-           replacement=_s2bytes('<!DOCTYPE feed [\n  <!ENTITY') + _s2bytes('>\n  <!ENTITY ').join(safe_entities) + _s2bytes('>\n]>')
+        safe_pattern=re.compile(_s2bytes('\s+(\w+)\s+"(&#\w+;|[^&"]*)"'))
+        safe_entities=filter(lambda e: safe_pattern.match(e),entity_results)
+        if safe_entities:
+            replacement=_s2bytes('<!DOCTYPE feed [\n  <!ENTITY') + _s2bytes('>\n  <!ENTITY ').join(safe_entities) + _s2bytes('>\n]>')
     data = doctype_pattern.sub(replacement, head) + data
 
     return version, data, dict(replacement and [(k.decode('utf-8'), v.decode('utf-8')) for k, v in safe_pattern.findall(replacement)])
