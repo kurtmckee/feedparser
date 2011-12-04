@@ -594,8 +594,6 @@ if __name__ == "__main__":
         illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
         encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
         microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
-#  print allfiles
-#  print sys.argv
     httpd = None
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
