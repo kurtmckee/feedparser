@@ -1,5 +1,6 @@
 Changes coming in the next release:
     * Fix issue 309 (itunes:keywords should be split by commas, not whitespace)
+    * Fix issue 310 (pubDate should map to `published`, not `updated`)
 
 5.1 - December 2, 2011
     * Extensive, extensive unit test refactoring

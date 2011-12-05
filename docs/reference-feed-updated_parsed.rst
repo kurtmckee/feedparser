@@ -13,7 +13,6 @@ The date the feed was last updated, as a standard :program:`Python` 9-tuple.
 * /rdf:RDF/rdf:channel/dc:date
 * /rdf:RDF/rdf:channel/dcterms:modified
 * /rss/channel/dc:date
-* /rss/channel/pubDate
 
 
 .. seealso::

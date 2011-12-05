@@ -15,6 +15,7 @@ This element is :ref:`parsed as a date <advanced.date>` and stored in
 * /atom10:feed/atom10:entry/atom10:published
 * /atom03:feed/atom03:entry/atom03:issued
 * /rss/channel/item/dcterms:issued
+* /rss/channel/item/pubDate
 * /rdf:RDF/rdf:item/dcterms:issued
 
 

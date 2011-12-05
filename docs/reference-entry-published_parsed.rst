@@ -13,6 +13,7 @@ The date this entry was first published, as a standard :program:`Python`
 * /atom03:feed/atom03:entry/atom03:issued
 * /rss/channel/item/dcterms:issued
 * /rdf:RDF/rdf:item/dcterms:issued
+* /rss/channel/item/pubDate
 
 
 .. seealso::

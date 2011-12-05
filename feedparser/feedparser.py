@@ -1373,18 +1373,19 @@ class _FeedParserMixin:
         self.push('published', 1)
     _start_dcterms_issued = _start_published
     _start_issued = _start_published
+    _start_pubdate = _start_published
 
     def _end_published(self):
         value = self.pop('published')
         self._save('published_parsed', _parse_date(value), overwrite=True)
     _end_dcterms_issued = _end_published
     _end_issued = _end_published
+    _end_pubdate = _end_published
 
     def _start_updated(self, attrsD):
         self.push('updated', 1)
     _start_modified = _start_updated
     _start_dcterms_modified = _start_updated
-    _start_pubdate = _start_updated
     _start_dc_date = _start_updated
     _start_lastbuilddate = _start_updated
 
@@ -1394,7 +1395,6 @@ class _FeedParserMixin:
         self._save('updated_parsed', parsed_value, overwrite=True)
     _end_modified = _end_updated
     _end_dcterms_modified = _end_updated
-    _end_pubdate = _end_updated
     _end_dc_date = _end_updated
     _end_lastbuilddate = _end_updated
 

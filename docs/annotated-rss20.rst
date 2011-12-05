@@ -27,7 +27,7 @@ that show how each value can be accessed once the feed is parsed.
     <copyright>\ :ref:`Copyright 2004, Mark Pilgrim <reference.feed.rights>`\</copyright>
     <managingEditor>\ :ref:`editor@example.org <reference.feed.author>`\</managingEditor>
     <webMaster>\ :ref:`webmaster@example.org <reference.feed.publisher>`\</webMaster>
-    <pubDate>\ :ref:`Sat, 07 Sep 2002 0:00:01 GMT <reference.feed.updated>`\</pubDate>
+    <pubDate>\ :ref:`Sat, 07 Sep 2002 0:00:01 GMT <reference.feed.published>`\</pubDate>
     <category>\ :ref:`Examples <reference.feed.tags.term>`\</category>
     <generator>\ :ref:`Sample Toolkit <reference.feed.generator>`\</generator>
     <docs>\ :ref:`http://feedvalidator.org/docs/rss2.html <reference.feed.docs>`\</docs>
@@ -62,7 +62,7 @@ that show how each value can be accessed once the feed is parsed.
     <comments>\ :ref:`http://example.org/comments/1 <reference.entry.comments>`\</comments>
     <enclosure url=":ref:`http://example.org/audio/demo.mp3 <reference.entry.enclosures.href>`" length=":ref:`1069871 <reference.entry.enclosures.length>`" type=":ref:`audio/mpeg <reference.entry.enclosures.type>`"/>
     <guid>\ :ref:`http://example.org/guid/1 <reference.entry.id>`\</guid>
-    <pubDate>\ :ref:`Thu, 05 Sep 2002 0:00:01 GMT <reference.entry.updated>`\</pubDate>
+    <pubDate>\ :ref:`Thu, 05 Sep 2002 0:00:01 GMT <reference.entry.published>`\</pubDate>
     </item>
     </channel>
     </rss>

@@ -17,7 +17,6 @@ This element is :ref:`parsed as a date <advanced.date>` and stored in
 * /rdf:RDF/rdf:channel/dc:date
 * /rdf:RDF/rdf:channel/dcterms:modified
 * /rss/channel/dc:date
-* /rss/channel/pubDate
 
 
 .. seealso::
