@@ -198,7 +198,7 @@ class TestFeedParserDict(unittest.TestCase):
             'category', 'enclosures', 'license', 'categories',
         )
         for k in keys:
-            self._check_no_key('a')
+            self._check_no_key(k)
         self.assertTrue('items' not in self.d)
         self.assertTrue(hasattr(self.d, 'items')) # dict.items() exists
     def test_neutral(self):
