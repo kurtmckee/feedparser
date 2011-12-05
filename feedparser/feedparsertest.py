@@ -161,6 +161,8 @@ class TestCase(BaseTestCase):
     pass
 
 class TestLooseParser(BaseTestCase):
+    "Test the sgmllib-based parser by manipulating feedparser " \
+    "into believing no XML parsers are installed"
     def __init__(self, arg):
         unittest.TestCase.__init__(self, arg)
         self._xml_available = feedparser._XML_AVAILABLE
@@ -179,6 +181,7 @@ class TestEncodings(BaseTestCase):
     pass
 
 class TestFeedParserDict(unittest.TestCase):
+    "Ensure that FeedParserDict returns values as expected and won't crash"
     def setUp(self):
         self.d = feedparser.FeedParserDict()
     def _check_key(self, k):
@@ -255,6 +258,8 @@ class TestFeedParserDict(unittest.TestCase):
         self.assertEqual(self.d['category'], 'cat')
 
 class TestOpenResource(unittest.TestCase):
+    "Ensure that `_open_resource()` interprets its arguments as URIs, " \
+    "file-like objects, or in-memory feeds as expected"
     def test_fileobj(self):
         r = feedparser._open_resource(sys.stdin, '', '', '', '', [], {})
         self.assertTrue(r is sys.stdin)
@@ -282,6 +287,7 @@ class TestOpenResource(unittest.TestCase):
         self.assertEqual(s.encode('utf-8'), r.read())
 
 class TestMakeSafeAbsoluteURI(unittest.TestCase):
+    "Exercise the URI joining and sanitization code"
     base = u'http://d.test/d/f.ext'
     def _mktest(rel, expect, doc):
         def fn(self):
@@ -297,6 +303,7 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
     test_bad = _mktest(u'x://bad.test/', u'', 'unacceptable uri protocol')
 
 class TestConvertToIdn(unittest.TestCase):
+    "Test IDN support (unavailable in Jython as of Jython 2.5.2)"
     # this is the greek test domain
     hostname = u'\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
     hostname += u'.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
@@ -311,6 +318,7 @@ class TestConvertToIdn(unittest.TestCase):
         self.assertEqual(r, u'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
 
 class TestCompression(unittest.TestCase):
+    "Test the gzip and deflate support in the HTTP code"
     def test_gzip_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
         self.assertEqual(f.version, 'atom10')
@@ -331,6 +339,7 @@ class TestCompression(unittest.TestCase):
         self.assertTrue(isinstance(f.bozo_exception, zlib.error))
 
 class TestHTTPStatus(unittest.TestCase):
+    "Test HTTP redirection and other status codes"
     def test_301(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_301.xml')
         self.assertEqual(f.status, 301)
@@ -387,6 +396,8 @@ class TestHTTPStatus(unittest.TestCase):
         self.assertEqual(f.bozo, 1)
 
 class TestDateParsers(unittest.TestCase):
+    "Test the various date parsers; most of the test cases are constructed " \
+    "dynamically based on the contents of the `date_tests` dict, below"
     def test_None(self):
         self.assertTrue(feedparser._parse_date(None) is None)
     def _check_date(self, func, dtstring, dttuple):
@@ -483,6 +494,7 @@ for func, items in date_tests.iteritems():
 
 
 class TestHTMLGuessing(unittest.TestCase):
+    "Exercise the HTML sniffing code"
     def _mktest(text, expect, doc):
         def fn(self):
             value = bool(feedparser._FeedParserMixin.lookslikehtml(text))
@@ -505,6 +517,7 @@ class TestHTMLGuessing(unittest.TestCase):
 #---------- additional api unit tests, not backed by files
 
 class TestBuildRequest(unittest.TestCase):
+    "Test that HTTP request objects are created as expected"
     def test_extra_headers(self):
         """You can pass in extra headers and they go into the request object."""
 
@@ -520,8 +533,8 @@ class TestBuildRequest(unittest.TestCase):
 
 #---------- parse test files and create test methods ----------
 def convert_to_utf8(data):
-    # identify data's encoding using its byte order mark
-    # and convert it to its utf-8 equivalent
+    "Identify data's encoding using its byte order mark" \
+    "and convert it to its utf-8 equivalent"
     if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
         return data.decode('cp037').encode('utf-8')
     elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
@@ -559,7 +572,7 @@ def getDescription(xmlfile, data):
     """Extract test data
 
     Each test case is an XML file which contains not only a test feed
-    but also the description of the test, i.e. the condition that we
+    but also the description of the test and the condition that we
     would expect the parser to create when it parses the feed.  Example:
     <!--
     Description: feed title
@@ -585,6 +598,8 @@ def buildTestCase(xmlfile, description, evalString):
     return func
 
 def runtests():
+    "Read the files in the tests/ directory, dynamically add tests to the " \
+    "TestCases above, spawn the HTTP server, and run the test suite"
     if sys.argv[1:]:
         allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
         sys.argv = [sys.argv[0]] #+ sys.argv[2:]
