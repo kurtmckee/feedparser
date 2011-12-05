@@ -1,4 +1,5 @@
 Changes coming in the next release:
+    * Fix mistakes, typos, and bugs in the unit test code
     * Fix crash in Python 2.4 and 2.5 if the feed has a UTF_32 byte order mark
     * Fix issue 309 (itunes:keywords should be split by commas, not whitespace)
     * Fix issue 310 (pubDate should map to `published`, not `updated`)
