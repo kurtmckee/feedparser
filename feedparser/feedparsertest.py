@@ -204,11 +204,11 @@ class TestFeedParserDict(unittest.TestCase):
     def test_neutral(self):
         self.d['a'] = 1
         self._check_key('a')
-    def test_single_mapping_target(self):
+    def test_single_mapping_target_1(self):
         self.d['id'] = 1
         self._check_key('id')
         self._check_key('guid')
-    def test_single_mapping_target(self):
+    def test_single_mapping_target_2(self):
         self.d['guid'] = 1
         self._check_key('id')
         self._check_key('guid')
