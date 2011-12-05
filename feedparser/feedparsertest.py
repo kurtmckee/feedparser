@@ -120,6 +120,10 @@ class FeedParserTestServer(threading.Thread):
 unicode1_re = re.compile(_s2bytes(" u'"))
 unicode2_re = re.compile(_s2bytes(' u"'))
 
+# _bytes is only used in everythingIsUnicode().
+# In Python 2 it's str, and in Python 3 it's bytes.
+_bytes = type(_s2bytes(''))
+
 def everythingIsUnicode(d):
     """Takes a dictionary, recursively verifies that every value is unicode"""
     for k, v in d.iteritems():
@@ -130,9 +134,9 @@ def everythingIsUnicode(d):
             for i in v:
                 if isinstance(i, dict) and not everythingIsUnicode(i):
                     return False
-                elif isinstance(v, basestring) and not isinstance(i, unicode):
+                elif isinstance(i, _bytes):
                     return False
-        elif isinstance(v, basestring) and not isinstance(v, unicode):
+        elif isinstance(v, _bytes):
             return False
     return True
 
@@ -159,6 +163,18 @@ class BaseTestCase(unittest.TestCase):
 
 class TestCase(BaseTestCase):
     pass
+
+class TestEverythingIsUnicode(unittest.TestCase):
+    "Ensure that `everythingIsUnicode()` is working appropriately"
+    def test_everything_is_unicode(self):
+        self.assertTrue(everythingIsUnicode(
+            {'a': u'a', 'b': [u'b', {'c': u'c'}], 'd': {'e': u'e'}}
+        ))
+    def test_not_everything_is_unicode(self):
+        self.assertFalse(everythingIsUnicode({'a': _s2bytes('a')}))
+        self.assertFalse(everythingIsUnicode({'a': [_s2bytes('a')]}))
+        self.assertFalse(everythingIsUnicode({'a': {'b': _s2bytes('b')}}))
+        self.assertFalse(everythingIsUnicode({'a': [{'b': _s2bytes('b')}]}))
 
 class TestLooseParser(BaseTestCase):
     "Test the sgmllib-based parser by manipulating feedparser " \
@@ -676,6 +692,7 @@ def runtests():
         testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
         testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
         testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestEverythingIsUnicode))
         testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
         # Return 0 if successful, 1 if there was a failure
