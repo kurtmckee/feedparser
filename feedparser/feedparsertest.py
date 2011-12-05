@@ -525,10 +525,43 @@ class TestBuildRequest(unittest.TestCase):
 
 
 #---------- parse test files and create test methods ----------
+def convert_to_utf8(data):
+    # identify data's encoding using its byte order mark
+    # and convert it to its utf-8 equivalent
+    if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
+        return data.decode('cp037').encode('utf-8')
+    elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
+        if not _utf32_available:
+            return None
+        return data.decode('utf-32be').encode('utf-8')
+    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
+        if not _utf32_available:
+            return None
+        return data.decode('utf-32le').encode('utf-8')
+    elif data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
+        if not _utf32_available:
+            return None
+        return data.decode('utf-32be').encode('utf-8')
+    elif data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
+        if not _utf32_available:
+            return None
+        return data.decode('utf-32le').encode('utf-8')
+    elif data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
+        return data.decode('utf-16be').encode('utf-8')
+    elif data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
+        return data.decode('utf-16le').encode('utf-8')
+    elif (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+        return data[2:].decode('utf-16be').encode('utf-8')
+    elif (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+        return data[2:].decode('utf-16le').encode('utf-8')
+    elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
+        return data[3:]
+    # no byte order mark was found
+    return data
 
 skip_re = re.compile(_s2bytes("SkipUnless:\s*(.*?)\n"))
 desc_re = re.compile(_s2bytes("Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->"))
-def getDescription(xmlfile):
+def getDescription(xmlfile, data):
     """Extract test data
 
     Each test case is an XML file which contains not only a test feed
@@ -539,32 +572,6 @@ def getDescription(xmlfile):
     Expect:      feed['title'] == u'Example feed'
     -->
     """
-
-    data = open(xmlfile, 'rb').read()
-    if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
-        data = unicode(data, 'cp037').encode('utf-8')
-    elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
-        if not _utf32_available: return None, None, '0'
-        data = unicode(data, 'utf-32be').encode('utf-8')
-    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
-        if not _utf32_available: return None, None, '0'
-        data = unicode(data, 'utf-32le').encode('utf-8')
-    elif data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
-        if not _utf32_available: return None, None, '0'
-        data = unicode(data, 'utf-32be').encode('utf-8')
-    elif data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
-        if not _utf32_available: return None, None, '0'
-        data = unicode(data, 'utf-32le').encode('utf-8')
-    elif data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
-        data = unicode(data, 'utf-16be').encode('utf-8')
-    elif data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
-        data = unicode(data, 'utf-16le').encode('utf-8')
-    elif (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
-        data = unicode(data[2:], 'utf-16be').encode('utf-8')
-    elif (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
-        data = unicode(data[2:], 'utf-16le').encode('utf-8')
-    elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
-        data = data[3:]
     skip_results = skip_re.search(data)
     if skip_results:
         skipUnless = skip_results.group(1).strip()
@@ -611,7 +618,16 @@ def runtests():
                 addTo = TestMicroformats
             elif xmlfile in wellformedfiles:
                 addTo = (TestStrictParser, TestLooseParser)
-            description, evalString, skipUnless = getDescription(xmlfile)
+            data = open(xmlfile, 'rb').read()
+            if 'encoding' in xmlfile:
+                data = convert_to_utf8(data)
+                if data is None:
+                    # convert_to_utf8 found a byte order mark for utf_32
+                    # but it's not supported in this installation of Python
+                    if 'http' in xmlfile:
+                        httpcount -= 1 + (xmlfile in wellformedfiles)
+                    continue
+            description, evalString, skipUnless = getDescription(xmlfile, data)
             testName = 'test_%06d' % c
             ishttp = 'http' in xmlfile
             try:
