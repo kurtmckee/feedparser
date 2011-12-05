@@ -52,11 +52,13 @@ if not feedparser._XML_AVAILABLE:
     sys.exit(1)
 
 try:
-    codecs.lookup('utf-32be')
+    # the utf_32 codec was introduced in Python 2.6; it's necessary to
+    # check this as long as feedparser supports Python 2.4 and 2.5
+    codecs.lookup('utf_32')
 except LookupError:
-    _utf32_available = 0
+    _UTF32_AVAILABLE = False
 else:
-    _utf32_available = 1
+    _UTF32_AVAILABLE = True
 
 _s2bytes = feedparser._s2bytes
 _l2bytes = feedparser._l2bytes
@@ -531,19 +533,19 @@ def convert_to_utf8(data):
     if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
         return data.decode('cp037').encode('utf-8')
     elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
-        if not _utf32_available:
+        if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32be').encode('utf-8')
     elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
-        if not _utf32_available:
+        if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32le').encode('utf-8')
     elif data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
-        if not _utf32_available:
+        if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32be').encode('utf-8')
     elif data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
-        if not _utf32_available:
+        if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32le').encode('utf-8')
     elif data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
