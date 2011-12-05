@@ -142,6 +142,7 @@ ACCEPTABLE_URI_SCHEMES = (
 
 # ---------- required modules (should come with any Python distribution) ----------
 import cgi
+import codecs
 import copy
 import datetime
 import re
@@ -280,6 +281,15 @@ try:
 except ImportError:
     BeautifulSoup = None
     PARSE_MICROFORMATS = False
+
+try:
+    # the utf_32 codec was introduced in Python 2.6; it's necessary to
+    # check this as long as feedparser supports Python 2.4 and 2.5
+    codecs.lookup('utf_32')
+except LookupError:
+    _UTF32_AVAILABLE = False
+else:
+    _UTF32_AVAILABLE = True
 
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
@@ -3551,19 +3561,23 @@ def _getCharacterEncoding(http_headers, xml_data):
         elif xml_data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
             # UTF-32BE
             sniffed_xml_encoding = u'utf-32be'
-            xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
+            if _UTF32_AVAILABLE:
+                xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
             # UTF-32LE
             sniffed_xml_encoding = u'utf-32le'
-            xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
+            if _UTF32_AVAILABLE:
+                xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
             # UTF-32BE with BOM
             sniffed_xml_encoding = u'utf-32be'
-            xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
+            if _UTF32_AVAILABLE:
+                xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
         elif xml_data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
             # UTF-32LE with BOM
             sniffed_xml_encoding = u'utf-32le'
-            xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
+            if _UTF32_AVAILABLE:
+                xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
         elif xml_data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
             # UTF-8 with BOM
             sniffed_xml_encoding = u'utf-8'
