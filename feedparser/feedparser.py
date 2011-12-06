@@ -1841,19 +1841,26 @@ if _XML_AVAILABLE:
             self.handle_data(text)
 
         def endElementNS(self, name, qname):
-            namespace, localname = name
-            lowernamespace = str(namespace or '').lower()
+            # The strategy here is to normalize the prefix if the namespace
+            # URI is known. This allows internal functions to be named and
+            # called using a predetermined prefix (e.g. 'dc' for Dublin Core).
+            uri, localname = name
+            uri_lower = str(uri or '').lower()
             if qname and qname.find(':') > 0:
-                givenprefix = qname.split(':')[0]
+                qname_prefix = qname.split(':', 1)[0]
             else:
-                givenprefix = ''
-            prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
+                qname_prefix = ''
+            prefix = self._matchnamespaces.get(uri_lower, qname_prefix)
+
             if prefix:
                 localname = prefix + ':' + localname
-            elif namespace and not qname: #Expat
-                for name,value in self.namespacesInUse.items():
-                    if name and value == namespace:
-                        localname = name + ':' + localname
+            elif uri and not qname: # Expat
+                # no known prefix was found, and no qname was provided;
+                # search through all of the namespaces that have been
+                # encountered thus far for a prefix
+                for k_prefix, v_uri in self.namespacesInUse.iteritems():
+                    if k_prefix and v_uri == uri:
+                        localname = k_prefix + ':' + localname
                         break
             localname = str(localname).lower()
             self.unknown_endtag(localname)
