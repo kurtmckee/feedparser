@@ -1791,19 +1791,22 @@ if _XML_AVAILABLE:
                 self.decls['xmlns:' + prefix] = uri
 
         def startElementNS(self, name, qname, attrs):
-            namespace, localname = name
-            lowernamespace = str(namespace or '').lower()
-            if lowernamespace.find(u'backend.userland.com/rss') <> -1:
-                # match any backend.userland.com namespace
-                namespace = u'http://backend.userland.com/rss'
-                lowernamespace = namespace
+            # The strategy here is to normalize the prefix if the namespace
+            # URI is known. This allows internal functions to be named and
+            # called using a predetermined prefix (e.g. 'dc' for Dublin Core).
+            uri, localname = name
+            uri_lower = str(uri or '').lower()
+            if uri_lower.find(u'backend.userland.com/rss') <> -1:
+                # match any backend.userland.com uri
+                uri = u'http://backend.userland.com/rss'
+                uri_lower = uri
             if qname and qname.find(':') > 0:
-                givenprefix = qname.split(':')[0]
+                qname_prefix = qname.split(':', 1)[0]
             else:
-                givenprefix = None
-            prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
-            if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and givenprefix not in self.namespacesInUse:
-                raise UndeclaredNamespace, "'%s' is not associated with a namespace" % givenprefix
+                qname_prefix = None
+            prefix = self._matchnamespaces.get(uri_lower, qname_prefix)
+            if qname_prefix and (prefix is None or (prefix == '' and uri_lower == '')) and qname_prefix not in self.namespacesInUse:
+                raise UndeclaredNamespace, "'%s' is not associated with a namespace" % qname_prefix
             localname = str(localname).lower()
 
             # qname implementation is horribly broken in Python 2.1 (it
@@ -1814,27 +1817,33 @@ if _XML_AVAILABLE:
             # at all).  Thanks to MatejC for helping me test this and
             # tirelessly telling me that it didn't work yet.
             attrsD, self.decls = self.decls, {}
-            if localname=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
-                attrsD['xmlns']=namespace
-            if localname=='svg' and namespace=='http://www.w3.org/2000/svg':
-                attrsD['xmlns']=namespace
+            if localname=='math' and uri=='http://www.w3.org/1998/Math/MathML':
+                attrsD['xmlns'] = uri
+            if localname=='svg' and uri=='http://www.w3.org/2000/svg':
+                attrsD['xmlns'] = uri
 
             if prefix:
                 localname = prefix.lower() + ':' + localname
-            elif namespace and not qname: #Expat
-                for name,value in self.namespacesInUse.items():
-                    if name and value == namespace:
-                        localname = name + ':' + localname
+            elif uri and not qname: # Expat
+                # no known prefix was found, and no qname was provided;
+                # search through all of the namespaces that have been
+                # encountered thus far for a prefix
+                for k_prefix, v_uri in self.namespacesInUse.items():
+                    if k_prefix and v_uri == uri:
+                        localname = k_prefix + ':' + localname
                         break
 
-            for (namespace, attrlocalname), attrvalue in attrs.items():
-                lowernamespace = (namespace or '').lower()
-                prefix = self._matchnamespaces.get(lowernamespace, '')
+            # normalize all of the attributes to ensure that they're
+            # using a predetermined prefix if the namespace uri is known
+            for (uri, attrlocalname), attrvalue in attrs.items():
+                uri_lower = (uri or '').lower()
+                prefix = self._matchnamespaces.get(uri_lower, '')
                 if prefix:
                     attrlocalname = prefix + ':' + attrlocalname
                 attrsD[str(attrlocalname).lower()] = attrvalue
             for qname in attrs.getQNames():
                 attrsD[str(qname).lower()] = attrs.getValueByQName(qname)
+
             self.unknown_starttag(localname, attrsD.items())
 
         def characters(self, text):
