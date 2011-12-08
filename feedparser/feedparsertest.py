@@ -58,6 +58,7 @@ _l2bytes = feedparser._l2bytes
 #---------- custom HTTP server (used to serve test feeds) ----------
 
 _PORT = 8097 # not really configurable, must match hardcoded port in tests
+_HOST = '127.0.0.1' # also not really configurable
 
 class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     headers_re = re.compile(_s2bytes(r"^Header:\s+([^:]+):(.+)$"), re.MULTILINE)
@@ -109,7 +110,7 @@ class FeedParserTestServer(threading.Thread):
         self.ready = threading.Event()
 
     def run(self):
-        self.httpd = BaseHTTPServer.HTTPServer(('', _PORT), FeedParserTestRequestHandler)
+        self.httpd = BaseHTTPServer.HTTPServer((_HOST, _PORT), FeedParserTestRequestHandler)
         self.ready.set()
         while self.requests:
             self.httpd.handle_request()
@@ -662,7 +663,7 @@ def runtests():
                     httpcount -= 1 + (xmlfile in wellformedfiles)
                 continue
             if ishttp:
-                xmlfile = 'http://127.0.0.1:%s/%s' % (_PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
+                xmlfile = 'http://%s:%s/%s' % (_HOST, _PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
             testFunc = buildTestCase(xmlfile, description, evalString)
             if isinstance(addTo, tuple):
                 setattr(addTo[0], testName, testFunc)
