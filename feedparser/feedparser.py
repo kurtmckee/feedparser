@@ -647,7 +647,7 @@ class _FeedParserMixin:
             # element declared itself as escaped markup, but it isn't really
             self.contentparams['type'] = u'application/xhtml+xml'
         if self.incontent and self.contentparams.get('type') == u'application/xhtml+xml':
-            if tag.find(':') <> -1:
+            if tag.find(':') != -1:
                 prefix, tag = tag.split(':', 1)
                 namespace = self.namespacesInUse.get(prefix, '')
                 if tag=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
@@ -659,7 +659,7 @@ class _FeedParserMixin:
             return self.handle_data('<%s%s>' % (tag, self.strattrs(attrs)), escape=0)
 
         # match namespaces
-        if tag.find(':') <> -1:
+        if tag.find(':') != -1:
             prefix, suffix = tag.split(':', 1)
         else:
             prefix, suffix = '', tag
@@ -693,7 +693,7 @@ class _FeedParserMixin:
         self.depth -= 1
 
         # match namespaces
-        if tag.find(':') <> -1:
+        if tag.find(':') != -1:
             prefix, suffix = tag.split(':', 1)
         else:
             prefix, suffix = '', tag
@@ -826,7 +826,7 @@ class _FeedParserMixin:
                 self.version = u'rss10'
             elif loweruri == 'http://www.w3.org/2005/atom':
                 self.version = u'atom10'
-        if loweruri.find(u'backend.userland.com/rss') <> -1:
+        if loweruri.find(u'backend.userland.com/rss') != -1:
             # match any backend.userland.com namespace
             uri = u'http://backend.userland.com/rss'
             loweruri = uri
@@ -1057,7 +1057,7 @@ class _FeedParserMixin:
 
     def _mapToStandardPrefix(self, name):
         colonpos = name.find(':')
-        if colonpos <> -1:
+        if colonpos != -1:
             prefix = name[:colonpos]
             suffix = name[colonpos+1:]
             prefix = self.namespacemap.get(prefix, prefix)
@@ -1800,7 +1800,7 @@ if _XML_AVAILABLE:
             # called using a predetermined prefix (e.g. 'dc' for Dublin Core).
             uri, localname = name
             uri_lower = str(uri or '').lower()
-            if uri_lower.find(u'backend.userland.com/rss') <> -1:
+            if uri_lower.find(u'backend.userland.com/rss') != -1:
                 # match any backend.userland.com uri
                 uri = u'http://backend.userland.com/rss'
                 uri_lower = uri
