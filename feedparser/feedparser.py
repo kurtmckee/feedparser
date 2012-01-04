@@ -605,9 +605,9 @@ class _FeedParserMixin:
 
         # normalize attrs
         attrs = map(self._normalize_attributes, attrs)
-
-        # track xml:base and xml:lang
         attrsD = dict(attrs)
+
+        # track xml:base
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
         if not isinstance(baseuri, unicode):
             baseuri = baseuri.decode(self.encoding, 'ignore')
@@ -617,6 +617,9 @@ class _FeedParserMixin:
             self.baseuri = _makeSafeAbsoluteURI(self.baseuri, baseuri) or self.baseuri
         else:
             self.baseuri = _urljoin(self.baseuri, baseuri)
+        self.basestack.append(self.baseuri)
+
+        # track xml:lang
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang == '':
             # xml:lang could be explicitly set to '', we need to capture that
@@ -628,7 +631,6 @@ class _FeedParserMixin:
             if tag in ('feed', 'rss', 'rdf:RDF'):
                 self.feeddata['language'] = lang.replace('_','-')
         self.lang = lang
-        self.basestack.append(self.baseuri)
         self.langstack.append(lang)
 
         # track namespaces
@@ -688,6 +690,8 @@ class _FeedParserMixin:
                 context[unknown_tag] = attrsD
 
     def unknown_endtag(self, tag):
+        self.depth -= 1
+
         # match namespaces
         if tag.find(':') <> -1:
             prefix, suffix = tag.split(':', 1)
@@ -719,17 +723,17 @@ class _FeedParserMixin:
             tag = tag.split(':')[-1]
             self.handle_data('</%s>' % tag, escape=0)
 
-        # track xml:base and xml:lang going out of scope
+        # track xml:base going out of scope
         if self.basestack:
             self.basestack.pop()
             if self.basestack and self.basestack[-1]:
                 self.baseuri = self.basestack[-1]
+
+        # track xml:lang going out of scope
         if self.langstack:
             self.langstack.pop()
             if self.langstack: # and (self.langstack[-1] is not None):
                 self.lang = self.langstack[-1]
-
-        self.depth -= 1
 
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
