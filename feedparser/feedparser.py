@@ -1804,14 +1804,11 @@ if _XML_AVAILABLE:
                 # match any backend.userland.com uri
                 uri = u'http://backend.userland.com/rss'
                 uri_lower = uri
-            if qname and qname.find(':') > 0:
-                qname_prefix = qname.split(':', 1)[0]
-            else:
-                qname_prefix = None
-            prefix = self._matchnamespaces.get(uri_lower, qname_prefix)
-            if qname_prefix and (prefix is None or (prefix == '' and uri_lower == '')) and qname_prefix not in self.namespacesInUse:
-                raise UndeclaredNamespace, "'%s' is not associated with a namespace" % qname_prefix
-            localname = str(localname).lower()
+            localname = localname.lower()
+
+            prefix = self._matchnamespaces.get(uri_lower, '')
+            if not prefix and qname and ':' in qname:
+                prefix = qname.split(':', 1)[0].lower()
 
             # qname implementation is horribly broken in Python 2.1 (it
             # doesn't report any), and slightly broken in Python 2.2 (it
@@ -1827,7 +1824,7 @@ if _XML_AVAILABLE:
                 attrsD['xmlns'] = uri
 
             if prefix:
-                localname = prefix.lower() + ':' + localname
+                localname = prefix + ':' + localname
             elif uri and not qname: # Expat
                 # no known prefix was found, and no qname was provided;
                 # search through all of the namespaces that have been
@@ -1859,11 +1856,15 @@ if _XML_AVAILABLE:
             # called using a predetermined prefix (e.g. 'dc' for Dublin Core).
             uri, localname = name
             uri_lower = str(uri or '').lower()
-            if qname and qname.find(':') > 0:
-                qname_prefix = qname.split(':', 1)[0]
-            else:
-                qname_prefix = ''
-            prefix = self._matchnamespaces.get(uri_lower, qname_prefix)
+            if uri_lower.find(u'backend.userland.com/rss') != -1:
+                # match any backend.userland.com uri
+                uri = u'http://backend.userland.com/rss'
+                uri_lower = uri
+            localname = localname.lower()
+
+            prefix = self._matchnamespaces.get(uri_lower, '')
+            if not prefix and qname and ':' in qname:
+                prefix = qname.split(':', 1)[0].lower()
 
             if prefix:
                 localname = prefix + ':' + localname
@@ -1875,7 +1876,7 @@ if _XML_AVAILABLE:
                     if k_prefix and v_uri == uri:
                         localname = k_prefix + ':' + localname
                         break
-            localname = str(localname).lower()
+
             self.unknown_endtag(localname)
 
         def error(self, exc):
