@@ -5,6 +5,7 @@ Changes coming in the next release:
     * Fix issue 310 (pubDate should map to `published`, not `updated`)
     * Issue 313 (include the compression test files in MANIFEST.in)
     * Issue 315 (HTTP server for unit tests runs on 0.0.0.0)
+    * Issue 325 (map `description_detail` to `summary_detail`)
 
 5.1 - December 2, 2011
     * Extensive, extensive unit test refactoring

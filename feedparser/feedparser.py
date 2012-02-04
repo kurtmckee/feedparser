@@ -323,6 +323,7 @@ class FeedParserDict(dict):
               'date': 'updated',
               'date_parsed': 'updated_parsed',
               'description': ['summary', 'subtitle'],
+              'description_detail': ['summary_detail', 'subtitle_detail'],
               'url': ['href'],
               'modified': 'updated',
               'modified_parsed': 'updated_parsed',
