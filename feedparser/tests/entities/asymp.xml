@@ -1,6 +1,6 @@
 <!--
 Description: asymp
-Expect:      bozo and feed['title'] == u'testing \u2248 entity'
+Expect:      feed['title'] == u'testing \u2248 entity'
 -->
 <rss>
 <channel>

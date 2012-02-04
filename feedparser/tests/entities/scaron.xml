@@ -1,6 +1,6 @@
 <!--
 Description: scaron
-Expect:      bozo and feed['title'] == u'testing \u0161 entity'
+Expect:      feed['title'] == u'testing \u0161 entity'
 -->
 <rss>
 <channel>

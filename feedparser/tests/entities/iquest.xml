@@ -1,6 +1,6 @@
 <!--
 Description: iquest
-Expect:      bozo and feed['title'] == u'testing \xbf entity'
+Expect:      feed['title'] == u'testing \xbf entity'
 -->
 <rss>
 <channel>

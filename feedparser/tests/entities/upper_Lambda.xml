@@ -1,6 +1,6 @@
 <!--
 Description: Lambda
-Expect:      bozo and feed['title'] == u'testing \u039b entity'
+Expect:      feed['title'] == u'testing \u039b entity'
 -->
 <rss>
 <channel>

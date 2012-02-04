@@ -1,6 +1,6 @@
 <!--
 Description: Eta
-Expect:      bozo and feed['title'] == u'testing \u0397 entity'
+Expect:      feed['title'] == u'testing \u0397 entity'
 -->
 <rss>
 <channel>

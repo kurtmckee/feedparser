@@ -1,6 +1,6 @@
 <!--
 Description: sigma
-Expect:      bozo and feed['title'] == u'testing \u03c3 entity'
+Expect:      feed['title'] == u'testing \u03c3 entity'
 -->
 <rss>
 <channel>

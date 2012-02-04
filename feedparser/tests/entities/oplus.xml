@@ -1,6 +1,6 @@
 <!--
 Description: oplus
-Expect:      bozo and feed['title'] == u'testing \u2295 entity'
+Expect:      feed['title'] == u'testing \u2295 entity'
 -->
 <rss>
 <channel>

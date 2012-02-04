@@ -1,6 +1,6 @@
 <!--
 Description: infin
-Expect:      bozo and feed['title'] == u'testing \u221e entity'
+Expect:      feed['title'] == u'testing \u221e entity'
 -->
 <rss>
 <channel>

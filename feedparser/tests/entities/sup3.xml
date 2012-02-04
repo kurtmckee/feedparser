@@ -1,6 +1,6 @@
 <!--
 Description: sup3
-Expect:      bozo and feed['title'] == u'testing \xb3 entity'
+Expect:      feed['title'] == u'testing \xb3 entity'
 -->
 <rss>
 <channel>

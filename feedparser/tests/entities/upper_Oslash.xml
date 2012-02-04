@@ -1,6 +1,6 @@
 <!--
 Description: Oslash
-Expect:      bozo and feed['title'] == u'testing \xd8 entity'
+Expect:      feed['title'] == u'testing \xd8 entity'
 -->
 <rss>
 <channel>

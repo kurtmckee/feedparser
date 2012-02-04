@@ -1,6 +1,6 @@
 <!--
 Description: curren
-Expect:      bozo and feed['title'] == u'testing \xa4 entity'
+Expect:      feed['title'] == u'testing \xa4 entity'
 -->
 <rss>
 <channel>

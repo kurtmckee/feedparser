@@ -1,6 +1,6 @@
 <!--
 Description: agrave
-Expect:      bozo and feed['title'] == u'testing \xe0 entity'
+Expect:      feed['title'] == u'testing \xe0 entity'
 -->
 <rss>
 <channel>

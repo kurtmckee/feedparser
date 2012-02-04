@@ -625,6 +625,7 @@ def runtests():
         wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
         illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
         encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
+        entitiesfiles = glob.glob(os.path.join('.', 'tests', 'entities', '*.xml'))
         microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
     httpd = None
     # there are several compression test cases that must be accounted for
@@ -636,10 +637,12 @@ def runtests():
     httpcount += len([f for f in illformedfiles if 'http' in f])
     httpcount += len([f for f in encodingfiles if 'http' in f])
     try:
-        for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles):
+        for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles + entitiesfiles):
             addTo = TestCase
             if xmlfile in encodingfiles:
                 addTo = TestEncodings
+            elif xmlfile in entitiesfiles:
+                addTo = (TestStrictParser, TestLooseParser)
             elif xmlfile in microformatfiles:
                 addTo = TestMicroformats
             elif xmlfile in wellformedfiles:

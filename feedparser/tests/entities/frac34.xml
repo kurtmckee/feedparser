@@ -1,6 +1,6 @@
 <!--
 Description: frac34
-Expect:      bozo and feed['title'] == u'testing \xbe entity'
+Expect:      feed['title'] == u'testing \xbe entity'
 -->
 <rss>
 <channel>

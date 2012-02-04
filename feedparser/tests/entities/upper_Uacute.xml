@@ -1,6 +1,6 @@
 <!--
 Description: Uacute
-Expect:      bozo and feed['title'] == u'testing \xda entity'
+Expect:      feed['title'] == u'testing \xda entity'
 -->
 <rss>
 <channel>

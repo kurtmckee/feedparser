@@ -1,6 +1,6 @@
 <!--
 Description: iexcl
-Expect:      bozo and feed['title'] == u'testing \xa1 entity'
+Expect:      feed['title'] == u'testing \xa1 entity'
 -->
 <rss>
 <channel>

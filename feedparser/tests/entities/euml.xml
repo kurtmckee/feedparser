@@ -1,6 +1,6 @@
 <!--
 Description: euml
-Expect:      bozo and feed['title'] == u'testing \xeb entity'
+Expect:      feed['title'] == u'testing \xeb entity'
 -->
 <rss>
 <channel>

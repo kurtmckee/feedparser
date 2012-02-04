@@ -1,6 +1,6 @@
 <!--
 Description: auml
-Expect:      bozo and feed['title'] == u'testing \xe4 entity'
+Expect:      feed['title'] == u'testing \xe4 entity'
 -->
 <rss>
 <channel>

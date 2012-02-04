@@ -1,6 +1,6 @@
 <!--
 Description: para
-Expect:      bozo and feed['title'] == u'testing \xb6 entity'
+Expect:      feed['title'] == u'testing \xb6 entity'
 -->
 <rss>
 <channel>

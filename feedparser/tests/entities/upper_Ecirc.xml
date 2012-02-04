@@ -1,6 +1,6 @@
 <!--
 Description: Ecirc
-Expect:      bozo and feed['title'] == u'testing \xca entity'
+Expect:      feed['title'] == u'testing \xca entity'
 -->
 <rss>
 <channel>

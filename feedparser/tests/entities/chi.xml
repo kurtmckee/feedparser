@@ -1,6 +1,6 @@
 <!--
 Description: chi
-Expect:      bozo and feed['title'] == u'testing \u03c7 entity'
+Expect:      feed['title'] == u'testing \u03c7 entity'
 -->
 <rss>
 <channel>

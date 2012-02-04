@@ -1,6 +1,6 @@
 <!--
 Description: hellip
-Expect:      bozo and feed['title'] == u'testing \u2026 entity'
+Expect:      feed['title'] == u'testing \u2026 entity'
 -->
 <rss>
 <channel>

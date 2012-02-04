@@ -1,6 +1,6 @@
 <!--
 Description: Pi
-Expect:      bozo and feed['title'] == u'testing \u03a0 entity'
+Expect:      feed['title'] == u'testing \u03a0 entity'
 -->
 <rss>
 <channel>

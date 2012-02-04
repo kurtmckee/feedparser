@@ -1,6 +1,6 @@
 <!--
 Description: Ucirc
-Expect:      bozo and feed['title'] == u'testing \xdb entity'
+Expect:      feed['title'] == u'testing \xdb entity'
 -->
 <rss>
 <channel>

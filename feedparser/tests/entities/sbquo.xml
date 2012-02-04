@@ -1,6 +1,6 @@
 <!--
 Description: sbquo
-Expect:      bozo and feed['title'] == u'testing \u201a entity'
+Expect:      feed['title'] == u'testing \u201a entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: THORN
-Expect:      bozo and feed['title'] == u'testing \xde entity'
+Expect:      feed['title'] == u'testing \xde entity'
 -->
 <rss>
 <channel>

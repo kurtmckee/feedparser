@@ -1,6 +1,6 @@
 <!--
 Description: rceil
-Expect:      bozo and feed['title'] == u'testing \u2309 entity'
+Expect:      feed['title'] == u'testing \u2309 entity'
 -->
 <rss>
 <channel>

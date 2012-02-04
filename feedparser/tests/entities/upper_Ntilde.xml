@@ -1,6 +1,6 @@
 <!--
 Description: Ntilde
-Expect:      bozo and feed['title'] == u'testing \xd1 entity'
+Expect:      feed['title'] == u'testing \xd1 entity'
 -->
 <rss>
 <channel>

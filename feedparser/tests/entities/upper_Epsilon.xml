@@ -1,6 +1,6 @@
 <!--
 Description: Epsilon
-Expect:      bozo and feed['title'] == u'testing \u0395 entity'
+Expect:      feed['title'] == u'testing \u0395 entity'
 -->
 <rss>
 <channel>

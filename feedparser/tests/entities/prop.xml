@@ -1,6 +1,6 @@
 <!--
 Description: prop
-Expect:      bozo and feed['title'] == u'testing \u221d entity'
+Expect:      feed['title'] == u'testing \u221d entity'
 -->
 <rss>
 <channel>

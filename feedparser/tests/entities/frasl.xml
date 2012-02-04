@@ -1,6 +1,6 @@
 <!--
 Description: frasl
-Expect:      bozo and feed['title'] == u'testing \u2044 entity'
+Expect:      feed['title'] == u'testing \u2044 entity'
 -->
 <rss>
 <channel>

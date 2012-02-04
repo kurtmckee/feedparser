@@ -1,6 +1,6 @@
 <!--
 Description: sect
-Expect:      bozo and feed['title'] == u'testing \xa7 entity'
+Expect:      feed['title'] == u'testing \xa7 entity'
 -->
 <rss>
 <channel>

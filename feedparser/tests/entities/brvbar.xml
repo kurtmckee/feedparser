@@ -1,6 +1,6 @@
 <!--
 Description: brvbar
-Expect:      bozo and feed['title'] == u'testing \xa6 entity'
+Expect:      feed['title'] == u'testing \xa6 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: radic
-Expect:      bozo and feed['title'] == u'testing \u221a entity'
+Expect:      feed['title'] == u'testing \u221a entity'
 -->
 <rss>
 <channel>

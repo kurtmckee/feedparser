@@ -1,6 +1,6 @@
 <!--
 Description: atilde
-Expect:      bozo and feed['title'] == u'testing \xe3 entity'
+Expect:      feed['title'] == u'testing \xe3 entity'
 -->
 <rss>
 <channel>

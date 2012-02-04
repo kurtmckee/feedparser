@@ -1,6 +1,6 @@
 <!--
 Description: ordf
-Expect:      bozo and feed['title'] == u'testing \xaa entity'
+Expect:      feed['title'] == u'testing \xaa entity'
 -->
 <rss>
 <channel>

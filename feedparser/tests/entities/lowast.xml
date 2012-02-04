@@ -1,6 +1,6 @@
 <!--
 Description: lowast
-Expect:      bozo and feed['title'] == u'testing \u2217 entity'
+Expect:      feed['title'] == u'testing \u2217 entity'
 -->
 <rss>
 <channel>

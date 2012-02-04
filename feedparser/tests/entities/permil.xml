@@ -1,6 +1,6 @@
 <!--
 Description: permil
-Expect:      bozo and feed['title'] == u'testing \u2030 entity'
+Expect:      feed['title'] == u'testing \u2030 entity'
 -->
 <rss>
 <channel>

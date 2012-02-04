@@ -1,6 +1,6 @@
 <!--
 Description: Ccedil
-Expect:      bozo and feed['title'] == u'testing \xc7 entity'
+Expect:      feed['title'] == u'testing \xc7 entity'
 -->
 <rss>
 <channel>

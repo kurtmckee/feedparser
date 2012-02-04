@@ -1,6 +1,6 @@
 <!--
 Description: micro
-Expect:      bozo and feed['title'] == u'testing \xb5 entity'
+Expect:      feed['title'] == u'testing \xb5 entity'
 -->
 <rss>
 <channel>

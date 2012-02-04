@@ -1,6 +1,6 @@
 <!--
 Description: forall
-Expect:      bozo and feed['title'] == u'testing \u2200 entity'
+Expect:      feed['title'] == u'testing \u2200 entity'
 -->
 <rss>
 <channel>

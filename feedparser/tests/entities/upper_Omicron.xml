@@ -1,6 +1,6 @@
 <!--
 Description: Omicron
-Expect:      bozo and feed['title'] == u'testing \u039f entity'
+Expect:      feed['title'] == u'testing \u039f entity'
 -->
 <rss>
 <channel>

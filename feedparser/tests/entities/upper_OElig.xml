@@ -1,6 +1,6 @@
 <!--
 Description: OElig
-Expect:      bozo and feed['title'] == u'testing \u0152 entity'
+Expect:      feed['title'] == u'testing \u0152 entity'
 -->
 <rss>
 <channel>

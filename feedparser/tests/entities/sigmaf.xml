@@ -1,6 +1,6 @@
 <!--
 Description: sigmaf
-Expect:      bozo and feed['title'] == u'testing \u03c2 entity'
+Expect:      feed['title'] == u'testing \u03c2 entity'
 -->
 <rss>
 <channel>

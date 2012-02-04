@@ -1,6 +1,6 @@
 <!--
 Description: yuml
-Expect:      bozo and feed['title'] == u'testing \xff entity'
+Expect:      feed['title'] == u'testing \xff entity'
 -->
 <rss>
 <channel>

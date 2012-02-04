@@ -1,6 +1,6 @@
 <!--
 Description: raquo
-Expect:      bozo and feed['title'] == u'testing \xbb entity'
+Expect:      feed['title'] == u'testing \xbb entity'
 -->
 <rss>
 <channel>

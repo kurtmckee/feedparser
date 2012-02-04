@@ -1,6 +1,6 @@
 <!--
 Description: sim
-Expect:      bozo and feed['title'] == u'testing \u223c entity'
+Expect:      feed['title'] == u'testing \u223c entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: yacute
-Expect:      bozo and feed['title'] == u'testing \xfd entity'
+Expect:      feed['title'] == u'testing \xfd entity'
 -->
 <rss>
 <channel>

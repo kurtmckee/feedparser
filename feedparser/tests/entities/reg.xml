@@ -1,6 +1,6 @@
 <!--
 Description: reg
-Expect:      bozo and feed['title'] == u'testing \xae entity'
+Expect:      feed['title'] == u'testing \xae entity'
 -->
 <rss>
 <channel>

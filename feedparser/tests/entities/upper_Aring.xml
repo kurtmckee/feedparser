@@ -1,6 +1,6 @@
 <!--
 Description: Aring
-Expect:      bozo and feed['title'] == u'testing \xc5 entity'
+Expect:      feed['title'] == u'testing \xc5 entity'
 -->
 <rss>
 <channel>

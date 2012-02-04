@@ -1,6 +1,6 @@
 <!--
 Description: emsp
-Expect:      bozo and feed['title'] == u'testing \u2003 entity'
+Expect:      feed['title'] == u'testing \u2003 entity'
 -->
 <rss>
 <channel>

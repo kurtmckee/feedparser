@@ -1,6 +1,6 @@
 <!--
 Description: Ocirc
-Expect:      bozo and feed['title'] == u'testing \xd4 entity'
+Expect:      feed['title'] == u'testing \xd4 entity'
 -->
 <rss>
 <channel>

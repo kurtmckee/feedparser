@@ -1,6 +1,6 @@
 <!--
 Description: prod
-Expect:      bozo and feed['title'] == u'testing \u220f entity'
+Expect:      feed['title'] == u'testing \u220f entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: theta
-Expect:      bozo and feed['title'] == u'testing \u03b8 entity'
+Expect:      feed['title'] == u'testing \u03b8 entity'
 -->
 <rss>
 <channel>

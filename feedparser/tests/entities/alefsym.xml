@@ -1,6 +1,6 @@
 <!--
 Description: alefsym
-Expect:      bozo and feed['title'] == u'testing \u2135 entity'
+Expect:      feed['title'] == u'testing \u2135 entity'
 -->
 <rss>
 <channel>
