@@ -2542,15 +2542,24 @@ def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):
 def _makeSafeAbsoluteURI(base, rel=None):
     # bail if ACCEPTABLE_URI_SCHEMES is empty
     if not ACCEPTABLE_URI_SCHEMES:
-        return _urljoin(base, rel or u'')
+        try:
+            return _urljoin(base, rel or u'')
+        except ValueError:
+            return u''
     if not base:
         return rel or u''
     if not rel:
-        scheme = urlparse.urlparse(base)[0]
+        try:
+            scheme = urlparse.urlparse(base)[0]
+        except ValueError:
+            return u''
         if not scheme or scheme in ACCEPTABLE_URI_SCHEMES:
             return base
         return u''
-    uri = _urljoin(base, rel)
+    try:
+        uri = _urljoin(base, rel)
+    except ValueError:
+        return u''
     if uri.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
         return u''
     return uri

@@ -319,6 +319,20 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
     test_rel = _mktest(u'/new', u'http://d.test/new', 'relative uri')
     test_bad = _mktest(u'x://bad.test/', u'', 'unacceptable uri protocol')
 
+    def test_catch_ValueError(self):
+        'catch ValueError in Python 2.7 and up'
+        uri = u'http://bad]test/'
+        value1 = feedparser._makeSafeAbsoluteURI(uri)
+        value2 = feedparser._makeSafeAbsoluteURI(self.base, uri)
+        swap = feedparser.ACCEPTABLE_URI_SCHEMES
+        feedparser.ACCEPTABLE_URI_SCHEMES = ()
+        value3 = feedparser._makeSafeAbsoluteURI(self.base, uri)
+        feedparser.ACCEPTABLE_URI_SCHEMES = swap
+        # Only Python 2.7 and up throw a ValueError, otherwise uri is returned
+        self.assertTrue(value1 in (uri, u''))
+        self.assertTrue(value2 in (uri, u''))
+        self.assertTrue(value3 in (uri, u''))
+
 class TestConvertToIdn(unittest.TestCase):
     "Test IDN support (unavailable in Jython as of Jython 2.5.2)"
     # this is the greek test domain
