@@ -8,6 +8,7 @@ Changes coming in the next release:
     * Issue 321 (malformed URIs can cause ValueError to be thrown)
     * Issue 323 (installing chardet causes 11 unit test failures)
     * Issue 325 (map `description_detail` to `summary_detail`)
+    * Issue 326 (Unicode filename causes UnicodeEncodeError if locale is ASCII)
 
 5.1 - December 2, 2011
     * Extensive, extensive unit test refactoring

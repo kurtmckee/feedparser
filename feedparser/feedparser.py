@@ -2979,7 +2979,11 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
         return open(url_file_stream_or_string, 'rb')
-    except IOError:
+    except (IOError, UnicodeEncodeError):
+        # if url_file_stream_or_string is a unicode object that
+        # cannot be converted to the encoding returned by
+        # sys.getfilesystemencoding(), a UnicodeEncodeError
+        # will be thrown
         pass
 
     # treat url_file_stream_or_string as string
