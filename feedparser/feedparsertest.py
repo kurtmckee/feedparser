@@ -2,7 +2,7 @@
 
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __license__ = """
-Copyright (c) 2010-2011 Kurt McKee <contactme@kurtmckee.org>
+Copyright (c) 2010-2012 Kurt McKee <contactme@kurtmckee.org>
 Copyright (c) 2004-2008 Mark Pilgrim
 All rights reserved.
 
