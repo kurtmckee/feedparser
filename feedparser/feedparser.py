@@ -3447,6 +3447,16 @@ _additional_timezones = {'AT': -400, 'ET': -500, 'CT': -600, 'MT': -700, 'PT': -
 rfc822._timezones.update(_additional_timezones)
 registerDateHandler(_parse_date_rfc822)
 
+# Fix issue 237: Handle dates with an additional comma
+# Example date string: 'Fri, 10 Feb, 2012 09:00:00 EST'
+def _parse_date_rfc822_comma(dateString):
+    comma_date_re = r'^[A-Za-z]{3},\s+[0-9]{2}\s+[A-Za-z]{3},\s+[0-9]{4}'
+    if re.match(comma_date_re, dateString):
+        # Remove the second ',' and use the rfc822 parser
+        dateString = re.sub(r'([^,]+,[^,]+),(.*)', r'\1\2', dateString)
+        return _parse_date_rfc822(dateString)
+registerDateHandler(_parse_date_rfc822_comma)
+
 def _parse_date_perforce(aDateString):
     """parse a date in yyyy/mm/dd hh:mm:ss TTT format"""
     # Fri, 2006/09/15 08:19:53 EDT
