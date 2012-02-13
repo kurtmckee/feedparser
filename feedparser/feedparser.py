@@ -3418,7 +3418,7 @@ _rfc822_months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
 _rfc822_daynames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
 # Only the first three letters of the month name matter
-_rfc822_month = "(?P<month>%s)(?:[a-z]*)" % ('|'.join(_rfc822_months))
+_rfc822_month = "(?P<month>%s)(?:[a-z]*,?)" % ('|'.join(_rfc822_months))
 # The year may be 2 or 4 digits; capture the century if it exists
 _rfc822_year = "(?P<year>(?:\d{2})?\d{2})"
 _rfc822_day = "(?P<day>\d{2})"
