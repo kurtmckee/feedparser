@@ -474,21 +474,21 @@ date_tests = {
     feedparser._parse_date_rfc822: (
         (u'', None), # empty string
         (u'Sun, 31 Dec 9999 23:59:59 -9999', None), # wildly out-of-range, catch OverflowError
-        (u'Mon, 11 Aug 0307 00:01:00 +0200', None), # wildly out-of-range, catch ValueError
+        (u'Thu, 01 Jan 0100 00:00:01 +0100', (99, 12, 31, 23, 0, 1, 3, 365, 0)), # ancient date
         (u'Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
         (u'Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year
-        (u'Thu, 31 Jun 2004 19:48:21 GMT', (2004, 7, 1, 19, 48, 21, 3, 183, 0)), # rollover june 31st
         (u'Wed, 19 Aug 2009 18:28:00 Etc/GMT', (2009, 8, 19, 18, 28, 0, 2, 231, 0)), # etc/gmt timezone
         (u'Thu, 01 Jan 2004 00:00 GMT', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no seconds
         (u'Thu, 01 Jan 2004', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no time
-        # Test asctime-style dates and times
-        (u'Sun Jan  4 16:29:06 PST 2004', (2004, 1, 5, 0, 29, 6, 0, 5, 0)),
         # Additional tests to handle Disney's long month names and invalid timezones
         (u'Mon, 26 January 2004 16:31:00 AT', (2004, 1, 26, 20, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 ET', (2004, 1, 26, 21, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 CT', (2004, 1, 26, 22, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 MT', (2004, 1, 26, 23, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 PT', (2004, 1, 27, 0, 31, 0, 1, 27, 0)),
+    ),
+    feedparser._parse_date_asctime: (
+        (u'Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
     ),
     feedparser._parse_date_w3dtf: (
         (u'', None), # empty string

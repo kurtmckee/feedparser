@@ -1,6 +1,7 @@
 Changes coming in the next release:
     * Fix mistakes, typos, and bugs in the unit test code
     * Fix crash in Python 2.4 and 2.5 if the feed has a UTF_32 byte order mark
+    * Replace the RFC822 date parser for more extensibility
     * Issue 309 (itunes:keywords should be split by commas, not whitespace)
     * Issue 310 (pubDate should map to `published`, not `updated`)
     * Issue 313 (include the compression test files in MANIFEST.in)

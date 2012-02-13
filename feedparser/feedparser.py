@@ -3412,40 +3412,86 @@ def _parse_date_w3dtf(dateString):
     return time.gmtime(time.mktime(gmt) + __extract_tzd(m) - time.timezone)
 registerDateHandler(_parse_date_w3dtf)
 
-def _parse_date_rfc822(dateString):
-    '''Parse an RFC822, RFC1123, RFC2822, or asctime-style date'''
-    data = dateString.split()
-    if not data:
+# Define the strings used by the RFC822 datetime parser
+_rfc822_months = ['jan', 'feb', 'mar', 'apr', 'may', 'jun',
+          'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+_rfc822_daynames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
+
+# Only the first three letters of the month name matter
+_rfc822_month = "(?P<month>%s)(?:[a-z]*)" % ('|'.join(_rfc822_months))
+# The year may be 2 or 4 digits; capture the century if it exists
+_rfc822_year = "(?P<year>(?:\d{2})?\d{2})"
+_rfc822_day = "(?P<day>\d{2})"
+_rfc822_date = "%s %s %s" % (_rfc822_day, _rfc822_month, _rfc822_year)
+
+_rfc822_hour = "(?P<hour>\d{2}):(?P<minute>\d{2})(?::(?P<second>\d{2}))?"
+_rfc822_tz = "(?P<tz>ut|gmt|[aecmp][sd]?t|[zamny]|[+-]\d{4})"
+_rfc822_tznames = {
+    'ut': 0, 'gmt': 0, 'z': 0,
+    'adt': -3, 'ast': -4, 'at': -4,
+    'edt': -4, 'est': -5, 'et': -5,
+    'cdt': -5, 'cst': -6, 'ct': -6,
+    'mdt': -6, 'mst': -7, 'mt': -7,
+    'pdt': -7, 'pst': -8, 'pt': -8,
+    'a': -1, 'n': 1,
+    'm': -12, 'y': 12,
+ }
+# The timezone may be prefixed by 'Etc/'
+_rfc822_time = "%s (?:etc/)?%s" % (_rfc822_hour, _rfc822_tz)
+
+_rfc822_dayname = "(?P<dayname>%s)" % ('|'.join(_rfc822_daynames))
+_rfc822_match = re.compile(
+    "(?:%s, )?%s(?: %s)?" % (_rfc822_dayname, _rfc822_date, _rfc822_time)
+).match
+
+def _parse_date_rfc822(dt):
+    """Parse RFC 822 dates and times, with one minor
+    difference: years may be 4DIGIT or 2DIGIT.
+    http://tools.ietf.org/html/rfc822#section-5"""
+    try:
+        m = _rfc822_match(dt.lower()).groupdict(0)
+    except AttributeError:
         return None
-    if data[0][-1] in (',', '.') or data[0].lower() in rfc822._daynames:
-        del data[0]
-    if len(data) == 4:
-        s = data[3]
-        i = s.find('+')
-        if i > 0:
-            data[3:] = [s[:i], s[i+1:]]
-        else:
-            data.append('')
-        dateString = " ".join(data)
-    # Account for the Etc/GMT timezone by stripping 'Etc/'
-    elif len(data) == 5 and data[4].lower().startswith('etc/'):
-        data[4] = data[4][4:]
-        dateString = " ".join(data)
-    if len(data) < 5:
-        dateString += ' 00:00:00 GMT'
-    tm = rfc822.parsedate_tz(dateString)
-    if tm:
-        # Jython doesn't adjust for 2-digit years like CPython does,
-        # so account for it by shifting the year so that it's in the
-        # range 1970-2069 (1970 being the year of the Unix epoch).
-        if tm[0] < 100:
-            tm = (tm[0] + (1900, 2000)[tm[0] < 70],) + tm[1:]
-        return time.gmtime(rfc822.mktime_tz(tm))
-# rfc822.py defines several time zones, but we define some extra ones.
-# 'ET' is equivalent to 'EST', etc.
-_additional_timezones = {'AT': -400, 'ET': -500, 'CT': -600, 'MT': -700, 'PT': -800}
-rfc822._timezones.update(_additional_timezones)
+
+    # Calculate a date and timestamp
+    for k in ('year', 'day', 'hour', 'minute', 'second'):
+        m[k] = int(m[k])
+    m['month'] = _rfc822_months.index(m['month']) + 1
+    # If the year is 2 digits, assume everything in the 90's is the 1990's
+    if m['year'] < 100:
+        m['year'] += (1900, 2000)[m['year'] < 90]
+    stamp = datetime.datetime(*[m[i] for i in 
+                ('year', 'month', 'day', 'hour', 'minute', 'second')])
+
+    # Use the timezone information to calculate the difference between
+    # the given date and timestamp and Universal Coordinated Time
+    if isinstance(m['tz'], int):
+        tzhour = 0
+        tzmin = 0
+    elif m['tz'].startswith('+'):
+        tzhour = int(m['tz'][1:3])
+        tzmin = int(m['tz'][3:])
+    elif m['tz'].startswith('-'):
+        tzhour = int(m['tz'][1:3]) * -1
+        tzmin = int(m['tz'][3:]) * -1
+    else:
+        tzhour = _rfc822_tznames[m['tz']]
+        tzmin = 0
+    delta = datetime.timedelta(0, 0, 0, 0, tzmin, tzhour)
+
+    # Return the date and timestamp in UTC
+    return (stamp - delta).utctimetuple()
 registerDateHandler(_parse_date_rfc822)
+
+def _parse_date_asctime(dt):
+    """Parse asctime-style dates"""
+    dayname, month, day, remainder = dt.split(None, 3)
+    # Convert month and day into zero-padded integers
+    month = '%02i ' % (_rfc822_months.index(month.lower()) + 1)
+    day = '%02i ' % (int(day),)
+    dt = month + day + remainder
+    return time.strptime(dt, '%m %d %H:%M:%S %Y')[:-1] + (0, )
+registerDateHandler(_parse_date_asctime)
 
 def _parse_date_perforce(aDateString):
     """parse a date in yyyy/mm/dd hh:mm:ss TTT format"""
