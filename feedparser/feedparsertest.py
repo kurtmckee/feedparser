@@ -438,6 +438,14 @@ class TestDateParsers(unittest.TestCase):
             tup = None
         self.assertEqual(tup, dttuple)
         self.assertEqual(tup, feedparser._parse_date(dtstring))
+    def test_year_10000_date(self):
+        # On some systems this date string will trigger an OverflowError.
+        # On Jython and x64 systems, however, it's interpreted just fine.
+        try:
+            date = feedparser._parse_date_rfc822(u'Sun, 31 Dec 9999 23:59:59 -9999')
+        except OverflowError:
+            date = None
+        self.assertTrue(date in (None, (10000, 1, 5, 4, 38, 59, 2, 5, 0)))
 
 date_tests = {
     feedparser._parse_date_greek: (
@@ -473,7 +481,6 @@ date_tests = {
     ),
     feedparser._parse_date_rfc822: (
         (u'', None), # empty string
-        (u'Sun, 31 Dec 9999 23:59:59 -9999', None), # wildly out-of-range, catch OverflowError
         (u'Thu, 01 Jan 0100 00:00:01 +0100', (99, 12, 31, 23, 0, 1, 3, 365, 0)), # ancient date
         (u'Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
         (u'Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year

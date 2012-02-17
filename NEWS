@@ -5,6 +5,7 @@ Changes coming in the next release:
     * Issue 309 (itunes:keywords should be split by commas, not whitespace)
     * Issue 310 (pubDate should map to `published`, not `updated`)
     * Issue 313 (include the compression test files in MANIFEST.in)
+    * Issue 314 (far-flung RFC822 dates don't throw OverflowError on x64)
     * Issue 315 (HTTP server for unit tests runs on 0.0.0.0)
     * Issue 321 (malformed URIs can cause ValueError to be thrown)
     * Issue 323 (installing chardet causes 11 unit test failures)
