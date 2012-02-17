@@ -34,7 +34,7 @@ Parsing a feed from a remote :abbr:`URL (Uniform Resource Locator)`
     u'Sample Feed'
 
 
-The following example assumes you are on Windows, and that you have saved a feed at :file:`c:\incoming\atom10.xml`.
+The following example assumes you are on Windows, and that you have saved a feed at :file:`c:\\incoming\\atom10.xml`.
 
 .. note::
 
