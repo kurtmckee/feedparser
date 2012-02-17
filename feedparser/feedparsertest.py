@@ -72,6 +72,12 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
         Header:   X-Foo: bar
         -->
         """
+        # Short-circuit the HTTP status test `test_redirect_to_304()`
+        if self.path == '/-/return-304.xml':
+            self.send_response(304)
+            self.send_header('Content-type', 'text/xml')
+            self.end_headers()
+            return feedparser._StringIO(u''.encode('utf-8'))
         path = self.translate_path(self.path)
         # the compression tests' filenames determine the header sent
         if self.path.startswith('/tests/compression'):
@@ -425,6 +431,13 @@ class TestHTTPStatus(unittest.TestCase):
     def test_9001(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_9001.xml')
         self.assertEqual(f.bozo, 1)
+    def test_redirect_to_304(self):
+        # ensure that an http redirect to an http 304 doesn't
+        # trigger a bozo_exception
+        u = 'http://localhost:8097/tests/http/http_redirect_to_304.xml'
+        f = feedparser.parse(u)
+        self.assertTrue(f.bozo == 0)
+        self.assertTrue(f.status == 302)
 
 class TestDateParsers(unittest.TestCase):
     "Test the various date parsers; most of the test cases are constructed " \
@@ -653,7 +666,7 @@ def runtests():
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
     # and a few `_open_resource`-related tests
-    httpcount = 5 + 15 + 2
+    httpcount = 5 + 17 + 2
     httpcount += len([f for f in allfiles if 'http' in f])
     httpcount += len([f for f in wellformedfiles if 'http' in f])
     httpcount += len([f for f in illformedfiles if 'http' in f])

@@ -8,6 +8,7 @@ Changes coming in the next release:
     * Issue 314 (far-flung RFC822 dates don't throw OverflowError on x64)
     * Issue 315 (HTTP server for unit tests runs on 0.0.0.0)
     * Issue 321 (malformed URIs can cause ValueError to be thrown)
+    * Issue 322 (HTTP redirect to HTTP 304 causes SAXParseException)
     * Issue 323 (installing chardet causes 11 unit test failures)
     * Issue 325 (map `description_detail` to `summary_detail`)
     * Issue 326 (Unicode filename causes UnicodeEncodeError if locale is ASCII)

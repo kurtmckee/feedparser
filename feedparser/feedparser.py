@@ -3859,7 +3859,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         baselang = baselang.decode('utf-8', 'ignore')
 
     # if server sent 304, we're done
-    if result.get('status', 0) == 304:
+    if getattr(f, 'code', 0) == 304:
         result['version'] = u''
         result['debug_message'] = 'The feed has not changed since you last checked, ' + \
             'so the server sent no data.  This is a feature, not a bug!'
