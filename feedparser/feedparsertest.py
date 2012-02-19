@@ -41,6 +41,7 @@ import threading
 import time
 import unittest
 import urllib
+import warnings
 import zlib
 import BaseHTTPServer
 import SimpleHTTPServer
@@ -170,6 +171,56 @@ class BaseTestCase(unittest.TestCase):
 
 class TestCase(BaseTestCase):
     pass
+
+class TestTemporaryFallbackBehavior(unittest.TestCase):
+    "These tests are temporarily here because of issues 310 and 328"
+    def test_issue_328_fallback_behavior(self):
+        warnings.filterwarnings('error')
+
+        d = feedparser.FeedParserDict()
+        d['published'] = u'pub string'
+        d['published_parsed'] = u'pub tuple'
+        d['updated'] = u'upd string'
+        d['updated_parsed'] = u'upd tuple'
+        # Ensure that `updated` doesn't map to `published` when it exists
+        self.assertTrue('published' in d)
+        self.assertTrue('published_parsed' in d)
+        self.assertTrue('updated' in d)
+        self.assertTrue('updated_parsed' in d)
+        self.assertEqual(d['published'], 'pub string')
+        self.assertEqual(d['published_parsed'], 'pub tuple')
+        self.assertEqual(d['updated'], 'upd string')
+        self.assertEqual(d['updated_parsed'], 'upd tuple')
+
+        d = feedparser.FeedParserDict()
+        d['published'] = u'pub string'
+        d['published_parsed'] = u'pub tuple'
+        # Ensure that `updated` doesn't actually exist
+        self.assertTrue('updated' not in d)
+        self.assertTrue('updated_parsed' not in d)
+        # Ensure that accessing `updated` throws a DeprecationWarning
+        try:
+            d['updated']
+        except DeprecationWarning:
+            # Expected behavior
+            pass
+        else:
+            # Wrong behavior
+            self.assertEqual(True, False)
+        try:
+            d['updated_parsed']
+        except DeprecationWarning:
+            # Expected behavior
+            pass
+        else:
+            # Wrong behavior
+            self.assertEqual(True, False)
+        # Ensure that `updated` maps to `published`
+        warnings.filterwarnings('ignore')
+        self.assertEqual(d['updated'], u'pub string')
+        self.assertEqual(d['updated_parsed'], u'pub tuple')
+        warnings.resetwarnings()
+
 
 class TestEverythingIsUnicode(unittest.TestCase):
     "Ensure that `everythingIsUnicode()` is working appropriately"
@@ -732,6 +783,7 @@ def runtests():
         testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
         testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
         testsuite.addTest(testloader.loadTestsFromTestCase(TestEverythingIsUnicode))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestTemporaryFallbackBehavior))
         testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
         # Return 0 if successful, 1 if there was a failure

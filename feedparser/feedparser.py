@@ -152,6 +152,7 @@ import types
 import urllib
 import urllib2
 import urlparse
+import warnings
 
 from htmlentitydefs import name2codepoint, codepoint2name, entitydefs
 
@@ -346,6 +347,30 @@ class FeedParserDict(dict):
             for link in dict.__getitem__(self, 'links'):
                 if link['rel']==u'license' and 'href' in link:
                     return link['href']
+        elif key == 'updated':
+            # Temporarily help developers out by keeping the old
+            # broken behavior that was reported in issue 310.
+            # This fix was proposed in issue 328.
+            if not dict.__contains__(self, 'updated') and \
+                dict.__contains__(self, 'published'):
+                warnings.warn("To avoid breaking existing software while "
+                    "fixing issue 310, a temporary mapping has been created "
+                    "from `updated` to `published` if `updated` doesn't "
+                    "exist. This fallback will be removed in a future version "
+                    "of feedparser.", DeprecationWarning)
+                return dict.__getitem__(self, 'published')
+            return dict.__getitem__(self, 'updated')
+        elif key == 'updated_parsed':
+            if not dict.__contains__(self, 'updated_parsed') and \
+                dict.__contains__(self, 'published_parsed'):
+                warnings.warn("To avoid breaking existing software while "
+                    "fixing issue 310, a temporary mapping has been created "
+                    "from `updated_parsed` to `published_parsed` if "
+                    "`updated_parsed` doesn't exist. This fallback will be "
+                    "removed in a future version of feedparser.",
+                    DeprecationWarning)
+                return dict.__getitem__(self, 'published_parsed')
+            return dict.__getitem__(self, 'updated_parsed')
         else:
             realkey = self.keymap.get(key, key)
             if isinstance(realkey, list):
@@ -357,6 +382,11 @@ class FeedParserDict(dict):
         return dict.__getitem__(self, key)
 
     def __contains__(self, key):
+        if key in ('updated', 'updated_parsed'):
+            # Temporarily help developers out by keeping the old
+            # broken behavior that was reported in issue 310.
+            # This fix was proposed in issue 328.
+            return dict.__contains__(self, key)
         try:
             self.__getitem__(key)
         except KeyError:
