@@ -3455,7 +3455,7 @@ _rfc822_day = "(?P<day>\d{2})"
 _rfc822_date = "%s %s %s" % (_rfc822_day, _rfc822_month, _rfc822_year)
 
 _rfc822_hour = "(?P<hour>\d{2}):(?P<minute>\d{2})(?::(?P<second>\d{2}))?"
-_rfc822_tz = "(?P<tz>ut|gmt|[aecmp][sd]?t|[zamny]|[+-]\d{4})"
+_rfc822_tz = "(?P<tz>ut|gmt(?:[+-]\d{2}:\d{2})?|[aecmp][sd]?t|[zamny]|[+-]\d{4})"
 _rfc822_tznames = {
     'ut': 0, 'gmt': 0, 'z': 0,
     'adt': -3, 'ast': -4, 'at': -4,
@@ -3495,9 +3495,14 @@ def _parse_date_rfc822(dt):
 
     # Use the timezone information to calculate the difference between
     # the given date and timestamp and Universal Coordinated Time
-    if isinstance(m['tz'], int):
-        tzhour = 0
-        tzmin = 0
+    tzhour = 0
+    tzmin = 0
+    if m['tz'] and m['tz'].startswith('gmt'):
+        # Handle GMT and GMT+hh:mm timezone syntax (the trailing
+        # timezone info will be handled by the next `if` block)
+        m['tz'] = ''.join(m['tz'][3:].split(':')) or 'gmt'
+    if not m['tz']:
+        pass
     elif m['tz'].startswith('+'):
         tzhour = int(m['tz'][1:3])
         tzmin = int(m['tz'][3:])
@@ -3506,7 +3511,6 @@ def _parse_date_rfc822(dt):
         tzmin = int(m['tz'][3:]) * -1
     else:
         tzhour = _rfc822_tznames[m['tz']]
-        tzmin = 0
     delta = datetime.timedelta(0, 0, 0, 0, tzmin, tzhour)
 
     # Return the date and timestamp in UTC
