@@ -139,8 +139,8 @@ Registering a third-party date handler
     import feedparser
     import re
 
-    _my_date_pattern = re.compile( \
-    r'(\\d{,2})/(\\d{,2})/(\\d{4}) (\\d{,2}):(\\d{2}):(\\d{2})')
+    _my_date_pattern = re.compile(
+        r'(\d{,2})/(\d{,2})/(\d{4}) (\d{,2}):(\d{2}):(\d{2})')
 
     def myDateHandler(aDateString):
         """parse a UTC date in MM/DD/YYYY HH:MM:SS format"""

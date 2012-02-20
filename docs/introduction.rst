@@ -47,7 +47,7 @@ Parsing a feed from a local file
 
 
     >>> import feedparser
-    >>> d = feedparser.parse(r'c:\\incoming\\atom10.xml')
+    >>> d = feedparser.parse(r'c:\incoming\atom10.xml')
     >>> d['feed']['title']
     u'Sample Feed'
 

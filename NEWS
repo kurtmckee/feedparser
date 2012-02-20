@@ -15,6 +15,7 @@ Changes coming in the next release:
     * Issue 327 (handle RFC822 dates with extraneous commas)
     * Issue 328 (temporarily map `updated` to `published` due to issue 310)
     * Issue 329 (escape backslashes in Windows path in docs/introduction.rst)
+    * Issue 331 (don't escape backslashes that are in raw strings in the docs)
 
 5.1 - December 2, 2011
     * Extensive, extensive unit test refactoring
