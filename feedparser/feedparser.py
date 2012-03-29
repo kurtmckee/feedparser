@@ -1601,6 +1601,7 @@ class _FeedParserMixin:
         else:
             self.pushContent('description', attrsD, u'text/html', self.infeed or self.inentry or self.insource)
     _start_dc_description = _start_description
+    _start_media_description = _start_description
 
     def _start_abstract(self, attrsD):
         self.pushContent('description', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
@@ -1613,6 +1614,7 @@ class _FeedParserMixin:
         self._summaryKey = None
     _end_abstract = _end_description
     _end_dc_description = _end_description
+    _end_media_description = _end_description
 
     def _start_info(self, attrsD):
         self.pushContent('info', attrsD, u'text/plain', 1)
@@ -1733,6 +1735,33 @@ class _FeedParserMixin:
         # False and None both evaluate as False, so the difference can be ignored
         # by applications that only need to know if the content is explicit.
         self._getContext()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
+
+    def _start_media_group(self, attrsD):
+        # don't do anything, but don't break the enclosed tags either
+        pass
+
+    def _start_media_credit(self, attrsD):
+        context = self._getContext()
+        context.setdefault('media_credit', [])
+        context['media_credit'].append(attrsD)
+        self.push('credit', 1)
+
+    def _end_media_credit(self):
+        credit = self.pop('credit')
+        if credit != None and len(credit.strip()) != 0:
+            context = self._getContext()
+            context['media_credit'][-1]['content'] = credit
+
+    def _start_media_restriction(self, attrsD):
+        context = self._getContext()
+        context.setdefault('media_restriction', attrsD)
+        self.push('restriction', 1)
+
+    def _end_media_restriction(self):
+        restriction = self.pop('restriction')
+        if restriction != None and len(restriction.strip()) != 0:
+            context = self._getContext()
+            context['media_restriction']['content'] = restriction
 
     def _start_media_content(self, attrsD):
         context = self._getContext()
