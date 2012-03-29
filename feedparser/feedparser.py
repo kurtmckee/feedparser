@@ -1763,6 +1763,17 @@ class _FeedParserMixin:
             context = self._getContext()
             context['media_restriction']['content'] = restriction
 
+    def _start_media_license(self, attrsD):
+        context = self._getContext()
+        context.setdefault('media_license', attrsD)
+        self.push('license', 1)
+
+    def _end_media_license(self):
+        license = self.pop('license')
+        if license != None and len(license.strip()) != 0:
+            context = self._getContext()
+            context['media_license']['content'] = license
+
     def _start_media_content(self, attrsD):
         context = self._getContext()
         context.setdefault('media_content', [])
