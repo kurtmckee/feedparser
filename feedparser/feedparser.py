@@ -3451,7 +3451,7 @@ _rfc822_daynames = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 _rfc822_month = "(?P<month>%s)(?:[a-z]*,?)" % ('|'.join(_rfc822_months))
 # The year may be 2 or 4 digits; capture the century if it exists
 _rfc822_year = "(?P<year>(?:\d{2})?\d{2})"
-_rfc822_day = "(?P<day>\d{2})"
+_rfc822_day = "(?P<day> *\d{1,2})"
 _rfc822_date = "%s %s %s" % (_rfc822_day, _rfc822_month, _rfc822_year)
 
 _rfc822_hour = "(?P<hour>\d{2}):(?P<minute>\d{2})(?::(?P<second>\d{2}))?"

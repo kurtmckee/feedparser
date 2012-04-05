@@ -1,3 +1,6 @@
+Coming in the next release:
+    * Issue 337 (`_parse_date_rfc822()` returns None on single-digit days)
+
 5.1.1 - March 20, 2011
     * Fix mistakes, typos, and bugs in the unit test code
     * Fix crash in Python 2.4 and 2.5 if the feed has a UTF_32 byte order mark
