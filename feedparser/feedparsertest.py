@@ -375,6 +375,7 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
     test_abs = _mktest(u'https://s.test/', u'https://s.test/', 'absolute uri')
     test_rel = _mktest(u'/new', u'http://d.test/new', 'relative uri')
     test_bad = _mktest(u'x://bad.test/', u'', 'unacceptable uri protocol')
+    test_mag = _mktest(u'magnet:?xt=a', u'magnet:?xt=a', 'magnet uri')
 
     def test_catch_ValueError(self):
         'catch ValueError in Python 2.7 and up'

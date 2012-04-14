@@ -131,9 +131,10 @@ else:
 #   https://secure.wikimedia.org/wikipedia/en/wiki/URI_scheme
 # Many more will likely need to be added!
 ACCEPTABLE_URI_SCHEMES = (
-    'file', 'ftp', 'gopher', 'h323', 'hdl', 'http', 'https', 'imap', 'mailto',
-    'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu', 'sftp',
-    'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet', 'wais',
+    'file', 'ftp', 'gopher', 'h323', 'hdl', 'http', 'https', 'imap', 'magnet',
+    'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu',
+    'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet',
+    'wais',
     # Additional common-but-unofficial schemes
     'aim', 'callto', 'cvs', 'facetime', 'feed', 'git', 'gtalk', 'irc', 'ircs',
     'irc6', 'itms', 'mms', 'msnim', 'skype', 'ssh', 'smb', 'svn', 'ymsg',
