@@ -3835,8 +3835,12 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             try:
                 data = zlib.decompress(data)
             except zlib.error, e:
-                result['bozo'] = 1
-                result['bozo_exception'] = e
+                try:
+                    # The data may have no headers and no checksum.
+                    data = zlib.decompress(data, -15)
+                except zlib.error, e:
+                    result['bozo'] = 1
+                    result['bozo_exception'] = e
 
     # save HTTP headers
     if http_headers:

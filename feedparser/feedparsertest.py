@@ -424,6 +424,9 @@ class TestCompression(unittest.TestCase):
     def test_zlib_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate.z')
         self.assertEqual(f.version, 'atom10')
+    def test_zlib_no_headers(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/deflate-no-headers.z')
+        self.assertEqual(f.version, 'atom10')
     def test_zlib_not_compressed(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate-not-compressed.z')
         self.assertEqual(f.bozo, 1)
@@ -723,7 +726,7 @@ def runtests():
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
     # and a few `_open_resource`-related tests
-    httpcount = 5 + 17 + 2
+    httpcount = 6 + 17 + 2
     httpcount += len([f for f in allfiles if 'http' in f])
     httpcount += len([f for f in wellformedfiles if 'http' in f])
     httpcount += len([f for f in illformedfiles if 'http' in f])
