@@ -86,6 +86,7 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
                 headers = {'Content-Encoding': 'gzip'}
             else:
                 headers = {'Content-Encoding': 'deflate'}
+            headers['Content-type'] = 'application/xml'
         else:
             headers = dict([(k.decode('utf-8'), v.decode('utf-8').strip()) for k, v in self.headers_re.findall(open(path, 'rb').read())])
         f = open(path, 'rb')
@@ -411,10 +412,11 @@ class TestCompression(unittest.TestCase):
     def test_gzip_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
         self.assertEqual(f.version, 'atom10')
-    def test_gzip_not_gzipped(self):
-        f = feedparser.parse('http://localhost:8097/tests/compression/gzip-not-gzipped.gz')
+    def test_gzip_not_compressed(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/gzip-not-compressed.gz')
         self.assertEqual(f.bozo, 1)
         self.assertTrue(isinstance(f.bozo_exception, IOError))
+        self.assertEqual(f['feed']['title'], 'gzip')
     def test_gzip_struct_error(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip-struct-error.gz')
         self.assertEqual(f.bozo, 1)
@@ -422,10 +424,11 @@ class TestCompression(unittest.TestCase):
     def test_zlib_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate.z')
         self.assertEqual(f.version, 'atom10')
-    def test_zlib_bad(self):
-        f = feedparser.parse('http://localhost:8097/tests/compression/deflate-error.z')
+    def test_zlib_not_compressed(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/deflate-not-compressed.z')
         self.assertEqual(f.bozo, 1)
         self.assertTrue(isinstance(f.bozo_exception, zlib.error))
+        self.assertEqual(f['feed']['title'], 'deflate')
 
 class TestHTTPStatus(unittest.TestCase):
     "Test HTTP redirection and other status codes"

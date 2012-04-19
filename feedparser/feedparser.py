@@ -3822,22 +3822,21 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             try:
                 data = gzip.GzipFile(fileobj=_StringIO(data)).read()
             except (IOError, struct.error), e:
-                # IOError can occur if the gzip header is bad
-                # struct.error can occur if the data is damaged
-                # Some feeds claim to be gzipped but they're not, so
-                # we get garbage.  Ideally, we should re-request the
-                # feed without the 'Accept-encoding: gzip' header,
-                # but we don't.
+                # IOError can occur if the gzip header is bad.
+                # struct.error can occur if the data is damaged.
                 result['bozo'] = 1
                 result['bozo_exception'] = e
-                data = None
+                if isinstance(e, struct.error):
+                    # A gzip header was found but the data is corrupt.
+                    # Ideally, we should re-request the feed without the
+                    # 'Accept-encoding: gzip' header, but we don't.
+                    data = None
         elif zlib and 'deflate' in http_headers.get('content-encoding', ''):
             try:
                 data = zlib.decompress(data)
             except zlib.error, e:
                 result['bozo'] = 1
                 result['bozo_exception'] = e
-                data = None
 
     # save HTTP headers
     if http_headers:

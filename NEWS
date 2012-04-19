@@ -1,4 +1,5 @@
 Coming in the next release:
+    * feedparser will now try to continue parsing despite compression errors
     * Issue 337 (`_parse_date_rfc822()` returns None on single-digit days)
     * Issue 343 (add magnet links to the ACCEPTABLE_URI_SCHEMES)
 
