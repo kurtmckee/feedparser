@@ -4,6 +4,7 @@ Coming in the next release:
     * Issue 337 (`_parse_date_rfc822()` returns None on single-digit days)
     * Issue 343 (add magnet links to the ACCEPTABLE_URI_SCHEMES)
     * Issue 344 (handle deflated data with no headers nor checksums)
+    * Issue 347 (support `itunes:image` elements with a `url` attribute)
 
 5.1.1 - March 20, 2011
     * Fix mistakes, typos, and bugs in the unit test code
