@@ -1,4 +1,4 @@
-Coming in the next release:
+5.1.2 - May 3, 2012
     * Minor changes to the documentation
     * Strip potentially dangerous ENTITY declarations in encoded feeds
     * feedparser will now try to continue parsing despite compression errors
