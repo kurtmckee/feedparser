@@ -1,4 +1,5 @@
 Coming in the next release:
+    * Minor changes to the documentation
     * Strip potentially dangerous ENTITY declarations in encoded feeds
     * feedparser will now try to continue parsing despite compression errors
     * Fix issue 321 a little more (the initial fix missed a code path)

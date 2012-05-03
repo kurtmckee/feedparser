@@ -2,8 +2,8 @@ Common :abbr:`RSS (Rich Site Summary)` Elements
 ===============================================
 
 The most commonly used elements in :abbr:`RSS (Rich Site Summary)` feeds
-(regardless of version) are title, link, description, modified date, and entry
-ID.  The modified date comes from the pubDate element, and the entry ID comes
+(regardless of version) are title, link, description, publication date, and entry
+ID.  The publication date comes from the pubDate element, and the entry ID comes
 from the guid element.
 
 This sample :abbr:`RSS (Rich Site Summary)` feed is at
@@ -18,7 +18,7 @@ This sample :abbr:`RSS (Rich Site Summary)` feed is at
     <title>Sample Feed</title>
     <description>For documentation &lt;em&gt;only&lt;/em&gt;</description>
     <link>http://example.org/</link>
-    <pubDate>Sat, 07 Sep 2002 0:00:01 GMT</pubDate>
+    <pubDate>Sat, 07 Sep 2002 00:00:01 GMT</pubDate>
     <!-- other elements omitted from this example -->
     <item>
     <title>First entry title</title>
@@ -26,7 +26,7 @@ This sample :abbr:`RSS (Rich Site Summary)` feed is at
     <description>Watch out for &lt;span style="background-image:
     url(javascript:window.location='http://example.org/')"&gt;nasty
     tricks&lt;/span&gt;</description>
-    <pubDate>Sat, 07 Sep 2002 0:00:01 GMT</pubDate>
+    <pubDate>Thu, 05 Sep 2002 00:00:01 GMT</pubDate>
     <guid>http://example.org/entry/3</guid>
     <!-- other elements omitted from this example -->
     </item>
@@ -49,9 +49,9 @@ Accessing Common Channel Elements
     u'http://example.org/'
     >>> d.feed.description
     u'For documentation <em>only</em>'
-    >>> d.feed.date
-    u'Sat, 07 Sep 2002 0:00:01 GMT'
-    >>> d.feed.date_parsed
+    >>> d.feed.published
+    u'Sat, 07 Sep 2002 00:00:01 GMT'
+    >>> d.feed.published_parsed
     (2002, 9, 7, 0, 0, 1, 5, 250, 0)
 
 
@@ -70,9 +70,9 @@ Accessing Common Item Elements
     u'http://example.org/item/1'
     >>> d.entries[0].description
     u'Watch out for <span>nasty tricks</span>'
-    >>> d.entries[0].date
-    u'Thu, 05 Sep 2002 0:00:01 GMT'
-    >>> d.entries[0].date_parsed
+    >>> d.entries[0].published
+    u'Thu, 05 Sep 2002 00:00:01 GMT'
+    >>> d.entries[0].published_parsed
     (2002, 9, 5, 0, 0, 1, 3, 248, 0)
     >>> d.entries[0].id
     u'http://example.org/guid/1'
