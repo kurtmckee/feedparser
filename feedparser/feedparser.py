@@ -3012,11 +3012,14 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
         return open(url_file_stream_or_string, 'rb')
-    except (IOError, UnicodeEncodeError):
+    except (IOError, UnicodeEncodeError, TypeError):
         # if url_file_stream_or_string is a unicode object that
         # cannot be converted to the encoding returned by
         # sys.getfilesystemencoding(), a UnicodeEncodeError
         # will be thrown
+        # If url_file_stream_or_string is a string that contains NULL
+        # (such as an XML document encoded in UTF-32), TypeError will
+        # be thrown.
         pass
 
     # treat url_file_stream_or_string as string
