@@ -253,7 +253,19 @@ class TestMicroformats(BaseTestCase):
     pass
 
 class TestEncodings(BaseTestCase):
-    pass
+    def test_doctype_replacement(self):
+        "Ensure that non-ASCII-compatible encodings don't hide " \
+        "disallowed ENTITY declarations"
+        doc = """<?xml version="1.0" encoding="utf-16be"?>
+        <!DOCTYPE feed [
+            <!ENTITY exponential1 "bogus ">
+            <!ENTITY exponential2 "&exponential1;&exponential1;">
+            <!ENTITY exponential3 "&exponential2;&exponential2;">
+        ]>
+        <feed><title type="html">&exponential3;</title></feed>"""
+        doc = codecs.BOM_UTF16_BE + doc.encode('utf-16be')
+        result = feedparser.parse(doc)
+        self.assertEqual(result['feed']['title'], u'&amp;exponential3')
 
 class TestFeedParserDict(unittest.TestCase):
     "Ensure that FeedParserDict returns values as expected and won't crash"
