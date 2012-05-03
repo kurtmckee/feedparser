@@ -3889,9 +3889,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['bozo'] = 1
         result['bozo_exception'] = NonXMLContentType(bozo_message)
 
-    if data is not None:
-        result['version'], data, entities = _stripDoctype(data)
-
     # ensure that baseuri is an absolute uri using an acceptable URI scheme
     contentloc = http_headers.get('content-location', u'')
     href = result.get('href', u'')
@@ -3985,6 +3982,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             'document declared as %s, but parsed as %s' % \
             (result['encoding'], proposed_encoding))
         result['encoding'] = proposed_encoding
+
+    result['version'], data, entities = _stripDoctype(data)
 
     if not _XML_AVAILABLE:
         use_strict_parser = 0
