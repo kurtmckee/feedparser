@@ -51,6 +51,8 @@ Using Last-Modified headers to reduce bandwidth
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
     >>> d.modified
+    Fri, 11 Jun 2012 23:00:34 GMT
+    >>> d.modified_parsed
     (2004, 6, 11, 23, 0, 34, 4, 163, 0)
     >>> d2 = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml', modified=d.modified)
     >>> d2.status
