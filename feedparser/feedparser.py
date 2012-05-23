@@ -4003,7 +4003,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         source.setByteStream(_StringIO(data))
         try:
             saxparser.parse(source)
-        except xml.sax.SAXParseException, e:
+        except xml.sax.SAXException, e:
             result['bozo'] = 1
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
