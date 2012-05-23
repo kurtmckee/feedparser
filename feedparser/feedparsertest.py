@@ -655,6 +655,19 @@ class TestBuildRequest(unittest.TestCase):
           request.get_header('Cache-control'), 'max-age=0')
 
 
+class TestLxmlBug(unittest.TestCase):
+    def test_lxml_etree_bug(self):
+        try:
+            import lxml.etree
+        except ImportError:
+            pass
+        else:
+            doc = u"<feed>&illformed_charref</feed>".encode('utf8')
+            # Importing lxml.etree currently causes libxml2 to
+            # throw SAXException instead of SAXParseException.
+            feedparser.parse(feedparser._StringIO(doc))
+        self.assertTrue(True)
+
 #---------- parse test files and create test methods ----------
 def convert_to_utf8(data):
     "Identify data's encoding using its byte order mark" \
@@ -805,6 +818,7 @@ def runtests():
         testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
         testsuite.addTest(testloader.loadTestsFromTestCase(TestEverythingIsUnicode))
         testsuite.addTest(testloader.loadTestsFromTestCase(TestTemporaryFallbackBehavior))
+        testsuite.addTest(testloader.loadTestsFromTestCase(TestLxmlBug))
         testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
         # Return 0 if successful, 1 if there was a failure
