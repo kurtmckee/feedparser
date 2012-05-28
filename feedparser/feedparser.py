@@ -3614,24 +3614,16 @@ def _getCharacterEncoding(http_headers, xml_data):
     http://cjkpython.i18n.org/
     '''
 
-    def _parseHTTPContentType(content_type):
-        '''takes HTTP Content-Type header and returns (content type, charset)
-
-        If no charset is specified, returns (content type, '')
-        If no content type is specified, returns ('', '')
-        Both return parameters are guaranteed to be lowercase strings
-        '''
-        content_type = content_type or ''
-        content_type, params = cgi.parse_header(content_type)
-        charset = params.get('charset', '').replace("'", "")
-        if not isinstance(charset, unicode):
-            charset = charset.decode('utf-8', 'ignore')
-        return content_type, charset
-
     sniffed_xml_encoding = u''
     xml_encoding = u''
     true_encoding = u''
-    http_content_type, http_encoding = _parseHTTPContentType(http_headers.get('content-type'))
+
+    http_content_type = http_headers.get('content-type') or ''
+    http_content_type, params = cgi.parse_header(http_content_type)
+    http_encoding = params.get('charset', '').replace("'", "")
+    if not isinstance(http_encoding, unicode):
+        http_encoding = http_encoding.decode('utf-8', 'ignore')
+
     # Must sniff for non-ASCII-compatible character encodings before
     # searching for XML declaration.  This heuristic is defined in
     # section F of the XML specification:
