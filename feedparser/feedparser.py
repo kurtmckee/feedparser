@@ -3718,6 +3718,8 @@ def convert_to_utf8(http_headers, data):
     # with gb18030 for greater compatibility.
     if rfc3023_encoding.lower() == u'gb2312':
         rfc3023_encoding = u'gb18030'
+    if xml_encoding.lower() == u'gb2312':
+        xml_encoding = u'gb18030'
 
     # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
