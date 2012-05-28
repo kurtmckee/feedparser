@@ -3930,10 +3930,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             'so the server sent no data.  This is a feature, not a bug!'
         return result
 
-    # if there was a problem downloading, we're done
-    if data is None:
-        return result
-
     # determine character encoding
     use_strict_parser = 0
     known_encoding = 0
