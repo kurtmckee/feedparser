@@ -3674,17 +3674,25 @@ def _getCharacterEncoding(http_headers, xml_data):
 
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
-        if sniffed_xml_encoding and (xml_encoding in (u'iso-10646-ucs-2', u'ucs-2', u'csunicode', u'iso-10646-ucs-4', u'ucs-4', u'csucs4', u'utf-16', u'utf-32', u'utf_16', u'utf_32', u'utf16', u'u16')):
+        if sniffed_xml_encoding and (xml_encoding in (
+            u'u16', u'utf-16', u'utf16', u'utf_16',
+            u'u32', u'utf-32', u'utf32', u'utf_32',
+            u'iso-10646-ucs-2', u'iso-10646-ucs-4',
+            u'csucs4', u'csunicode', u'ucs-2', u'ucs-4'
+        )):
             xml_encoding = sniffed_xml_encoding
     acceptable_content_type = 0
-    application_content_types = (u'application/xml', u'application/xml-dtd', u'application/xml-external-parsed-entity')
+    application_content_types = (u'application/xml', u'application/xml-dtd',
+                                 u'application/xml-external-parsed-entity')
     text_content_types = (u'text/xml', u'text/xml-external-parsed-entity')
     if (http_content_type in application_content_types) or \
-       (http_content_type.startswith(u'application/') and http_content_type.endswith(u'+xml')):
+       (http_content_type.startswith(u'application/') and 
+        http_content_type.endswith(u'+xml')):
         acceptable_content_type = 1
         true_encoding = http_encoding or xml_encoding or u'utf-8'
     elif (http_content_type in text_content_types) or \
-         (http_content_type.startswith(u'text/')) and http_content_type.endswith(u'+xml'):
+         (http_content_type.startswith(u'text/') and
+          http_content_type.endswith(u'+xml')):
         acceptable_content_type = 1
         true_encoding = http_encoding or u'us-ascii'
     elif http_content_type.startswith(u'text/'):
@@ -3697,7 +3705,8 @@ def _getCharacterEncoding(http_headers, xml_data):
     # apparently MSIE and Firefox both do the following switch:
     if true_encoding.lower() == u'gb2312':
         true_encoding = u'gb18030'
-    return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type
+    return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, \
+        acceptable_content_type
 
 # Match the opening XML processing instruction.
 # Example: <?xml version="1.0" encoding="utf-8"?>
