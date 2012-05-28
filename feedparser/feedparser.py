@@ -3676,15 +3676,22 @@ def _getCharacterEncoding(http_headers, data):
     xml_encoding = u''
     rfc3023_encoding = u''
 
+    # Find the HTTP Content-Type and, hopefully, a character
+    # encoding provided by the server. The Content-Type is used
+    # to choose the "correct" encoding among the BOM encoding,
+    # XML declaration encoding, and HTTP encoding, following the
+    # heuristic defined in RFC 3023.
     http_content_type = http_headers.get('content-type') or ''
     http_content_type, params = cgi.parse_header(http_content_type)
     http_encoding = params.get('charset', '').replace("'", "")
     if not isinstance(http_encoding, unicode):
         http_encoding = http_encoding.decode('utf-8', 'ignore')
 
-    # Must sniff for non-ASCII-compatible character encodings before
-    # searching for XML declaration.  This heuristic is defined in
-    # section F of the XML specification:
+    # Look at the first few bytes of the document to guess what
+    # its encoding may be. We only need to decode enough of the
+    # document that we can use an ASCII-compatible regular
+    # expression to search for an XML encoding declaration.
+    # The heuristic follows the XML specification, section F:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
     # Check for BOMs first.
     if data[:4] == codecs.BOM_UTF32_BE:
@@ -3727,6 +3734,7 @@ def _getCharacterEncoding(http_headers, data):
 
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
+        # Normalize the xml_encoding if necessary.
         if bom_encoding and (xml_encoding in (
             u'u16', u'utf-16', u'utf16', u'utf_16',
             u'u32', u'utf-32', u'utf32', u'utf_32',
@@ -3734,6 +3742,7 @@ def _getCharacterEncoding(http_headers, data):
             u'csucs4', u'csunicode', u'ucs-2', u'ucs-4'
         )):
             xml_encoding = bom_encoding
+
     acceptable_content_type = 0
     application_content_types = (u'application/xml', u'application/xml-dtd',
                                  u'application/xml-external-parsed-entity')
@@ -3754,8 +3763,8 @@ def _getCharacterEncoding(http_headers, data):
         rfc3023_encoding = xml_encoding or u'iso-8859-1'
     else:
         rfc3023_encoding = xml_encoding or u'utf-8'
-    # some feeds claim to be gb2312 but are actually gb18030.
-    # apparently MSIE and Firefox both do the following switch:
+    # gb18030 is a superset of gb2312, so always replace gb2312
+    # with gb18030 for greater compatibility.
     if rfc3023_encoding.lower() == u'gb2312':
         rfc3023_encoding = u'gb18030'
     return rfc3023_encoding, http_encoding, xml_encoding, bom_encoding, \
