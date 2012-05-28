@@ -3768,28 +3768,40 @@ def _stripDoctype(data):
     rss_version may be 'rss091n' or None
     stripped_data is the same XML document, minus the DOCTYPE
     '''
+
+    # Divide the document into two groups by finding the location
+    # of the first element that doesn't begin with '<?' or '<!'.
     start = re.search(_s2bytes('<\w'), data)
     start = start and start.start() or -1
-    head,data = data[:start+1], data[start+1:]
+    head, data = data[:start+1], data[start+1:]
 
+    # Save and then remove all of the ENTITY declarations.
     entity_results = RE_ENTITY_PATTERN.findall(head)
     head = RE_ENTITY_PATTERN.sub(_s2bytes(''), head)
+
+    # Find the DOCTYPE declaration and check the feed type.
     doctype_results = RE_DOCTYPE_PATTERN.findall(head)
     doctype = doctype_results and doctype_results[0] or _s2bytes('')
-    if doctype.lower().count(_s2bytes('netscape')):
+    if _s2bytes('netscape') in doctype.lower():
         version = u'rss091n'
     else:
         version = None
 
-    # only allow in 'safe' inline entity definitions
-    replacement=_s2bytes('')
-    if len(doctype_results)==1 and entity_results:
-        safe_entities=filter(lambda e: RE_SAFE_ENTITY_PATTERN.match(e),entity_results)
+    # Re-insert the safe ENTITY declarations if a DOCTYPE was found.
+    replacement = _s2bytes('')
+    if len(doctype_results) == 1 and entity_results:
+        match_safe_entities = lambda e: RE_SAFE_ENTITY_PATTERN.match(e)
+        safe_entities = filter(match_safe_entities, entity_results)
         if safe_entities:
-            replacement=_s2bytes('<!DOCTYPE feed [\n  <!ENTITY') + _s2bytes('>\n  <!ENTITY ').join(safe_entities) + _s2bytes('>\n]>')
+            replacement = _s2bytes('<!DOCTYPE feed [\n<!ENTITY') \
+                        + _s2bytes('>\n<!ENTITY ').join(safe_entities) \
+                        + _s2bytes('>\n]>')
     data = RE_DOCTYPE_PATTERN.sub(replacement, head) + data
 
-    return version, data, dict(replacement and [(k.decode('utf-8'), v.decode('utf-8')) for k, v in RE_SAFE_ENTITY_PATTERN.findall(replacement)])
+    # Precompute the safe entities for the loose parser.
+    safe_entities = dict((k.decode('utf-8'), v.decode('utf-8'))
+                      for k, v in RE_SAFE_ENTITY_PATTERN.findall(replacement))
+    return version, data, safe_entities
 
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
     '''Parse a feed from a URL, file, stream, or string.
