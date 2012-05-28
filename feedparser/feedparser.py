@@ -3565,8 +3565,6 @@ UTF16LE_MARKER = _l2bytes([0x3C, 0x00, 0x3F, 0x00])
 UTF32BE_MARKER = _l2bytes([0x00, 0x00, 0x00, 0x3C])
 UTF32LE_MARKER = _l2bytes([0x3C, 0x00, 0x00, 0x00])
 
-ZERO_BYTES = _l2bytes([0x00, 0x00])
-
 def _getCharacterEncoding(http_headers, xml_data):
     '''Get the character encoding of the XML document
 
@@ -3629,36 +3627,33 @@ def _getCharacterEncoding(http_headers, xml_data):
     # searching for XML declaration.  This heuristic is defined in
     # section F of the XML specification:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
-    if xml_data[:4] == EBCDIC_MARKER:
+    # Check for BOMs first.
+    if xml_data[:4] == codecs.BOM_UTF32_BE:
+        sniffed_xml_encoding = u'utf-32be'
+        xml_data = xml_data[4:]
+    elif xml_data[:4] == codecs.BOM_UTF32_LE:
+        sniffed_xml_encoding = u'utf-32le'
+        xml_data = xml_data[4:]
+    elif xml_data[:2] == codecs.BOM_UTF16_BE:
+        sniffed_xml_encoding = u'utf-16be'
+        xml_data = xml_data[2:]
+    elif xml_data[:2] == codecs.BOM_UTF16_LE:
+        sniffed_xml_encoding = u'utf-16le'
+        xml_data = xml_data[2:]
+    elif xml_data[:3] == codecs.BOM_UTF8:
+        sniffed_xml_encoding = u'utf-8'
+        xml_data = xml_data[3:]
+    # Check for the characters '<?xm' in several encodings.
+    elif xml_data[:4] == EBCDIC_MARKER:
         sniffed_xml_encoding = u'cp037'
     elif xml_data[:4] == UTF16BE_MARKER:
         sniffed_xml_encoding = u'utf-16be'
-    elif (len(xml_data) >= 4) and (xml_data[:2] == codecs.BOM_UTF16_BE) and (xml_data[2:4] != ZERO_BYTES):
-        # UTF-16BE with BOM
-        sniffed_xml_encoding = u'utf-16be'
-        xml_data = xml_data[2:]
     elif xml_data[:4] == UTF16LE_MARKER:
         sniffed_xml_encoding = u'utf-16le'
-    elif (len(xml_data) >= 4) and (xml_data[:2] == codecs.BOM_UTF16_LE) and (xml_data[2:4] != ZERO_BYTES):
-        # UTF-16LE with BOM
-        sniffed_xml_encoding = u'utf-16le'
-        xml_data = xml_data[2:]
     elif xml_data[:4] == UTF32BE_MARKER:
         sniffed_xml_encoding = u'utf-32be'
     elif xml_data[:4] == UTF32LE_MARKER:
         sniffed_xml_encoding = u'utf-32le'
-    elif xml_data[:4] == codecs.BOM_UTF32_BE:
-        # UTF-32BE with BOM
-        sniffed_xml_encoding = u'utf-32be'
-        xml_data = xml_data[4:]
-    elif xml_data[:4] == codecs.BOM_UTF32_LE:
-        # UTF-32LE with BOM
-        sniffed_xml_encoding = u'utf-32le'
-        xml_data = xml_data[4:]
-    elif xml_data[:3] == codecs.BOM_UTF8:
-        # UTF-8 with BOM
-        sniffed_xml_encoding = u'utf-8'
-        xml_data = xml_data[3:]
 
     try:
         if sniffed_xml_encoding:
