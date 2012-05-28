@@ -3921,15 +3921,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['bozo'] = 1
         result['bozo_exception'] = NonXMLContentType(bozo_message)
 
-    # ensure that baseuri is an absolute uri using an acceptable URI scheme
-    contentloc = http_headers.get('content-location', u'')
-    href = result.get('href', u'')
-    baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
-
-    baselang = http_headers.get('content-language', None)
-    if not isinstance(baselang, unicode) and baselang is not None:
-        baselang = baselang.decode('utf-8', 'ignore')
-
     # determine character encoding
     use_strict_parser = 0
     known_encoding = 0
@@ -3968,6 +3959,15 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         result['encoding'] = proposed_encoding
 
     result['version'], data, entities = _stripDoctype(data)
+
+    # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
+    contentloc = http_headers.get('content-location', u'')
+    href = result.get('href', u'')
+    baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
+
+    baselang = http_headers.get('content-language', None)
+    if not isinstance(baselang, unicode) and baselang is not None:
+        baselang = baselang.decode('utf-8', 'ignore')
 
     if not _XML_AVAILABLE:
         use_strict_parser = 0
