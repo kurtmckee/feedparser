@@ -3700,7 +3700,13 @@ def _toUTF8(data, encoding):
     encoding is a string recognized by encodings.aliases
     '''
     # strip Byte Order Mark (if present)
-    if (len(data) >= 4) and (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+    if data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
+        encoding = 'utf-32be'
+        data = data[4:]
+    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
+        encoding = 'utf-32le'
+        data = data[4:]
+    elif (len(data) >= 4) and (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
         encoding = 'utf-16be'
         data = data[2:]
     elif (len(data) >= 4) and (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
@@ -3709,12 +3715,6 @@ def _toUTF8(data, encoding):
     elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
         encoding = 'utf-8'
         data = data[3:]
-    elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
-        encoding = 'utf-32be'
-        data = data[4:]
-    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
-        encoding = 'utf-32le'
-        data = data[4:]
     newdata = unicode(data, encoding)
     declmatch = re.compile('^<\?xml[^>]*?>')
     newdecl = '''<?xml version='1.0' encoding='utf-8'?>'''
