@@ -3899,6 +3899,13 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if data is None:
         return result
 
+    # Stop processing if the server sent HTTP 304 Not Modified.
+    if getattr(f, 'code', 0) == 304:
+        result['version'] = u''
+        result['debug_message'] = 'The feed has not changed since you last checked, ' + \
+            'so the server sent no data.  This is a feature, not a bug!'
+        return result
+
     # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
     # - xml_encoding is the encoding declared in the <?xml declaration
@@ -3922,13 +3929,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     baselang = http_headers.get('content-language', None)
     if not isinstance(baselang, unicode) and baselang is not None:
         baselang = baselang.decode('utf-8', 'ignore')
-
-    # if server sent 304, we're done
-    if getattr(f, 'code', 0) == 304:
-        result['version'] = u''
-        result['debug_message'] = 'The feed has not changed since you last checked, ' + \
-            'so the server sent no data.  This is a feature, not a bug!'
-        return result
 
     # determine character encoding
     use_strict_parser = 0
