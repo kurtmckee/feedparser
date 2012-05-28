@@ -3746,6 +3746,22 @@ def _toUTF8(data, encoding):
         newdata = newdecl + u'\n' + newdata
     return newdata.encode('utf-8')
 
+# Match XML entity declarations.
+# Example: <!ENTITY copyright "(C)">
+RE_ENTITY_PATTERN = re.compile(_s2bytes(r'^\s*<!ENTITY([^>]*?)>'), re.MULTILINE)
+
+# Match XML DOCTYPE declarations.
+# Example: <!DOCTYPE feed [ ]>
+RE_DOCTYPE_PATTERN = re.compile(_s2bytes(r'^\s*<!DOCTYPE([^>]*?)>'), re.MULTILINE)
+
+# Match safe entity declarations.
+# This will allow hexadecimal character references through,
+# as well as text, but not arbitrary nested entities.
+# Example: cubed "&#179;"
+# Example: copyright "(C)"
+# Forbidden: explode1 "&explode2;&explode2;"
+RE_SAFE_ENTITY_PATTERN = re.compile(_s2bytes('\s+(\w+)\s+"(&#\w+;|[^&"]*)"'))
+
 def _stripDoctype(data):
     '''Strips DOCTYPE from XML document, returns (rss_version, stripped_data)
 
@@ -3756,11 +3772,9 @@ def _stripDoctype(data):
     start = start and start.start() or -1
     head,data = data[:start+1], data[start+1:]
 
-    entity_pattern = re.compile(_s2bytes(r'^\s*<!ENTITY([^>]*?)>'), re.MULTILINE)
-    entity_results=entity_pattern.findall(head)
-    head = entity_pattern.sub(_s2bytes(''), head)
-    doctype_pattern = re.compile(_s2bytes(r'^\s*<!DOCTYPE([^>]*?)>'), re.MULTILINE)
-    doctype_results = doctype_pattern.findall(head)
+    entity_results = RE_ENTITY_PATTERN.findall(head)
+    head = RE_ENTITY_PATTERN.sub(_s2bytes(''), head)
+    doctype_results = RE_DOCTYPE_PATTERN.findall(head)
     doctype = doctype_results and doctype_results[0] or _s2bytes('')
     if doctype.lower().count(_s2bytes('netscape')):
         version = u'rss091n'
@@ -3770,13 +3784,12 @@ def _stripDoctype(data):
     # only allow in 'safe' inline entity definitions
     replacement=_s2bytes('')
     if len(doctype_results)==1 and entity_results:
-        safe_pattern=re.compile(_s2bytes('\s+(\w+)\s+"(&#\w+;|[^&"]*)"'))
-        safe_entities=filter(lambda e: safe_pattern.match(e),entity_results)
+        safe_entities=filter(lambda e: RE_SAFE_ENTITY_PATTERN.match(e),entity_results)
         if safe_entities:
             replacement=_s2bytes('<!DOCTYPE feed [\n  <!ENTITY') + _s2bytes('>\n  <!ENTITY ').join(safe_entities) + _s2bytes('>\n]>')
-    data = doctype_pattern.sub(replacement, head) + data
+    data = RE_DOCTYPE_PATTERN.sub(replacement, head) + data
 
-    return version, data, dict(replacement and [(k.decode('utf-8'), v.decode('utf-8')) for k, v in safe_pattern.findall(replacement)])
+    return version, data, dict(replacement and [(k.decode('utf-8'), v.decode('utf-8')) for k, v in RE_SAFE_ENTITY_PATTERN.findall(replacement)])
 
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
     '''Parse a feed from a URL, file, stream, or string.
