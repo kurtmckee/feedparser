@@ -1,6 +1,6 @@
 ﻿<!--
 Description: Ensure when there are invalid bytes in encoding specified by BOM, feedparser doesn't crash
-Expect:      bozo and not encoding
+Expect:      bozo
 -->
 <rss version="2.0">
 <channel>
