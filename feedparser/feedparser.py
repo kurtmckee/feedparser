@@ -3565,6 +3565,8 @@ UTF16LE_MARKER = _l2bytes([0x3C, 0x00, 0x3F, 0x00])
 UTF32BE_MARKER = _l2bytes([0x00, 0x00, 0x00, 0x3C])
 UTF32LE_MARKER = _l2bytes([0x3C, 0x00, 0x00, 0x00])
 
+ZERO_BYTES = _l2bytes([0x00, 0x00])
+
 def _getCharacterEncoding(http_headers, xml_data):
     '''Get the character encoding of the XML document
 
@@ -3634,10 +3636,10 @@ def _getCharacterEncoding(http_headers, xml_data):
     elif xml_data[:4] == codecs.BOM_UTF32_LE:
         sniffed_xml_encoding = u'utf-32le'
         xml_data = xml_data[4:]
-    elif xml_data[:2] == codecs.BOM_UTF16_BE:
+    elif xml_data[:2] == codecs.BOM_UTF16_BE and xml_data[2:4] != ZERO_BYTES:
         sniffed_xml_encoding = u'utf-16be'
         xml_data = xml_data[2:]
-    elif xml_data[:2] == codecs.BOM_UTF16_LE:
+    elif xml_data[:2] == codecs.BOM_UTF16_LE and xml_data[2:4] != ZERO_BYTES:
         sniffed_xml_encoding = u'utf-16le'
         xml_data = xml_data[2:]
     elif xml_data[:3] == codecs.BOM_UTF8:
@@ -3706,10 +3708,10 @@ def _toUTF8(data, encoding):
     elif data[:4] == codecs.BOM_UTF32_LE:
         encoding = 'utf-32le'
         data = data[4:]
-    elif (len(data) >= 4) and (data[:2] == codecs.BOM_UTF16_BE) and (data[2:4] != _l2bytes([0x00, 0x00])):
+    elif data[:2] == codecs.BOM_UTF16_BE and data[2:4] != ZERO_BYTES:
         encoding = 'utf-16be'
         data = data[2:]
-    elif (len(data) >= 4) and (data[:2] == codecs.BOM_UTF16_LE) and (data[2:4] != _l2bytes([0x00, 0x00])):
+    elif data[:2] == codecs.BOM_UTF16_LE and data[2:4] != ZERO_BYTES:
         encoding = 'utf-16le'
         data = data[2:]
     elif data[:3] == codecs.BOM_UTF8:
