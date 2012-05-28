@@ -3700,19 +3700,19 @@ def _toUTF8(data, encoding):
     encoding is a string recognized by encodings.aliases
     '''
     # strip Byte Order Mark (if present)
-    if data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
+    if data[:4] == codecs.BOM_UTF32_BE:
         encoding = 'utf-32be'
         data = data[4:]
-    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
+    elif data[:4] == codecs.BOM_UTF32_LE:
         encoding = 'utf-32le'
         data = data[4:]
-    elif (len(data) >= 4) and (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+    elif (len(data) >= 4) and (data[:2] == codecs.BOM_UTF16_BE) and (data[2:4] != _l2bytes([0x00, 0x00])):
         encoding = 'utf-16be'
         data = data[2:]
-    elif (len(data) >= 4) and (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+    elif (len(data) >= 4) and (data[:2] == codecs.BOM_UTF16_LE) and (data[2:4] != _l2bytes([0x00, 0x00])):
         encoding = 'utf-16le'
         data = data[2:]
-    elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
+    elif data[:3] == codecs.BOM_UTF8:
         encoding = 'utf-8'
         data = data[3:]
     newdata = unicode(data, encoding)
