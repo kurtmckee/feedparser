@@ -274,6 +274,14 @@ class TestEncodings(BaseTestCase):
         doc = codecs.BOM_UTF16_BE + doc.encode('utf-16be')
         result = feedparser.parse(doc)
         self.assertEqual(result['feed']['title'], u'&amp;exponential3')
+    def test_gb2312_converted_to_gb18030_in_xml_encoding(self):
+        # \u55de was chosen because it exists in gb18030 but not gb2312
+        feed = u'''<?xml version="1.0" encoding="gb2312"?>
+                  <feed><title>\u55de</title></feed>'''
+        result = feedparser.parse(feed.encode('gb18030'), response_headers={
+            'Content-Type': 'text/xml'
+        })
+        self.assertEqual(result.encoding, 'gb18030')
 
 class TestFeedParserDict(unittest.TestCase):
     "Ensure that FeedParserDict returns values as expected and won't crash"
