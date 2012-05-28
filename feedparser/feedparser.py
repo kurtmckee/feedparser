@@ -3933,9 +3933,13 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # determine character encoding
     use_strict_parser = 0
     known_encoding = 0
+    chardet_encoding = None
     tried_encodings = []
+    if chardet:
+        chardet_encoding = unicode(chardet.detect(data)['encoding'], 'ascii', 'ignore')
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
-    for proposed_encoding in (result['encoding'], xml_encoding, sniffed_xml_encoding):
+    for proposed_encoding in (result['encoding'], xml_encoding, sniffed_xml_encoding,
+                              chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
         if not proposed_encoding:
             continue
         if proposed_encoding in tried_encodings:
@@ -3948,47 +3952,6 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         else:
             known_encoding = use_strict_parser = 1
             break
-    # if no luck and we have auto-detection library, try that
-    if (not known_encoding) and chardet:
-        proposed_encoding = unicode(chardet.detect(data)['encoding'], 'ascii', 'ignore')
-        if proposed_encoding and (proposed_encoding not in tried_encodings):
-            tried_encodings.append(proposed_encoding)
-            try:
-                data = _toUTF8(data, proposed_encoding)
-            except (UnicodeDecodeError, LookupError):
-                pass
-            else:
-                known_encoding = use_strict_parser = 1
-    # if still no luck and we haven't tried utf-8 yet, try that
-    if (not known_encoding) and (u'utf-8' not in tried_encodings):
-        proposed_encoding = u'utf-8'
-        tried_encodings.append(proposed_encoding)
-        try:
-            data = _toUTF8(data, proposed_encoding)
-        except UnicodeDecodeError:
-            pass
-        else:
-            known_encoding = use_strict_parser = 1
-    # if still no luck and we haven't tried windows-1252 yet, try that
-    if (not known_encoding) and (u'windows-1252' not in tried_encodings):
-        proposed_encoding = u'windows-1252'
-        tried_encodings.append(proposed_encoding)
-        try:
-            data = _toUTF8(data, proposed_encoding)
-        except UnicodeDecodeError:
-            pass
-        else:
-            known_encoding = use_strict_parser = 1
-    # if still no luck and we haven't tried iso-8859-2 yet, try that.
-    if (not known_encoding) and (u'iso-8859-2' not in tried_encodings):
-        proposed_encoding = u'iso-8859-2'
-        tried_encodings.append(proposed_encoding)
-        try:
-            data = _toUTF8(data, proposed_encoding)
-        except UnicodeDecodeError:
-            pass
-        else:
-            known_encoding = use_strict_parser = 1
     # if still no luck, give up
     if not known_encoding:
         result['bozo'] = 1
