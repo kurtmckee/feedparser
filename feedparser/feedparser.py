@@ -3762,11 +3762,11 @@ RE_DOCTYPE_PATTERN = re.compile(_s2bytes(r'^\s*<!DOCTYPE([^>]*?)>'), re.MULTILIN
 # Forbidden: explode1 "&explode2;&explode2;"
 RE_SAFE_ENTITY_PATTERN = re.compile(_s2bytes('\s+(\w+)\s+"(&#\w+;|[^&"]*)"'))
 
-def _stripDoctype(data):
-    '''Strips DOCTYPE from XML document, returns (rss_version, stripped_data)
+def replace_doctype(data):
+    '''Strips and replaces the DOCTYPE, returns (rss_version, stripped_data)
 
     rss_version may be 'rss091n' or None
-    stripped_data is the same XML document, minus the DOCTYPE
+    stripped_data is the same XML document with a replaced DOCTYPE
     '''
 
     # Divide the document into two groups by finding the location
@@ -3958,7 +3958,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             (result['encoding'], proposed_encoding))
         result['encoding'] = proposed_encoding
 
-    result['version'], data, entities = _stripDoctype(data)
+    result['version'], data, entities = replace_doctype(data)
 
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
     contentloc = http_headers.get('content-location', u'')
