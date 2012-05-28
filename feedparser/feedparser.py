@@ -3676,17 +3676,6 @@ def _getCharacterEncoding(http_headers, data):
     xml_encoding = u''
     rfc3023_encoding = u''
 
-    # Find the HTTP Content-Type and, hopefully, a character
-    # encoding provided by the server. The Content-Type is used
-    # to choose the "correct" encoding among the BOM encoding,
-    # XML declaration encoding, and HTTP encoding, following the
-    # heuristic defined in RFC 3023.
-    http_content_type = http_headers.get('content-type') or ''
-    http_content_type, params = cgi.parse_header(http_content_type)
-    http_encoding = params.get('charset', '').replace("'", "")
-    if not isinstance(http_encoding, unicode):
-        http_encoding = http_encoding.decode('utf-8', 'ignore')
-
     # Look at the first few bytes of the document to guess what
     # its encoding may be. We only need to decode enough of the
     # document that we can use an ASCII-compatible regular
@@ -3742,6 +3731,17 @@ def _getCharacterEncoding(http_headers, data):
             u'csucs4', u'csunicode', u'ucs-2', u'ucs-4'
         )):
             xml_encoding = bom_encoding
+
+    # Find the HTTP Content-Type and, hopefully, a character
+    # encoding provided by the server. The Content-Type is used
+    # to choose the "correct" encoding among the BOM encoding,
+    # XML declaration encoding, and HTTP encoding, following the
+    # heuristic defined in RFC 3023.
+    http_content_type = http_headers.get('content-type') or ''
+    http_content_type, params = cgi.parse_header(http_content_type)
+    http_encoding = params.get('charset', '').replace("'", "")
+    if not isinstance(http_encoding, unicode):
+        http_encoding = http_encoding.decode('utf-8', 'ignore')
 
     acceptable_content_type = 0
     application_content_types = (u'application/xml', u'application/xml-dtd',
