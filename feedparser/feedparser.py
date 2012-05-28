@@ -3557,13 +3557,6 @@ def _parse_date(dateString):
         return date9tuple
     return None
 
-# Byte Order Marks for the various encodings
-UTF8_BOM = _l2bytes([0xEF, 0xBB, 0xBF])
-UTF16BE_BOM = _l2bytes([0xFE, 0xFF])
-UTF16LE_BOM = _l2bytes([0xFF, 0xFE])
-UTF32BE_BOM = _l2bytes([0x00, 0x00, 0xFE, 0xFF])
-UTF32LE_BOM = _l2bytes([0xFF, 0xFE, 0x00, 0x00])
-
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
 EBCDIC_MARKER = _l2bytes([0x4C, 0x6F, 0xA7, 0x94])
@@ -3640,13 +3633,13 @@ def _getCharacterEncoding(http_headers, xml_data):
         sniffed_xml_encoding = u'cp037'
     elif xml_data[:4] == UTF16BE_MARKER:
         sniffed_xml_encoding = u'utf-16be'
-    elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16BE_BOM) and (xml_data[2:4] != ZERO_BYTES):
+    elif (len(xml_data) >= 4) and (xml_data[:2] == codecs.BOM_UTF16_BE) and (xml_data[2:4] != ZERO_BYTES):
         # UTF-16BE with BOM
         sniffed_xml_encoding = u'utf-16be'
         xml_data = xml_data[2:]
     elif xml_data[:4] == UTF16LE_MARKER:
         sniffed_xml_encoding = u'utf-16le'
-    elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16LE_BOM) and (xml_data[2:4] != ZERO_BYTES):
+    elif (len(xml_data) >= 4) and (xml_data[:2] == codecs.BOM_UTF16_LE) and (xml_data[2:4] != ZERO_BYTES):
         # UTF-16LE with BOM
         sniffed_xml_encoding = u'utf-16le'
         xml_data = xml_data[2:]
@@ -3654,15 +3647,15 @@ def _getCharacterEncoding(http_headers, xml_data):
         sniffed_xml_encoding = u'utf-32be'
     elif xml_data[:4] == UTF32LE_MARKER:
         sniffed_xml_encoding = u'utf-32le'
-    elif xml_data[:4] == UTF32BE_BOM:
+    elif xml_data[:4] == codecs.BOM_UTF32_BE:
         # UTF-32BE with BOM
         sniffed_xml_encoding = u'utf-32be'
         xml_data = xml_data[4:]
-    elif xml_data[:4] == UTF32LE_BOM:
+    elif xml_data[:4] == codecs.BOM_UTF32_LE:
         # UTF-32LE with BOM
         sniffed_xml_encoding = u'utf-32le'
         xml_data = xml_data[4:]
-    elif xml_data[:3] == UTF8_BOM:
+    elif xml_data[:3] == codecs.BOM_UTF8:
         # UTF-8 with BOM
         sniffed_xml_encoding = u'utf-8'
         xml_data = xml_data[3:]
