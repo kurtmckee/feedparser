@@ -3575,11 +3575,11 @@ def convert_to_utf8(http_headers, data):
     # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
     # - xml_encoding is the encoding declared in the <?xml declaration
-    # - sniffed_encoding is the encoding sniffed from the first 4 bytes of the XML data
-    # - encoding is the actual encoding, as per RFC 3023 and a variety of other conflicting specifications
+    # - bom_encoding is the encoding sniffed from the first 4 bytes of the XML data
+    # - rfc3023_encoding is the actual encoding, as per RFC 3023 and a variety of other conflicting specifications
     error = None
 
-    encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type = \
+    rfc3023_encoding, http_encoding, xml_encoding, bom_encoding, acceptable_content_type = \
         _getCharacterEncoding(http_headers, data)
     if http_headers and (not acceptable_content_type):
         if 'content-type' in http_headers:
@@ -3595,7 +3595,7 @@ def convert_to_utf8(http_headers, data):
     if chardet:
         chardet_encoding = unicode(chardet.detect(data)['encoding'], 'ascii', 'ignore')
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
-    for proposed_encoding in (encoding, xml_encoding, sniffed_xml_encoding,
+    for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
                               chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
         if not proposed_encoding:
             continue
@@ -3614,21 +3614,21 @@ def convert_to_utf8(http_headers, data):
         error = CharacterEncodingUnknown(
             'document encoding unknown, I tried ' +
             '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' %
-            (encoding, xml_encoding))
-        encoding = u''
-    elif proposed_encoding != encoding:
+            (rfc3023_encoding, xml_encoding))
+        rfc3023_encoding = u''
+    elif proposed_encoding != rfc3023_encoding:
         error = CharacterEncodingOverride(
             'document declared as %s, but parsed as %s' %
-            (encoding, proposed_encoding))
-        encoding = proposed_encoding
+            (rfc3023_encoding, proposed_encoding))
+        rfc3023_encoding = proposed_encoding
 
-    return data, encoding, error
+    return data, rfc3023_encoding, error
 
-def _getCharacterEncoding(http_headers, xml_data):
+def _getCharacterEncoding(http_headers, data):
     '''Get the character encoding of the XML document
 
     http_headers is a dictionary
-    xml_data is a raw string (not Unicode)
+    data is a raw string (not Unicode)
 
     This is so much trickier than it sounds, it's not even funny.
     According to RFC 3023 ('XML Media Types'), if the HTTP Content-Type
@@ -3672,9 +3672,9 @@ def _getCharacterEncoding(http_headers, xml_data):
     http://cjkpython.i18n.org/
     '''
 
-    sniffed_xml_encoding = u''
+    bom_encoding = u''
     xml_encoding = u''
-    true_encoding = u''
+    rfc3023_encoding = u''
 
     http_content_type = http_headers.get('content-type') or ''
     http_content_type, params = cgi.parse_header(http_content_type)
@@ -3687,53 +3687,53 @@ def _getCharacterEncoding(http_headers, xml_data):
     # section F of the XML specification:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
     # Check for BOMs first.
-    if xml_data[:4] == codecs.BOM_UTF32_BE:
-        sniffed_xml_encoding = u'utf-32be'
-        xml_data = xml_data[4:]
-    elif xml_data[:4] == codecs.BOM_UTF32_LE:
-        sniffed_xml_encoding = u'utf-32le'
-        xml_data = xml_data[4:]
-    elif xml_data[:2] == codecs.BOM_UTF16_BE and xml_data[2:4] != ZERO_BYTES:
-        sniffed_xml_encoding = u'utf-16be'
-        xml_data = xml_data[2:]
-    elif xml_data[:2] == codecs.BOM_UTF16_LE and xml_data[2:4] != ZERO_BYTES:
-        sniffed_xml_encoding = u'utf-16le'
-        xml_data = xml_data[2:]
-    elif xml_data[:3] == codecs.BOM_UTF8:
-        sniffed_xml_encoding = u'utf-8'
-        xml_data = xml_data[3:]
+    if data[:4] == codecs.BOM_UTF32_BE:
+        bom_encoding = u'utf-32be'
+        data = data[4:]
+    elif data[:4] == codecs.BOM_UTF32_LE:
+        bom_encoding = u'utf-32le'
+        data = data[4:]
+    elif data[:2] == codecs.BOM_UTF16_BE and data[2:4] != ZERO_BYTES:
+        bom_encoding = u'utf-16be'
+        data = data[2:]
+    elif data[:2] == codecs.BOM_UTF16_LE and data[2:4] != ZERO_BYTES:
+        bom_encoding = u'utf-16le'
+        data = data[2:]
+    elif data[:3] == codecs.BOM_UTF8:
+        bom_encoding = u'utf-8'
+        data = data[3:]
     # Check for the characters '<?xm' in several encodings.
-    elif xml_data[:4] == EBCDIC_MARKER:
-        sniffed_xml_encoding = u'cp037'
-    elif xml_data[:4] == UTF16BE_MARKER:
-        sniffed_xml_encoding = u'utf-16be'
-    elif xml_data[:4] == UTF16LE_MARKER:
-        sniffed_xml_encoding = u'utf-16le'
-    elif xml_data[:4] == UTF32BE_MARKER:
-        sniffed_xml_encoding = u'utf-32be'
-    elif xml_data[:4] == UTF32LE_MARKER:
-        sniffed_xml_encoding = u'utf-32le'
+    elif data[:4] == EBCDIC_MARKER:
+        bom_encoding = u'cp037'
+    elif data[:4] == UTF16BE_MARKER:
+        bom_encoding = u'utf-16be'
+    elif data[:4] == UTF16LE_MARKER:
+        bom_encoding = u'utf-16le'
+    elif data[:4] == UTF32BE_MARKER:
+        bom_encoding = u'utf-32be'
+    elif data[:4] == UTF32LE_MARKER:
+        bom_encoding = u'utf-32le'
 
     try:
-        if sniffed_xml_encoding:
-            xml_data = xml_data.decode(sniffed_xml_encoding).encode('utf-8')
+        if bom_encoding:
+            data = data.decode(bom_encoding).encode('utf-8')
     except (UnicodeDecodeError, LookupError):
         # feedparser recognizes UTF-32 encodings that aren't
         # available in Python 2.4 and 2.5, so it's possible to
         # encounter a LookupError during decoding.
         xml_encoding_match = None
     else:
-        xml_encoding_match = RE_XML_PI_ENCODING.match(xml_data)
+        xml_encoding_match = RE_XML_PI_ENCODING.match(data)
 
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
-        if sniffed_xml_encoding and (xml_encoding in (
+        if bom_encoding and (xml_encoding in (
             u'u16', u'utf-16', u'utf16', u'utf_16',
             u'u32', u'utf-32', u'utf32', u'utf_32',
             u'iso-10646-ucs-2', u'iso-10646-ucs-4',
             u'csucs4', u'csunicode', u'ucs-2', u'ucs-4'
         )):
-            xml_encoding = sniffed_xml_encoding
+            xml_encoding = bom_encoding
     acceptable_content_type = 0
     application_content_types = (u'application/xml', u'application/xml-dtd',
                                  u'application/xml-external-parsed-entity')
@@ -3742,23 +3742,23 @@ def _getCharacterEncoding(http_headers, xml_data):
        (http_content_type.startswith(u'application/') and 
         http_content_type.endswith(u'+xml')):
         acceptable_content_type = 1
-        true_encoding = http_encoding or xml_encoding or u'utf-8'
+        rfc3023_encoding = http_encoding or xml_encoding or u'utf-8'
     elif (http_content_type in text_content_types) or \
          (http_content_type.startswith(u'text/') and
           http_content_type.endswith(u'+xml')):
         acceptable_content_type = 1
-        true_encoding = http_encoding or u'us-ascii'
+        rfc3023_encoding = http_encoding or u'us-ascii'
     elif http_content_type.startswith(u'text/'):
-        true_encoding = http_encoding or u'us-ascii'
+        rfc3023_encoding = http_encoding or u'us-ascii'
     elif http_headers and 'content-type' not in http_headers:
-        true_encoding = xml_encoding or u'iso-8859-1'
+        rfc3023_encoding = xml_encoding or u'iso-8859-1'
     else:
-        true_encoding = xml_encoding or u'utf-8'
+        rfc3023_encoding = xml_encoding or u'utf-8'
     # some feeds claim to be gb2312 but are actually gb18030.
     # apparently MSIE and Firefox both do the following switch:
-    if true_encoding.lower() == u'gb2312':
-        true_encoding = u'gb18030'
-    return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, \
+    if rfc3023_encoding.lower() == u'gb2312':
+        rfc3023_encoding = u'gb18030'
+    return rfc3023_encoding, http_encoding, xml_encoding, bom_encoding, \
         acceptable_content_type
 
 # Match the opening XML processing instruction.
