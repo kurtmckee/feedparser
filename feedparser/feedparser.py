@@ -3571,6 +3571,59 @@ ZERO_BYTES = _l2bytes([0x00, 0x00])
 # Example: <?xml version="1.0" encoding="utf-8"?>
 RE_XML_PI_ENCODING = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>'))
 
+def convert_to_utf8(http_headers, data):
+    # there are four encodings to keep track of:
+    # - http_encoding is the encoding declared in the Content-Type HTTP header
+    # - xml_encoding is the encoding declared in the <?xml declaration
+    # - sniffed_encoding is the encoding sniffed from the first 4 bytes of the XML data
+    # - encoding is the actual encoding, as per RFC 3023 and a variety of other conflicting specifications
+    error = None
+
+    encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type = \
+        _getCharacterEncoding(http_headers, data)
+    if http_headers and (not acceptable_content_type):
+        if 'content-type' in http_headers:
+            msg = '%s is not an XML media type' % http_headers['content-type']
+        else:
+            msg = 'no Content-type specified'
+        error = NonXMLContentType(msg)
+
+    # determine character encoding
+    known_encoding = 0
+    chardet_encoding = None
+    tried_encodings = []
+    if chardet:
+        chardet_encoding = unicode(chardet.detect(data)['encoding'], 'ascii', 'ignore')
+    # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
+    for proposed_encoding in (encoding, xml_encoding, sniffed_xml_encoding,
+                              chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
+        if not proposed_encoding:
+            continue
+        if proposed_encoding in tried_encodings:
+            continue
+        tried_encodings.append(proposed_encoding)
+        try:
+            data = _toUTF8(data, proposed_encoding)
+        except (UnicodeDecodeError, LookupError):
+            pass
+        else:
+            known_encoding = 1
+            break
+    # if still no luck, give up
+    if not known_encoding:
+        error = CharacterEncodingUnknown(
+            'document encoding unknown, I tried ' +
+            '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' %
+            (encoding, xml_encoding))
+        encoding = u''
+    elif proposed_encoding != encoding:
+        error = CharacterEncodingOverride(
+            'document declared as %s, but parsed as %s' %
+            (encoding, proposed_encoding))
+        encoding = proposed_encoding
+
+    return data, encoding, error
+
 def _getCharacterEncoding(http_headers, xml_data):
     '''Get the character encoding of the XML document
 
@@ -3906,57 +3959,11 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             'so the server sent no data.  This is a feature, not a bug!'
         return result
 
-    # there are four encodings to keep track of:
-    # - http_encoding is the encoding declared in the Content-Type HTTP header
-    # - xml_encoding is the encoding declared in the <?xml declaration
-    # - sniffed_encoding is the encoding sniffed from the first 4 bytes of the XML data
-    # - result['encoding'] is the actual encoding, as per RFC 3023 and a variety of other conflicting specifications
-    result['encoding'], http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type = \
-        _getCharacterEncoding(http_headers, data)
-    if http_headers and (not acceptable_content_type):
-        if 'content-type' in http_headers:
-            bozo_message = '%s is not an XML media type' % http_headers['content-type']
-        else:
-            bozo_message = 'no Content-type specified'
+    data, result['encoding'], error = convert_to_utf8(http_headers, data)
+    use_strict_parser = result['encoding'] and True or False
+    if error is not None:
         result['bozo'] = 1
-        result['bozo_exception'] = NonXMLContentType(bozo_message)
-
-    # determine character encoding
-    use_strict_parser = 0
-    known_encoding = 0
-    chardet_encoding = None
-    tried_encodings = []
-    if chardet:
-        chardet_encoding = unicode(chardet.detect(data)['encoding'], 'ascii', 'ignore')
-    # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
-    for proposed_encoding in (result['encoding'], xml_encoding, sniffed_xml_encoding,
-                              chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
-        if not proposed_encoding:
-            continue
-        if proposed_encoding in tried_encodings:
-            continue
-        tried_encodings.append(proposed_encoding)
-        try:
-            data = _toUTF8(data, proposed_encoding)
-        except (UnicodeDecodeError, LookupError):
-            pass
-        else:
-            known_encoding = use_strict_parser = 1
-            break
-    # if still no luck, give up
-    if not known_encoding:
-        result['bozo'] = 1
-        result['bozo_exception'] = CharacterEncodingUnknown( \
-            'document encoding unknown, I tried ' + \
-            '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' % \
-            (result['encoding'], xml_encoding))
-        result['encoding'] = u''
-    elif proposed_encoding != result['encoding']:
-        result['bozo'] = 1
-        result['bozo_exception'] = CharacterEncodingOverride( \
-            'document declared as %s, but parsed as %s' % \
-            (result['encoding'], proposed_encoding))
-        result['encoding'] = proposed_encoding
+        result['bozo_exception'] = error
 
     result['version'], data, entities = replace_doctype(data)
 
