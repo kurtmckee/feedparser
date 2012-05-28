@@ -3567,6 +3567,10 @@ UTF32LE_MARKER = _l2bytes([0x3C, 0x00, 0x00, 0x00])
 
 ZERO_BYTES = _l2bytes([0x00, 0x00])
 
+# Capture the value of the XML processing instruction's encoding attribute.
+# Example: <?xml version="1.0" encoding="utf-8"?>
+RE_XML_PI_ENCODING = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>'))
+
 def _getCharacterEncoding(http_headers, xml_data):
     '''Get the character encoding of the XML document
 
@@ -3666,7 +3670,7 @@ def _getCharacterEncoding(http_headers, xml_data):
         # encounter a LookupError during decoding.
         xml_encoding_match = None
     else:
-        xml_encoding_match = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>')).match(xml_data)
+        xml_encoding_match = RE_XML_PI_ENCODING.match(xml_data)
 
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
@@ -3695,6 +3699,10 @@ def _getCharacterEncoding(http_headers, xml_data):
         true_encoding = u'gb18030'
     return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type
 
+# Match the opening XML processing instruction.
+# Example: <?xml version="1.0" encoding="utf-8"?>
+RE_XML_PROCESSING_INSTRUCTION = re.compile('^<\?xml[^>]*?>')
+
 def _toUTF8(data, encoding):
     '''Convert a feed to UTF-8 and modify the encoding in the
     XML processing instruction.
@@ -3722,10 +3730,9 @@ def _toUTF8(data, encoding):
     newdata = unicode(data, encoding)
 
     # Update the encoding in the opening XML processing instruction.
-    declmatch = re.compile('^<\?xml[^>]*?>')
     newdecl = '''<?xml version='1.0' encoding='utf-8'?>'''
-    if declmatch.search(newdata):
-        newdata = declmatch.sub(newdecl, newdata)
+    if RE_XML_PROCESSING_INSTRUCTION.search(newdata):
+        newdata = RE_XML_PROCESSING_INSTRUCTION.sub(newdecl, newdata)
     else:
         newdata = newdecl + u'\n' + newdata
     return newdata.encode('utf-8')
