@@ -3696,12 +3696,14 @@ def _getCharacterEncoding(http_headers, xml_data):
     return true_encoding, http_encoding, xml_encoding, sniffed_xml_encoding, acceptable_content_type
 
 def _toUTF8(data, encoding):
-    '''Changes an XML data stream on the fly to specify a new encoding
+    '''Convert a feed to UTF-8 and modify the encoding in the
+    XML processing instruction.
 
-    data is a raw sequence of bytes (not Unicode) that is presumed to be in %encoding already
+    data is a str (Python 2) or bytes object (Python 3)
     encoding is a string recognized by encodings.aliases
     '''
-    # strip Byte Order Mark (if present)
+
+    # If a byte order mark is found, strip it and override `encoding`.
     if data[:4] == codecs.BOM_UTF32_BE:
         encoding = 'utf-32be'
         data = data[4:]
@@ -3718,6 +3720,8 @@ def _toUTF8(data, encoding):
         encoding = 'utf-8'
         data = data[3:]
     newdata = unicode(data, encoding)
+
+    # Update the encoding in the opening XML processing instruction.
     declmatch = re.compile('^<\?xml[^>]*?>')
     newdecl = '''<?xml version='1.0' encoding='utf-8'?>'''
     if declmatch.search(newdata):
