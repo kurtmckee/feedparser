@@ -3566,6 +3566,23 @@ def _parse_date(dateString):
         return date9tuple
     return None
 
+# Byte Order Marks for the various encodings
+UTF8_BOM = _l2bytes([0xEF, 0xBB, 0xBF])
+UTF16BE_BOM = _l2bytes([0xFE, 0xFF])
+UTF16LE_BOM = _l2bytes([0xFF, 0xFE])
+UTF32BE_BOM = _l2bytes([0x00, 0x00, 0xFE, 0xFF])
+UTF32LE_BOM = _l2bytes([0xFF, 0xFE, 0x00, 0x00])
+
+# Each marker represents some of the characters of the opening XML
+# processing instruction ('<?xm') in the specified encoding.
+EBCDIC_MARKER = _l2bytes([0x4C, 0x6F, 0xA7, 0x94])
+UTF16BE_MARKER = _l2bytes([0x00, 0x3C, 0x00, 0x3F])
+UTF16LE_MARKER = _l2bytes([0x3C, 0x00, 0x3F, 0x00])
+UTF32BE_MARKER = _l2bytes([0x00, 0x00, 0x00, 0x3C])
+UTF32LE_MARKER = _l2bytes([0x3C, 0x00, 0x00, 0x00])
+
+ZERO_BYTES = _l2bytes([0x00, 0x00])
+
 def _getCharacterEncoding(http_headers, xml_data):
     '''Get the character encoding of the XML document
 
@@ -3629,48 +3646,42 @@ def _getCharacterEncoding(http_headers, xml_data):
     # section F of the XML specification:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
     try:
-        if xml_data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
-            # In all forms of EBCDIC, these four bytes correspond
-            # to the string '<?xm'; try decoding using CP037
+        if xml_data[:4] == EBCDIC_MARKER:
             sniffed_xml_encoding = u'cp037'
             xml_data = xml_data.decode('cp037').encode('utf-8')
-        elif xml_data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
-            # UTF-16BE
+        elif xml_data[:4] == UTF16BE_MARKER:
             sniffed_xml_encoding = u'utf-16be'
             xml_data = unicode(xml_data, 'utf-16be').encode('utf-8')
-        elif (len(xml_data) >= 4) and (xml_data[:2] == _l2bytes([0xfe, 0xff])) and (xml_data[2:4] != _l2bytes([0x00, 0x00])):
+        elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16BE_BOM) and (xml_data[2:4] != ZERO_BYTES):
             # UTF-16BE with BOM
             sniffed_xml_encoding = u'utf-16be'
             xml_data = unicode(xml_data[2:], 'utf-16be').encode('utf-8')
-        elif xml_data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
-            # UTF-16LE
+        elif xml_data[:4] == UTF16LE_MARKER:
             sniffed_xml_encoding = u'utf-16le'
             xml_data = unicode(xml_data, 'utf-16le').encode('utf-8')
-        elif (len(xml_data) >= 4) and (xml_data[:2] == _l2bytes([0xff, 0xfe])) and (xml_data[2:4] != _l2bytes([0x00, 0x00])):
+        elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16LE_BOM) and (xml_data[2:4] != ZERO_BYTES):
             # UTF-16LE with BOM
             sniffed_xml_encoding = u'utf-16le'
             xml_data = unicode(xml_data[2:], 'utf-16le').encode('utf-8')
-        elif xml_data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
-            # UTF-32BE
+        elif xml_data[:4] == UTF32BE_MARKER:
             sniffed_xml_encoding = u'utf-32be'
             if _UTF32_AVAILABLE:
                 xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
-        elif xml_data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
-            # UTF-32LE
+        elif xml_data[:4] == UTF32LE_MARKER:
             sniffed_xml_encoding = u'utf-32le'
             if _UTF32_AVAILABLE:
                 xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
-        elif xml_data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
+        elif xml_data[:4] == UTF32BE_BOM:
             # UTF-32BE with BOM
             sniffed_xml_encoding = u'utf-32be'
             if _UTF32_AVAILABLE:
                 xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
-        elif xml_data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
+        elif xml_data[:4] == UTF32LE_BOM:
             # UTF-32LE with BOM
             sniffed_xml_encoding = u'utf-32le'
             if _UTF32_AVAILABLE:
                 xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
-        elif xml_data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
+        elif xml_data[:3] == UTF8_BOM:
             # UTF-8 with BOM
             sniffed_xml_encoding = u'utf-8'
             xml_data = unicode(xml_data[3:], 'utf-8').encode('utf-8')
