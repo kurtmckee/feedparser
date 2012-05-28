@@ -3645,52 +3645,48 @@ def _getCharacterEncoding(http_headers, xml_data):
     # searching for XML declaration.  This heuristic is defined in
     # section F of the XML specification:
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
+    if xml_data[:4] == EBCDIC_MARKER:
+        sniffed_xml_encoding = u'cp037'
+    elif xml_data[:4] == UTF16BE_MARKER:
+        sniffed_xml_encoding = u'utf-16be'
+    elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16BE_BOM) and (xml_data[2:4] != ZERO_BYTES):
+        # UTF-16BE with BOM
+        sniffed_xml_encoding = u'utf-16be'
+        xml_data = xml_data[2:]
+    elif xml_data[:4] == UTF16LE_MARKER:
+        sniffed_xml_encoding = u'utf-16le'
+    elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16LE_BOM) and (xml_data[2:4] != ZERO_BYTES):
+        # UTF-16LE with BOM
+        sniffed_xml_encoding = u'utf-16le'
+        xml_data = xml_data[2:]
+    elif xml_data[:4] == UTF32BE_MARKER:
+        sniffed_xml_encoding = u'utf-32be'
+    elif xml_data[:4] == UTF32LE_MARKER:
+        sniffed_xml_encoding = u'utf-32le'
+    elif xml_data[:4] == UTF32BE_BOM:
+        # UTF-32BE with BOM
+        sniffed_xml_encoding = u'utf-32be'
+        xml_data = xml_data[4:]
+    elif xml_data[:4] == UTF32LE_BOM:
+        # UTF-32LE with BOM
+        sniffed_xml_encoding = u'utf-32le'
+        xml_data = xml_data[4:]
+    elif xml_data[:3] == UTF8_BOM:
+        # UTF-8 with BOM
+        sniffed_xml_encoding = u'utf-8'
+        xml_data = xml_data[3:]
+
     try:
-        if xml_data[:4] == EBCDIC_MARKER:
-            sniffed_xml_encoding = u'cp037'
-            xml_data = xml_data.decode('cp037').encode('utf-8')
-        elif xml_data[:4] == UTF16BE_MARKER:
-            sniffed_xml_encoding = u'utf-16be'
-            xml_data = unicode(xml_data, 'utf-16be').encode('utf-8')
-        elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16BE_BOM) and (xml_data[2:4] != ZERO_BYTES):
-            # UTF-16BE with BOM
-            sniffed_xml_encoding = u'utf-16be'
-            xml_data = unicode(xml_data[2:], 'utf-16be').encode('utf-8')
-        elif xml_data[:4] == UTF16LE_MARKER:
-            sniffed_xml_encoding = u'utf-16le'
-            xml_data = unicode(xml_data, 'utf-16le').encode('utf-8')
-        elif (len(xml_data) >= 4) and (xml_data[:2] == UTF16LE_BOM) and (xml_data[2:4] != ZERO_BYTES):
-            # UTF-16LE with BOM
-            sniffed_xml_encoding = u'utf-16le'
-            xml_data = unicode(xml_data[2:], 'utf-16le').encode('utf-8')
-        elif xml_data[:4] == UTF32BE_MARKER:
-            sniffed_xml_encoding = u'utf-32be'
-            if _UTF32_AVAILABLE:
-                xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
-        elif xml_data[:4] == UTF32LE_MARKER:
-            sniffed_xml_encoding = u'utf-32le'
-            if _UTF32_AVAILABLE:
-                xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
-        elif xml_data[:4] == UTF32BE_BOM:
-            # UTF-32BE with BOM
-            sniffed_xml_encoding = u'utf-32be'
-            if _UTF32_AVAILABLE:
-                xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
-        elif xml_data[:4] == UTF32LE_BOM:
-            # UTF-32LE with BOM
-            sniffed_xml_encoding = u'utf-32le'
-            if _UTF32_AVAILABLE:
-                xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
-        elif xml_data[:3] == UTF8_BOM:
-            # UTF-8 with BOM
-            sniffed_xml_encoding = u'utf-8'
-            xml_data = unicode(xml_data[3:], 'utf-8').encode('utf-8')
-        else:
-            # ASCII-compatible
-            pass
-        xml_encoding_match = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>')).match(xml_data)
-    except UnicodeDecodeError:
+        if sniffed_xml_encoding:
+            xml_data = xml_data.decode(sniffed_xml_encoding).encode('utf-8')
+    except (UnicodeDecodeError, LookupError):
+        # feedparser recognizes UTF-32 encodings that aren't
+        # available in Python 2.4 and 2.5, so it's possible to
+        # encounter a LookupError during decoding.
         xml_encoding_match = None
+    else:
+        xml_encoding_match = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>')).match(xml_data)
+
     if xml_encoding_match:
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
         if sniffed_xml_encoding and (xml_encoding in (u'iso-10646-ucs-2', u'ucs-2', u'csunicode', u'iso-10646-ucs-4', u'ucs-4', u'csucs4', u'utf-16', u'utf-32', u'utf_16', u'utf_32', u'utf16', u'u16')):
