@@ -3567,6 +3567,10 @@ UTF32LE_MARKER = _l2bytes([0x3C, 0x00, 0x00, 0x00])
 
 ZERO_BYTES = _l2bytes([0x00, 0x00])
 
+# Match the opening XML declaration.
+# Example: <?xml version="1.0" encoding="utf-8"?>
+RE_XML_DECLARATION = re.compile('^<\?xml[^>]*?>')
+
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>
 RE_XML_PI_ENCODING = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>'))
@@ -3744,11 +3748,18 @@ def convert_to_utf8(http_headers, data):
             continue
         tried_encodings.append(proposed_encoding)
         try:
-            data = _toUTF8(data, proposed_encoding)
+            data = data.decode(proposed_encoding)
         except (UnicodeDecodeError, LookupError):
             pass
         else:
             known_encoding = 1
+            # Update the encoding in the opening XML processing instruction.
+            new_declaration = '''<?xml version='1.0' encoding='utf-8'?>'''
+            if RE_XML_DECLARATION.search(data):
+                data = RE_XML_DECLARATION.sub(new_declaration, data)
+            else:
+                data = new_declaration + u'\n' + data
+            data = data.encode('utf-8')
             break
     # if still no luck, give up
     if not known_encoding:
@@ -3764,28 +3775,6 @@ def convert_to_utf8(http_headers, data):
         rfc3023_encoding = proposed_encoding
 
     return data, rfc3023_encoding, error
-
-# Match the opening XML processing instruction.
-# Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_PROCESSING_INSTRUCTION = re.compile('^<\?xml[^>]*?>')
-
-def _toUTF8(data, encoding):
-    '''Convert a feed to UTF-8 and modify the encoding in the
-    XML processing instruction.
-
-    data is a str (Python 2) or bytes object (Python 3)
-    encoding is a string recognized by encodings.aliases
-    '''
-
-    newdata = unicode(data, encoding)
-
-    # Update the encoding in the opening XML processing instruction.
-    newdecl = '''<?xml version='1.0' encoding='utf-8'?>'''
-    if RE_XML_PROCESSING_INSTRUCTION.search(newdata):
-        newdata = RE_XML_PROCESSING_INSTRUCTION.sub(newdecl, newdata)
-    else:
-        newdata = newdecl + u'\n' + newdata
-    return newdata.encode('utf-8')
 
 # Match XML entity declarations.
 # Example: <!ENTITY copyright "(C)">
