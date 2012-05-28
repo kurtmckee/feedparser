@@ -284,15 +284,6 @@ except ImportError:
     BeautifulSoup = None
     PARSE_MICROFORMATS = False
 
-try:
-    # the utf_32 codec was introduced in Python 2.6; it's necessary to
-    # check this as long as feedparser supports Python 2.4 and 2.5
-    codecs.lookup('utf_32')
-except LookupError:
-    _UTF32_AVAILABLE = False
-else:
-    _UTF32_AVAILABLE = True
-
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
 class CharacterEncodingOverride(ThingsNobodyCaresAboutButMe): pass

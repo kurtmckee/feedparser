@@ -52,7 +52,15 @@ if not feedparser._XML_AVAILABLE:
     sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
     sys.exit(1)
 
-_UTF32_AVAILABLE = feedparser._UTF32_AVAILABLE
+try:
+    # the utf_32 codec was introduced in Python 2.6; it's necessary to
+    # check this as long as feedparser supports Python 2.4 and 2.5
+    codecs.lookup('utf_32')
+except LookupError:
+    _UTF32_AVAILABLE = False
+else:
+    _UTF32_AVAILABLE = True
+
 _s2bytes = feedparser._s2bytes
 _l2bytes = feedparser._l2bytes
 
