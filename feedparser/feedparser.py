@@ -3477,15 +3477,7 @@ _rfc822_match = re.compile(
     "(?:%s, )?%s(?: %s)?" % (_rfc822_dayname, _rfc822_date, _rfc822_time)
 ).match
 
-def _parse_date_rfc822(dt):
-    """Parse RFC 822 dates and times, with one minor
-    difference: years may be 4DIGIT or 2DIGIT.
-    http://tools.ietf.org/html/rfc822#section-5"""
-    try:
-        m = _rfc822_match(dt.lower()).groupdict(0)
-    except AttributeError:
-        return None
-
+def _parse_date_group_rfc822(m):
     # Calculate a date and timestamp
     for k in ('year', 'day', 'hour', 'minute', 'second'):
         m[k] = int(m[k])
@@ -3518,7 +3510,35 @@ def _parse_date_rfc822(dt):
 
     # Return the date and timestamp in UTC
     return (stamp - delta).utctimetuple()
+
+def _parse_date_rfc822(dt):
+    """Parse RFC 822 dates and times, with one minor
+    difference: years may be 4DIGIT or 2DIGIT.
+    http://tools.ietf.org/html/rfc822#section-5"""
+    try:
+        m = _rfc822_match(dt.lower()).groupdict(0)
+    except AttributeError:
+        return None
+
+    return _parse_date_group_rfc822(m)
 registerDateHandler(_parse_date_rfc822)
+
+def _parse_date_rfc822_grubby(dt):
+    """Parse date format similar to RFC 822, but 
+    the comma after the dayname is optional and
+    month/day are inverted"""
+    _rfc822_date_grubby = "%s %s %s" % (_rfc822_month, _rfc822_day, _rfc822_year)
+    _rfc822_match_grubby = re.compile(
+        "(?:%s[,]? )?%s(?: %s)?" % (_rfc822_dayname, _rfc822_date_grubby, _rfc822_time)
+    ).match
+
+    try:
+        m = _rfc822_match_grubby(dt.lower()).groupdict(0)
+    except AttributeError:
+        return None
+
+    return _parse_date_group_rfc822(m)
+registerDateHandler(_parse_date_rfc822_grubby)
 
 def _parse_date_asctime(dt):
     """Parse asctime-style dates"""
