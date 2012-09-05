@@ -1,0 +1,11 @@
+<!--
+Description: item pubDate
+Expect:      not bozo and entries[0]['published_parsed'] == (2012, 8, 30, 15, 26, 16, 3, 243, 0)
+-->
+<rss version="2.0">
+<channel>
+<item>
+<pubDate>Thu Aug 30 2012 17:26:16 +0200</pubDate>
+</item>
+</channel>
+</rss>
