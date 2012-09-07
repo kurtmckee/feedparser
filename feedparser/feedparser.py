@@ -3464,7 +3464,7 @@ _rfc822_tznames = {
     'm': -12, 'y': 12,
  }
 # The timezone may be prefixed by 'Etc/'
-_rfc822_time = "%s (?:etc/)?%s" % (_rfc822_hour, _rfc822_tz)
+_rfc822_time = "%s[ ]{1,2}(?:etc/)?%s" % (_rfc822_hour, _rfc822_tz)
 
 _rfc822_dayname = "(?P<dayname>%s)" % ('|'.join(_rfc822_daynames))
 _rfc822_match = re.compile(
