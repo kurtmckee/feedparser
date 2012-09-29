@@ -3933,7 +3933,7 @@ def _parse_poslist(value, geom_type):
         return _parse_georss_line(value)
     elif geom_type == 'polygon':
         ring = _parse_georss_line(value)
-        return {'type': 'Polygon', 'coordinates': (ring['coordinates'],)}
+        return {'type': u'Polygon', 'coordinates': (ring['coordinates'],)}
     else:
         raise ValueError, "unsupported geometry type: %s" % geom_type
 
@@ -3941,7 +3941,7 @@ def _parse_poslist(value, geom_type):
 def _parse_georss_point(value):
     try:
         lat, lon = value.replace(',', ' ').split()
-        return {'type': 'Point', 'coordinates': (float(lon), float(lat))}
+        return {'type': u'Point', 'coordinates': (float(lon), float(lat))}
     except Exception, e:
         if _debug:
             sys.stderr.write('_parse_georss_point raised %s\n' % (handler.__name__, repr(e)))
@@ -3957,7 +3957,7 @@ def _parse_georss_line(value):
             lat = float(latlons[i])
             lon = float(latlons[i+1])
             coords.append((lon, lat))
-        return {'type': 'LineString', 'coordinates': tuple(coords)}
+        return {u'type': u'LineString', u'coordinates': tuple(coords)}
     except Exception, e:
         if _debug:
             sys.stderr.write('_parse_georss_line raised %s\n' % repr(e))
@@ -3975,7 +3975,7 @@ def _parse_georss_polygon(value):
             lat = float(latlons[i])
             lon = float(latlons[i+1])
             coords.append((lon, lat))
-        return {'type': 'Polygon', 'coordinates': (tuple(coords),)}
+        return {'type': u'Polygon', 'coordinates': (tuple(coords),)}
     except Exception, e:
         if _debug:
             sys.stderr.write('_parse_georss_polygon raised %s\n' % repr(e))
@@ -3986,7 +3986,7 @@ def _parse_georss_polygon(value):
 def _parse_georss_box(value):
     try:
         vals = [float(x) for x in value.replace(',', ' ').split()]
-        return {'type': 'Box', 'coordinates': ((vals[1], vals[0]), (vals[3], vals[2]))}
+        return {'type': u'Box', 'coordinates': ((vals[1], vals[0]), (vals[3], vals[2]))}
     except Exception, e:
         if _debug:
             sys.stderr.write('_parse_georss_box raised %s\n' % repr(e))
