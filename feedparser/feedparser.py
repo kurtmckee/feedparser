@@ -495,6 +495,8 @@ class _FeedParserMixin:
         'http://freshmeat.net/rss/fm/':                          'fm',
         'http://xmlns.com/foaf/0.1/':                            'foaf',
         'http://www.w3.org/2003/01/geo/wgs84_pos#':              'geo',
+        'http://www.georss.org/georss':                          'georss',
+        'http://www.opengis.net/gml':                            'gml',
         'http://postneo.com/icbm/':                              'icbm',
         'http://purl.org/rss/1.0/modules/image/':                'image',
         'http://www.itunes.com/DTDs/PodCast-1.0.dtd':            'itunes',
@@ -555,6 +557,10 @@ class _FeedParserMixin:
         self.incontributor = 0
         self.inpublisher = 0
         self.insource = 0
+        
+        # georss
+        self.ingeometry = 0
+        
         self.sourcedata = FeedParserDict()
         self.contentparams = FeedParserDict()
         self._summaryKey = None
@@ -1445,6 +1451,89 @@ class _FeedParserMixin:
 
     def _end_expirationdate(self):
         self._save('expired_parsed', _parse_date(self.pop('expired')), overwrite=True)
+
+    # geospatial location, or "where", from georss.org
+
+    def _start_georssgeom(self, attrsD):
+        self.push('geometry', 0)
+    _start_georss_point = _start_georssgeom
+    _start_georss_line = _start_georssgeom
+    _start_georss_polygon = _start_georssgeom
+    _start_georss_box = _start_georssgeom
+
+    def _save_where(self, geometry):
+        context = self._getContext()
+        context.setdefault('where', {})
+        context['where'] = FeedParserDict(geometry)
+
+    def _end_georss_point(self):
+        geometry = _parse_georss_point(self.pop('geometry'))
+        self._save_where(geometry)
+
+    def _end_georss_line(self):
+        geometry = _parse_georss_line(self.pop('geometry'))
+        self._save_where(geometry)
+    
+    def _end_georss_polygon(self):
+        this = self.pop('geometry')
+        geometry = _parse_georss_polygon(this)
+        self._save_where(geometry)
+
+    def _end_georss_box(self):
+        geometry = _parse_georss_box(self.pop('geometry'))
+        self._save_where(geometry)
+
+    def _start_where(self, attrsD):
+        self.push('where', 0)
+    _start_georss_where = _start_where
+
+    def _start_gml_point(self, attrsD):
+        self.ingeometry = 'point'
+        self.push('geometry', 0)
+
+    def _start_gml_linestring(self, attrsD):
+        self.ingeometry = 'linestring'
+        self.push('geometry', 0)
+
+    def _start_gml_polygon(self, attrsD):
+        self.push('geometry', 0)
+
+    def _start_gml_exterior(self, attrsD):
+        self.push('geometry', 0)
+
+    def _start_gml_linearring(self, attrsD):
+        self.ingeometry = 'polygon'
+        self.push('geometry', 0)
+
+    def _start_gml_pos(self, attrsD):
+        self.push('pos', 0)
+
+    def _end_gml_pos(self):
+        this = self.pop('pos')
+        geometry = _parse_georss_point(this)
+        self._save_where(geometry)
+
+    def _start_gml_poslist(self, attrsD):
+        self.push('pos', 0)
+
+    def _end_gml_poslist(self):
+        geometry = _parse_poslist(self.pop('pos'), self.ingeometry)
+        self._save_where(geometry)
+
+    def _end_geom(self):
+        self.ingeometry = 0
+        self.pop('geometry')
+    _end_gml_point = _end_geom
+    _end_gml_linestring = _end_geom
+    _end_gml_linearring = _end_geom
+    _end_gml_exterior = _end_geom
+    _end_gml_polygon = _end_geom
+
+    def _end_where(self):
+        self.pop('where')
+    _end_georss_where = _end_where
+
+    # end geospatial
 
     def _start_cc_license(self, attrsD):
         context = self._getContext()
@@ -3834,6 +3923,78 @@ def replace_doctype(data):
     safe_entities = dict((k.decode('utf-8'), v.decode('utf-8'))
                       for k, v in RE_SAFE_ENTITY_PATTERN.findall(replacement))
     return version, data, safe_entities
+
+
+# GeoRSS geometry parsers. Each return a dict with 'type' and 'coordinates'
+# keys, or None in the case of a parsing error
+
+def _parse_poslist(value, geom_type):
+    if geom_type == 'linestring':
+        return _parse_georss_line(value)
+    elif geom_type == 'polygon':
+        ring = _parse_georss_line(value)
+        return {'type': 'Polygon', 'coordinates': (ring['coordinates'],)}
+    else:
+        raise ValueError, "unsupported geometry type: %s" % geom_type
+
+# Point coordinates are a 2-tuple (lon, lat)
+def _parse_georss_point(value):
+    try:
+        lat, lon = value.replace(',', ' ').split()
+        return {'type': 'Point', 'coordinates': (float(lon), float(lat))}
+    except Exception, e:
+        if _debug:
+            sys.stderr.write('_parse_georss_point raised %s\n' % (handler.__name__, repr(e)))
+        pass
+    return None
+
+# Line coordinates are a tuple of 2-tuples ((lon0, lat0), ... (lonN, latN))
+def _parse_georss_line(value):
+    try:
+        latlons = value.replace(',', ' ').split()
+        coords = []
+        for i in range(0, len(latlons), 2):
+            lat = float(latlons[i])
+            lon = float(latlons[i+1])
+            coords.append((lon, lat))
+        return {'type': 'LineString', 'coordinates': tuple(coords)}
+    except Exception, e:
+        if _debug:
+            sys.stderr.write('_parse_georss_line raised %s\n' % repr(e))
+        pass
+    return None
+
+# Polygon coordinates are a tuple of closed LineString tuples. The first item
+# in the tuple is the exterior ring. Subsequent items are interior rings, but
+# georss:polygon elements usually have no interior rings.
+def _parse_georss_polygon(value):
+    try:
+        latlons = value.replace(',', ' ').split()
+        coords = []
+        for i in range(0, len(latlons), 2):
+            lat = float(latlons[i])
+            lon = float(latlons[i+1])
+            coords.append((lon, lat))
+        return {'type': 'Polygon', 'coordinates': (tuple(coords),)}
+    except Exception, e:
+        if _debug:
+            sys.stderr.write('_parse_georss_polygon raised %s\n' % repr(e))
+        pass
+    return None
+
+# Box coordinates are a 2-tuple of 2-tuples ((lon_ll, lat_ll), (lon_ur, lat_ur))
+def _parse_georss_box(value):
+    try:
+        vals = [float(x) for x in value.replace(',', ' ').split()]
+        return {'type': 'Box', 'coordinates': ((vals[1], vals[0]), (vals[3], vals[2]))}
+    except Exception, e:
+        if _debug:
+            sys.stderr.write('_parse_georss_box raised %s\n' % repr(e))
+        pass
+    return None
+
+# end geospatial parsers
+
 
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
     '''Parse a feed from a URL, file, stream, or string.
