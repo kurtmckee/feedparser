@@ -526,7 +526,7 @@ class _FeedParserMixin:
         'http://www.w3.org/1999/xhtml':                          'xhtml',
         'http://www.w3.org/1999/xlink':                          'xlink',
         'http://www.w3.org/XML/1998/namespace':                  'xml',
-        'http://podlove.org/simple-chapters':                    'sc',
+        'http://podlove.org/simple-chapters':                    'psc',
     }
     _matchnamespaces = {}
 
@@ -568,7 +568,7 @@ class _FeedParserMixin:
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
-        self.sc_chapters_counter = 0
+        self.psc_chapters_counter = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
 
@@ -1375,7 +1375,7 @@ class _FeedParserMixin:
         self.inentry = 1
         self.guidislink = 0
         self.title_depth = -1
-        self.sc_chapters_counter = 0
+        self.psc_chapters_counter = 0
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1769,24 +1769,24 @@ class _FeedParserMixin:
             return
         context['newlocation'] = _makeSafeAbsoluteURI(self.baseuri, url.strip())
 
-    def _start_sc_chapters(self, attrsD):
+    def _start_psc_chapters(self, attrsD):
         version = self._getAttribute(attrsD, 'version')
-        if version == '1.0' and self.sc_chapters_counter == 0:
-            self.sc_chapters_counter += 1
+        if version == '1.1' and self.psc_chapters_counter == 0:
+            self.psc_chapters_counter += 1
             attrsD['chapters'] = []
-            self._getContext()['sc_chapters'] = FeedParserDict(attrsD)
+            self._getContext()['psc_chapters'] = FeedParserDict(attrsD)
             
-    def _end_sc_chapters(self):
-        version = self._getContext()['sc_chapters']['version']
-        if version == '1.0':
-            self.sc_chapters_counter += 1
+    def _end_psc_chapters(self):
+        version = self._getContext()['psc_chapters']['version']
+        if version == '1.1':
+            self.psc_chapters_counter += 1
         
-    def _start_sc_chapter(self, attrsD):
-        if self.sc_chapters_counter == 1:
+    def _start_psc_chapter(self, attrsD):
+        if self.psc_chapters_counter == 1:
             start = self._getAttribute(attrsD, 'start')
-            attrsD['start_parsed'] = _parse_sc_chapter_start(start)
+            attrsD['start_parsed'] = _parse_psc_chapter_start(start)
 
-            context = self._getContext()['sc_chapters']
+            context = self._getContext()['psc_chapters']
             context['chapters'].append(FeedParserDict(attrsD))
 
 
@@ -3147,7 +3147,7 @@ try:
 except NameError:
     pass
     
-def _parse_sc_chapter_start(start):
+def _parse_psc_chapter_start(start):
     FORMAT = r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$'
 
     m = re.compile(FORMAT).match(start)

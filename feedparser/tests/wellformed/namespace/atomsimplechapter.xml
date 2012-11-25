@@ -1,9 +1,8 @@
 <!--
 Description:  Simple-Chapters: podlove.org/simple-chapters 
-Expect:       not bozo and entries[0]['sc_chapters']['chapters'][0]['title'] == 'Welcome' and entries[0]['sc_chapters']['chapters'][1]['start_parsed'] == datetime.timedelta(0, 187, 250000)
+Expect:       not bozo and entries[0]['psc_chapters']['chapters'][0]['title'] == 'Welcome' and entries[0]['psc_chapters']['chapters'][1]['start_parsed'] == datetime.timedelta(0, 187, 250000) and entries[0]['psc_chapters']['chapters'][0]['image'] == 'testimage'
 -->
-<feed xmlns="http://www.w3.org/2005/Atom"
- xmlns:sc="http://podlove.org/simple-chapters">
+<feed xmlns="http://www.w3.org/2005/Atom">
   <title>Podlove Podcast</title>
 
   <link href="http://podlove.org/"/>
@@ -23,13 +22,13 @@ Expect:       not bozo and entries[0]['sc_chapters']['chapters'][0]['title'] == 
      href="http://podlove.org/files/fiatlux.mp3"/>
 
     <!-- specify chapter information -->
-    <sc:chapters version="1.0">
-      <sc:chapter start="00:00:00" title="Welcome" />
-      <sc:chapter start="00:03:07.250" title="Introducing Podlove"
+    <psc:chapters version="1.1" xmlns:psc="http://podlove.org/simple-chapters">
+      <psc:chapter start="00:00:00" title="Welcome" image="testimage"/>
+      <psc:chapter start="00:03:07.250" title="Introducing Podlove"
        href="http://podlove.org/" />
-      <sc:chapter start="08:26" title="Podlove WordPress Plugin"
+      <psc:chapter start="08:26" title="Podlove WordPress Plugin"
        href="http://podlove.org/wordpress-plugin" />
-      <sc:chapter start="12:42.345" title="Resumée" />
-    </sc:chapters>
+      <psc:chapter start="12:42.345" title="Resumée" />
+    </psc:chapters>
   </entry>
 </feed>
