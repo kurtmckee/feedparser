@@ -5,8 +5,8 @@ Feeds in the real world may be missing elements, even elements that are
 required by the specification.  You should always test for the existence of an
 element before getting its value.  Never assume an element is present.
 
-Use standard :program:`Python` dictionary functions such as ``has_key`` to test
-whether an element exists.
+To test whether elements exist, you can use standard :program:`Python`
+dictionary idioms.
 
 Testing if elements are present
 -------------------------------
@@ -15,9 +15,9 @@ Testing if elements are present
 
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
-    >>> d.feed.has_key('title')
+    >>> 'title' in d.feed
     True
-    >>> d.feed.has_key('ttl')
+    >>> 'ttl' in d.feed
     False
     >>> d.feed.get('title', 'No title')
     u'Sample feed'
