@@ -2977,9 +2977,9 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
             url_file_stream_or_string = 'http:' + url_file_stream_or_string[5:]
         if not agent:
             agent = USER_AGENT
-        # test for inline user:password for basic auth
+        # Test for inline user:password credentials for HTTP basic auth
         auth = None
-        if base64:
+        if base64 and not url_file_stream_or_string.startswith('ftp:'):
             urltype, rest = urllib.splittype(url_file_stream_or_string)
             realhost, rest = urllib.splithost(rest)
             if realhost:
