@@ -3,6 +3,7 @@ Coming in the next release:
     * Issue 346 (the gb2312 encoding isn't always upgraded to gb18030)
     * Issue 350 (HTTP Last-Modified example is incorrect in documentation)
     * Issue 352 (importing lxml.etree changes what exceptions libxml2 throws)
+    * Issue 356 (add support for the HTML5 attributes `poster` and `preload`)
 
 5.1.2 - May 3, 2012
     * Minor changes to the documentation
