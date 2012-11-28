@@ -1971,6 +1971,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
         # Reconstruct the original character reference.
+        ref = ref.lower()
         if ref.startswith('x'):
             value = int(ref[1:], 16)
         else:
