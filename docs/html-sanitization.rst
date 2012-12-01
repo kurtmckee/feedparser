@@ -245,7 +245,9 @@ by default (all others are stripped):
    * pattern
    * ping
    * point-size
+   * poster
    * pqg
+   * preload
    * prompt
    * radiogroup
    * readonly

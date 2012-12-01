@@ -2060,6 +2060,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
         # Reconstruct the original character reference.
+        ref = ref.lower()
         if ref.startswith('x'):
             value = int(ref[1:], 16)
         else:
@@ -2630,7 +2631,8 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
                      ('object', 'data'),
                      ('object', 'usemap'),
                      ('q', 'cite'),
-                     ('script', 'src')])
+                     ('script', 'src'),
+                     ('video', 'poster')])
 
     def __init__(self, baseuri, encoding, _type):
         _BaseHTMLProcessor.__init__(self, encoding, _type)
@@ -2707,13 +2709,13 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'loop', 'loopcount', 'loopend', 'loopstart', 'low', 'lowsrc', 'max',
       'maxlength', 'media', 'method', 'min', 'multiple', 'name', 'nohref',
       'noshade', 'nowrap', 'open', 'optimum', 'pattern', 'ping', 'point-size',
-      'prompt', 'pqg', 'radiogroup', 'readonly', 'rel', 'repeat-max',
-      'repeat-min', 'replace', 'required', 'rev', 'rightspacing', 'rows',
-      'rowspan', 'rules', 'scope', 'selected', 'shape', 'size', 'span', 'src',
-      'start', 'step', 'summary', 'suppress', 'tabindex', 'target', 'template',
-      'title', 'toppadding', 'type', 'unselectable', 'usemap', 'urn', 'valign',
-      'value', 'variable', 'volume', 'vspace', 'vrml', 'width', 'wrap',
-      'xml:lang'])
+      'poster', 'pqg', 'preload', 'prompt', 'radiogroup', 'readonly', 'rel',
+      'repeat-max', 'repeat-min', 'replace', 'required', 'rev', 'rightspacing',
+      'rows', 'rowspan', 'rules', 'scope', 'selected', 'shape', 'size', 'span',
+      'src', 'start', 'step', 'summary', 'suppress', 'tabindex', 'target',
+      'template', 'title', 'toppadding', 'type', 'unselectable', 'usemap',
+      'urn', 'valign', 'value', 'variable', 'volume', 'vspace', 'vrml',
+      'width', 'wrap', 'xml:lang'])
 
     unacceptable_elements_with_end_tag = set(['script', 'applet', 'style'])
 
@@ -3065,9 +3067,9 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
             url_file_stream_or_string = 'http:' + url_file_stream_or_string[5:]
         if not agent:
             agent = USER_AGENT
-        # test for inline user:password for basic auth
+        # Test for inline user:password credentials for HTTP basic auth
         auth = None
-        if base64:
+        if base64 and not url_file_stream_or_string.startswith('ftp:'):
             urltype, rest = urllib.splittype(url_file_stream_or_string)
             realhost, rest = urllib.splithost(rest)
             if realhost:
@@ -3829,7 +3831,7 @@ def convert_to_utf8(http_headers, data):
     chardet_encoding = None
     tried_encodings = []
     if chardet:
-        chardet_encoding = unicode(chardet.detect(data)['encoding'], 'ascii', 'ignore')
+        chardet_encoding = unicode(chardet.detect(data)['encoding'] or '', 'ascii', 'ignore')
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
     for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
                               chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
