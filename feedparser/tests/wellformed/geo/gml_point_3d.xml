@@ -1,6 +1,6 @@
 <!--
-Description: item point where
-Expect: entries[0]['where']['type'] == 'Point' and entries[0]['where']['coordinates'] == (31.1732, 36.9382)
+Description: item point where 3D
+Expect: entries[0]['where']['coordinates'] == (-156.2342, 42.3453, 45.0)
 -->
 <feed
   xmlns="http://www.w3.org/2005/Atom"
@@ -9,8 +9,8 @@ Expect: entries[0]['where']['type'] == 'Point' and entries[0]['where']['coordina
   >
   <entry>
     <georss:where>
-      <gml:Point>
-        <gml:pos>36.9382 31.1732</gml:pos>
+      <gml:Point srsName="urn:ogc:def:crs:EPSG:6.6:4979" srsDimension="3">
+        <gml:pos>42.3453 -156.2342 45</gml:pos>
       </gml:Point>
     </georss:where>
   </entry>
