@@ -7,7 +7,7 @@ Expect:      entries[0]['where']['type'] == 'Point' and entries[0]['where']['coo
   xmlns:georss="http://www.georss.org/georss"
   >
   <entry>
-    <georss:point>36.9382 31.1732</georss:point>
+    <georss:point> 36.9382 31.1732 </georss:point>
   </entry>
 </feed>
 
