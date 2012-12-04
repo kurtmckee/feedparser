@@ -1496,7 +1496,7 @@ class _FeedParserMixin:
         context['where'] = FeedParserDict()
     _start_georss_where = _start_where
 
-    def _start_gml_point(self, attrsD):
+    def _parse_srs_attrs(self, attrsD):
         srsName = attrsD.get('srsname')
         try:
             srsDimension = int(attrsD.get('srsdimension', '2'))
@@ -1505,14 +1505,19 @@ class _FeedParserMixin:
         context = self._getContext()
         context['where']['srsName'] = srsName
         context['where']['srsDimension'] = srsDimension
+
+    def _start_gml_point(self, attrsD):
+        self._parse_srs_attrs(attrsD)
         self.ingeometry = 1
         self.push('geometry', 0)
 
     def _start_gml_linestring(self, attrsD):
+        self._parse_srs_attrs(attrsD)
         self.ingeometry = 'linestring'
         self.push('geometry', 0)
 
     def _start_gml_polygon(self, attrsD):
+        self._parse_srs_attrs(attrsD)
         self.push('geometry', 0)
 
     def _start_gml_exterior(self, attrsD):
