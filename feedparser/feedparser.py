@@ -44,7 +44,8 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Sam Ruby <http://intertwingly.net/>",
                     "Ade Oshineye <http://blog.oshineye.com/>",
                     "Martin Pool <http://sourcefrog.net/>",
-                    "Kurt McKee <http://kurtmckee.org/>"]
+                    "Kurt McKee <http://kurtmckee.org/>",
+                    "Bernd Schlapsi <https://github.com/brot>",]
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
@@ -2456,7 +2457,10 @@ class _MicroformatsParser:
            linktype.startswith('video/') or \
            (linktype.startswith('application/') and not linktype.endswith('xml')):
             return 1
-        path = urlparse.urlparse(attrsD['href'])[2]
+        try:
+            path = urlparse.urlparse(attrsD['href'])[2]
+        except ValueError:
+            return 0
         if path.find('.') == -1:
             return 0
         fileext = path.split('.').pop().lower()
