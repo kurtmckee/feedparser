@@ -7,7 +7,7 @@ if sys.version_info >= (3, ):
 
 setup(
     name = 'feedparser',
-    version = '5.1.2',
+    version = '5.1.3',
     description = 'Universal feed parser, handles RSS 0.9x, RSS 1.0, '
                   'RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
     author = 'Kurt McKee',
@@ -33,6 +33,7 @@ setup(
         'Programming Language :: Python :: 3.0',
         'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Markup :: XML',
     ],

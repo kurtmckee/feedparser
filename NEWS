@@ -1,4 +1,4 @@
-Coming in the next release:
+5.1.3 - December 9, 2012
     * Consolidated and simplified the character encoding detection code
     * Issue 346 (the gb2312 encoding isn't always upgraded to gb18030)
     * Issue 350 (HTTP Last-Modified example is incorrect in documentation)
