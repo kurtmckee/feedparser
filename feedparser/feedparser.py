@@ -3981,10 +3981,11 @@ def _gen_georss_coords(value, swap=True, dims=2):
     # A generator of (lon, lat) pairs from a string of encoded GeoRSS
     # coordinates. Converts to floats and swaps order.
     latlons = itertools.imap(float, value.strip().replace(',', ' ').split())
+    nxt = latlons.next
     while True:
-        t = [latlons.next(), latlons.next()][::-1 if swap else 1]
+        t = [nxt(), nxt()][::-1 if swap else 1]
         if dims == 3:
-            t.append(latlons.next())
+            t.append(nxt())
         yield tuple(t)
 
 def _parse_georss_point(value, swap=True, dims=2):
