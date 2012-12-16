@@ -786,7 +786,9 @@ def runtests():
                 addTo = TestMicroformats
             elif xmlfile in wellformedfiles:
                 addTo = (TestStrictParser, TestLooseParser)
-            data = open(xmlfile, 'rb').read()
+            f = open(xmlfile, 'rb')
+            data = f.read()
+            f.close()
             if 'encoding' in xmlfile:
                 data = convert_to_utf8(data)
                 if data is None:
