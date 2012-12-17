@@ -1,5 +1,6 @@
 coming in the next version:
     * Support PyPy
+    * Issue 384 (fix chardet support in Python 3)
 
 5.1.3 - December 9, 2012
     * Consolidated and simplified the character encoding detection code
