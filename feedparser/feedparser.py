@@ -930,11 +930,6 @@ class _FeedParserMixin:
                     self._addTag(tag['term'], tag['scheme'], tag['label'])
                 for enclosure in mfresults.get('enclosures', []):
                     self._start_enclosure(enclosure)
-                for xfn in mfresults.get('xfn', []):
-                    self._addXFN(xfn['relationships'], xfn['href'], xfn['name'])
-                vcard = mfresults.get('vcard')
-                if vcard:
-                    self._getContext()['vcard'] = vcard
 
         # sanitize embedded markup
         if is_htmlish and SANITIZE_HTML:
@@ -1593,13 +1588,6 @@ class _FeedParserMixin:
         context.setdefault('links', []).append(attrsD)
         del context['license']
     _end_creativeCommons_license = _end_creativecommons_license
-
-    def _addXFN(self, relationships, href, name):
-        context = self._getContext()
-        xfn = context.setdefault('xfn', [])
-        value = FeedParserDict({'relationships': relationships, 'href': href, 'name': name})
-        if value not in xfn:
-            xfn.append(value)
 
     def _addTag(self, term, scheme, label):
         context = self._getContext()
@@ -2272,7 +2260,6 @@ class _MicroformatsParser:
     NODE = 4
     EMAIL = 5
 
-    known_xfn_relationships = set(['contact', 'acquaintance', 'friend', 'met', 'co-worker', 'coworker', 'colleague', 'co-resident', 'coresident', 'neighbor', 'child', 'parent', 'sibling', 'brother', 'sister', 'spouse', 'wife', 'husband', 'kin', 'relative', 'muse', 'crush', 'date', 'sweetheart', 'me'])
     known_binary_extensions =  set(['zip','rar','exe','gz','tar','tgz','tbz2','bz2','z','7z','dmg','img','sit','sitx','hqx','deb','rpm','bz2','jar','rar','iso','bin','msi','mp2','mp3','ogg','ogm','mp4','m4v','m4a','avi','wma','wmv'])
 
     def __init__(self, data, baseuri, encoding):
@@ -2283,354 +2270,6 @@ class _MicroformatsParser:
             data = data.encode(encoding)
         self.tags = []
         self.enclosures = []
-        self.xfn = []
-        self.vcard = None
-
-    def vcardEscape(self, s):
-        if isinstance(s, basestring):
-            s = s.replace(',', '\\,').replace(';', '\\;').replace('\n', '\\n')
-        return s
-
-    def vcardFold(self, s):
-        s = re.sub(';+$', '', s)
-        sFolded = ''
-        iMax = 75
-        sPrefix = ''
-        while len(s) > iMax:
-            sFolded += sPrefix + s[:iMax] + '\n'
-            s = s[iMax:]
-            sPrefix = ' '
-            iMax = 74
-        sFolded += sPrefix + s
-        return sFolded
-
-    def normalize(self, s):
-        return re.sub(r'\s+', ' ', s).strip()
-
-    def unique(self, aList):
-        results = []
-        for element in aList:
-            if element not in results:
-                results.append(element)
-        return results
-
-    def toISO8601(self, dt):
-        return time.strftime('%Y-%m-%dT%H:%M:%SZ', dt)
-
-    def getPropertyValue(self, elmRoot, sProperty, iPropertyType=4, bAllowMultiple=0, bAutoEscape=0):
-        all = lambda x: 1
-        sProperty = sProperty.lower()
-        bFound = 0
-        bNormalize = 1
-        propertyMatch = {'class': re.compile(r'\b%s\b' % sProperty)}
-        if bAllowMultiple and (iPropertyType != self.NODE):
-            snapResults = []
-            containers = elmRoot(['ul', 'ol'], propertyMatch)
-            for container in containers:
-                snapResults.extend(container('li'))
-            bFound = (len(snapResults) != 0)
-        if not bFound:
-            snapResults = elmRoot(all, propertyMatch)
-            bFound = (len(snapResults) != 0)
-        if (not bFound) and (sProperty == 'value'):
-            snapResults = elmRoot('pre')
-            bFound = (len(snapResults) != 0)
-            bNormalize = not bFound
-            if not bFound:
-                snapResults = [elmRoot]
-                bFound = (len(snapResults) != 0)
-        arFilter = []
-        if sProperty == 'vcard':
-            snapFilter = elmRoot(all, propertyMatch)
-            for node in snapFilter:
-                if node.findParent(all, propertyMatch):
-                    arFilter.append(node)
-        arResults = []
-        for node in snapResults:
-            if node not in arFilter:
-                arResults.append(node)
-        bFound = (len(arResults) != 0)
-        if not bFound:
-            if bAllowMultiple:
-                return []
-            elif iPropertyType == self.STRING:
-                return ''
-            elif iPropertyType == self.DATE:
-                return None
-            elif iPropertyType == self.URI:
-                return ''
-            elif iPropertyType == self.NODE:
-                return None
-            else:
-                return None
-        arValues = []
-        for elmResult in arResults:
-            sValue = None
-            if iPropertyType == self.NODE:
-                if bAllowMultiple:
-                    arValues.append(elmResult)
-                    continue
-                else:
-                    return elmResult
-            sNodeName = elmResult.name.lower()
-            if (iPropertyType == self.EMAIL) and (sNodeName == 'a'):
-                sValue = (elmResult.get('href') or '').split('mailto:').pop().split('?')[0]
-            if sValue:
-                sValue = bNormalize and self.normalize(sValue) or sValue.strip()
-            if (not sValue) and (sNodeName == 'abbr'):
-                sValue = elmResult.get('title')
-            if sValue:
-                sValue = bNormalize and self.normalize(sValue) or sValue.strip()
-            if (not sValue) and (iPropertyType == self.URI):
-                if sNodeName == 'a':
-                    sValue = elmResult.get('href')
-                elif sNodeName == 'img':
-                    sValue = elmResult.get('src')
-                elif sNodeName == 'object':
-                    sValue = elmResult.get('data')
-            if sValue:
-                sValue = bNormalize and self.normalize(sValue) or sValue.strip()
-            if (not sValue) and (sNodeName == 'img'):
-                sValue = elmResult.get('alt')
-            if sValue:
-                sValue = bNormalize and self.normalize(sValue) or sValue.strip()
-            if not sValue:
-                sValue = elmResult.renderContents()
-                sValue = re.sub(r'<\S[^>]*>', '', sValue)
-                sValue = sValue.replace('\r\n', '\n')
-                sValue = sValue.replace('\r', '\n')
-            if sValue:
-                sValue = bNormalize and self.normalize(sValue) or sValue.strip()
-            if not sValue:
-                continue
-            if iPropertyType == self.DATE:
-                sValue = _parse_date_iso8601(sValue)
-            if bAllowMultiple:
-                arValues.append(bAutoEscape and self.vcardEscape(sValue) or sValue)
-            else:
-                return bAutoEscape and self.vcardEscape(sValue) or sValue
-        return arValues
-
-    def findVCards(self, elmRoot, bAgentParsing=0):
-        sVCards = ''
-
-        if not bAgentParsing:
-            arCards = self.getPropertyValue(elmRoot, 'vcard', bAllowMultiple=1)
-        else:
-            arCards = [elmRoot]
-
-        for elmCard in arCards:
-            arLines = []
-
-            def processSingleString(sProperty):
-                sValue = self.getPropertyValue(elmCard, sProperty, self.STRING, bAutoEscape=1).decode(self.encoding)
-                if sValue:
-                    arLines.append(self.vcardFold(sProperty.upper() + ':' + sValue))
-                return sValue or u''
-
-            def processSingleURI(sProperty):
-                sValue = self.getPropertyValue(elmCard, sProperty, self.URI)
-                if sValue:
-                    sContentType = ''
-                    sEncoding = ''
-                    sValueKey = ''
-                    if sValue.startswith('data:'):
-                        sEncoding = ';ENCODING=b'
-                        sContentType = sValue.split(';')[0].split('/').pop()
-                        sValue = sValue.split(',', 1).pop()
-                    else:
-                        elmValue = self.getPropertyValue(elmCard, sProperty)
-                        if elmValue:
-                            if sProperty != 'url':
-                                sValueKey = ';VALUE=uri'
-                            sContentType = elmValue.get('type', '').strip().split('/').pop().strip()
-                    sContentType = sContentType.upper()
-                    if sContentType == 'OCTET-STREAM':
-                        sContentType = ''
-                    if sContentType:
-                        sContentType = ';TYPE=' + sContentType.upper()
-                    arLines.append(self.vcardFold(sProperty.upper() + sEncoding + sContentType + sValueKey + ':' + sValue))
-
-            def processTypeValue(sProperty, arDefaultType, arForceType=None):
-                arResults = self.getPropertyValue(elmCard, sProperty, bAllowMultiple=1)
-                for elmResult in arResults:
-                    arType = self.getPropertyValue(elmResult, 'type', self.STRING, 1, 1)
-                    if arForceType:
-                        arType = self.unique(arForceType + arType)
-                    if not arType:
-                        arType = arDefaultType
-                    sValue = self.getPropertyValue(elmResult, 'value', self.EMAIL, 0)
-                    if sValue:
-                        arLines.append(self.vcardFold(sProperty.upper() + ';TYPE=' + ','.join(arType) + ':' + sValue))
-
-            # AGENT
-            # must do this before all other properties because it is destructive
-            # (removes nested class="vcard" nodes so they don't interfere with
-            # this vcard's other properties)
-            arAgent = self.getPropertyValue(elmCard, 'agent', bAllowMultiple=1)
-            for elmAgent in arAgent:
-                if re.compile(r'\bvcard\b').search(elmAgent.get('class')):
-                    sAgentValue = self.findVCards(elmAgent, 1) + '\n'
-                    sAgentValue = sAgentValue.replace('\n', '\\n')
-                    sAgentValue = sAgentValue.replace(';', '\\;')
-                    if sAgentValue:
-                        arLines.append(self.vcardFold('AGENT:' + sAgentValue))
-                    # Completely remove the agent element from the parse tree
-                    elmAgent.extract()
-                else:
-                    sAgentValue = self.getPropertyValue(elmAgent, 'value', self.URI, bAutoEscape=1);
-                    if sAgentValue:
-                        arLines.append(self.vcardFold('AGENT;VALUE=uri:' + sAgentValue))
-
-            # FN (full name)
-            sFN = processSingleString('fn')
-
-            # N (name)
-            elmName = self.getPropertyValue(elmCard, 'n')
-            if elmName:
-                sFamilyName = self.getPropertyValue(elmName, 'family-name', self.STRING, bAutoEscape=1)
-                sGivenName = self.getPropertyValue(elmName, 'given-name', self.STRING, bAutoEscape=1)
-                arAdditionalNames = self.getPropertyValue(elmName, 'additional-name', self.STRING, 1, 1) + self.getPropertyValue(elmName, 'additional-names', self.STRING, 1, 1)
-                arHonorificPrefixes = self.getPropertyValue(elmName, 'honorific-prefix', self.STRING, 1, 1) + self.getPropertyValue(elmName, 'honorific-prefixes', self.STRING, 1, 1)
-                arHonorificSuffixes = self.getPropertyValue(elmName, 'honorific-suffix', self.STRING, 1, 1) + self.getPropertyValue(elmName, 'honorific-suffixes', self.STRING, 1, 1)
-                arLines.append(self.vcardFold('N:' + sFamilyName + ';' +
-                                         sGivenName + ';' +
-                                         ','.join(arAdditionalNames) + ';' +
-                                         ','.join(arHonorificPrefixes) + ';' +
-                                         ','.join(arHonorificSuffixes)))
-            elif sFN:
-                # implied "N" optimization
-                # http://microformats.org/wiki/hcard#Implied_.22N.22_Optimization
-                arNames = self.normalize(sFN).split()
-                if len(arNames) == 2:
-                    bFamilyNameFirst = (arNames[0].endswith(',') or
-                                        len(arNames[1]) == 1 or
-                                        ((len(arNames[1]) == 2) and (arNames[1].endswith('.'))))
-                    if bFamilyNameFirst:
-                        arLines.append(self.vcardFold('N:' + arNames[0] + ';' + arNames[1]))
-                    else:
-                        arLines.append(self.vcardFold('N:' + arNames[1] + ';' + arNames[0]))
-
-            # SORT-STRING
-            sSortString = self.getPropertyValue(elmCard, 'sort-string', self.STRING, bAutoEscape=1)
-            if sSortString:
-                arLines.append(self.vcardFold('SORT-STRING:' + sSortString))
-
-            # NICKNAME
-            arNickname = self.getPropertyValue(elmCard, 'nickname', self.STRING, 1, 1)
-            if arNickname:
-                arLines.append(self.vcardFold('NICKNAME:' + ','.join(arNickname)))
-
-            # PHOTO
-            processSingleURI('photo')
-
-            # BDAY
-            dtBday = self.getPropertyValue(elmCard, 'bday', self.DATE)
-            if dtBday:
-                arLines.append(self.vcardFold('BDAY:' + self.toISO8601(dtBday)))
-
-            # ADR (address)
-            arAdr = self.getPropertyValue(elmCard, 'adr', bAllowMultiple=1)
-            for elmAdr in arAdr:
-                arType = self.getPropertyValue(elmAdr, 'type', self.STRING, 1, 1)
-                if not arType:
-                    arType = ['intl','postal','parcel','work'] # default adr types, see RFC 2426 section 3.2.1
-                sPostOfficeBox = self.getPropertyValue(elmAdr, 'post-office-box', self.STRING, 0, 1)
-                sExtendedAddress = self.getPropertyValue(elmAdr, 'extended-address', self.STRING, 0, 1)
-                sStreetAddress = self.getPropertyValue(elmAdr, 'street-address', self.STRING, 0, 1)
-                sLocality = self.getPropertyValue(elmAdr, 'locality', self.STRING, 0, 1)
-                sRegion = self.getPropertyValue(elmAdr, 'region', self.STRING, 0, 1)
-                sPostalCode = self.getPropertyValue(elmAdr, 'postal-code', self.STRING, 0, 1)
-                sCountryName = self.getPropertyValue(elmAdr, 'country-name', self.STRING, 0, 1)
-                arLines.append(self.vcardFold('ADR;TYPE=' + ','.join(arType) + ':' +
-                                         sPostOfficeBox + ';' +
-                                         sExtendedAddress + ';' +
-                                         sStreetAddress + ';' +
-                                         sLocality + ';' +
-                                         sRegion + ';' +
-                                         sPostalCode + ';' +
-                                         sCountryName))
-
-            # LABEL
-            processTypeValue('label', ['intl','postal','parcel','work'])
-
-            # TEL (phone number)
-            processTypeValue('tel', ['voice'])
-
-            # EMAIL
-            processTypeValue('email', ['internet'], ['internet'])
-
-            # MAILER
-            processSingleString('mailer')
-
-            # TZ (timezone)
-            processSingleString('tz')
-
-            # GEO (geographical information)
-            elmGeo = self.getPropertyValue(elmCard, 'geo')
-            if elmGeo:
-                sLatitude = self.getPropertyValue(elmGeo, 'latitude', self.STRING, 0, 1)
-                sLongitude = self.getPropertyValue(elmGeo, 'longitude', self.STRING, 0, 1)
-                arLines.append(self.vcardFold('GEO:' + sLatitude + ';' + sLongitude))
-
-            # TITLE
-            processSingleString('title')
-
-            # ROLE
-            processSingleString('role')
-
-            # LOGO
-            processSingleURI('logo')
-
-            # ORG (organization)
-            elmOrg = self.getPropertyValue(elmCard, 'org')
-            if elmOrg:
-                sOrganizationName = self.getPropertyValue(elmOrg, 'organization-name', self.STRING, 0, 1)
-                if not sOrganizationName:
-                    # implied "organization-name" optimization
-                    # http://microformats.org/wiki/hcard#Implied_.22organization-name.22_Optimization
-                    sOrganizationName = self.getPropertyValue(elmCard, 'org', self.STRING, 0, 1)
-                    if sOrganizationName:
-                        arLines.append(self.vcardFold('ORG:' + sOrganizationName))
-                else:
-                    arOrganizationUnit = self.getPropertyValue(elmOrg, 'organization-unit', self.STRING, 1, 1)
-                    arLines.append(self.vcardFold('ORG:' + sOrganizationName + ';' + ';'.join(arOrganizationUnit)))
-
-            # CATEGORY
-            arCategory = self.getPropertyValue(elmCard, 'category', self.STRING, 1, 1) + self.getPropertyValue(elmCard, 'categories', self.STRING, 1, 1)
-            if arCategory:
-                arLines.append(self.vcardFold('CATEGORIES:' + ','.join(arCategory)))
-
-            # NOTE
-            processSingleString('note')
-
-            # REV
-            processSingleString('rev')
-
-            # SOUND
-            processSingleURI('sound')
-
-            # UID
-            processSingleString('uid')
-
-            # URL
-            processSingleURI('url')
-
-            # CLASS
-            processSingleString('class')
-
-            # KEY
-            processSingleURI('key')
-
-            if arLines:
-                arLines = [u'BEGIN:vCard',u'VERSION:3.0'] + arLines + [u'END:vCard']
-                # XXX - this is super ugly; properly fix this with issue 148
-                for i, s in enumerate(arLines):
-                    if not isinstance(s, unicode):
-                        arLines[i] = s.decode('utf-8', 'ignore')
-                sVCards += u'\n'.join(arLines) + u'\n'
-
-        return sVCards.strip()
 
     def isProbablyDownloadable(self, elm):
         attrsD = elm.attrMap
@@ -2682,14 +2321,6 @@ class _MicroformatsParser:
                 if elm.string and not elm.get('title'):
                     self.enclosures[-1]['title'] = elm.string
 
-    def findXFN(self):
-        all = lambda x: 1
-        for elm in self.document(all, {'rel': re.compile('.+'), 'href': re.compile('.+')}):
-            rels = elm.get('rel', u'').split()
-            xfn_rels = [r for r in rels if r in self.known_xfn_relationships]
-            if xfn_rels:
-                self.xfn.append({"relationships": xfn_rels, "href": elm.get('href', ''), "name": elm.string})
-
 def _parseMicroformats(htmlSource, baseURI, encoding):
     if not BeautifulSoup:
         return
@@ -2699,11 +2330,9 @@ def _parseMicroformats(htmlSource, baseURI, encoding):
         # sgmllib throws this exception when performing lookups of tags
         # with non-ASCII characters in them.
         return
-    p.vcard = p.findVCards(p.document)
     p.findTags()
     p.findEnclosures()
-    p.findXFN()
-    return {"tags": p.tags, "enclosures": p.enclosures, "xfn": p.xfn, "vcard": p.vcard}
+    return {"tags": p.tags, "enclosures": p.enclosures}
 
 class _RelativeURIResolver(_BaseHTMLProcessor):
     relative_uris = set([('a', 'href'),
