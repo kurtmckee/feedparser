@@ -514,9 +514,6 @@ class TestHTTPStatus(unittest.TestCase):
     def test_404(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_404.xml')
         self.assertEqual(f.status, 404)
-    def test_9001(self):
-        f = feedparser.parse('http://localhost:8097/tests/http/http_status_9001.xml')
-        self.assertEqual(f.bozo, 1)
     def test_redirect_to_304(self):
         # ensure that an http redirect to an http 304 doesn't
         # trigger a bozo_exception
@@ -770,7 +767,7 @@ def runtests():
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
     # and a few `_open_resource`-related tests
-    httpcount = 6 + 17 + 2
+    httpcount = 6 + 16 + 2
     httpcount += len([f for f in allfiles if 'http' in f])
     httpcount += len([f for f in wellformedfiles if 'http' in f])
     httpcount += len([f for f in illformedfiles if 'http' in f])
