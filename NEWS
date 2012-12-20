@@ -1,6 +1,7 @@
 coming in the next version:
     * Support PyPy
     * Remove the HTTP Status 9001 test that caused unit test tracebacks
+    * Remove the completely-untested HTML tidy code
     * Issue 62 (support georss and gml namespaces)
     * Issue 334 (media:restriction element content is not returned)
     * Issue 335 (sub-elements of media:group are not parsed and returned)

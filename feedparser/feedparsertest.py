@@ -812,9 +812,6 @@ def runtests():
                 setattr(addTo[1], testName, testFunc)
             else:
                 setattr(addTo, testName, testFunc)
-        if feedparser.TIDY_MARKUP and feedparser._mxtidy:
-            sys.stderr.write('\nWarning: feedparser.TIDY_MARKUP invalidates tests, turning it off temporarily\n\n')
-            feedparser.TIDY_MARKUP = 0
         if httpcount:
             httpd = FeedParserTestServer(httpcount)
             httpd.daemon = True

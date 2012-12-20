@@ -61,15 +61,6 @@ ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,ap
 # of pre-installed parsers until it finds one that supports everything we need.
 PREFERRED_XML_PARSERS = ["drv_libxml2"]
 
-# If you want feedparser to automatically run HTML markup through HTML Tidy, set
-# this to 1.  Requires mxTidy <http://www.egenix.com/files/python/mxTidy.html>
-# or utidylib <http://utidylib.berlios.de/>.
-TIDY_MARKUP = 0
-
-# List of Python interfaces for HTML Tidy, in order of preference.  Only useful
-# if TIDY_MARKUP = 1
-PREFERRED_TIDY_INTERFACES = ["uTidy", "mxTidy"]
-
 # If you want feedparser to automatically resolve all relative URIs, set this
 # to 1.
 RESOLVE_RELATIVE_URIS = 1
@@ -3053,38 +3044,6 @@ def _sanitizeHTML(htmlSource, encoding, _type):
     htmlSource = htmlSource.replace('<![CDATA[', '&lt;![CDATA[')
     p.feed(htmlSource)
     data = p.output()
-    if TIDY_MARKUP:
-        # loop through list of preferred Tidy interfaces looking for one that's installed,
-        # then set up a common _tidy function to wrap the interface-specific API.
-        _tidy = None
-        for tidy_interface in PREFERRED_TIDY_INTERFACES:
-            try:
-                if tidy_interface == "uTidy":
-                    from tidy import parseString as _utidy
-                    def _tidy(data, **kwargs):
-                        return str(_utidy(data, **kwargs))
-                    break
-                elif tidy_interface == "mxTidy":
-                    from mx.Tidy import Tidy as _mxtidy
-                    def _tidy(data, **kwargs):
-                        nerrors, nwarnings, data, errordata = _mxtidy.tidy(data, **kwargs)
-                        return data
-                    break
-            except:
-                pass
-        if _tidy:
-            utf8 = isinstance(data, unicode)
-            if utf8:
-                data = data.encode('utf-8')
-            data = _tidy(data, output_xhtml=1, numeric_entities=1, wrap=0, char_encoding="utf8")
-            if utf8:
-                data = unicode(data, 'utf-8')
-            if data.count('<body'):
-                data = data.split('<body', 1)[1]
-                if data.count('>'):
-                    data = data.split('>', 1)[1]
-            if data.count('</body'):
-                data = data.split('</body', 1)[0]
     data = data.strip().replace('\r\n', '\n')
     return data
 
