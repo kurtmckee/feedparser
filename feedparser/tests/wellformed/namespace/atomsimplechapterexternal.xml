@@ -1,6 +1,6 @@
 <!--
 Description:  Simple-Chapters: podlove.org/simple-chapters 
-Expect:       not bozo and any(link['href'] == u'http://podlove.org/examples/chapters.psc' for link in entries[0]['links']) 
+Expect:       not bozo and entries[0]['links'][2]['href'] == u'http://podlove.org/examples/chapters.psc'
 -->
 <feed xmlns:atom="http://www.w3.org/2005/Atom">
   <title>Podlove Podcast</title>
