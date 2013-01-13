@@ -530,6 +530,7 @@ class _FeedParserMixin:
         'http://www.w3.org/1999/xhtml':                          'xhtml',
         'http://www.w3.org/1999/xlink':                          'xlink',
         'http://www.w3.org/XML/1998/namespace':                  'xml',
+        'http://podlove.org/simple-chapters':                    'psc',
     }
     _matchnamespaces = {}
 
@@ -575,6 +576,7 @@ class _FeedParserMixin:
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
+        self.psc_chapters_counter = 0
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
 
@@ -1381,6 +1383,7 @@ class _FeedParserMixin:
         self.inentry = 1
         self.guidislink = 0
         self.title_depth = -1
+        self.psc_chapters_counter = 0
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1935,6 +1938,27 @@ class _FeedParserMixin:
         if context is not self.feeddata:
             return
         context['newlocation'] = _makeSafeAbsoluteURI(self.baseuri, url.strip())
+
+    def _start_psc_chapters(self, attrsD):
+        version = self._getAttribute(attrsD, 'version')
+        if version == '1.1' and self.psc_chapters_counter == 0:
+            self.psc_chapters_counter += 1
+            attrsD['chapters'] = []
+            self._getContext()['psc_chapters'] = FeedParserDict(attrsD)
+            
+    def _end_psc_chapters(self):
+        version = self._getContext()['psc_chapters']['version']
+        if version == '1.1':
+            self.psc_chapters_counter += 1
+        
+    def _start_psc_chapter(self, attrsD):
+        if self.psc_chapters_counter == 1:
+            start = self._getAttribute(attrsD, 'start')
+            attrsD['start_parsed'] = _parse_psc_chapter_start(start)
+
+            context = self._getContext()['psc_chapters']
+            context['chapters'].append(FeedParserDict(attrsD))
+
 
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
@@ -3297,6 +3321,18 @@ try:
     del regex
 except NameError:
     pass
+    
+def _parse_psc_chapter_start(start):
+    FORMAT = r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$'
+
+    m = re.compile(FORMAT).match(start)
+    if m is None:
+        return None
+
+    _, h, m, s, _, ms = m.groups()
+    h, m, s, ms = (int(h or 0), int(m), int(s), int(ms or 0))
+    return datetime.timedelta(0, h*60*60 + m*60 + s, ms*1000)
+
 def _parse_date_iso8601(dateString):
     '''Parse a variety of ISO-8601-compatible formats like 20040105'''
     m = None
