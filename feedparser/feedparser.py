@@ -3983,7 +3983,7 @@ def _gen_georss_coords(value, swap=True, dims=2):
     latlons = itertools.imap(float, value.strip().replace(',', ' ').split())
     nxt = latlons.next
     while True:
-        t = [nxt(), nxt()][::-1 if swap else 1]
+        t = [nxt(), nxt()][::swap and -1 or 1]
         if dims == 3:
             t.append(nxt())
         yield tuple(t)
