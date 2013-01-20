@@ -926,8 +926,6 @@ class _FeedParserMixin:
         if PARSE_MICROFORMATS and is_htmlish and element in ['content', 'description', 'summary']:
             mfresults = _parseMicroformats(output, self.baseuri, self.encoding)
             if mfresults:
-                for tag in mfresults.get('tags', []):
-                    self._addTag(tag['term'], tag['scheme'], tag['label'])
                 for enclosure in mfresults.get('enclosures', []):
                     self._start_enclosure(enclosure)
 
@@ -2268,7 +2266,6 @@ class _MicroformatsParser:
         self.encoding = encoding
         if isinstance(data, unicode):
             data = data.encode(encoding)
-        self.tags = []
         self.enclosures = []
 
     def isProbablyDownloadable(self, elm):
@@ -2288,27 +2285,6 @@ class _MicroformatsParser:
             return 0
         fileext = path.split('.').pop().lower()
         return fileext in self.known_binary_extensions
-
-    def findTags(self):
-        all = lambda x: 1
-        for elm in self.document(all, {'rel': re.compile(r'\btag\b')}):
-            href = elm.get('href')
-            if not href:
-                continue
-            urlscheme, domain, path, params, query, fragment = \
-                       urlparse.urlparse(_urljoin(self.baseuri, href))
-            segments = path.split('/')
-            tag = segments.pop()
-            if not tag:
-                if segments:
-                    tag = segments.pop()
-                else:
-                    # there are no tags
-                    continue
-            tagscheme = urlparse.urlunparse((urlscheme, domain, '/'.join(segments), '', '', ''))
-            if not tagscheme.endswith('/'):
-                tagscheme += '/'
-            self.tags.append(FeedParserDict({"term": tag, "scheme": tagscheme, "label": elm.string or ''}))
 
     def findEnclosures(self):
         all = lambda x: 1
@@ -2330,9 +2306,8 @@ def _parseMicroformats(htmlSource, baseURI, encoding):
         # sgmllib throws this exception when performing lookups of tags
         # with non-ASCII characters in them.
         return
-    p.findTags()
     p.findEnclosures()
-    return {"tags": p.tags, "enclosures": p.enclosures}
+    return {"enclosures": p.enclosures}
 
 class _RelativeURIResolver(_BaseHTMLProcessor):
     relative_uris = set([('a', 'href'),

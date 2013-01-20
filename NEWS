@@ -4,6 +4,7 @@ coming in the next version:
     * Remove the completely-untested HTML tidy code
     * Remove the XFN microformat parsing code
     * Remove the rel_hcard microformat parsing code
+    * Remove the rel_tag microformat parsing code
     * Issue 62 (support georss and gml namespaces)
     * Issue 334 (media:restriction element content is not returned)
     * Issue 335 (sub-elements of media:group are not parsed and returned)
