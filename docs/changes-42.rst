@@ -3,7 +3,7 @@ Changes in version 4.2
 
 :program:`Universal Feed Parser` 4.2 was released on 2008-03-12.
 
-- Support for :ref:`parsing microformats <advanced.microformats>`, including :ref:`rel=enclosure <advanced.microformats.relenclosure>`, :ref:`rel=tag <advanced.microformats.reltag>`, :ref:`XFN <advanced.microformats.xfn>`, and :ref:`hCard <advanced.microformats.hcard>`.
+- Support for parsing microformats, including rel=enclosure, rel=tag, XFN, and hCard.
 
 - Updated the whitelist of :ref:`acceptable HTML elements and attributes <advanced.sanitization.html>` based on the latest draft of the :abbr:`HTML (HyperText Markup Language)` 5 specification.
 

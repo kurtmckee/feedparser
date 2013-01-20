@@ -25,10 +25,6 @@ If this contains :abbr:`HTML (HyperText Markup Language)` or
 within this value may contain relative :abbr:`URI (Uniform Resource Identifier)`\s.
 If so, they are :ref:`resolved according to a set of rules <advanced.base>`.
 
-If this contains :abbr:`HTML (HyperText Markup Language)` or
-:abbr:`XHTML (Extensible HyperText Markup Language)`, it will be
-:ref:`parsed for microformats <advanced.microformats>`.
-
 
 .. _reference.entry.content.type:
 

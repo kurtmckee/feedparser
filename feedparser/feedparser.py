@@ -69,10 +69,6 @@ RESOLVE_RELATIVE_URIS = 1
 # HTML content, set this to 1.
 SANITIZE_HTML = 1
 
-# If you want feedparser to automatically parse microformat content embedded
-# in entry contents, set this to 1
-PARSE_MICROFORMATS = 1
-
 # ---------- Python 3 modules (make it work if possible) ----------
 try:
     import rfc822
@@ -195,8 +191,7 @@ else:
         _XML_AVAILABLE = 1
 
 # sgmllib is not available by default in Python 3; if the end user doesn't have
-# it available then we'll lose illformed XML parsing, content santizing, and
-# microformat support (at least while feedparser depends on BeautifulSoup).
+# it available then we'll lose illformed XML parsing and content santizing
 try:
     import sgmllib
 except ImportError:
@@ -267,15 +262,6 @@ try:
     import chardet
 except ImportError:
     chardet = None
-
-# BeautifulSoup is used to extract microformat content from HTML
-# feedparser is tested using BeautifulSoup 3.2.0
-# http://www.crummy.com/software/BeautifulSoup/
-try:
-    import BeautifulSoup
-except ImportError:
-    BeautifulSoup = None
-    PARSE_MICROFORMATS = False
 
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
@@ -919,15 +905,6 @@ class _FeedParserMixin:
         if is_htmlish and RESOLVE_RELATIVE_URIS:
             if element in self.can_contain_relative_uris:
                 output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', u'text/html'))
-
-        # parse microformats
-        # (must do this before sanitizing because some microformats
-        # rely on elements that we sanitize)
-        if PARSE_MICROFORMATS and is_htmlish and element in ['content', 'description', 'summary']:
-            mfresults = _parseMicroformats(output, self.baseuri, self.encoding)
-            if mfresults:
-                for enclosure in mfresults.get('enclosures', []):
-                    self._start_enclosure(enclosure)
 
         # sanitize embedded markup
         if is_htmlish and SANITIZE_HTML:
@@ -2250,64 +2227,6 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
 
     def strattrs(self, attrs):
         return ''.join([' %s="%s"' % (n,v.replace('"','&quot;')) for n,v in attrs])
-
-class _MicroformatsParser:
-    STRING = 1
-    DATE = 2
-    URI = 3
-    NODE = 4
-    EMAIL = 5
-
-    known_binary_extensions =  set(['zip','rar','exe','gz','tar','tgz','tbz2','bz2','z','7z','dmg','img','sit','sitx','hqx','deb','rpm','bz2','jar','rar','iso','bin','msi','mp2','mp3','ogg','ogm','mp4','m4v','m4a','avi','wma','wmv'])
-
-    def __init__(self, data, baseuri, encoding):
-        self.document = BeautifulSoup.BeautifulSoup(data)
-        self.baseuri = baseuri
-        self.encoding = encoding
-        if isinstance(data, unicode):
-            data = data.encode(encoding)
-        self.enclosures = []
-
-    def isProbablyDownloadable(self, elm):
-        attrsD = elm.attrMap
-        if 'href' not in attrsD:
-            return 0
-        linktype = attrsD.get('type', '').strip()
-        if linktype.startswith('audio/') or \
-           linktype.startswith('video/') or \
-           (linktype.startswith('application/') and not linktype.endswith('xml')):
-            return 1
-        try:
-            path = urlparse.urlparse(attrsD['href'])[2]
-        except ValueError:
-            return 0
-        if path.find('.') == -1:
-            return 0
-        fileext = path.split('.').pop().lower()
-        return fileext in self.known_binary_extensions
-
-    def findEnclosures(self):
-        all = lambda x: 1
-        enclosure_match = re.compile(r'\benclosure\b')
-        for elm in self.document(all, {'href': re.compile(r'.+')}):
-            if not enclosure_match.search(elm.get('rel', u'')) and not self.isProbablyDownloadable(elm):
-                continue
-            if elm.attrMap not in self.enclosures:
-                self.enclosures.append(elm.attrMap)
-                if elm.string and not elm.get('title'):
-                    self.enclosures[-1]['title'] = elm.string
-
-def _parseMicroformats(htmlSource, baseURI, encoding):
-    if not BeautifulSoup:
-        return
-    try:
-        p = _MicroformatsParser(htmlSource, baseURI, encoding)
-    except UnicodeEncodeError:
-        # sgmllib throws this exception when performing lookups of tags
-        # with non-ASCII characters in them.
-        return
-    p.findEnclosures()
-    return {"enclosures": p.enclosures}
 
 class _RelativeURIResolver(_BaseHTMLProcessor):
     relative_uris = set([('a', 'href'),

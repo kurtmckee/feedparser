@@ -2,7 +2,9 @@ coming in the next version:
     * Support PyPy
     * Remove the HTTP Status 9001 test that caused unit test tracebacks
     * Remove the completely-untested HTML tidy code
+    * Remove BeautifulSoup as a dependency
     * Remove the XFN microformat parsing code
+    * Remove the rel_enclosure microformat parsing code
     * Remove the rel_hcard microformat parsing code
     * Remove the rel_tag microformat parsing code
     * Issue 62 (support georss and gml namespaces)
