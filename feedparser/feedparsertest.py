@@ -592,9 +592,15 @@ date_tests = {
         (u'Mon, 26 January 2004 16:31:00 CT', (2004, 1, 26, 22, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 MT', (2004, 1, 26, 23, 31, 0, 0, 26, 0)),
         (u'Mon, 26 January 2004 16:31:00 PT', (2004, 1, 27, 0, 31, 0, 1, 27, 0)),
-    ),
-    feedparser._parse_date_rfc822_grubby: (
+        # Swapped month and day
         (u'Thu Aug 30 2012 17:26:16 +0200', (2012, 8, 30, 15, 26, 16, 3, 243, 0)),
+        (u'Sun, 16 Dec 2012 1:2:3:4 GMT', None), # invalid time
+        (u'Sun, 16 zzz 2012 11:47:32 GMT', None), # invalid month
+        (u'Sun, Dec x 2012 11:47:32 GMT', None), # invalid day (swapped day/month)
+        ('Sun, 16 Dec zz 11:47:32 GMT', None), # invalid year
+        ('Sun, 16 Dec 2012 11:47:32 +zz:00', None), # invalid timezone hour
+        ('Sun, 16 Dec 2012 11:47:32 +00:zz', None), # invalid timezone minute
+        ('Sun, 99 Jun 2009 12:00:00 GMT', None), # out-of-range day
     ),
     feedparser._parse_date_asctime: (
         (u'Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
