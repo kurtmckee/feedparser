@@ -527,13 +527,13 @@ class TestDateParsers(unittest.TestCase):
     "dynamically based on the contents of the `date_tests` dict, below"
     def test_None(self):
         self.assertTrue(feedparser._parse_date(None) is None)
-    def _check_date(self, func, dtstring, dttuple):
+    def _check_date(self, func, dtstring, expected_value):
         try:
-            tup = func(dtstring)
+            parsed_value = func(dtstring)
         except (OverflowError, ValueError):
-            tup = None
-        self.assertEqual(tup, dttuple)
-        self.assertEqual(tup, feedparser._parse_date(dtstring))
+            parsed_value = None
+        self.assertEqual(parsed_value, expected_value)
+        self.assertEqual(parsed_value, feedparser._parse_date(dtstring))
     def test_year_10000_date(self):
         # On some systems this date string will trigger an OverflowError.
         # On Jython and x64 systems, however, it's interpreted just fine.
@@ -614,19 +614,15 @@ date_tests = {
         (u'2003-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # year/month/day only
         (u'2003-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # year/month only
         (u'2003', (2003, 1, 1, 0, 0, 0, 2, 1, 0)), # year only
-        # MSSQL-style dates
-        (u'2004-07-08 23:56:58 -00:20', (2004, 7, 9, 0, 16, 58, 4, 191, 0)), # with timezone
-        (u'2004-07-08 23:56:58', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # without timezone
-        (u'2004-07-08 23:56:58.0', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # with fractional second
+        # Special cases for rollovers in leap years
+        (u'2004-02-28T18:14:55-08:00', (2004, 2, 29, 2, 14, 55, 6, 60, 0)), # feb 28 in leap year
+        (u'2003-02-28T18:14:55-08:00', (2003, 3, 1, 2, 14, 55, 5, 60, 0)), # feb 28 in non-leap year
+        (u'2000-02-28T18:14:55-08:00', (2000, 2, 29, 2, 14, 55, 1, 60, 0)), # feb 28 in leap year on century divisible by 400
         # Out-of-range times
         (u'9999-12-31T23:59:59-99:99', None), # Date is out-of-range
         (u'2003-12-31T25:14:55Z', None), # invalid (25 hours)
         (u'2003-12-31T10:61:55Z', None), # invalid (61 minutes)
         (u'2003-12-31T10:14:61Z', None), # invalid (61 seconds)
-        # Special cases for rollovers in leap years
-        (u'2004-02-28T18:14:55-08:00', (2004, 2, 29, 2, 14, 55, 6, 60, 0)), # feb 28 in leap year
-        (u'2003-02-28T18:14:55-08:00', (2003, 3, 1, 2, 14, 55, 5, 60, 0)), # feb 28 in non-leap year
-        (u'2000-02-28T18:14:55-08:00', (2000, 2, 29, 2, 14, 55, 1, 60, 0)), # feb 28 in leap year on century divisible by 400
         # Invalid formats
         (u'22013', None), # Year is too long
         (u'013', None), # Year is too short
@@ -636,6 +632,10 @@ date_tests = {
         (u'2013-xx-27', None), # Date
         (u'2013-01-28T09:xx:00Z', None), # Time
         (u'2013-01-28T09:00:00+00:xx', None), # Timezone
+        # MSSQL-style dates
+        (u'2004-07-08 23:56:58 -00:20', (2004, 7, 9, 0, 16, 58, 4, 191, 0)), # with timezone
+        (u'2004-07-08 23:56:58', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # without timezone
+        (u'2004-07-08 23:56:58.0', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # with fractional second
     )
 }
 
