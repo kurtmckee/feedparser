@@ -8,6 +8,7 @@ coming in the next version:
     * Remove the rel_hcard microformat parsing code
     * Remove the rel_tag microformat parsing code
     * Replace the regex-based RFC 822 date parser with a procedural one
+    * Replace the Python-licensed W3DTF date parser
     * Issue 62 (support georss and gml namespaces)
     * Issue 334 (media:restriction element content is not returned)
     * Issue 335 (sub-elements of media:group are not parsed and returned)

@@ -3029,107 +3029,91 @@ def _parse_date_hungarian(dateString):
     return _parse_date_w3dtf(w3dtfdate)
 registerDateHandler(_parse_date_hungarian)
 
-# W3DTF-style date parsing adapted from PyXML xml.utils.iso8601, written by
-# Drake and licensed under the Python license.  Removed all range checking
-# for month, day, hour, minute, and second, since mktime will normalize
-# these later
-# Modified to also support MSSQL-style datetimes as defined at:
+timezonenames = {
+    'ut': 0, 'gmt': 0, 'z': 0,
+    'adt': -3, 'ast': -4, 'at': -4,
+    'edt': -4, 'est': -5, 'et': -5,
+    'cdt': -5, 'cst': -6, 'ct': -6,
+    'mdt': -6, 'mst': -7, 'mt': -7,
+    'pdt': -7, 'pst': -8, 'pt': -8,
+    'a': -1, 'n': 1,
+    'm': -12, 'y': 12,
+}
+# W3 date and time format parser
+# http://www.w3.org/TR/NOTE-datetime
+# Also supports MSSQL-style datetimes as defined at:
 # http://msdn.microsoft.com/en-us/library/ms186724.aspx
-# (which basically means allowing a space as a date/time/timezone separator)
-def _parse_date_w3dtf(dateString):
-    def __extract_date(m):
-        year = int(m.group('year'))
-        if year < 100:
-            year = 100 * int(time.gmtime()[0] / 100) + int(year)
-        if year < 1000:
-            return 0, 0, 0
-        julian = m.group('julian')
-        if julian:
-            julian = int(julian)
-            month = julian / 30 + 1
-            day = julian % 30 + 1
-            jday = None
-            while jday != julian:
-                t = time.mktime((year, month, day, 0, 0, 0, 0, 0, 0))
-                jday = time.gmtime(t)[-2]
-                diff = abs(jday - julian)
-                if jday > julian:
-                    if diff < day:
-                        day = day - diff
-                    else:
-                        month = month - 1
-                        day = 31
-                elif jday < julian:
-                    if day + diff < 28:
-                        day = day + diff
-                    else:
-                        month = month + 1
-            return year, month, day
-        month = m.group('month')
-        day = 1
-        if month is None:
-            month = 1
-        else:
-            month = int(month)
-            day = m.group('day')
-            if day:
-                day = int(day)
-            else:
-                day = 1
-        return year, month, day
+# (basically, allow a space as a date/time/timezone separator)
+def _parse_date_w3dtf(datestr):
+    if not datestr.strip():
+        return None
+    parts = datestr.lower().split('t')
+    if len(parts) == 1:
+        # This may be a date only, or may be an MSSQL-style date
+        parts = parts[0].split()
+        if len(parts) == 1:
+            # Treat this as a date only
+            parts.append('00:00:00z')
+    elif len(parts) > 2:
+        return None
+    date = parts[0].split('-', 2) 
+    if not date or len(date[0]) != 4:
+        return None
+    # Ensure that `date` has 3 elements. Using '1' sets the default
+    # month to January and the default day to the 1st of the month.
+    date.extend(['1'] * (3 - len(date)))
+    try:
+        year, month, day = [int(i) for i in date]
+    except ValueError:
+        # `date` may have more than 3 elements or may contain
+        # non-integer strings.
+        return None
+    if parts[1].endswith('z'):
+        parts[1] = parts[1][:-1]
+        parts.append('z')
+    # Append the numeric timezone offset, if any, to parts.
+    # If this is an MSSQL-style date then parts[2] already contains
+    # the timezone information, so `append()` will not affect it.
+    # Add 1 to each value so that if `find()` returns -1 it will be
+    # treated as False.
+    loc = parts[1].find('-') + 1 or parts[1].find('+') + 1 or len(parts[1]) + 1
+    loc = loc - 1
+    parts.append(parts[1][loc:])
+    parts[1] = parts[1][:loc]
+    time = parts[1].split(':', 2)
+    # Ensure that time has 3 elements. Using '0' means that the
+    # minutes and seconds, if missing, will default to 0.
+    time.extend(['0'] * (3 - len(time)))
+    tzhour = 0
+    tzmin = 0
+    if parts[2][:1] in ('-', '+'):
+        try:
+            tzhour = int(parts[2][1:3])
+            tzmin = int(parts[2][4:])
+        except ValueError:
+            return None
+        if parts[2].startswith('-'):
+            tzhour = tzhour * -1
+            tzmin = tzmin * -1
+    else:
+        tzhour = timezonenames.get(parts[2], 0)
+    try:
+        hour, minute, second = [int(float(i)) for i in time]
+    except ValueError:
+        return None
+    # Create the datetime object and timezone delta objects
+    try:
+        stamp = datetime.datetime(year, month, day, hour, minute, second)
+    except ValueError:
+        return None
+    delta = datetime.timedelta(0, 0, 0, 0, tzmin, tzhour)
+    # Return the date and timestamp in a UTC 9-tuple
+    try:
+        return (stamp - delta).utctimetuple()
+    except (OverflowError, ValueError):
+        # IronPython throws ValueErrors instead of OverflowErrors
+        return None
 
-    def __extract_time(m):
-        if not m:
-            return 0, 0, 0
-        hours = m.group('hours')
-        if not hours:
-            return 0, 0, 0
-        hours = int(hours)
-        minutes = int(m.group('minutes'))
-        seconds = m.group('seconds')
-        if seconds:
-            seconds = int(seconds)
-        else:
-            seconds = 0
-        return hours, minutes, seconds
-
-    def __extract_tzd(m):
-        '''Return the Time Zone Designator as an offset in seconds from UTC.'''
-        if not m:
-            return 0
-        tzd = m.group('tzd')
-        if not tzd:
-            return 0
-        if tzd == 'Z':
-            return 0
-        hours = int(m.group('tzdhours'))
-        minutes = m.group('tzdminutes')
-        if minutes:
-            minutes = int(minutes)
-        else:
-            minutes = 0
-        offset = (hours*60 + minutes) * 60
-        if tzd[0] == '+':
-            return -offset
-        return offset
-
-    __date_re = ('(?P<year>\d\d\d\d)'
-                 '(?:(?P<dsep>-|)'
-                 '(?:(?P<month>\d\d)(?:(?P=dsep)(?P<day>\d\d))?'
-                 '|(?P<julian>\d\d\d)))?')
-    __tzd_re = ' ?(?P<tzd>[-+](?P<tzdhours>\d\d)(?::?(?P<tzdminutes>\d\d))|Z)?'
-    __time_re = ('(?P<hours>\d\d)(?P<tsep>:|)(?P<minutes>\d\d)'
-                 '(?:(?P=tsep)(?P<seconds>\d\d)(?:[.,]\d+)?)?'
-                 + __tzd_re)
-    __datetime_re = '%s(?:[T ]%s)?' % (__date_re, __time_re)
-    __datetime_rx = re.compile(__datetime_re)
-    m = __datetime_rx.match(dateString)
-    if (m is None) or (m.group() != dateString):
-        return
-    gmt = __extract_date(m) + __extract_time(m) + (0, 0, 0)
-    if gmt[0] == 0:
-        return
-    return time.gmtime(time.mktime(gmt) + __extract_tzd(m) - time.timezone)
 registerDateHandler(_parse_date_w3dtf)
 
 def _parse_date_rfc822(date):
@@ -3146,16 +3130,6 @@ def _parse_date_rfc822(date):
     months = {
         'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
         'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
-    }
-    timezonenames = {
-        'ut': 0, 'gmt': 0, 'z': 0,
-        'adt': -3, 'ast': -4, 'at': -4,
-        'edt': -4, 'est': -5, 'et': -5,
-        'cdt': -5, 'cst': -6, 'ct': -6,
-        'mdt': -6, 'mst': -7, 'mt': -7,
-        'pdt': -7, 'pst': -8, 'pt': -8,
-        'a': -1, 'n': 1,
-        'm': -12, 'y': 12,
     }
 
     parts = date.lower().split()
