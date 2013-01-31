@@ -2761,6 +2761,17 @@ def _build_urllib2_request(url, agent, etag, modified, referrer, auth, request_h
     request.add_header('A-IM', 'feed') # RFC 3229 support
     return request
 
+def _parse_psc_chapter_start(start):
+    FORMAT = r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$'
+
+    m = re.compile(FORMAT).match(start)
+    if m is None:
+        return None
+
+    _, h, m, s, _, ms = m.groups()
+    h, m, s, ms = (int(h or 0), int(m), int(s), int(ms or 0))
+    return datetime.timedelta(0, h*60*60 + m*60 + s, ms*1000)
+
 _date_handlers = []
 def registerDateHandler(func):
     '''Register a date handler function (takes string, returns 9-tuple date in GMT)'''
@@ -2804,17 +2815,6 @@ try:
 except NameError:
     pass
     
-def _parse_psc_chapter_start(start):
-    FORMAT = r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$'
-
-    m = re.compile(FORMAT).match(start)
-    if m is None:
-        return None
-
-    _, h, m, s, _, ms = m.groups()
-    h, m, s, ms = (int(h or 0), int(m), int(s), int(ms or 0))
-    return datetime.timedelta(0, h*60*60 + m*60 + s, ms*1000)
-
 def _parse_date_iso8601(dateString):
     '''Parse a variety of ISO-8601-compatible formats like 20040105'''
     m = None
