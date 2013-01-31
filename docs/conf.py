@@ -1,6 +1,6 @@
 # project information
 project = u'feedparser'
-copyright = u'2004-2008 Mark Pilgrim, 2010-2012 Kurt McKee'
+copyright = u'2004-2008 Mark Pilgrim, 2010-2013 Kurt McKee'
 version = u'5.1.3'
 release = u'5.1.3'
 language = u'en'
