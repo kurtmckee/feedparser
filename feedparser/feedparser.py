@@ -1977,6 +1977,7 @@ if _XML_AVAILABLE:
                 attrsD[str(attrlocalname).lower()] = attrvalue
             for qname in attrs.getQNames():
                 attrsD[str(qname).lower()] = attrs.getValueByQName(qname)
+            localname = str(localname).lower()
             self.unknown_starttag(localname, attrsD.items())
 
         def characters(self, text):
