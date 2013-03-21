@@ -3706,6 +3706,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
 
     # Stop processing if the server sent HTTP 304 Not Modified.
     if getattr(f, 'code', 0) == 304:
+        result['status'] = 304
         result['version'] = u''
         result['debug_message'] = 'The feed has not changed since you last checked, ' + \
             'so the server sent no data.  This is a feature, not a bug!'
