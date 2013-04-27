@@ -429,16 +429,15 @@ _cp1252 = {
 _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
     uri = _urifixer.sub(r'\1\3', uri)
-    #try:
     if not isinstance(uri, unicode):
         uri = uri.decode('utf-8', 'ignore')
-    uri = urlparse.urljoin(base, uri)
+    try:
+        uri = urlparse.urljoin(base, uri)
+    except ValueError:
+        uri = u''
     if not isinstance(uri, unicode):
         return uri.decode('utf-8', 'ignore')
     return uri
-    #except:
-    #    uri = urlparse.urlunparse([urllib.quote(part) for part in urlparse.urlparse(uri)])
-    #    return urlparse.urljoin(base, uri)
 
 class _FeedParserMixin:
     namespaces = {
@@ -2280,10 +2279,7 @@ def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):
 def _makeSafeAbsoluteURI(base, rel=None):
     # bail if ACCEPTABLE_URI_SCHEMES is empty
     if not ACCEPTABLE_URI_SCHEMES:
-        try:
-            return _urljoin(base, rel or u'')
-        except ValueError:
-            return u''
+        return _urljoin(base, rel or u'')
     if not base:
         return rel or u''
     if not rel:
@@ -2294,10 +2290,7 @@ def _makeSafeAbsoluteURI(base, rel=None):
         if not scheme or scheme in ACCEPTABLE_URI_SCHEMES:
             return base
         return u''
-    try:
-        uri = _urljoin(base, rel)
-    except ValueError:
-        return u''
+    uri = _urljoin(base, rel)
     if uri.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
         return u''
     return uri
