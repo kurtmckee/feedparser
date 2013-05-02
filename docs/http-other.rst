@@ -1,7 +1,7 @@
 Other :abbr:`HTTP (Hypertext Transfer Protocol)` Headers
 ========================================================
 
-You can specify extra :abbr:`HTTP (Hypertext Transfer Protocol)` request
+You can specify additional :abbr:`HTTP (Hypertext Transfer Protocol)` request
 headers as a dictionary.  When you download a feed from a remote web server,
 :program:`Universal Feed Parser` exposes the complete set of
 :abbr:`HTTP (Hypertext Transfer Protocol)` response headers as a dictionary.
@@ -16,7 +16,7 @@ Sending custom :abbr:`HTTP (Hypertext Transfer Protocol)` request headers
 
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom03.xml',
-                              extra_headers={'Cache-control': 'max-age=0'})
+                              request_headers={'Cache-control': 'max-age=0'})
 
 
 Accessing other :abbr:`HTTP (Hypertext Transfer Protocol)` response headers
