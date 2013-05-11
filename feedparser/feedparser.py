@@ -552,7 +552,11 @@ class _FeedParserMixin:
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
-        self.psc_chapters_counter = 0
+        # psc_chapters_flag prevents multiple psc_chapters from being
+        # captured in a single entry or item. The transition states are
+        # None -> True -> False. psc_chapter elements will only be
+        # captured while it is True.
+        self.psc_chapters_flag = None
         if baselang:
             self.feeddata['language'] = baselang.replace('_','-')
 
@@ -1343,7 +1347,7 @@ class _FeedParserMixin:
         self.inentry = 1
         self.guidislink = 0
         self.title_depth = -1
-        self.psc_chapters_counter = 0
+        self.psc_chapters_flag = None
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1893,19 +1897,18 @@ class _FeedParserMixin:
         context['newlocation'] = _makeSafeAbsoluteURI(self.baseuri, url.strip())
 
     def _start_psc_chapters(self, attrsD):
-        version = self._getAttribute(attrsD, 'version')
-        if version == '1.1' and self.psc_chapters_counter == 0:
-            self.psc_chapters_counter += 1
+        if self.psc_chapters_flag is None:
+	    # Transition from None -> True
+            self.psc_chapters_flag = True
             attrsD['chapters'] = []
             self._getContext()['psc_chapters'] = FeedParserDict(attrsD)
             
     def _end_psc_chapters(self):
-        version = self._getContext()['psc_chapters']['version']
-        if version == '1.1':
-            self.psc_chapters_counter += 1
+        # Transition from True -> False
+        self.psc_chapters_flag = False
         
     def _start_psc_chapter(self, attrsD):
-        if self.psc_chapters_counter == 1:
+        if self.psc_chapters_flag:
             start = self._getAttribute(attrsD, 'start')
             attrsD['start_parsed'] = _parse_psc_chapter_start(start)
 
