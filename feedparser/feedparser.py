@@ -881,7 +881,9 @@ class _FeedParserMixin:
 
         # resolve relative URIs
         if (element in self.can_be_relative_uri) and output:
-            output = self.resolveURI(output)
+            # do not resolve guid elements with isPermalink="false"
+            if not element == 'id' or self.guidislink:
+                output = self.resolveURI(output)
 
         # decode entities within embedded markup
         if not self.contentparams.get('base64', 0):
