@@ -1379,6 +1379,19 @@ class _FeedParserMixin:
         self._sync_author_detail('publisher')
     _end_webmaster = _end_dc_publisher
 
+    def _start_dcterms_valid(self, attrsD):
+        self.push('validity', 1)
+
+    def _end_dcterms_valid(self):
+        for validity_detail in self.pop('validity').split(';'):
+            key, value = validity_detail.split('=')
+            if key == 'start':
+                self._save('validity_start', value, overwrite=True)
+                self._save('validity_start_parsed', _parse_date(value), overwrite=True)
+            elif key == 'end':
+                self._save('validity_end', value, overwrite=True)
+                self._save('validity_end_parsed', _parse_date(value), overwrite=True)
+
     def _start_published(self, attrsD):
         self.push('published', 1)
     _start_dcterms_issued = _start_published
