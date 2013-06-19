@@ -2268,9 +2268,33 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
     def resolveURI(self, uri):
         return _makeSafeAbsoluteURI(self.baseuri, uri.strip())
 
+    # Taken from http://effbot.org/zone/re-sub.htm#unescape-html
+    # License: http://effbot.org/zone/copyright.htm
+    def html_unescape(self, text):
+        def fixup(m):
+            text = m.group(0)
+            if text[:2] == "&#":
+                # character reference
+                try:
+                    if text[:3] == "&#x":
+                        return unichr(int(text[3:-1], 16))
+                    else:
+                        return unichr(int(text[2:-1]))
+                except ValueError:
+                    pass
+            else:
+                # named entity
+                try:
+                    text = unichr(name2codepoint[text[1:-1]])
+                except KeyError:
+                    pass
+            return text # leave as is
+        return re.sub("&#?\w+;", fixup, text)
+
     def unknown_starttag(self, tag, attrs):
         attrs = self.normalize_attrs(attrs)
-        attrs = [(key, ((tag, key) in self.relative_uris) and self.resolveURI(value) or value) for key, value in attrs]
+        attrs = [(key, ((tag, key) in self.relative_uris) and _xmlescape(self.resolveURI(self.html_unescape(value))) or value)
+                 for key, value in attrs]
         _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
 
 def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):

@@ -1,0 +1,11 @@
+<!--
+Description: escaped markup in item description
+Expect:      not bozo and entries[0]['description'] == u'<a href="https://example.iana.org/file?id=1">Link</a>'
+-->
+<rss version="2.0">
+<channel>
+<item>
+<description><![CDATA[<a href="https:&#x2F;&#x2F;example.iana.org&#x2F;file?id=1">Link</a>]]></description>
+</item>
+</channel>
+</rss>
