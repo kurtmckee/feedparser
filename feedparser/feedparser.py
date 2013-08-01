@@ -1839,6 +1839,17 @@ class _FeedParserMixin:
         # don't do anything, but don't break the enclosed tags either
         pass
 
+    def _start_media_rating(self, attrsD):
+        context = self._getContext()
+        context.setdefault('media_rating', attrsD)
+        self.push('rating', 1)
+
+    def _end_media_rating(self):
+        rating = self.pop('rating')
+        if rating != None and len(rating.strip()) != 0:
+            context = self._getContext()
+            context['media_rating']['content'] = rating
+
     def _start_media_credit(self, attrsD):
         context = self._getContext()
         context.setdefault('media_credit', [])
