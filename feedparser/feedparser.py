@@ -1610,6 +1610,11 @@ class _FeedParserMixin:
             if term.strip():
                 self._addTag(term.strip(), u'http://www.itunes.com/', None)
 
+    def _end_media_keywords(self):
+        for term in self.pop('media_keywords').split(','):
+            if term.strip():
+                self._addTag(term.strip(), None, None)
+
     def _start_itunes_category(self, attrsD):
         self._addTag(attrsD.get('text'), u'http://www.itunes.com/', None)
         self.push('category', 1)
