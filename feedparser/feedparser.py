@@ -1877,7 +1877,7 @@ class _FeedParserMixin:
         restriction = self.pop('restriction')
         if restriction != None and len(restriction.strip()) != 0:
             context = self._getContext()
-            context['media_restriction']['content'] = restriction
+            context['media_restriction']['content'] = [cc.strip().lower() for cc in restriction.split(' ')]
 
     def _start_media_license(self, attrsD):
         context = self._getContext()
