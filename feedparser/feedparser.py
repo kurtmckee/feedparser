@@ -1384,13 +1384,14 @@ class _FeedParserMixin:
 
     def _end_dcterms_valid(self):
         for validity_detail in self.pop('validity').split(';'):
-            key, value = validity_detail.split('=')
-            if key == 'start':
-                self._save('validity_start', value, overwrite=True)
-                self._save('validity_start_parsed', _parse_date(value), overwrite=True)
-            elif key == 'end':
-                self._save('validity_end', value, overwrite=True)
-                self._save('validity_end_parsed', _parse_date(value), overwrite=True)
+            if '=' in validity_detail:
+                key, value = validity_detail.split('=')
+                if key == 'start':
+                    self._save('validity_start', value, overwrite=True)
+                    self._save('validity_start_parsed', _parse_date(value), overwrite=True)
+                elif key == 'end':
+                    self._save('validity_end', value, overwrite=True)
+                    self._save('validity_end_parsed', _parse_date(value), overwrite=True)
 
     def _start_published(self, attrsD):
         self.push('published', 1)
