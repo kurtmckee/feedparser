@@ -1286,7 +1286,8 @@ class _FeedParserMixin:
     def _push_detail_to_authors(self, prefix='author'):
         context = self._getContext()
         context.setdefault('authors', [FeedParserDict()])
-        context['authors'][-1] = FeedParserDict(context[prefix + '_detail'])
+        if prefix + '_detail' in context:
+            context['authors'][-1] = FeedParserDict(context[prefix + '_detail'])
 
     def _save_contributor(self, key, value):
         context = self._getContext()
