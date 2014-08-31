@@ -1,0 +1,11 @@
+<!--
+Description: guidispermalink is False if isPermaLink is set to "false"
+Expect:      not bozo and not entries[0]['guidispermalink']
+-->
+<rss version="2.0">
+<channel>
+<item>
+<guid isPermaLink="false">not a permalink</guid>
+</item>
+</channel>
+</rss>

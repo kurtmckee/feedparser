@@ -1,0 +1,14 @@
+<!--
+Description: guidispermalink is True if isPermaLink is set to "true" or not specified
+Expect:      not bozo and entries[0]['guidispermalink'] and entries[1]['guidispermalink']
+-->
+<rss version="2.0">
+<channel>
+<item>
+<guid>http://guid.example.com/</guid>
+</item>
+<item>
+<guid isPermaLink="true">http://guid.example.com/</guid>
+</item>
+</channel>
+</rss>

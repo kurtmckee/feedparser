@@ -1650,6 +1650,7 @@ class _FeedParserMixin:
     def _end_guid(self):
         value = self.pop('id')
         self._save('guidislink', self.guidislink and 'link' not in self._getContext())
+        self._save('guidispermalink', self.guidislink)
         if self.guidislink:
             # guid acts as link, but only if 'ispermalink' is not present or is 'true',
             # and only if the item doesn't already have a link element
