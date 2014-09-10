@@ -45,20 +45,24 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
                     "Ade Oshineye <http://blog.oshineye.com/>",
                     "Martin Pool <http://sourcefrog.net/>",
                     "Kurt McKee <http://kurtmckee.org/>",
-                    "Bernd Schlapsi <https://github.com/brot>",]
+                    "Bernd Schlapsi <https://github.com/brot>"]
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
 # change this to your application name and URL.
-USER_AGENT = "UniversalFeedParser/%s +https://code.google.com/p/feedparser/" % __version__
+USER_AGENT = "UniversalFeedParser/%s +https://code.google.com/p/feedparser/" \
+             % __version__
 
 # HTTP "Accept" header to send to servers when downloading feeds.  If you don't
 # want to send an Accept header, set this to None.
-ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
+ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,"\
+                + "application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,"\
+                + "*/*;q=0.1"
 
-# List of preferred XML parsers, by SAX driver name.  These will be tried first,
-# but if they're not installed, Python will keep searching through its own list
-# of pre-installed parsers until it finds one that supports everything we need.
+# List of preferred XML parsers, by SAX driver name.  These will be tried
+# first, but if they're not installed, Python will keep searching through its
+# own list of pre-installed parsers until it finds one that supports everything
+# we need.
 PREFERRED_XML_PARSERS = ["drv_libxml2"]
 
 # If you want feedparser to automatically resolve all relative URIs, set this
@@ -85,7 +89,8 @@ except (NameError, AttributeError):
 
 # base64 support for Atom feeds that contain embedded binary data
 try:
-    import base64, binascii
+    import base64
+    import binascii
 except ImportError:
     base64 = binascii = None
 else:
@@ -103,12 +108,14 @@ except NameError:
     # Python 2
     def _s2bytes(s):
         return s
+
     def _l2bytes(l):
         return ''.join(map(chr, l))
 else:
     # Python 3
     def _s2bytes(s):
         return bytes(s, 'utf8')
+
     def _l2bytes(l):
         return bytes(l)
 
@@ -127,9 +134,9 @@ ACCEPTABLE_URI_SCHEMES = (
     'aim', 'callto', 'cvs', 'facetime', 'feed', 'git', 'gtalk', 'irc', 'ircs',
     'irc6', 'itms', 'mms', 'msnim', 'skype', 'ssh', 'smb', 'svn', 'ymsg',
 )
-#ACCEPTABLE_URI_SCHEMES = ()
+# ACCEPTABLE_URI_SCHEMES = ()
 
-# ---------- required modules (should come with any Python distribution) ----------
+# -------- required modules (should come with any Python distribution) --------
 import cgi
 import codecs
 import copy
@@ -138,13 +145,12 @@ import itertools
 import re
 import struct
 import time
-import types
 import urllib
 import urllib2
 import urlparse
 import warnings
 
-from htmlentitydefs import name2codepoint, codepoint2name, entitydefs
+from htmlentitydefs import name2codepoint, entitydefs
 
 try:
     from io import BytesIO as _StringIO
@@ -154,9 +160,11 @@ except ImportError:
     except ImportError:
         from StringIO import StringIO as _StringIO
 
-# ---------- optional modules (feedparser will work without these, but with reduced functionality) ----------
+# ----------------------------- optional modules -----------------------------
+# (feedparser will work without these, but with reduced functionality)
 
-# gzip is included with most Python distributions, but may not be available if you compiled your own
+# gzip is included with most Python distributions, but may not be available if
+# you compiled your own
 try:
     import gzip
 except ImportError:
@@ -166,16 +174,18 @@ try:
 except ImportError:
     zlib = None
 
-# If a real XML parser is available, feedparser will attempt to use it.  feedparser has
-# been tested with the built-in SAX parser and libxml2.  On platforms where the
-# Python distribution does not come with an XML parser (such as Mac OS X 10.2 and some
-# versions of FreeBSD), feedparser will quietly fall back on regex-based parsing.
+# If a real XML parser is available, feedparser will attempt to use it.
+# feedparser has been tested with the built-in SAX parser and libxml2.  On
+# platforms where the Python distribution does not come with an XML parser
+# (such as Mac OS X 10.2 and some versions of FreeBSD), feedparser will quietly
+# fall back on regex-based parsing.
 try:
     import xml.sax
     from xml.sax.saxutils import escape as _xmlescape
 except ImportError:
     _XML_AVAILABLE = 0
-    def _xmlescape(data,entities={}):
+
+    def _xmlescape(data, entities={}):
         data = data.replace('&', '&amp;')
         data = data.replace('>', '&gt;')
         data = data.replace('<', '&lt;')
@@ -184,7 +194,7 @@ except ImportError:
         return data
 else:
     try:
-        xml.sax.make_parser(PREFERRED_XML_PARSERS) # test for valid parsers
+        xml.sax.make_parser(PREFERRED_XML_PARSERS)  # test for valid parsers
     except xml.sax.SAXReaderNotAvailable:
         _XML_AVAILABLE = 0
     else:
@@ -203,6 +213,7 @@ except ImportError:
         class SGMLParser(object):
             def goahead(self, i):
                 pass
+
             def parse_starttag(self, i):
                 pass
 else:
@@ -234,6 +245,7 @@ else:
             # Overriding the built-in sgmllib.endbracket regex allows the
             # parser to find angle brackets embedded in element attributes.
             self.endbracket = re.compile('''([^'"<>]|"[^"]*"(?=>|/|\s|\w+=)|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])|.*?(?=[<>])''')
+
         def search(self, target, index=0):
             match = self.endbracket.match(target, index)
             if match is not None:
@@ -241,20 +253,15 @@ else:
                 # resolves a thread-safety.
                 return EndBracketMatch(match)
             return None
+
     class EndBracketMatch:
         def __init__(self, match):
             self.match = match
+
         def start(self, n):
             return self.match.end(n)
     endbracket = _EndBracketRegEx()
 
-
-# iconv_codec provides support for more character encodings.
-# It's available from http://cjkpython.i18n.org/
-try:
-    import iconv_codec
-except ImportError:
-    pass
 
 # chardet library auto-detects character encodings
 # Download from http://chardet.feedparser.org/
@@ -264,11 +271,26 @@ except ImportError:
     chardet = None
 
 # ---------- don't touch these ----------
-class ThingsNobodyCaresAboutButMe(Exception): pass
-class CharacterEncodingOverride(ThingsNobodyCaresAboutButMe): pass
-class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe): pass
-class NonXMLContentType(ThingsNobodyCaresAboutButMe): pass
-class UndeclaredNamespace(Exception): pass
+
+
+class ThingsNobodyCaresAboutButMe(Exception):
+    pass
+
+
+class CharacterEncodingOverride(ThingsNobodyCaresAboutButMe):
+    pass
+
+
+class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe):
+    pass
+
+
+class NonXMLContentType(ThingsNobodyCaresAboutButMe):
+    pass
+
+
+class UndeclaredNamespace(Exception):
+    pass
 
 SUPPORTED_VERSIONS = {'': u'unknown',
                       'rss090': u'RSS 0.90',
@@ -288,6 +310,7 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       'cdf': u'CDF',
                       }
 
+
 class FeedParserDict(dict):
     keymap = {'channel': 'feed',
               'items': 'entries',
@@ -305,6 +328,7 @@ class FeedParserDict(dict):
               'copyright_detail': 'rights_detail',
               'tagline': 'subtitle',
               'tagline_detail': 'subtitle_detail'}
+
     def __getitem__(self, key):
         if key == 'category':
             try:
@@ -312,8 +336,11 @@ class FeedParserDict(dict):
             except IndexError:
                 raise KeyError, "object doesn't have key 'category'"
         elif key == 'enclosures':
-            norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
-            return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']==u'enclosure']
+            norel = lambda link: FeedParserDict(
+                [(name, value) for (name, value) in link.items()
+                    if name != 'rel'])
+            return [norel(link) for link in dict.__getitem__(self, 'links')
+                    if link['rel'] == u'enclosure']
         elif key == 'license':
             for link in dict.__getitem__(self, 'links'):
                 if link['rel']==u'license' and 'href' in link:
