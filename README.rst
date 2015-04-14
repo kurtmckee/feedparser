@@ -1,7 +1,7 @@
 feedparser - Parse Atom and RSS feeds in Python.
 
-Copyright (c) 2010-2013 Kurt McKee <contactme@kurtmckee.org>
-Copyright (c) 2002-2008 Mark Pilgrim
+|Copyright (c) 2010-2013 Kurt McKee <contactme@kurtmckee.org>
+|Copyright (c) 2002-2008 Mark Pilgrim
 
 feedparser is open source. See the LICENSE file for more information.
 
@@ -9,7 +9,7 @@ feedparser is open source. See the LICENSE file for more information.
 Installation
 ============
 
-Feedparser can be installed using distutils or setuptools by running:
+Feedparser can be installed using distutils or setuptools by running::
 
     $ python setup.py install
 
@@ -28,7 +28,7 @@ copy it to somewhere in your Python path.
 
 If a copy of sgmllib.py was not included in your feedparser download, you can
 grab a copy from the Python 2 standard library (preferably from the Python 2.7
-series) and run the 2to3 tool on it:
+series) and run the 2to3 tool on it::
 
     $ 2to3 -w sgmllib.py
 
@@ -56,7 +56,7 @@ build the documentation you'll need the Sphinx package, which is available at:
 
     http://sphinx.pocoo.org/
 
-You can then build HTML pages using a command similar to:
+You can then build HTML pages using a command similar to::
 
     $ sphinx-build -b html docs/ fpdocs
 
@@ -67,7 +67,7 @@ Testing
 =======
 
 Feedparser has an extensive test suite that has been growing for a decade. If
-you'd like to run the tests yourself, you can run the following command:
+you'd like to run the tests yourself, you can run the following command::
 
     $ python feedparsertest.py
 
