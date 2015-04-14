@@ -500,11 +500,17 @@ allowed by default (all others are stripped):
    * annotation
    * annotation-xml
    * maction
+   * maligngroup
+   * malignmark
    * math
+   * menclose
    * merror
    * mfenced
    * mfrac
+   * mglyph
    * mi
+   * mlabeledtr
+   * mlongdiv
    * mmultiscripts
    * mn
    * mo
@@ -514,8 +520,15 @@ allowed by default (all others are stripped):
    * mprescripts
    * mroot
    * mrow
+   * ms
+   * mscarries
+   * mscarry
+   * msgroup
+   * msline
    * mspace
    * msqrt
+   * msrow
+   * mstack
    * mstyle
    * msub
    * msubsup
@@ -536,43 +549,99 @@ allowed by default (all others are stripped):
 .. hlist::
    :columns: 3
 
+   * accent
+   * accentunder
    * actiontype
    * align
+   * alignmentscope
+   * altimg
+   * altimg-height
+   * altimg-valign
+   * altimg-width
+   * alttext
+   * bevelled
+   * charalign
    * close
    * columnalign
    * columnlines
    * columnspacing
    * columnspan
+   * columnwidth
+   * crossout
+   * decimalpoint
+   * denomalign
    * depth
+   * dir
    * display
    * displaystyle
+   * edge
    * encoding
    * equalcolumns
    * equalrows
    * fence
    * fontstyle
    * fontweight
+   * form
    * frame
+   * framespacing
+   * groupalign
    * height
+   * href
+   * id
+   * indentalign
+   * indentalignfirst
+   * indentalignlast
+   * indentshift
+   * indentshiftfirst
+   * indentshiftlast
+   * indenttarget
+   * infixlinebreakstyle
+   * largeop
+   * length
+   * linebreak
+   * linebreakmultchar
+   * linebreakstyle
+   * lineleading
    * linethickness
+   * location
+   * longdivstyle
+   * lquote
    * lspace
    * mathbackground
    * mathcolor
+   * mathsize
    * mathvariant
    * maxsize
+   * minlabelspacing
    * minsize
+   * movablelimits
+   * notation
+   * numalign
    * open
    * other
+   * overflow
+   * position
    * rowalign
    * rowlines
    * rowspacing
    * rowspan
+   * rquote
    * rspace
    * scriptlevel
+   * scriptminsize
+   * scriptsizemultiplier
    * selection
    * separator
    * separators
+   * shift
+   * side
+   * src
+   * stackalign
    * stretchy
+   * subscriptshift
+   * superscriptshift
+   * symmetric
+   * voffset
    * width
    * xlink:href
    * xlink:show
