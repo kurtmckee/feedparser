@@ -2237,6 +2237,7 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
     relative_uris = set([('a', 'href'),
                      ('applet', 'codebase'),
                      ('area', 'href'),
+                     ('audio', 'src'),
                      ('blockquote', 'cite'),
                      ('body', 'background'),
                      ('del', 'cite'),
@@ -2259,7 +2260,9 @@ class _RelativeURIResolver(_BaseHTMLProcessor):
                      ('object', 'usemap'),
                      ('q', 'cite'),
                      ('script', 'src'),
-                     ('video', 'poster')])
+                     ('source', 'src'),
+                     ('video', 'poster'),
+                     ('video', 'src')])
 
     def __init__(self, baseuri, encoding, _type):
         _BaseHTMLProcessor.__init__(self, encoding, _type)
