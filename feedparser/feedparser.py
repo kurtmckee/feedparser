@@ -1288,7 +1288,7 @@ class _FeedParserMixin:
 
     def _sync_author_detail(self, key='author'):
         context = self._getContext()
-        detail = context.get('%s_detail' % key)
+        detail = context.get('%ss' % key, [FeedParserDict()])[-1]
         if detail:
             name = detail.get('name')
             email = detail.get('email')
@@ -1317,11 +1317,11 @@ class _FeedParserMixin:
                     author = author[:-1]
                 author = author.strip()
             if author or email:
-                context.setdefault('%s_detail' % key, FeedParserDict())
+                context.setdefault('%s_detail' % key, detail)
             if author:
-                context['%s_detail' % key]['name'] = author
+                detail['name'] = author
             if email:
-                context['%s_detail' % key]['email'] = email
+                detail['email'] = email
 
     def _start_subtitle(self, attrsD):
         self.pushContent('subtitle', attrsD, u'text/plain', 1)
