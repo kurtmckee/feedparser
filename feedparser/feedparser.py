@@ -931,8 +931,8 @@ class _FeedParserMixin:
         if isinstance(output, unicode):
             output = output.translate(_cp1252)
 
-        # categories/tags/keywords/whatever are handled in _end_category
-        if element == 'category':
+        # categories/tags/keywords/whatever are handled in _end_category or _end_tags
+        if element in ('category', 'tags'):
             return output
 
         if element == 'title' and -1 < self.title_depth <= self.depth:
@@ -1574,9 +1574,19 @@ class _FeedParserMixin:
         tags = context.setdefault('tags', [])
         if (not term) and (not scheme) and (not label):
             return
-        value = FeedParserDict({'term': term, 'scheme': scheme, 'label': label})
+        value = FeedParserDict(term=term, scheme=scheme, label=label)
         if value not in tags:
             tags.append(value)
+
+    def _start_tags(self, attrsD):
+        # This is a completely-made up element. Its semantics are determined
+        # only by a single feed that precipitated bug report 392 on Google Code.
+        # In short, this is junk code.
+        self.push('tags', 1)
+
+    def _end_tags(self):
+        for term in self.pop('tags').split(','):
+            self._addTag(term.strip(), None, None)
 
     def _start_category(self, attrsD):
         term = attrsD.get('term')
