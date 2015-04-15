@@ -931,8 +931,8 @@ class _FeedParserMixin:
         if isinstance(output, unicode):
             output = output.translate(_cp1252)
 
-        # categories/tags/keywords/whatever are handled in _end_category or _end_tags
-        if element in ('category', 'tags'):
+        # categories/tags/keywords/whatever are handled in _end_category or _end_tags or _end_itunes_keywords
+        if element in ('category', 'tags', 'itunes_keywords'):
             return output
 
         if element == 'title' and -1 < self.title_depth <= self.depth:
