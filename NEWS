@@ -10,6 +10,7 @@ coming in the next version:
     * Replace the regex-based RFC 822 date parser with a procedural one
     * Replace the Python-licensed W3DTF date parser
     * Support HTML5 audio/source/video element relative URL's
+    * Remove the unparsed itunes_keywords key from the result dictionary
     * Fix issue 321 just a little more (yet another code path was missed)
     * Issue 62 (support georss and gml namespaces)
     * Issue 296 (GUID's are always treated like relative URI's)
