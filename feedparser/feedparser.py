@@ -2238,6 +2238,8 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
             data = data.replace('&amp;', '&')
             data = data.replace('&quot;', '"')
             data = data.replace('&apos;', "'")
+            data = data.replace('&#x2f;', '/')
+            data = data.replace('&#x2F;', '/')
         return data
 
     def strattrs(self, attrs):
