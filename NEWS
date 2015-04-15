@@ -19,6 +19,7 @@ coming in the next version:
     * Issue 374 (support the Podlove Simple Chapters namespace)
     * Issue 384 (fix chardet support in Python 3)
     * Issue 389 (elements in unknown uppercase namespaces are ignored)
+    * Issue 392 (tags element subverts 'tags' key in result dictionary)
     * Issue 396 (Podlove Simple Chapters version 1.0 causes a KeyError)
     * Issue 399 (docs call `request_headers` parameter `extra_headers`)
     * Issue 404 (support asctime datetime strings with timezone information)
