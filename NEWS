@@ -1,4 +1,4 @@
-coming in the next version:
+5.2.0 - April 16, 2015
     * Support PyPy
     * Remove the HTTP Status 9001 test that caused unit test tracebacks
     * Remove the completely-untested HTML tidy code
