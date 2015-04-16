@@ -2,8 +2,8 @@
 
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __license__ = """
-Copyright (c) 2010-2013 Kurt McKee <contactme@kurtmckee.org>
-Copyright (c) 2004-2008 Mark Pilgrim
+Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+Copyright 2004-2008 Mark Pilgrim
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -604,6 +604,7 @@ date_tests = {
     ),
     feedparser._parse_date_asctime: (
         (u'Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
+        (u'Sun Jul 15 01:16:00 +0000 2012', (2012, 7, 15, 1, 16, 0, 6, 197, 0)),
     ),
     feedparser._parse_date_w3dtf: (
         (u'', None), # empty string

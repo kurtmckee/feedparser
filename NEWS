@@ -1,4 +1,4 @@
-coming in the next version:
+5.2.0 - April 16, 2015
     * Support PyPy
     * Remove the HTTP Status 9001 test that caused unit test tracebacks
     * Remove the completely-untested HTML tidy code
@@ -9,16 +9,28 @@ coming in the next version:
     * Remove the rel_tag microformat parsing code
     * Replace the regex-based RFC 822 date parser with a procedural one
     * Replace the Python-licensed W3DTF date parser
+    * Support HTML5 audio/source/video element relative URL's
+    * Remove the unparsed itunes_keywords key from the result dictionary
     * Fix issue 321 just a little more (yet another code path was missed)
     * Issue 62 (support georss and gml namespaces)
     * Issue 296 (GUID's are always treated like relative URI's)
     * Issue 334 (media:restriction element content is not returned)
     * Issue 335 (sub-elements of media:group are not parsed and returned)
+    * Issue 342 (support multiple dc:creator elements)
+    * Issue 357 (loose parser breaks ampersands in link element URL's)
     * Issue 374 (support the Podlove Simple Chapters namespace)
+    * Issue 380 (support media:rating element)
     * Issue 384 (fix chardet support in Python 3)
     * Issue 389 (elements in unknown uppercase namespaces are ignored)
+    * Issue 392 (tags element subverts 'tags' key in result dictionary)
     * Issue 396 (Podlove Simple Chapters version 1.0 causes a KeyError)
     * Issue 399 (docs call `request_headers` parameter `extra_headers`)
+    * Issue 401 (support additional dcterms and media namespaces elements)
+    * Issue 404 (support asctime datetime strings with timezone information)
+    * Issue 407 (decode forward slashes encoded as character entities)
+    * Issue 421 (delay chardet invocation as long as possible)
+    * Issue 422 (add return types docstrings)
+    * Issue 433 (update the list of allowed MathML elements and attributes)
 
 5.1.3 - December 9, 2012
     * Consolidated and simplified the character encoding detection code

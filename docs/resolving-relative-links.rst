@@ -75,6 +75,7 @@ relative:
 * <a href="...">
 * <applet codebase="...">
 * <area href="...">
+* <audio src="...">
 * <blockquote cite="...">
 * <body background="...">
 * <del cite="...">
@@ -97,6 +98,9 @@ relative:
 * <object usemap="...">
 * <q cite="...">
 * <script src="...">
+* <source src="...">
+* <video poster="...">
+* <video src="...">
 
 
 How Relative :abbr:`URI (Uniform Resource Identifier)`\s Are Resolved
