@@ -1,7 +1,7 @@
 feedparser - Parse Atom and RSS feeds in Python.
 
-| Copyright (c) 2010-2013 Kurt McKee <contactme@kurtmckee.org>
-| Copyright (c) 2002-2008 Mark Pilgrim
+| Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+| Copyright 2002-2008 Mark Pilgrim
 
 feedparser is open source. See the LICENSE file for more information.
 
@@ -49,7 +49,7 @@ Documentation
 
 The feedparser documentation is available on the web at:
 
-    http://packages.python.org/feedparser
+    https://pythonhosted.org/feedparser/
 
 It is also included in its source format, ReST, in the docs/ directory. To
 build the documentation you'll need the Sphinx package, which is available at:
