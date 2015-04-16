@@ -25,6 +25,7 @@ coming in the next version:
     * Issue 399 (docs call `request_headers` parameter `extra_headers`)
     * Issue 404 (support asctime datetime strings with timezone information)
     * Issue 407 (decode forward slashes encoded as character entities)
+    * Issue 421 (delay chardet invocation as long as possible)
     * Issue 433 (update the list of allowed MathML elements and attributes)
 
 5.1.3 - December 9, 2012
