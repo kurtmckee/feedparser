@@ -3600,17 +3600,21 @@ def convert_to_utf8(http_headers, data):
 
     # determine character encoding
     known_encoding = 0
-    chardet_encoding = None
+    lazy_chardet_encoding = None
     tried_encodings = []
     if chardet:
-        chardet_encoding = chardet.detect(data)['encoding']
-        if not chardet_encoding:
-            chardet_encoding = ''
-        if not isinstance(chardet_encoding, unicode):
-            chardet_encoding = unicode(chardet_encoding, 'ascii', 'ignore')
+        def lazy_chardet_encoding():
+            chardet_encoding = chardet.detect(data)['encoding']
+            if not chardet_encoding:
+                chardet_encoding = ''
+            if not isinstance(chardet_encoding, unicode):
+                chardet_encoding = unicode(chardet_encoding, 'ascii', 'ignore')
+            return chardet_encoding
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
     for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
-                              chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
+                              lazy_chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
+        if callable(proposed_encoding):
+            proposed_encoding = proposed_encoding()
         if not proposed_encoding:
             continue
         if proposed_encoding in tried_encodings:
