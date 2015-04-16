@@ -950,6 +950,7 @@ class _FeedParserMixin:
                     # query variables in urls in link elements are improperly
                     # converted from `?a=1&b=2` to `?a=1&b;=2` as if they're
                     # unhandled character references. fix this special case.
+                    output = output.replace('&amp;', '&')
                     output = re.sub("&([A-Za-z0-9_]+);", "&\g<1>", output)
                     self.entries[-1][element] = output
                     if output:
