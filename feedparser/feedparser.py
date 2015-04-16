@@ -1380,6 +1380,20 @@ class _FeedParserMixin:
         self._sync_author_detail('publisher')
     _end_webmaster = _end_dc_publisher
 
+    def _start_dcterms_valid(self, attrsD):
+        self.push('validity', 1)
+
+    def _end_dcterms_valid(self):
+        for validity_detail in self.pop('validity').split(';'):
+            if '=' in validity_detail:
+                key, value = validity_detail.split('=', 1)
+                if key == 'start':
+                    self._save('validity_start', value, overwrite=True)
+                    self._save('validity_start_parsed', _parse_date(value), overwrite=True)
+                elif key == 'end':
+                    self._save('validity_end', value, overwrite=True)
+                    self._save('validity_end_parsed', _parse_date(value), overwrite=True)
+
     def _start_published(self, attrsD):
         self.push('published', 1)
     _start_dcterms_issued = _start_published
@@ -1606,6 +1620,11 @@ class _FeedParserMixin:
         for term in self.pop('itunes_keywords').split(','):
             if term.strip():
                 self._addTag(term.strip(), u'http://www.itunes.com/', None)
+
+    def _end_media_keywords(self):
+        for term in self.pop('media_keywords').split(','):
+            if term.strip():
+                self._addTag(term.strip(), None, None)
 
     def _start_itunes_category(self, attrsD):
         self._addTag(attrsD.get('text'), u'http://www.itunes.com/', None)
@@ -1837,6 +1856,17 @@ class _FeedParserMixin:
         # don't do anything, but don't break the enclosed tags either
         pass
 
+    def _start_media_rating(self, attrsD):
+        context = self._getContext()
+        context.setdefault('media_rating', attrsD)
+        self.push('rating', 1)
+
+    def _end_media_rating(self):
+        rating = self.pop('rating')
+        if rating is not None and rating.strip():
+            context = self._getContext()
+            context['media_rating']['content'] = rating
+
     def _start_media_credit(self, attrsD):
         context = self._getContext()
         context.setdefault('media_credit', [])
@@ -1858,7 +1888,7 @@ class _FeedParserMixin:
         restriction = self.pop('restriction')
         if restriction != None and len(restriction.strip()) != 0:
             context = self._getContext()
-            context['media_restriction']['content'] = restriction
+            context['media_restriction']['content'] = [cc.strip().lower() for cc in restriction.split(' ')]
 
     def _start_media_license(self, attrsD):
         context = self._getContext()
