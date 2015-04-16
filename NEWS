@@ -15,10 +15,12 @@ coming in the next version:
     * Issue 334 (media:restriction element content is not returned)
     * Issue 335 (sub-elements of media:group are not parsed and returned)
     * Issue 374 (support the Podlove Simple Chapters namespace)
+    * Issue 380 (support media:rating element)
     * Issue 384 (fix chardet support in Python 3)
     * Issue 389 (elements in unknown uppercase namespaces are ignored)
     * Issue 396 (Podlove Simple Chapters version 1.0 causes a KeyError)
     * Issue 399 (docs call `request_headers` parameter `extra_headers`)
+    * Issue 401 (support additional dcterms and media namespaces elements)
 
 5.1.3 - December 9, 2012
     * Consolidated and simplified the character encoding detection code
