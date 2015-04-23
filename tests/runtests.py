@@ -49,6 +49,7 @@ import BaseHTTPServer
 import SimpleHTTPServer
 
 import feedparser
+import feedparser.urls
 from feedparser.datetimes.asctime import _parse_date_asctime
 from feedparser.datetimes.greek import _parse_date_greek
 from feedparser.datetimes.hungarian import _parse_date_hungarian
@@ -423,10 +424,10 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
         uri = u'http://bad]test/'
         value1 = feedparser._makeSafeAbsoluteURI(uri)
         value2 = feedparser._makeSafeAbsoluteURI(self.base, uri)
-        swap = feedparser.ACCEPTABLE_URI_SCHEMES
-        feedparser.ACCEPTABLE_URI_SCHEMES = ()
+        swap = feedparser.urls.ACCEPTABLE_URI_SCHEMES
+        feedparser.urls.ACCEPTABLE_URI_SCHEMES = ()
         value3 = feedparser._makeSafeAbsoluteURI(self.base, uri)
-        feedparser.ACCEPTABLE_URI_SCHEMES = swap
+        feedparser.urls.ACCEPTABLE_URI_SCHEMES = swap
         # Only Python 2.7 and up throw a ValueError, otherwise uri is returned
         self.assertTrue(value1 in (uri, u''))
         self.assertTrue(value2 in (uri, u''))

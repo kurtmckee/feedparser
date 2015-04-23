@@ -110,23 +110,6 @@ else:
     def _l2bytes(l):
         return bytes(l)
 
-# If you want feedparser to allow all URL schemes, set this to ()
-# List culled from Python's urlparse documentation at:
-#   http://docs.python.org/library/urlparse.html
-# as well as from "URI scheme" at Wikipedia:
-#   https://secure.wikimedia.org/wikipedia/en/wiki/URI_scheme
-# Many more will likely need to be added!
-ACCEPTABLE_URI_SCHEMES = (
-    'file', 'ftp', 'gopher', 'h323', 'hdl', 'http', 'https', 'imap', 'magnet',
-    'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu',
-    'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet',
-    'wais',
-    # Additional common-but-unofficial schemes
-    'aim', 'callto', 'cvs', 'facetime', 'feed', 'git', 'gtalk', 'irc', 'ircs',
-    'irc6', 'itms', 'mms', 'msnim', 'skype', 'ssh', 'smb', 'svn', 'ymsg',
-)
-#ACCEPTABLE_URI_SCHEMES = ()
-
 # ---------- required modules (should come with any Python distribution) ----------
 import cgi
 import codecs
@@ -188,65 +171,6 @@ else:
     else:
         _XML_AVAILABLE = 1
 
-# sgmllib is not available by default in Python 3; if the end user doesn't have
-# it available then we'll lose illformed XML parsing and content santizing
-try:
-    import sgmllib
-except ImportError:
-    # This is probably Python 3, which doesn't include sgmllib anymore
-    _SGML_AVAILABLE = 0
-
-    # Mock sgmllib enough to allow subclassing later on
-    class sgmllib(object):
-        class SGMLParser(object):
-            def goahead(self, i):
-                pass
-            def parse_starttag(self, i):
-                pass
-else:
-    _SGML_AVAILABLE = 1
-
-    # sgmllib defines a number of module-level regular expressions that are
-    # insufficient for the XML parsing feedparser needs. Rather than modify
-    # the variables directly in sgmllib, they're defined here using the same
-    # names, and the compiled code objects of several sgmllib.SGMLParser
-    # methods are copied into _BaseHTMLProcessor so that they execute in
-    # feedparser's scope instead of sgmllib's scope.
-    charref = re.compile('&#(\d+|[xX][0-9a-fA-F]+);')
-    tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
-    attrfind = re.compile(
-        r'\s*([a-zA-Z_][-:.a-zA-Z_0-9]*)[$]?(\s*=\s*'
-        r'(\'[^\']*\'|"[^"]*"|[][\-a-zA-Z0-9./,:;+*%?!&$\(\)_#=~\'"@]*))?'
-    )
-
-    # Unfortunately, these must be copied over to prevent NameError exceptions
-    entityref = sgmllib.entityref
-    incomplete = sgmllib.incomplete
-    interesting = sgmllib.interesting
-    shorttag = sgmllib.shorttag
-    shorttagopen = sgmllib.shorttagopen
-    starttagopen = sgmllib.starttagopen
-
-    class _EndBracketRegEx:
-        def __init__(self):
-            # Overriding the built-in sgmllib.endbracket regex allows the
-            # parser to find angle brackets embedded in element attributes.
-            self.endbracket = re.compile('''([^'"<>]|"[^"]*"(?=>|/|\s|\w+=)|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])|.*?(?=[<>])''')
-        def search(self, target, index=0):
-            match = self.endbracket.match(target, index)
-            if match is not None:
-                # Returning a new object in the calling thread's context
-                # resolves a thread-safety.
-                return EndBracketMatch(match)
-            return None
-    class EndBracketMatch:
-        def __init__(self, match):
-            self.match = match
-        def start(self, n):
-            return self.match.end(n)
-    endbracket = _EndBracketRegEx()
-
-
 # iconv_codec provides support for more character encodings.
 # It's available from http://cjkpython.i18n.org/
 try:
@@ -262,6 +186,9 @@ except ImportError:
     chardet = None
 
 from .datetimes import registerDateHandler, _parse_date
+from .html import _BaseHTMLProcessor, _cp1252
+from .sgml import *
+from .urls import _urljoin, _convert_to_idn, _makeSafeAbsoluteURI, _resolveRelativeURIs
 
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
@@ -401,49 +328,6 @@ class FeedParserDict(dict):
 
     def __hash__(self):
         return id(self)
-
-_cp1252 = {
-    128: unichr(8364), # euro sign
-    130: unichr(8218), # single low-9 quotation mark
-    131: unichr( 402), # latin small letter f with hook
-    132: unichr(8222), # double low-9 quotation mark
-    133: unichr(8230), # horizontal ellipsis
-    134: unichr(8224), # dagger
-    135: unichr(8225), # double dagger
-    136: unichr( 710), # modifier letter circumflex accent
-    137: unichr(8240), # per mille sign
-    138: unichr( 352), # latin capital letter s with caron
-    139: unichr(8249), # single left-pointing angle quotation mark
-    140: unichr( 338), # latin capital ligature oe
-    142: unichr( 381), # latin capital letter z with caron
-    145: unichr(8216), # left single quotation mark
-    146: unichr(8217), # right single quotation mark
-    147: unichr(8220), # left double quotation mark
-    148: unichr(8221), # right double quotation mark
-    149: unichr(8226), # bullet
-    150: unichr(8211), # en dash
-    151: unichr(8212), # em dash
-    152: unichr( 732), # small tilde
-    153: unichr(8482), # trade mark sign
-    154: unichr( 353), # latin small letter s with caron
-    155: unichr(8250), # single right-pointing angle quotation mark
-    156: unichr( 339), # latin small ligature oe
-    158: unichr( 382), # latin small letter z with caron
-    159: unichr( 376), # latin capital letter y with diaeresis
-}
-
-_urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
-def _urljoin(base, uri):
-    uri = _urifixer.sub(r'\1\3', uri)
-    if not isinstance(uri, unicode):
-        uri = uri.decode('utf-8', 'ignore')
-    try:
-        uri = urlparse.urljoin(base, uri)
-    except ValueError:
-        uri = u''
-    if not isinstance(uri, unicode):
-        return uri.decode('utf-8', 'ignore')
-    return uri
 
 class _FeedParserMixin:
     namespaces = {
@@ -2063,192 +1947,6 @@ if _XML_AVAILABLE:
             self.error(exc)
             raise exc
 
-class _BaseHTMLProcessor(sgmllib.SGMLParser):
-    special = re.compile('''[<>'"]''')
-    bare_ampersand = re.compile("&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
-    elements_no_end_tag = set([
-      'area', 'base', 'basefont', 'br', 'col', 'command', 'embed', 'frame',
-      'hr', 'img', 'input', 'isindex', 'keygen', 'link', 'meta', 'param',
-      'source', 'track', 'wbr'
-    ])
-
-    def __init__(self, encoding, _type):
-        self.encoding = encoding
-        self._type = _type
-        sgmllib.SGMLParser.__init__(self)
-
-    def reset(self):
-        self.pieces = []
-        sgmllib.SGMLParser.reset(self)
-
-    def _shorttag_replace(self, match):
-        tag = match.group(1)
-        if tag in self.elements_no_end_tag:
-            return '<' + tag + ' />'
-        else:
-            return '<' + tag + '></' + tag + '>'
-
-    # By declaring these methods and overriding their compiled code
-    # with the code from sgmllib, the original code will execute in
-    # feedparser's scope instead of sgmllib's. This means that the
-    # `tagfind` and `charref` regular expressions will be found as
-    # they're declared above, not as they're declared in sgmllib.
-    def goahead(self, i):
-        pass
-    goahead.func_code = sgmllib.SGMLParser.goahead.func_code
-
-    def __parse_starttag(self, i):
-        pass
-    __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
-
-    def parse_starttag(self,i):
-        j = self.__parse_starttag(i)
-        if self._type == 'application/xhtml+xml':
-            if j>2 and self.rawdata[j-2:j]=='/>':
-                self.unknown_endtag(self.lasttag)
-        return j
-
-    def feed(self, data):
-        data = re.compile(r'<!((?!DOCTYPE|--|\[))', re.IGNORECASE).sub(r'&lt;!\1', data)
-        data = re.sub(r'<([^<>\s]+?)\s*/>', self._shorttag_replace, data)
-        data = data.replace('&#39;', "'")
-        data = data.replace('&#34;', '"')
-        try:
-            bytes
-            if bytes is str:
-                raise NameError
-            self.encoding = self.encoding + u'_INVALID_PYTHON_3'
-        except NameError:
-            if self.encoding and isinstance(data, unicode):
-                data = data.encode(self.encoding)
-        sgmllib.SGMLParser.feed(self, data)
-        sgmllib.SGMLParser.close(self)
-
-    def normalize_attrs(self, attrs):
-        if not attrs:
-            return attrs
-        # utility method to be called by descendants
-        attrs = dict([(k.lower(), v) for k, v in attrs]).items()
-        attrs = [(k, k in ('rel', 'type') and v.lower() or v) for k, v in attrs]
-        attrs.sort()
-        return attrs
-
-    def unknown_starttag(self, tag, attrs):
-        # called for each start tag
-        # attrs is a list of (attr, value) tuples
-        # e.g. for <pre class='screen'>, tag='pre', attrs=[('class', 'screen')]
-        uattrs = []
-        strattrs=''
-        if attrs:
-            for key, value in attrs:
-                value=value.replace('>','&gt;').replace('<','&lt;').replace('"','&quot;')
-                value = self.bare_ampersand.sub("&amp;", value)
-                # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
-                if not isinstance(value, unicode):
-                    value = value.decode(self.encoding, 'ignore')
-                try:
-                    # Currently, in Python 3 the key is already a str, and cannot be decoded again
-                    uattrs.append((unicode(key, self.encoding), value))
-                except TypeError:
-                    uattrs.append((key, value))
-            strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs])
-            if self.encoding:
-                try:
-                    strattrs = strattrs.encode(self.encoding)
-                except (UnicodeEncodeError, LookupError):
-                    pass
-        if tag in self.elements_no_end_tag:
-            self.pieces.append('<%s%s />' % (tag, strattrs))
-        else:
-            self.pieces.append('<%s%s>' % (tag, strattrs))
-
-    def unknown_endtag(self, tag):
-        # called for each end tag, e.g. for </pre>, tag will be 'pre'
-        # Reconstruct the original end tag.
-        if tag not in self.elements_no_end_tag:
-            self.pieces.append("</%s>" % tag)
-
-    def handle_charref(self, ref):
-        # called for each character reference, e.g. for '&#160;', ref will be '160'
-        # Reconstruct the original character reference.
-        ref = ref.lower()
-        if ref.startswith('x'):
-            value = int(ref[1:], 16)
-        else:
-            value = int(ref)
-
-        if value in _cp1252:
-            self.pieces.append('&#%s;' % hex(ord(_cp1252[value]))[1:])
-        else:
-            self.pieces.append('&#%s;' % ref)
-
-    def handle_entityref(self, ref):
-        # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
-        # Reconstruct the original entity reference.
-        if ref in name2codepoint or ref == 'apos':
-            self.pieces.append('&%s;' % ref)
-        else:
-            self.pieces.append('&amp;%s' % ref)
-
-    def handle_data(self, text):
-        # called for each block of plain text, i.e. outside of any tag and
-        # not containing any character or entity references
-        # Store the original text verbatim.
-        self.pieces.append(text)
-
-    def handle_comment(self, text):
-        # called for each HTML comment, e.g. <!-- insert Javascript code here -->
-        # Reconstruct the original comment.
-        self.pieces.append('<!--%s-->' % text)
-
-    def handle_pi(self, text):
-        # called for each processing instruction, e.g. <?instruction>
-        # Reconstruct original processing instruction.
-        self.pieces.append('<?%s>' % text)
-
-    def handle_decl(self, text):
-        # called for the DOCTYPE, if present, e.g.
-        # <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        #     "http://www.w3.org/TR/html4/loose.dtd">
-        # Reconstruct original DOCTYPE
-        self.pieces.append('<!%s>' % text)
-
-    _new_declname_match = re.compile(r'[a-zA-Z][-_.a-zA-Z0-9:]*\s*').match
-    def _scan_name(self, i, declstartpos):
-        rawdata = self.rawdata
-        n = len(rawdata)
-        if i == n:
-            return None, -1
-        m = self._new_declname_match(rawdata, i)
-        if m:
-            s = m.group()
-            name = s.strip()
-            if (i + len(s)) == n:
-                return None, -1  # end of buffer
-            return name.lower(), m.end()
-        else:
-            self.handle_data(rawdata)
-#            self.updatepos(declstartpos, i)
-            return None, -1
-
-    def convert_charref(self, name):
-        return '&#%s;' % name
-
-    def convert_entityref(self, name):
-        return '&%s;' % name
-
-    def output(self):
-        '''Return processed HTML as a single string'''
-        return ''.join([str(p) for p in self.pieces])
-
-    def parse_declaration(self, i):
-        try:
-            return sgmllib.SGMLParser.parse_declaration(self, i)
-        except sgmllib.SGMLParseError:
-            # escape the doctype declaration and continue parsing
-            self.handle_data('&lt;')
-            return i+1
-
 class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
     def __init__(self, baseuri, baselang, encoding, entities):
         sgmllib.SGMLParser.__init__(self)
@@ -2281,76 +1979,6 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
 
     def strattrs(self, attrs):
         return ''.join([' %s="%s"' % (n,v.replace('"','&quot;')) for n,v in attrs])
-
-class _RelativeURIResolver(_BaseHTMLProcessor):
-    relative_uris = set([('a', 'href'),
-                     ('applet', 'codebase'),
-                     ('area', 'href'),
-                     ('audio', 'src'),
-                     ('blockquote', 'cite'),
-                     ('body', 'background'),
-                     ('del', 'cite'),
-                     ('form', 'action'),
-                     ('frame', 'longdesc'),
-                     ('frame', 'src'),
-                     ('iframe', 'longdesc'),
-                     ('iframe', 'src'),
-                     ('head', 'profile'),
-                     ('img', 'longdesc'),
-                     ('img', 'src'),
-                     ('img', 'usemap'),
-                     ('input', 'src'),
-                     ('input', 'usemap'),
-                     ('ins', 'cite'),
-                     ('link', 'href'),
-                     ('object', 'classid'),
-                     ('object', 'codebase'),
-                     ('object', 'data'),
-                     ('object', 'usemap'),
-                     ('q', 'cite'),
-                     ('script', 'src'),
-                     ('source', 'src'),
-                     ('video', 'poster'),
-                     ('video', 'src')])
-
-    def __init__(self, baseuri, encoding, _type):
-        _BaseHTMLProcessor.__init__(self, encoding, _type)
-        self.baseuri = baseuri
-
-    def resolveURI(self, uri):
-        return _makeSafeAbsoluteURI(self.baseuri, uri.strip())
-
-    def unknown_starttag(self, tag, attrs):
-        attrs = self.normalize_attrs(attrs)
-        attrs = [(key, ((tag, key) in self.relative_uris) and self.resolveURI(value) or value) for key, value in attrs]
-        _BaseHTMLProcessor.unknown_starttag(self, tag, attrs)
-
-def _resolveRelativeURIs(htmlSource, baseURI, encoding, _type):
-    if not _SGML_AVAILABLE:
-        return htmlSource
-
-    p = _RelativeURIResolver(baseURI, encoding, _type)
-    p.feed(htmlSource)
-    return p.output()
-
-def _makeSafeAbsoluteURI(base, rel=None):
-    # bail if ACCEPTABLE_URI_SCHEMES is empty
-    if not ACCEPTABLE_URI_SCHEMES:
-        return _urljoin(base, rel or u'')
-    if not base:
-        return rel or u''
-    if not rel:
-        try:
-            scheme = urlparse.urlparse(base)[0]
-        except ValueError:
-            return u''
-        if not scheme or scheme in ACCEPTABLE_URI_SCHEMES:
-            return base
-        return u''
-    uri = _urljoin(base, rel)
-    if uri.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
-        return u''
-    return uri
 
 class _HTMLSanitizer(_BaseHTMLProcessor):
     acceptable_elements = set(['a', 'abbr', 'acronym', 'address', 'area',
@@ -2884,30 +2512,6 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     if isinstance(url_file_stream_or_string, unicode):
         return _StringIO(url_file_stream_or_string.encode('utf-8'))
     return _StringIO(url_file_stream_or_string)
-
-def _convert_to_idn(url):
-    """Convert a URL to IDN notation"""
-    # this function should only be called with a unicode string
-    # strategy: if the host cannot be encoded in ascii, then
-    # it'll be necessary to encode it in idn form
-    parts = list(urlparse.urlsplit(url))
-    try:
-        parts[1].encode('ascii')
-    except UnicodeEncodeError:
-        # the url needs to be converted to idn notation
-        host = parts[1].rsplit(':', 1)
-        newhost = []
-        port = u''
-        if len(host) == 2:
-            port = host.pop()
-        for h in host[0].split('.'):
-            newhost.append(h.encode('idna').decode('utf-8'))
-        parts[1] = '.'.join(newhost)
-        if port:
-            parts[1] += ':' + port
-        return urlparse.urlunsplit(parts)
-    else:
-        return url
 
 def _build_urllib2_request(url, agent, etag, modified, referrer, auth, request_headers):
     request = urllib2.Request(url)
