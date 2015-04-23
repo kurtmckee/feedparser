@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import absolute_import
+
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __license__ = """
 Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
@@ -47,6 +49,14 @@ import BaseHTTPServer
 import SimpleHTTPServer
 
 import feedparser
+from feedparser.datetimes.asctime import _parse_date_asctime
+from feedparser.datetimes.greek import _parse_date_greek
+from feedparser.datetimes.hungarian import _parse_date_hungarian
+from feedparser.datetimes.iso8601 import _parse_date_iso8601
+from feedparser.datetimes.korean import _parse_date_onblog, _parse_date_nate
+from feedparser.datetimes.perforce import _parse_date_perforce
+from feedparser.datetimes.rfc822 import _parse_date_rfc822
+from feedparser.datetimes.w3dtf import _parse_date_w3dtf
 
 if not feedparser._XML_AVAILABLE:
     sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
@@ -136,6 +146,7 @@ class FeedParserTestServer(threading.Thread):
 #---------- dummy test case class (test methods are added dynamically) ----------
 unicode1_re = re.compile(_s2bytes(" u'"))
 unicode2_re = re.compile(_s2bytes(' u"'))
+unicode3_re = re.compile(_s2bytes("\[u'"))
 
 # _bytes is only used in everythingIsUnicode().
 # In Python 2 it's str, and in Python 3 it's bytes.
@@ -171,6 +182,7 @@ def failUnlessEval(self, xmlfile, evalString, msg=None):
         # which will require the failure message to be updated
         evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
         evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
+        evalString = re.sub(unicode3_re, _s2bytes("['"), evalString)
         if not eval(evalString, globals(), env):
             failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
             raise self.failureException, failure
@@ -538,21 +550,21 @@ class TestDateParsers(unittest.TestCase):
         # On some systems this date string will trigger an OverflowError.
         # On Jython and x64 systems, however, it's interpreted just fine.
         try:
-            date = feedparser._parse_date_rfc822(u'Sun, 31 Dec 9999 23:59:59 -9999')
+            date = _parse_date_rfc822(u'Sun, 31 Dec 9999 23:59:59 -9999')
         except OverflowError:
             date = None
         self.assertTrue(date in (None, (10000, 1, 5, 4, 38, 59, 2, 5, 0)))
 
 date_tests = {
-    feedparser._parse_date_greek: (
+    _parse_date_greek: (
         (u'', None), # empty string
         (u'\u039a\u03c5\u03c1, 11 \u0399\u03bf\u03cd\u03bb 2004 12:00:00 EST', (2004, 7, 11, 17, 0, 0, 6, 193, 0)),
     ),
-    feedparser._parse_date_hungarian: (
+    _parse_date_hungarian: (
         (u'', None), # empty string
         (u'2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)),
     ),
-    feedparser._parse_date_iso8601: (
+    _parse_date_iso8601: (
         (u'', None), # empty string
         (u'-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only variant
         (u'031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only, no hyphens
@@ -563,19 +575,19 @@ date_tests = {
         # Special case for Google's extra zero in the month
         (u'2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
     ),
-    feedparser._parse_date_nate: (
+    _parse_date_nate: (
         (u'', None), # empty string
         (u'2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
     ),
-    feedparser._parse_date_onblog: (
+    _parse_date_onblog: (
         (u'', None), # empty string
         (u'2004\ub144 05\uc6d4 28\uc77c  01:31:15', (2004, 5, 27, 16, 31, 15, 3, 148, 0)),
     ),
-    feedparser._parse_date_perforce: (
+    _parse_date_perforce: (
         (u'', None), # empty string
         (u'Fri, 2006/09/15 08:19:53 EDT', (2006, 9, 15, 12, 19, 53, 4, 258, 0)),
     ),
-    feedparser._parse_date_rfc822: (
+    _parse_date_rfc822: (
         (u'', None), # empty string
         (u'Thu, 01 Jan 0100 00:00:01 +0100', (99, 12, 31, 23, 0, 1, 3, 365, 0)), # ancient date
         (u'Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
@@ -602,11 +614,11 @@ date_tests = {
         ('Sun, 16 Dec 2012 11:47:32 +00:zz', None), # invalid timezone minute
         ('Sun, 99 Jun 2009 12:00:00 GMT', None), # out-of-range day
     ),
-    feedparser._parse_date_asctime: (
+    _parse_date_asctime: (
         (u'Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
         (u'Sun Jul 15 01:16:00 +0000 2012', (2012, 7, 15, 1, 16, 0, 6, 197, 0)),
     ),
-    feedparser._parse_date_w3dtf: (
+    _parse_date_w3dtf: (
         (u'', None), # empty string
         (u'2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # UTC
         (u'2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)), # San Francisco timezone
