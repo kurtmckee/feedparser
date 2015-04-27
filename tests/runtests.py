@@ -779,16 +779,12 @@ def buildTestCase(xmlfile, description, evalString):
 def runtests():
     "Read the files in the tests/ directory, dynamically add tests to the " \
     "TestCases above, spawn the HTTP server, and run the test suite"
-    if sys.argv[1:]:
-        allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
-        wellformedfiles = illformedfiles = encodingfiles = entitiesfiles = []
-        sys.argv = [sys.argv[0]] #+ sys.argv[2:]
-    else:
-        allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
-        wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
-        illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
-        encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
-        entitiesfiles = glob.glob(os.path.join('.', 'tests', 'entities', '*.xml'))
+    allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
+    wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
+    illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
+    encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
+    entitiesfiles = glob.glob(os.path.join('.', 'tests', 'entities', '*.xml'))
+
     httpd = None
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
