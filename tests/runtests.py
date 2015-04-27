@@ -802,84 +802,72 @@ def runtests():
     httpcount += len([f for f in wellformedfiles if 'http' in f])
     httpcount += len([f for f in illformedfiles if 'http' in f])
     httpcount += len([f for f in encodingfiles if 'http' in f])
-    try:
-        for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles + entitiesfiles):
-            addTo = TestCase
-            if xmlfile in encodingfiles:
-                addTo = TestEncodings
-            elif xmlfile in entitiesfiles:
-                addTo = (TestStrictParser, TestLooseParser)
-            elif xmlfile in microformatfiles:
-                addTo = TestMicroformats
-            elif xmlfile in wellformedfiles:
-                addTo = (TestStrictParser, TestLooseParser)
-            f = open(xmlfile, 'rb')
-            data = f.read()
-            f.close()
-            if 'encoding' in xmlfile:
-                data = convert_to_utf8(data)
-                if data is None:
-                    # convert_to_utf8 found a byte order mark for utf_32
-                    # but it's not supported in this installation of Python
-                    if 'http' in xmlfile:
-                        httpcount -= 1 + (xmlfile in wellformedfiles)
-                    continue
-            description, evalString, skipUnless = getDescription(xmlfile, data)
-            testName = 'test_%06d' % c
-            ishttp = 'http' in xmlfile
-            try:
-                if not eval(skipUnless): raise NotImplementedError
-            except (ImportError, LookupError, NotImplementedError, AttributeError):
-                if ishttp:
+
+    for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles + entitiesfiles):
+        addTo = TestCase
+        if xmlfile in encodingfiles:
+            addTo = TestEncodings
+        elif xmlfile in entitiesfiles:
+            addTo = (TestStrictParser, TestLooseParser)
+        elif xmlfile in microformatfiles:
+            addTo = TestMicroformats
+        elif xmlfile in wellformedfiles:
+            addTo = (TestStrictParser, TestLooseParser)
+        f = open(xmlfile, 'rb')
+        data = f.read()
+        f.close()
+        if 'encoding' in xmlfile:
+            data = convert_to_utf8(data)
+            if data is None:
+                # convert_to_utf8 found a byte order mark for utf_32
+                # but it's not supported in this installation of Python
+                if 'http' in xmlfile:
                     httpcount -= 1 + (xmlfile in wellformedfiles)
                 continue
+        description, evalString, skipUnless = getDescription(xmlfile, data)
+        testName = 'test_%06d' % c
+        ishttp = 'http' in xmlfile
+        try:
+            if not eval(skipUnless): raise NotImplementedError
+        except (ImportError, LookupError, NotImplementedError, AttributeError):
             if ishttp:
-                xmlfile = 'http://%s:%s/%s' % (_HOST, _PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
-            testFunc = buildTestCase(xmlfile, description, evalString)
-            if isinstance(addTo, tuple):
-                setattr(addTo[0], testName, testFunc)
-                setattr(addTo[1], testName, testFunc)
-            else:
-                setattr(addTo, testName, testFunc)
-        if httpcount:
-            httpd = FeedParserTestServer(httpcount)
-            httpd.daemon = True
-            httpd.start()
-            httpd.ready.wait()
-        testsuite = unittest.TestSuite()
-        testloader = unittest.TestLoader()
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestStrictParser))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestLooseParser))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestEverythingIsUnicode))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestTemporaryFallbackBehavior))
-        testsuite.addTest(testloader.loadTestsFromTestCase(TestLxmlBug))
-        testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
+                httpcount -= 1 + (xmlfile in wellformedfiles)
+            continue
+        if ishttp:
+            xmlfile = 'http://%s:%s/%s' % (_HOST, _PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
+        testFunc = buildTestCase(xmlfile, description, evalString)
+        if isinstance(addTo, tuple):
+            setattr(addTo[0], testName, testFunc)
+            setattr(addTo[1], testName, testFunc)
+        else:
+            setattr(addTo, testName, testFunc)
+    if httpcount:
+        httpd = FeedParserTestServer(httpcount)
+        httpd.daemon = True
+        httpd.start()
+        httpd.ready.wait()
+    testsuite = unittest.TestSuite()
+    testloader = unittest.TestLoader()
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestStrictParser))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestLooseParser))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestEverythingIsUnicode))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestTemporaryFallbackBehavior))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestLxmlBug))
+    testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
-        # Return 0 if successful, 1 if there was a failure
-        sys.exit(not testresults.wasSuccessful())
-    finally:
-        if httpd:
-            if httpd.requests:
-                # Should never get here unless something went horribly wrong, like the
-                # user hitting Ctrl-C.  Tell our HTTP server that it's done, then do
-                # one more request to flush it.  This rarely works; the combination of
-                # threading, self-terminating HTTP servers, and unittest is really
-                # quite flaky.  Just what you want in a testing framework, no?
-                httpd.requests = 0
-                if httpd.ready:
-                    urllib.urlopen('http://127.0.0.1:8097/tests/wellformed/rss/aaa_wellformed.xml').read()
-            httpd.join(0)
+    # Return 0 if successful, 1 if there was a failure
+    sys.exit(not testresults.wasSuccessful())
 
 if __name__ == "__main__":
     runtests()
