@@ -270,9 +270,6 @@ class TestLooseParser(BaseTestCase):
 class TestStrictParser(BaseTestCase):
     pass
 
-class TestMicroformats(BaseTestCase):
-    pass
-
 class TestEncodings(BaseTestCase):
     def test_doctype_replacement(self):
         "Ensure that non-ASCII-compatible encodings don't hide " \
@@ -784,7 +781,7 @@ def runtests():
     "TestCases above, spawn the HTTP server, and run the test suite"
     if sys.argv[1:]:
         allfiles = filter(lambda s: s.endswith('.xml'), reduce(operator.add, map(glob.glob, sys.argv[1:]), []))
-        wellformedfiles = illformedfiles = encodingfiles = entitiesfiles = microformatfiles = []
+        wellformedfiles = illformedfiles = encodingfiles = entitiesfiles = []
         sys.argv = [sys.argv[0]] #+ sys.argv[2:]
     else:
         allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
@@ -792,7 +789,6 @@ def runtests():
         illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
         encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
         entitiesfiles = glob.glob(os.path.join('.', 'tests', 'entities', '*.xml'))
-        microformatfiles = glob.glob(os.path.join('.', 'tests', 'microformats', '**', '*.xml'))
     httpd = None
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
@@ -809,8 +805,6 @@ def runtests():
             addTo = TestEncodings
         elif xmlfile in entitiesfiles:
             addTo = (TestStrictParser, TestLooseParser)
-        elif xmlfile in microformatfiles:
-            addTo = TestMicroformats
         elif xmlfile in wellformedfiles:
             addTo = (TestStrictParser, TestLooseParser)
         f = open(xmlfile, 'rb')
@@ -857,7 +851,6 @@ def runtests():
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCompression))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestConvertToIdn))
-    testsuite.addTest(testloader.loadTestsFromTestCase(TestMicroformats))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestOpenResource))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestFeedParserDict))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestMakeSafeAbsoluteURI))
