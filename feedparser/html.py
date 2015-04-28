@@ -42,10 +42,11 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
       'source', 'track', 'wbr'
     ])
 
-    def __init__(self, encoding, _type):
-        self.encoding = encoding
+    def __init__(self, encoding=None, _type='application/xhtml+xml'):
+        if encoding:
+            self.encoding = encoding
         self._type = _type
-        sgmllib.SGMLParser.__init__(self)
+        super(_BaseHTMLProcessor, self).__init__()
 
     def reset(self):
         self.pieces = []

@@ -294,12 +294,11 @@ class _FeedParserMixin:
     can_contain_dangerous_markup = set(['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description'])
     html_types = [u'text/html', u'application/xhtml+xml']
 
-    def __init__(self, baseuri=None, baselang=None, encoding=u'utf-8'):
+    def __init__(self):
         if not self._matchnamespaces:
             for k, v in self.namespaces.items():
                 self._matchnamespaces[k.lower()] = v
         self.feeddata = FeedParserDict() # feed-level data
-        self.encoding = encoding # character encoding
         self.entries = [] # list of entry-level data
         self.version = u'' # feed type/version, see SUPPORTED_VERSIONS
         self.namespacesInUse = {} # dictionary of namespaces defined by the feed
@@ -326,8 +325,6 @@ class _FeedParserMixin:
         self.elementstack = []
         self.basestack = []
         self.langstack = []
-        self.baseuri = baseuri or u''
-        self.lang = baselang or None
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
@@ -336,8 +333,8 @@ class _FeedParserMixin:
         # None -> True -> False. psc_chapter elements will only be
         # captured while it is True.
         self.psc_chapters_flag = None
-        if baselang:
-            self.feeddata['language'] = baselang.replace('_','-')
+        if self.lang:
+            self.feeddata['language'] = self.lang.replace('_','-')
 
         # A map of the following form:
         #     {
@@ -347,6 +344,7 @@ class _FeedParserMixin:
         #         },
         #     }
         self.property_depth_map = {}
+        super(_FeedParserMixin, self).__init__()
 
     def _normalize_attributes(self, kv):
         k = kv[0].lower()
@@ -1741,11 +1739,13 @@ class _FeedParserMixin:
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
-            xml.sax.handler.ContentHandler.__init__(self)
-            _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
             self.bozo = 0
             self.exc = None
             self.decls = {}
+            self.baseuri = baseuri or u''
+            self.lang = baselang
+            self.encoding = encoding
+            super(_StrictFeedParser, self).__init__()
 
         def startPrefixMapping(self, prefix, uri):
             if not uri:
@@ -1837,11 +1837,12 @@ if _XML_AVAILABLE:
             raise exc
 
 class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
-    def __init__(self, baseuri, baselang, encoding, entities):
-        sgmllib.SGMLParser.__init__(self)
-        _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
-        _BaseHTMLProcessor.__init__(self, encoding, 'application/xhtml+xml')
-        self.entities=entities
+    def __init__(self, baseuri=None, baselang=None, encoding=None, entities=None):
+        self.baseuri = baseuri or u''
+        self.lang = baselang or None
+        self.encoding = encoding or u'utf-8' # character encoding
+        self.entities = entities or {}
+        super(_LooseFeedParser, self).__init__()
 
     def decodeEntities(self, element, data):
         data = data.replace('&#60;', '&lt;')
