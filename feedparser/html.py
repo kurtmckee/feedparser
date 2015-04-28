@@ -33,7 +33,7 @@ _cp1252 = {
     159: unichr( 376), # latin capital letter y with diaeresis
 }
 
-class _BaseHTMLProcessor(sgmllib.SGMLParser):
+class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
     special = re.compile('''[<>'"]''')
     bare_ampersand = re.compile("&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
     elements_no_end_tag = set([
