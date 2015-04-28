@@ -187,7 +187,7 @@ except ImportError:
 from .datetimes import registerDateHandler, _parse_date
 from .html import _BaseHTMLProcessor, _cp1252
 from .http import _build_urllib2_request, _FeedURLHandler
-from .namespaces import georss, psc
+from .namespaces import georss, mediarss, psc
 from .sanitizer import _sanitizeHTML, _HTMLSanitizer
 from .sgml import *
 from .urls import _urljoin, _convert_to_idn, _makeSafeAbsoluteURI, _resolveRelativeURIs
@@ -219,7 +219,7 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       }
 
 
-class _FeedParserMixin(georss.Namespace, psc.Namespace):
+class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
     namespaces = {
         '': '',
         'http://backend.userland.com/rss': '',
@@ -1259,19 +1259,10 @@ class _FeedParserMixin(georss.Namespace, psc.Namespace):
     _start_dc_subject = _start_category
     _start_keywords = _start_category
 
-    def _start_media_category(self, attrsD):
-        attrsD.setdefault('scheme', u'http://search.yahoo.com/mrss/category_schema')
-        self._start_category(attrsD)
-
     def _end_itunes_keywords(self):
         for term in self.pop('itunes_keywords').split(','):
             if term.strip():
                 self._addTag(term.strip(), u'http://www.itunes.com/', None)
-
-    def _end_media_keywords(self):
-        for term in self.pop('media_keywords').split(','):
-            if term.strip():
-                self._addTag(term.strip(), None, None)
 
     def _start_itunes_category(self, attrsD):
         self._addTag(attrsD.get('text'), u'http://www.itunes.com/', None)
@@ -1290,7 +1281,6 @@ class _FeedParserMixin(georss.Namespace, psc.Namespace):
     _end_dc_subject = _end_category
     _end_keywords = _end_category
     _end_itunes_category = _end_category
-    _end_media_category = _end_category
 
     def _start_cloud(self, attrsD):
         self._getContext()['cloud'] = FeedParserDict(attrsD)
@@ -1338,7 +1328,6 @@ class _FeedParserMixin(georss.Namespace, psc.Namespace):
             return self.unknown_starttag('title', attrsD.items())
         self.pushContent('title', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
     _start_dc_title = _start_title
-    _start_media_title = _start_title
 
     def _end_title(self):
         if self.svgOK:
@@ -1349,11 +1338,6 @@ class _FeedParserMixin(georss.Namespace, psc.Namespace):
         self.title_depth = self.depth
     _end_dc_title = _end_title
 
-    def _end_media_title(self):
-        title_depth = self.title_depth
-        self._end_title()
-        self.title_depth = title_depth
-
     def _start_description(self, attrsD):
         context = self._getContext()
         if 'summary' in context:
@@ -1362,7 +1346,6 @@ class _FeedParserMixin(georss.Namespace, psc.Namespace):
         else:
             self.pushContent('description', attrsD, u'text/html', self.infeed or self.inentry or self.insource)
     _start_dc_description = _start_description
-    _start_media_description = _start_description
 
     def _start_abstract(self, attrsD):
         self.pushContent('description', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
@@ -1375,7 +1358,6 @@ class _FeedParserMixin(georss.Namespace, psc.Namespace):
         self._summaryKey = None
     _end_abstract = _end_description
     _end_dc_description = _end_description
-    _end_media_description = _end_description
 
     def _start_info(self, attrsD):
         self.pushContent('info', attrsD, u'text/plain', 1)
@@ -1498,82 +1480,6 @@ class _FeedParserMixin(georss.Namespace, psc.Namespace):
         # False and None both evaluate as False, so the difference can be ignored
         # by applications that only need to know if the content is explicit.
         self._getContext()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
-
-    def _start_media_group(self, attrsD):
-        # don't do anything, but don't break the enclosed tags either
-        pass
-
-    def _start_media_rating(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_rating', attrsD)
-        self.push('rating', 1)
-
-    def _end_media_rating(self):
-        rating = self.pop('rating')
-        if rating is not None and rating.strip():
-            context = self._getContext()
-            context['media_rating']['content'] = rating
-
-    def _start_media_credit(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_credit', [])
-        context['media_credit'].append(attrsD)
-        self.push('credit', 1)
-
-    def _end_media_credit(self):
-        credit = self.pop('credit')
-        if credit != None and len(credit.strip()) != 0:
-            context = self._getContext()
-            context['media_credit'][-1]['content'] = credit
-
-    def _start_media_restriction(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_restriction', attrsD)
-        self.push('restriction', 1)
-
-    def _end_media_restriction(self):
-        restriction = self.pop('restriction')
-        if restriction != None and len(restriction.strip()) != 0:
-            context = self._getContext()
-            context['media_restriction']['content'] = [cc.strip().lower() for cc in restriction.split(' ')]
-
-    def _start_media_license(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_license', attrsD)
-        self.push('license', 1)
-
-    def _end_media_license(self):
-        license = self.pop('license')
-        if license != None and len(license.strip()) != 0:
-            context = self._getContext()
-            context['media_license']['content'] = license
-
-    def _start_media_content(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_content', [])
-        context['media_content'].append(attrsD)
-
-    def _start_media_thumbnail(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_thumbnail', [])
-        self.push('url', 1) # new
-        context['media_thumbnail'].append(attrsD)
-
-    def _end_media_thumbnail(self):
-        url = self.pop('url')
-        context = self._getContext()
-        if url != None and len(url.strip()) != 0:
-            if 'url' not in context['media_thumbnail'][-1]:
-                context['media_thumbnail'][-1]['url'] = url
-
-    def _start_media_player(self, attrsD):
-        self.push('media_player', 0)
-        self._getContext()['media_player'] = FeedParserDict(attrsD)
-
-    def _end_media_player(self):
-        value = self.pop('media_player')
-        context = self._getContext()
-        context['media_player']['content'] = value
 
     def _start_newlocation(self, attrsD):
         self.push('newlocation', 1)
