@@ -187,7 +187,7 @@ except ImportError:
 from .datetimes import registerDateHandler, _parse_date
 from .html import _BaseHTMLProcessor, _cp1252
 from .http import _build_urllib2_request, _FeedURLHandler
-from .namespaces import georss, mediarss, psc
+from .namespaces import georss, itunes, mediarss, psc
 from .sanitizer import _sanitizeHTML, _HTMLSanitizer
 from .sgml import *
 from .urls import _urljoin, _convert_to_idn, _makeSafeAbsoluteURI, _resolveRelativeURIs
@@ -219,7 +219,7 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       }
 
 
-class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
+class _FeedParserMixin(georss.Namespace, itunes.Namespace, mediarss.Namespace, psc.Namespace):
     namespaces = {
         '': '',
         'http://backend.userland.com/rss': '',
@@ -918,7 +918,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
     _start_managingeditor = _start_author
     _start_dc_author = _start_author
     _start_dc_creator = _start_author
-    _start_itunes_author = _start_author
 
     def _end_author(self):
         self.pop('author')
@@ -927,16 +926,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
     _end_managingeditor = _end_author
     _end_dc_author = _end_author
     _end_dc_creator = _end_author
-    _end_itunes_author = _end_author
-
-    def _start_itunes_owner(self, attrsD):
-        self.inpublisher = 1
-        self.push('publisher', 0)
-
-    def _end_itunes_owner(self):
-        self.pop('publisher')
-        self.inpublisher = 0
-        self._sync_author_detail('publisher')
 
     def _start_contributor(self, attrsD):
         self.incontributor = 1
@@ -962,7 +951,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
 
     def _start_name(self, attrsD):
         self.push('name', 0)
-    _start_itunes_name = _start_name
 
     def _end_name(self):
         value = self.pop('name')
@@ -975,7 +963,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
         elif self.intextinput:
             context = self._getContext()
             context['name'] = value
-    _end_itunes_name = _end_name
 
     def _start_width(self, attrsD):
         self.push('width', 0)
@@ -1019,7 +1006,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
 
     def _start_email(self, attrsD):
         self.push('email', 0)
-    _start_itunes_email = _start_email
 
     def _end_email(self):
         value = self.pop('email')
@@ -1029,7 +1015,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
             self._save_author('email', value)
         elif self.incontributor:
             self._save_contributor('email', value)
-    _end_itunes_email = _end_email
 
     def _getContext(self):
         if self.insource:
@@ -1097,12 +1082,10 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
     def _start_subtitle(self, attrsD):
         self.pushContent('subtitle', attrsD, u'text/plain', 1)
     _start_tagline = _start_subtitle
-    _start_itunes_subtitle = _start_subtitle
 
     def _end_subtitle(self):
         self.popContent('subtitle')
     _end_tagline = _end_subtitle
-    _end_itunes_subtitle = _end_subtitle
 
     def _start_rights(self, attrsD):
         self.pushContent('rights', attrsD, u'text/plain', 1)
@@ -1259,15 +1242,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
     _start_dc_subject = _start_category
     _start_keywords = _start_category
 
-    def _end_itunes_keywords(self):
-        for term in self.pop('itunes_keywords').split(','):
-            if term.strip():
-                self._addTag(term.strip(), u'http://www.itunes.com/', None)
-
-    def _start_itunes_category(self, attrsD):
-        self._addTag(attrsD.get('text'), u'http://www.itunes.com/', None)
-        self.push('category', 1)
-
     def _end_category(self):
         value = self.pop('category')
         if not value:
@@ -1280,7 +1254,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
             self._addTag(value, None, None)
     _end_dc_subject = _end_category
     _end_keywords = _end_category
-    _end_itunes_category = _end_category
 
     def _start_cloud(self, attrsD):
         self._getContext()['cloud'] = FeedParserDict(attrsD)
@@ -1404,7 +1377,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
         else:
             self._summaryKey = 'summary'
             self.pushContent(self._summaryKey, attrsD, u'text/plain', 1)
-    _start_itunes_summary = _start_summary
 
     def _end_summary(self):
         if self._summaryKey == 'content':
@@ -1412,7 +1384,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
         else:
             self.popContent(self._summaryKey or 'summary')
         self._summaryKey = None
-    _end_itunes_summary = _end_summary
 
     def _start_enclosure(self, attrsD):
         attrsD = self._itsAnHrefDamnIt(attrsD)
@@ -1461,25 +1432,6 @@ class _FeedParserMixin(georss.Namespace, mediarss.Namespace, psc.Namespace):
     _end_xhtml_body = _end_content
     _end_content_encoded = _end_content
     _end_fullitem = _end_content
-
-    def _start_itunes_image(self, attrsD):
-        self.push('itunes_image', 0)
-        if attrsD.get('href'):
-            self._getContext()['image'] = FeedParserDict({'href': attrsD.get('href')})
-        elif attrsD.get('url'):
-            self._getContext()['image'] = FeedParserDict({'href': attrsD.get('url')})
-    _start_itunes_link = _start_itunes_image
-
-    def _end_itunes_block(self):
-        value = self.pop('itunes_block', 0)
-        self._getContext()['itunes_block'] = (value == 'yes') and 1 or 0
-
-    def _end_itunes_explicit(self):
-        value = self.pop('itunes_explicit', 0)
-        # Convert 'yes' -> True, 'clean' to False, and any other value to None
-        # False and None both evaluate as False, so the difference can be ignored
-        # by applications that only need to know if the content is explicit.
-        self._getContext()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
 
     def _start_newlocation(self, attrsD):
         self.push('newlocation', 1)
