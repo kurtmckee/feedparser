@@ -187,7 +187,7 @@ except ImportError:
 from .datetimes import registerDateHandler, _parse_date
 from .html import _BaseHTMLProcessor, _cp1252
 from .http import _build_urllib2_request, _FeedURLHandler
-from .namespaces import georss
+from .namespaces import georss, psc
 from .sanitizer import _sanitizeHTML, _HTMLSanitizer
 from .sgml import *
 from .urls import _urljoin, _convert_to_idn, _makeSafeAbsoluteURI, _resolveRelativeURIs
@@ -219,7 +219,7 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       }
 
 
-class _FeedParserMixin(georss.Namespace):
+class _FeedParserMixin(georss.Namespace, psc.Namespace):
     namespaces = {
         '': '',
         'http://backend.userland.com/rss': '',
@@ -326,11 +326,6 @@ class _FeedParserMixin(georss.Namespace):
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
-        # psc_chapters_flag prevents multiple psc_chapters from being
-        # captured in a single entry or item. The transition states are
-        # None -> True -> False. psc_chapter elements will only be
-        # captured while it is True.
-        self.psc_chapters_flag = None
         if self.lang:
             self.feeddata['language'] = self.lang.replace('_','-')
 
@@ -1125,7 +1120,6 @@ class _FeedParserMixin(georss.Namespace):
         self.inentry = 1
         self.guidislink = 0
         self.title_depth = -1
-        self.psc_chapters_flag = None
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1592,25 +1586,6 @@ class _FeedParserMixin(georss.Namespace):
             return
         context['newlocation'] = _makeSafeAbsoluteURI(self.baseuri, url.strip())
 
-    def _start_psc_chapters(self, attrsD):
-        if self.psc_chapters_flag is None:
-	    # Transition from None -> True
-            self.psc_chapters_flag = True
-            attrsD['chapters'] = []
-            self._getContext()['psc_chapters'] = FeedParserDict(attrsD)
-
-    def _end_psc_chapters(self):
-        # Transition from True -> False
-        self.psc_chapters_flag = False
-
-    def _start_psc_chapter(self, attrsD):
-        if self.psc_chapters_flag:
-            start = self._getAttribute(attrsD, 'start')
-            attrsD['start_parsed'] = _parse_psc_chapter_start(start)
-
-            context = self._getContext()['psc_chapters']
-            context['chapters'].append(FeedParserDict(attrsD))
-
 
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
@@ -1833,17 +1808,6 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     if isinstance(url_file_stream_or_string, unicode):
         return _StringIO(url_file_stream_or_string.encode('utf-8'))
     return _StringIO(url_file_stream_or_string)
-
-def _parse_psc_chapter_start(start):
-    FORMAT = r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$'
-
-    m = re.compile(FORMAT).match(start)
-    if m is None:
-        return None
-
-    _, h, m, s, _, ms = m.groups()
-    h, m, s, ms = (int(h or 0), int(m), int(s), int(ms or 0))
-    return datetime.timedelta(0, h*60*60 + m*60 + s, ms*1000)
 
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
