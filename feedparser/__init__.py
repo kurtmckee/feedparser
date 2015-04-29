@@ -187,7 +187,7 @@ except ImportError:
 from .datetimes import registerDateHandler, _parse_date
 from .html import _BaseHTMLProcessor, _cp1252
 from .http import _build_urllib2_request, _FeedURLHandler
-from .namespaces import georss, itunes, mediarss, psc
+from .namespaces import cc, georss, itunes, mediarss, psc
 from .sanitizer import _sanitizeHTML, _HTMLSanitizer
 from .sgml import *
 from .urls import _urljoin, _convert_to_idn, _makeSafeAbsoluteURI, _resolveRelativeURIs
@@ -219,7 +219,7 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       }
 
 
-class _FeedParserMixin(georss.Namespace, itunes.Namespace, mediarss.Namespace, psc.Namespace):
+class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediarss.Namespace, psc.Namespace):
     namespaces = {
         '': '',
         'http://backend.userland.com/rss': '',
@@ -1191,30 +1191,6 @@ class _FeedParserMixin(georss.Namespace, itunes.Namespace, mediarss.Namespace, p
 
     def _end_expirationdate(self):
         self._save('expired_parsed', _parse_date(self.pop('expired')), overwrite=True)
-
-    def _start_cc_license(self, attrsD):
-        context = self._getContext()
-        value = self._getAttribute(attrsD, 'rdf:resource')
-        attrsD = FeedParserDict()
-        attrsD['rel'] = u'license'
-        if value:
-            attrsD['href']=value
-        context.setdefault('links', []).append(attrsD)
-
-    def _start_creativecommons_license(self, attrsD):
-        self.push('license', 1)
-    _start_creativeCommons_license = _start_creativecommons_license
-
-    def _end_creativecommons_license(self):
-        value = self.pop('license')
-        context = self._getContext()
-        attrsD = FeedParserDict()
-        attrsD['rel'] = u'license'
-        if value:
-            attrsD['href'] = value
-        context.setdefault('links', []).append(attrsD)
-        del context['license']
-    _end_creativeCommons_license = _end_creativecommons_license
 
     def _addTag(self, term, scheme, label):
         context = self._getContext()
