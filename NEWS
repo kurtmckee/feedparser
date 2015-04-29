@@ -1,5 +1,6 @@
 coming in the next release:
     * Convert feedparser from a monolithic file to a package
+    * Update the Creative Commons namespace URI's
 
 5.2.0 - April 16, 2015
     * Support PyPy
