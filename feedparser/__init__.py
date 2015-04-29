@@ -187,7 +187,7 @@ except ImportError:
 from .datetimes import registerDateHandler, _parse_date
 from .html import _BaseHTMLProcessor, _cp1252
 from .http import _build_urllib2_request, _FeedURLHandler
-from .namespaces import cc, georss, itunes, mediarss, psc
+from .namespaces import cc, dc, georss, itunes, mediarss, psc
 from .sanitizer import _sanitizeHTML, _HTMLSanitizer
 from .sgml import *
 from .urls import _urljoin, _convert_to_idn, _makeSafeAbsoluteURI, _resolveRelativeURIs
@@ -219,7 +219,14 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       }
 
 
-class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediarss.Namespace, psc.Namespace):
+class _FeedParserMixin(
+        cc.Namespace,
+        dc.Namespace,
+        georss.Namespace,
+        itunes.Namespace,
+        mediarss.Namespace,
+        psc.Namespace,
+):
     namespaces = {
         '': '',
         'http://backend.userland.com/rss': '',
@@ -918,16 +925,12 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
         context.setdefault('authors', [])
         context['authors'].append(FeedParserDict())
     _start_managingeditor = _start_author
-    _start_dc_author = _start_author
-    _start_dc_creator = _start_author
 
     def _end_author(self):
         self.pop('author')
         self.inauthor = 0
         self._sync_author_detail()
     _end_managingeditor = _end_author
-    _end_dc_author = _end_author
-    _end_dc_creator = _end_author
 
     def _start_contributor(self, attrsD):
         self.incontributor = 1
@@ -938,17 +941,6 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
 
     def _end_contributor(self):
         self.pop('contributor')
-        self.incontributor = 0
-
-    def _start_dc_contributor(self, attrsD):
-        self.incontributor = 1
-        context = self._getContext()
-        context.setdefault('contributors', [])
-        context['contributors'].append(FeedParserDict())
-        self.push('name', 0)
-
-    def _end_dc_contributor(self):
-        self._end_name()
         self.incontributor = 0
 
     def _start_name(self, attrsD):
@@ -1091,12 +1083,10 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
 
     def _start_rights(self, attrsD):
         self.pushContent('rights', attrsD, u'text/plain', 1)
-    _start_dc_rights = _start_rights
     _start_copyright = _start_rights
 
     def _end_rights(self):
         self.popContent('rights')
-    _end_dc_rights = _end_rights
     _end_copyright = _end_rights
 
     def _start_item(self, attrsD):
@@ -1117,55 +1107,33 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
         self.inentry = 0
     _end_entry = _end_item
 
-    def _start_dc_language(self, attrsD):
+    def _start_language(self, attrsD):
         self.push('language', 1)
-    _start_language = _start_dc_language
 
-    def _end_dc_language(self):
+    def _end_language(self):
         self.lang = self.pop('language')
-    _end_language = _end_dc_language
 
-    def _start_dc_publisher(self, attrsD):
+    def _start_webmaster(self, attrsD):
         self.push('publisher', 1)
-    _start_webmaster = _start_dc_publisher
 
-    def _end_dc_publisher(self):
+    def _end_webmaster(self):
         self.pop('publisher')
         self._sync_author_detail('publisher')
-    _end_webmaster = _end_dc_publisher
-
-    def _start_dcterms_valid(self, attrsD):
-        self.push('validity', 1)
-
-    def _end_dcterms_valid(self):
-        for validity_detail in self.pop('validity').split(';'):
-            if '=' in validity_detail:
-                key, value = validity_detail.split('=', 1)
-                if key == 'start':
-                    self._save('validity_start', value, overwrite=True)
-                    self._save('validity_start_parsed', _parse_date(value), overwrite=True)
-                elif key == 'end':
-                    self._save('validity_end', value, overwrite=True)
-                    self._save('validity_end_parsed', _parse_date(value), overwrite=True)
 
     def _start_published(self, attrsD):
         self.push('published', 1)
-    _start_dcterms_issued = _start_published
     _start_issued = _start_published
     _start_pubdate = _start_published
 
     def _end_published(self):
         value = self.pop('published')
         self._save('published_parsed', _parse_date(value), overwrite=True)
-    _end_dcterms_issued = _end_published
     _end_issued = _end_published
     _end_pubdate = _end_published
 
     def _start_updated(self, attrsD):
         self.push('updated', 1)
     _start_modified = _start_updated
-    _start_dcterms_modified = _start_updated
-    _start_dc_date = _start_updated
     _start_lastbuilddate = _start_updated
 
     def _end_updated(self):
@@ -1173,18 +1141,14 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
         parsed_value = _parse_date(value)
         self._save('updated_parsed', parsed_value, overwrite=True)
     _end_modified = _end_updated
-    _end_dcterms_modified = _end_updated
-    _end_dc_date = _end_updated
     _end_lastbuilddate = _end_updated
 
     def _start_created(self, attrsD):
         self.push('created', 1)
-    _start_dcterms_created = _start_created
 
     def _end_created(self):
         value = self.pop('created')
         self._save('created_parsed', _parse_date(value), overwrite=True)
-    _end_dcterms_created = _end_created
 
     def _start_expirationdate(self, attrsD):
         self.push('expired', 1)
@@ -1217,7 +1181,6 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
         label = attrsD.get('label')
         self._addTag(term, scheme, label)
         self.push('category', 1)
-    _start_dc_subject = _start_category
     _start_keywords = _start_category
 
     def _end_category(self):
@@ -1230,7 +1193,6 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
             tags[-1]['term'] = value
         else:
             self._addTag(value, None, None)
-    _end_dc_subject = _end_category
     _end_keywords = _end_category
 
     def _start_cloud(self, attrsD):
@@ -1278,7 +1240,6 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
         if self.svgOK:
             return self.unknown_starttag('title', attrsD.items())
         self.pushContent('title', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
-    _start_dc_title = _start_title
 
     def _end_title(self):
         if self.svgOK:
@@ -1287,7 +1248,6 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
         if not value:
             return
         self.title_depth = self.depth
-    _end_dc_title = _end_title
 
     def _start_description(self, attrsD):
         context = self._getContext()
@@ -1296,7 +1256,6 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
             self._start_content(attrsD)
         else:
             self.pushContent('description', attrsD, u'text/html', self.infeed or self.inentry or self.insource)
-    _start_dc_description = _start_description
 
     def _start_abstract(self, attrsD):
         self.pushContent('description', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
@@ -1308,7 +1267,6 @@ class _FeedParserMixin(cc.Namespace, georss.Namespace, itunes.Namespace, mediars
             value = self.popContent('description')
         self._summaryKey = None
     _end_abstract = _end_description
-    _end_dc_description = _end_description
 
     def _start_info(self, attrsD):
         self.pushContent('info', attrsD, u'text/plain', 1)
