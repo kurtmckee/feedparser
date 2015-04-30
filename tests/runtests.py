@@ -44,6 +44,7 @@ import time
 import unittest
 import urllib
 import warnings
+import xml.sax
 import zlib
 import BaseHTTPServer
 import SimpleHTTPServer
@@ -458,7 +459,8 @@ class TestCompression(unittest.TestCase):
     def test_gzip_struct_error(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip-struct-error.gz')
         self.assertEqual(f.bozo, 1)
-        self.assertTrue(isinstance(f.bozo_exception, struct.error))
+        # Python 3.4 throws an EOFError that gets overwritten as xml.sax.SAXException later.
+        self.assertTrue(isinstance(f.bozo_exception, (xml.sax.SAXException, struct.error)))
     def test_zlib_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate.z')
         self.assertEqual(f.version, 'atom10')

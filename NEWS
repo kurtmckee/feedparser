@@ -2,6 +2,7 @@ coming in the next release:
     * Convert feedparser from a monolithic file to a package
     * Update the Creative Commons namespace URI's
     * Update the default User-Agent name and URL
+    * Catch EOFError when using gzip in Python 3.4
 
 5.2.0 - April 16, 2015
     * Support PyPy
