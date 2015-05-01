@@ -147,9 +147,6 @@ class FeedParserTestServer(threading.Thread):
         self.ready.clear()
 
 #---------- dummy test case class (test methods are added dynamically) ----------
-unicode1_re = re.compile(b" u'")
-unicode2_re = re.compile(b' u"')
-unicode3_re = re.compile(b"\[u'")
 
 # _bytes is only used in everythingIsUnicode().
 # In Python 2 it's str, and in Python 3 it's bytes.
@@ -174,21 +171,11 @@ def everythingIsUnicode(d):
 def failUnlessEval(self, xmlfile, evalString, msg=None):
     """Fail unless eval(evalString, env)"""
     env = feedparser.parse(xmlfile)
-    try:
-        if not eval(evalString, globals(), env):
-            failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-            raise self.failureException(failure)
-        if not everythingIsUnicode(env):
-            raise self.failureException("not everything is unicode \nWITH env(%s)" % (pprint.pformat(env), ))
-    except SyntaxError:
-        # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
-        # which will require the failure message to be updated
-        evalString = re.sub(unicode1_re, b" '", evalString)
-        evalString = re.sub(unicode2_re, b' "', evalString)
-        evalString = re.sub(unicode3_re, b"['", evalString)
-        if not eval(evalString, globals(), env):
-            failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-            raise self.failureException(failure)
+    if not eval(evalString, globals(), env):
+        failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+        raise self.failureException(failure)
+    if not everythingIsUnicode(env):
+        raise self.failureException("not everything is unicode \nWITH env(%s)" % (pprint.pformat(env), ))
 
 class BaseTestCase(unittest.TestCase):
     failUnlessEval = failUnlessEval
