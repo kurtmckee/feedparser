@@ -3,6 +3,7 @@ coming in the next release:
     * Update the Creative Commons namespace URI's
     * Update the default User-Agent name and URL
     * Catch EOFError when using gzip in Python 3.4
+    * Issue 20: Support Middle European (Summer) Time timezones
 
 5.2.0 - April 16, 2015
     * Support PyPy

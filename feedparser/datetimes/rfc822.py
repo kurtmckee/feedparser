@@ -11,6 +11,7 @@ timezonenames = {
     'pdt': -7, 'pst': -8, 'pt': -8,
     'a': -1, 'n': 1,
     'm': -12, 'y': 12,
+    'met': 1, 'mest': 2,
 }
 
 def _parse_date_rfc822(date):
