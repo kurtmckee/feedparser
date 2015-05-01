@@ -2,7 +2,7 @@
 SkipUnless:   __import__('codecs').lookup('windows-1252')
 Header:       Content-type: text/xml; charset=windows-1252
 Description:  text/xml + explicit charset (this one is harder than the others)
-Expect:       not bozo and entries[0]['description'] == u'This is a \xa3\u201ctest.\u201d'
+Expect:       not bozo and entries[0]['description'] == 'This is a \xa3\u201ctest.\u201d'
 -->
 
 <rss version="2.0">

@@ -2,7 +2,7 @@
 <!--
 SkipUnless:  __import__('codecs').lookup('cskoi8r')
 Description: \x80 character in cskoi8r encoding
-Expect:      not bozo and feed['title'] == u'\u2500'
+Expect:      not bozo and feed['title'] == '\u2500'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <title>€</title>
