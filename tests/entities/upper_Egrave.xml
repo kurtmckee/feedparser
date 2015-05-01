@@ -1,6 +1,6 @@
 <!--
 Description: Egrave
-Expect:      feed['title'] == u'testing \xc8 entity'
+Expect:      feed['title'] == 'testing \xc8 entity'
 -->
 <rss>
 <channel>

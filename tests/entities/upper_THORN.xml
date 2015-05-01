@@ -1,6 +1,6 @@
 <!--
 Description: THORN
-Expect:      feed['title'] == u'testing \xde entity'
+Expect:      feed['title'] == 'testing \xde entity'
 -->
 <rss>
 <channel>

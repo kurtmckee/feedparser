@@ -1,6 +1,6 @@
 <!--
 Description: & test 58
-Expect:      not bozo and entries[0]['title_detail']['value'] == u'<strong>&amp;</strong>'
+Expect:      not bozo and entries[0]['title_detail']['value'] == '<strong>&amp;</strong>'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <entry>

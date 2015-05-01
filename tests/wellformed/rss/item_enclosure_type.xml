@@ -1,6 +1,6 @@
 <!--
 Description: item enclosure type
-Expect:      not bozo and entries[0]['enclosures'][0]['type'] == u'image/jpeg'
+Expect:      not bozo and entries[0]['enclosures'][0]['type'] == 'image/jpeg'
 -->
 <rss version="2.0">
 <channel>

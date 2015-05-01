@@ -1,6 +1,6 @@
 <!--
 Description: item description ends with <br />
-Expect:      not bozo and entries[0]['description'] == u'<b>x</b><br />'
+Expect:      not bozo and entries[0]['description'] == '<b>x</b><br />'
 -->
 <rss version="2.0">
 <channel>

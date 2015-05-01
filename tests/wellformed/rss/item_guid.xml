@@ -1,6 +1,6 @@
 <!--
 Description: item guid
-Expect:      not bozo and entries[0]['guid'] == u'http://guid.example.com/'
+Expect:      not bozo and entries[0]['guid'] == 'http://guid.example.com/'
 -->
 <rss version="2.0">
 <channel>

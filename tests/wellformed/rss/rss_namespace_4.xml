@@ -1,6 +1,6 @@
 <!--
 Description: RSS Userland namespace #4
-Expect:      not bozo and feed['description'] == u'Example description'
+Expect:      not bozo and feed['description'] == 'Example description'
 -->
 <rss xmlns="http://blogs.law.harvard.edu/tech/rss">
 <channel>

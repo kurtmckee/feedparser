@@ -1,6 +1,6 @@
 <!--
 Description: Q&A
-Expect:      not bozo and entries[0]['title_detail']['value'] == u'Q&amp;A session'
+Expect:      not bozo and entries[0]['title_detail']['value'] == 'Q&amp;A session'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

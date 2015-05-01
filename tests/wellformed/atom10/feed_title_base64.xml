@@ -1,6 +1,6 @@
 <!--
 Description: feed title base64-encoded
-Expect:      not bozo and feed['title'] == u'Example <b>Atom</b>'
+Expect:      not bozo and feed['title'] == 'Example <b>Atom</b>'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title type="application/octet-stream">

@@ -1,6 +1,6 @@
 <!--
 Description: RSS Userland namespace #2
-Expect:      not bozo and feed['description'] == u'Example description'
+Expect:      not bozo and feed['description'] == 'Example description'
 -->
 <rss xmlns="http://backend.userland.com/rss2">
 <channel>

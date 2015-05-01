@@ -1,6 +1,6 @@
 <!--
 Description: channel webMaster maps to publisher
-Expect:      not bozo and feed['publisher_detail']['email'] == u'me@example.com'
+Expect:      not bozo and feed['publisher_detail']['email'] == 'me@example.com'
 -->
 <rss version="2.0">
 <channel>

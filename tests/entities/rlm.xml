@@ -1,6 +1,6 @@
 <!--
 Description: rlm
-Expect:      feed['title'] == u'testing \u200f entity'
+Expect:      feed['title'] == 'testing \u200f entity'
 -->
 <rss>
 <channel>

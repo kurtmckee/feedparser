@@ -1,6 +1,6 @@
 <!--
 Description: xhtml:body type
-Expect:      not bozo and entries[0]['content'][0]['type'] == u'application/xhtml+xml'
+Expect:      not bozo and entries[0]['content'][0]['type'] == 'application/xhtml+xml'
 -->
 <rss version="2.0">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: item guid does not override link
-Expect:      not bozo and entries[0]['link'] == u'http://link.example.com/'
+Expect:      not bozo and entries[0]['link'] == 'http://link.example.com/'
 -->
 <rss version="2.0">
 <channel>

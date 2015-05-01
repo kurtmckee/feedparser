@@ -1,6 +1,6 @@
 <!--
 Description: euro
-Expect:      feed['title'] == u'testing \u20ac entity'
+Expect:      feed['title'] == 'testing \u20ac entity'
 -->
 <rss>
 <channel>

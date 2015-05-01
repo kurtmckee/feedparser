@@ -1,6 +1,6 @@
 <!--
 Description: ne
-Expect:      feed['title'] == u'testing \u2260 entity'
+Expect:      feed['title'] == 'testing \u2260 entity'
 -->
 <rss>
 <channel>

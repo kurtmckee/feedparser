@@ -1,6 +1,6 @@
 <!--
 Description: normal link
-Expect:      not bozo and feed['link'] == u'http://example.com/'
+Expect:      not bozo and feed['link'] == 'http://example.com/'
 -->
 <rss version="2.0">
 <channel>

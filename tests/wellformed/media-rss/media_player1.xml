@@ -1,6 +1,6 @@
 <!--
 Description: media player content
-Expect:      not bozo and entries[0]['media_player']['url'] == u'http://www.example.com/'
+Expect:      not bozo and entries[0]['media_player']['url'] == 'http://www.example.com/'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <entry>

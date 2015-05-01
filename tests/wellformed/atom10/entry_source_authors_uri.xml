@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
 Description: entry contains multiple author uris
-Expect: not bozo and (entries[0]['source']['authors'][0]['url'] == u'http://one.com/') and (entries[0]['source']['authors'][1]['url'] == u'http://two.com/')
+Expect: not bozo and (entries[0]['source']['authors'][0]['url'] == 'http://one.com/') and (entries[0]['source']['authors'][1]['url'] == 'http://two.com/')
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
   <entry>

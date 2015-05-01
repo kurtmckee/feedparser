@@ -1,6 +1,6 @@
 <!--
 Description: kappa
-Expect:      feed['title'] == u'testing \u03ba entity'
+Expect:      feed['title'] == 'testing \u03ba entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: entry source generator version
-Expect:      not bozo and entries[0]['source']['generator_detail']['version'] == u'2.65'
+Expect:      not bozo and entries[0]['source']['generator_detail']['version'] == '2.65'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

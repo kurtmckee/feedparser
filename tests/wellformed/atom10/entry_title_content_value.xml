@@ -1,6 +1,6 @@
 <!--
 Description: entry title content value
-Expect:      not bozo and entries[0]['title_detail']['value'] == u'Example Atom'
+Expect:      not bozo and entries[0]['title_detail']['value'] == 'Example Atom'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

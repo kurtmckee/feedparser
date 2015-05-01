@@ -1,6 +1,6 @@
 <!--
 Description: empty xmlns uri
-Expect:      not bozo and feed['title'] == u'empty'
+Expect:      not bozo and feed['title'] == 'empty'
 -->
 <rss xmlns="">
     <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: item guid maps to link when isPermaLink="true"
-Expect:      not bozo and entries[0]['link'] == u'http://guid.example.com/'
+Expect:      not bozo and entries[0]['link'] == 'http://guid.example.com/'
 -->
 <rss version="2.0">
 <channel>

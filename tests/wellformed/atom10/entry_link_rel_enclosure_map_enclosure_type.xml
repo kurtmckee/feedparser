@@ -1,6 +1,6 @@
 <!--
 Description: entry link rel='enclosure'
-Expect:      not bozo and entries[0]['enclosures'][0]['type'] == u'video/mpeg4'
+Expect:      not bozo and entries[0]['enclosures'][0]['type'] == 'video/mpeg4'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

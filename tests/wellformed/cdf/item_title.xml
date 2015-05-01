@@ -1,6 +1,6 @@
 <!--
 Description: CDF item title
-Expect:      not bozo and entries[0]['title'] == u'Example item'
+Expect:      not bozo and entries[0]['title'] == 'Example item'
 -->
 <CHANNEL>
 <ITEM>

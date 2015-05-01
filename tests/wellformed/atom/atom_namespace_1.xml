@@ -1,6 +1,6 @@
 <!--
 Description: Atom namespace (official)
-Expect:      not bozo and feed['title'] == u'Example Atom'
+Expect:      not bozo and feed['title'] == 'Example Atom'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
   <title>Example Atom</title>

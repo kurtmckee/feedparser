@@ -1,6 +1,6 @@
 <!--
 Description: feed author name + email maps to author
-Expect:      not bozo and feed['author'] == u'Example author (me@example.com)'
+Expect:      not bozo and feed['author'] == 'Example author (me@example.com)'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
   <author>

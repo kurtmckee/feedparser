@@ -1,6 +1,6 @@
 <!--
 Description: content:encoded
-Expect:      not bozo and entries[0]['content'][0]['value'] == u'<p>Example content</p>'
+Expect:      not bozo and entries[0]['content'][0]['value'] == '<p>Example content</p>'
 -->
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 <channel>

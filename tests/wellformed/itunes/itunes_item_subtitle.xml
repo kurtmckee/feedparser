@@ -1,6 +1,6 @@
 <!--
 Description: iTunes item subtitle
-Expect:      not bozo and entries[0]['subtitle'] == u'Example subtitle'
+Expect:      not bozo and entries[0]['subtitle'] == 'Example subtitle'
 -->
 <rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd">
 <channel>

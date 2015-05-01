@@ -1,6 +1,6 @@
 <!--
 Description: cap
-Expect:      feed['title'] == u'testing \u2229 entity'
+Expect:      feed['title'] == 'testing \u2229 entity'
 -->
 <rss>
 <channel>

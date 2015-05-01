@@ -1,6 +1,6 @@
 <!--
 Description: rceil
-Expect:      feed['title'] == u'testing \u2309 entity'
+Expect:      feed['title'] == 'testing \u2309 entity'
 -->
 <rss>
 <channel>

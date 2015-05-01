@@ -1,6 +1,6 @@
 <!--
 Description: iota
-Expect:      feed['title'] == u'testing \u03b9 entity'
+Expect:      feed['title'] == 'testing \u03b9 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: weierp
-Expect:      feed['title'] == u'testing \u2118 entity'
+Expect:      feed['title'] == 'testing \u2118 entity'
 -->
 <rss>
 <channel>

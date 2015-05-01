@@ -1,6 +1,6 @@
 <!--
 Description: entry id maps to guid
-Expect:      not bozo and entries[0]['guid'] == u'http://example.com/'
+Expect:      not bozo and entries[0]['guid'] == 'http://example.com/'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

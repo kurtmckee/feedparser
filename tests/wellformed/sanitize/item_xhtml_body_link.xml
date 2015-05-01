@@ -1,6 +1,6 @@
 <!--
 Description: item xhtml:body contains link
-Expect:      not bozo and entries[0]['description'] == u'safe description'
+Expect:      not bozo and entries[0]['description'] == 'safe description'
 -->
 <rss version="2.0">
 <channel>

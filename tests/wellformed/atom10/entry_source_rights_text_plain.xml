@@ -1,6 +1,6 @@
 <!--
 Description: entry source rights with explicit type='text'
-Expect:      not bozo and entries[0]['source']['rights'] == u'Example Atom'
+Expect:      not bozo and entries[0]['source']['rights'] == 'Example Atom'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

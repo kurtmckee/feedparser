@@ -1,6 +1,6 @@
 <!--
 Description: Eacute
-Expect:      feed['title'] == u'testing \xc9 entity'
+Expect:      feed['title'] == 'testing \xc9 entity'
 -->
 <rss>
 <channel>

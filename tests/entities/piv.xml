@@ -1,6 +1,6 @@
 <!--
 Description: piv
-Expect:      feed['title'] == u'testing \u03d6 entity'
+Expect:      feed['title'] == 'testing \u03d6 entity'
 -->
 <rss>
 <channel>

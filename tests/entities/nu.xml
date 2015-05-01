@@ -1,6 +1,6 @@
 <!--
 Description: nu
-Expect:      feed['title'] == u'testing \u03bd entity'
+Expect:      feed['title'] == 'testing \u03bd entity'
 -->
 <rss>
 <channel>

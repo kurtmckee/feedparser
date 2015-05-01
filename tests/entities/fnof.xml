@@ -1,6 +1,6 @@
 <!--
 Description: fnof
-Expect:      feed['title'] == u'testing \u0192 entity'
+Expect:      feed['title'] == 'testing \u0192 entity'
 -->
 <rss>
 <channel>

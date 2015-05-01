@@ -1,6 +1,6 @@
 <!--
 Description: Scaron
-Expect:      feed['title'] == u'testing \u0160 entity'
+Expect:      feed['title'] == 'testing \u0160 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: clubs
-Expect:      feed['title'] == u'testing \u2663 entity'
+Expect:      feed['title'] == 'testing \u2663 entity'
 -->
 <rss>
 <channel>

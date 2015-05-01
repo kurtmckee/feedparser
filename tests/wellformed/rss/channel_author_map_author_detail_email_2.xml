@@ -1,6 +1,6 @@
 <!--
 Description: channel author maps to author_detail email if both name and email are given (email contains +)
-Expect:      not bozo and feed['author_detail']['email'] == u'me+spam@example.com'
+Expect:      not bozo and feed['author_detail']['email'] == 'me+spam@example.com'
 -->
 <rss version="2.0">
 <channel>

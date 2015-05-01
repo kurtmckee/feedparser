@@ -1,6 +1,6 @@
 <!--
 Description: entry source subtitle base64-encoded
-Expect:      not bozo and entries[0]['source']['subtitle'] == u'<p>History of the &lt;blink&gt; tag</p>'
+Expect:      not bozo and entries[0]['source']['subtitle'] == '<p>History of the &lt;blink&gt; tag</p>'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

@@ -1,6 +1,6 @@
 <!--
 Description: ttl
-Expect:      not bozo and feed['ttl'] == u'60'
+Expect:      not bozo and feed['ttl'] == '60'
 -->
 <rss version="2.0">
 <channel>

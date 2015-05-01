@@ -1,6 +1,6 @@
 <!--
 Description: entry summary
-Expect:      not bozo and entries[0]['summary'] == u'Example Atom'
+Expect:      not bozo and entries[0]['summary'] == 'Example Atom'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <entry>

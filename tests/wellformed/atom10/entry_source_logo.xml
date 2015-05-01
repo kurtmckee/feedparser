@@ -1,6 +1,6 @@
 <!--
 Description: entry source logo
-Expect:      not bozo and entries[0]['source']['logo'] == u'http://example.com/logo.jpg'
+Expect:      not bozo and entries[0]['source']['logo'] == 'http://example.com/logo.jpg'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

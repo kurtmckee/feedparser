@@ -1,6 +1,6 @@
 <!--
 Description: dagger
-Expect:      feed['title'] == u'testing \u2020 entity'
+Expect:      feed['title'] == 'testing \u2020 entity'
 -->
 <rss>
 <channel>

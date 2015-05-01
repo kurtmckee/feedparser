@@ -1,7 +1,7 @@
 <!--
 Credits:     Simon Fell - http://www.pocketsoap.com/rssTests/rss2.0noNSwithModules.xml - included here with permission
 Description: RSS 2.0 with modules
-Expect:      not bozo and entries[0]['title'] == u'Test Item - RSS 2.0 no NS'
+Expect:      not bozo and entries[0]['title'] == 'Test Item - RSS 2.0 no NS'
 -->
 <rss 		 version="2.0"
 		 xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 

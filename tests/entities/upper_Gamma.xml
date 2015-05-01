@@ -1,6 +1,6 @@
 <!--
 Description: Gamma
-Expect:      feed['title'] == u'testing \u0393 entity'
+Expect:      feed['title'] == 'testing \u0393 entity'
 -->
 <rss>
 <channel>

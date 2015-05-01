@@ -1,6 +1,6 @@
 <!--
 Description: normal copyright
-Expect:      not bozo and feed['copyright'] == u'Example copyright'
+Expect:      not bozo and feed['copyright'] == 'Example copyright'
 -->
 <rss version="2.0">
 <channel>

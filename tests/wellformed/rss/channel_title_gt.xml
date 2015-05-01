@@ -1,6 +1,6 @@
 <!--
 Description: channel title contains gt entity
-Expect:      not bozo and feed['title'] == u'2 > 1'
+Expect:      not bozo and feed['title'] == '2 > 1'
 -->
 <rss version="0.91">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: item enclosure length
-Expect:      not bozo and entries[0]['enclosures'][0]['length'] == u'100000'
+Expect:      not bozo and entries[0]['enclosures'][0]['length'] == '100000'
 -->
 <rss version="2.0">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: channel title contains lt entity
-Expect:      not bozo and feed['title'] == u'1 < 2'
+Expect:      not bozo and feed['title'] == '1 < 2'
 -->
 <rss version="0.91">
 <channel>

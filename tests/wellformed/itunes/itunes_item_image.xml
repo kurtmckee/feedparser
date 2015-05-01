@@ -1,6 +1,6 @@
 <!--
 Description: iTunes item image
-Expect:      not bozo and entries[0]['image']['href'] == u'http://example.com/logo.jpg'
+Expect:      not bozo and entries[0]['image']['href'] == 'http://example.com/logo.jpg'
 -->
 <rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: Iacute
-Expect:      feed['title'] == u'testing \xcd entity'
+Expect:      feed['title'] == 'testing \xcd entity'
 -->
 <rss>
 <channel>

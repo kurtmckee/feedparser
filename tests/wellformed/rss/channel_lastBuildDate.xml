@@ -1,6 +1,6 @@
 <!--
 Description: channel lastBuildDate
-Expect: not bozo and feed['updated'] == u'Sat, 07 Sep 2002 00:00:01 GMT'
+Expect: not bozo and feed['updated'] == 'Sat, 07 Sep 2002 00:00:01 GMT'
 -->
 <rss version="2.0">
 <channel>

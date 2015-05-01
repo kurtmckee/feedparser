@@ -1,6 +1,6 @@
 <!--
 Description: pound
-Expect:      feed['title'] == u'testing \xa3 entity'
+Expect:      feed['title'] == 'testing \xa3 entity'
 -->
 <rss>
 <channel>

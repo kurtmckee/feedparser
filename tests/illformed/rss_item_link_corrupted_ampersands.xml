@@ -1,6 +1,6 @@
 <!--
     Description: ensure a=1&b=2, not a=1&b;=2
-    Expect: entries[0].link == u'http://link/get?a=1&b=2'
+    Expect: entries[0].link == 'http://link/get?a=1&b=2'
 -->
 
 <rss version="2.0">

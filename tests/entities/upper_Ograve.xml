@@ -1,6 +1,6 @@
 <!--
 Description: Ograve
-Expect:      feed['title'] == u'testing \xd2 entity'
+Expect:      feed['title'] == 'testing \xd2 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: entry title base64-encoded
-Expect:      not bozo and entries[0]['title'] == u'<p>History of the &lt;blink&gt; tag</p>'
+Expect:      not bozo and entries[0]['title'] == '<p>History of the &lt;blink&gt; tag</p>'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <entry>

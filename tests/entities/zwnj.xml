@@ -1,6 +1,6 @@
 <!--
 Description: zwnj
-Expect:      feed['title'] == u'testing \u200c entity'
+Expect:      feed['title'] == 'testing \u200c entity'
 -->
 <rss>
 <channel>

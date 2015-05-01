@@ -1,6 +1,6 @@
 <!--
 Description: CDF channel title
-Expect:      not bozo and feed['title'] == u'Example feed'
+Expect:      not bozo and feed['title'] == 'Example feed'
 -->
 <CHANNEL>
   <TITLE>Example feed</TITLE>

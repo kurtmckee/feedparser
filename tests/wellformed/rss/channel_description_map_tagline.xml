@@ -1,6 +1,6 @@
 <!--
 Description: channel description is mapped to tagline
-Expect:      not bozo and feed['tagline'] == u'Example description'
+Expect:      not bozo and feed['tagline'] == 'Example description'
 -->
 <rss version="2.0">
 <channel>

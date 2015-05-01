@@ -1,6 +1,6 @@
 <!--
 Description: Yuml
-Expect:      feed['title'] == u'testing \u0178 entity'
+Expect:      feed['title'] == 'testing \u0178 entity'
 -->
 <rss>
 <channel>

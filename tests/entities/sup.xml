@@ -1,6 +1,6 @@
 <!--
 Description: sup
-Expect:      feed['title'] == u'testing \u2283 entity'
+Expect:      feed['title'] == 'testing \u2283 entity'
 -->
 <rss>
 <channel>

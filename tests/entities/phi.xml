@@ -1,6 +1,6 @@
 <!--
 Description: phi
-Expect:      feed['title'] == u'testing \u03c6 entity'
+Expect:      feed['title'] == 'testing \u03c6 entity'
 -->
 <rss>
 <channel>
