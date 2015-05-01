@@ -1,0 +1,5 @@
+*.pyc
+.tox/
+dist/
+env/
+feedparser.egg-info/

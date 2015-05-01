@@ -41,10 +41,9 @@ This will produce HTML documentation in the fpdocs/ directory.
 Testing
 =======
 
-Feedparser has an extensive test suite that has been growing for a decade. If
-you'd like to run the tests yourself, you can run the following command::
+Feedparser has an extensive test suite, powered by tox. To run it, type this::
 
-    $ python feedparsertest.py
+    $ tox
 
 This will spawn an HTTP server that will listen on port 8097. The tests will
 fail if that port is in use.

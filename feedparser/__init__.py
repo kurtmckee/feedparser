@@ -53,7 +53,7 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
 # change this to your application name and URL.
-USER_AGENT = "UniversalFeedParser/%s +https://code.google.com/p/feedparser/" % __version__
+USER_AGENT = "feedparser/%s +https://github.com/kurtmckee/feedparser/" % __version__
 
 # HTTP "Accept" header to send to servers when downloading feeds.  If you don't
 # want to send an Accept header, set this to None.
@@ -123,7 +123,6 @@ import types
 import urllib
 import urllib2
 import urlparse
-import warnings
 
 from htmlentitydefs import name2codepoint, codepoint2name, entitydefs
 
@@ -188,9 +187,11 @@ except ImportError:
 from .datetimes import registerDateHandler, _parse_date
 from .html import _BaseHTMLProcessor, _cp1252
 from .http import _build_urllib2_request, _FeedURLHandler
+from .namespaces import cc, dc, georss, itunes, mediarss, psc
 from .sanitizer import _sanitizeHTML, _HTMLSanitizer
 from .sgml import *
 from .urls import _urljoin, _convert_to_idn, _makeSafeAbsoluteURI, _resolveRelativeURIs
+from .util import FeedParserDict
 
 # ---------- don't touch these ----------
 class ThingsNobodyCaresAboutButMe(Exception): pass
@@ -217,121 +218,15 @@ SUPPORTED_VERSIONS = {'': u'unknown',
                       'cdf': u'CDF',
                       }
 
-class FeedParserDict(dict):
-    keymap = {'channel': 'feed',
-              'items': 'entries',
-              'guid': 'id',
-              'date': 'updated',
-              'date_parsed': 'updated_parsed',
-              'description': ['summary', 'subtitle'],
-              'description_detail': ['summary_detail', 'subtitle_detail'],
-              'url': ['href'],
-              'modified': 'updated',
-              'modified_parsed': 'updated_parsed',
-              'issued': 'published',
-              'issued_parsed': 'published_parsed',
-              'copyright': 'rights',
-              'copyright_detail': 'rights_detail',
-              'tagline': 'subtitle',
-              'tagline_detail': 'subtitle_detail'}
-    def __getitem__(self, key):
-        '''
-        :return: A :class:`FeedParserDict`.
-        '''
-        if key == 'category':
-            try:
-                return dict.__getitem__(self, 'tags')[0]['term']
-            except IndexError:
-                raise KeyError, "object doesn't have key 'category'"
-        elif key == 'enclosures':
-            norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
-            return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']==u'enclosure']
-        elif key == 'license':
-            for link in dict.__getitem__(self, 'links'):
-                if link['rel']==u'license' and 'href' in link:
-                    return link['href']
-        elif key == 'updated':
-            # Temporarily help developers out by keeping the old
-            # broken behavior that was reported in issue 310.
-            # This fix was proposed in issue 328.
-            if not dict.__contains__(self, 'updated') and \
-                dict.__contains__(self, 'published'):
-                warnings.warn("To avoid breaking existing software while "
-                    "fixing issue 310, a temporary mapping has been created "
-                    "from `updated` to `published` if `updated` doesn't "
-                    "exist. This fallback will be removed in a future version "
-                    "of feedparser.", DeprecationWarning)
-                return dict.__getitem__(self, 'published')
-            return dict.__getitem__(self, 'updated')
-        elif key == 'updated_parsed':
-            if not dict.__contains__(self, 'updated_parsed') and \
-                dict.__contains__(self, 'published_parsed'):
-                warnings.warn("To avoid breaking existing software while "
-                    "fixing issue 310, a temporary mapping has been created "
-                    "from `updated_parsed` to `published_parsed` if "
-                    "`updated_parsed` doesn't exist. This fallback will be "
-                    "removed in a future version of feedparser.",
-                    DeprecationWarning)
-                return dict.__getitem__(self, 'published_parsed')
-            return dict.__getitem__(self, 'updated_parsed')
-        else:
-            realkey = self.keymap.get(key, key)
-            if isinstance(realkey, list):
-                for k in realkey:
-                    if dict.__contains__(self, k):
-                        return dict.__getitem__(self, k)
-            elif dict.__contains__(self, realkey):
-                return dict.__getitem__(self, realkey)
-        return dict.__getitem__(self, key)
 
-    def __contains__(self, key):
-        if key in ('updated', 'updated_parsed'):
-            # Temporarily help developers out by keeping the old
-            # broken behavior that was reported in issue 310.
-            # This fix was proposed in issue 328.
-            return dict.__contains__(self, key)
-        try:
-            self.__getitem__(key)
-        except KeyError:
-            return False
-        else:
-            return True
-
-    has_key = __contains__
-
-    def get(self, key, default=None):
-        '''
-        :return: A :class:`FeedParserDict`.
-        '''
-        try:
-            return self.__getitem__(key)
-        except KeyError:
-            return default
-
-    def __setitem__(self, key, value):
-        key = self.keymap.get(key, key)
-        if isinstance(key, list):
-            key = key[0]
-        return dict.__setitem__(self, key, value)
-
-    def setdefault(self, key, value):
-        if key not in self:
-            self[key] = value
-            return value
-        return self[key]
-
-    def __getattr__(self, key):
-        # __getattribute__() is called first; this will be called
-        # only if an attribute was not already found
-        try:
-            return self.__getitem__(key)
-        except KeyError:
-            raise AttributeError, "object has no attribute '%s'" % key
-
-    def __hash__(self):
-        return id(self)
-
-class _FeedParserMixin:
+class _FeedParserMixin(
+        cc.Namespace,
+        dc.Namespace,
+        georss.Namespace,
+        itunes.Namespace,
+        mediarss.Namespace,
+        psc.Namespace,
+):
     namespaces = {
         '': '',
         'http://backend.userland.com/rss': '',
@@ -352,7 +247,9 @@ class _FeedParserMixin:
         'http://purl.org/rss/1.0/modules/annotate/':             'annotate',
         'http://media.tangent.org/rss/1.0/':                     'audio',
         'http://backend.userland.com/blogChannelModule':         'blogChannel',
+        'http://creativecommons.org/ns#license':                 'cc',
         'http://web.resource.org/cc/':                           'cc',
+        'http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html': 'creativeCommons',
         'http://backend.userland.com/creativeCommonsRssModule':  'creativeCommons',
         'http://purl.org/rss/1.0/modules/company':               'co',
         'http://purl.org/rss/1.0/modules/content/':              'content',
@@ -407,12 +304,11 @@ class _FeedParserMixin:
     can_contain_dangerous_markup = set(['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description'])
     html_types = [u'text/html', u'application/xhtml+xml']
 
-    def __init__(self, baseuri=None, baselang=None, encoding=u'utf-8'):
+    def __init__(self):
         if not self._matchnamespaces:
             for k, v in self.namespaces.items():
                 self._matchnamespaces[k.lower()] = v
         self.feeddata = FeedParserDict() # feed-level data
-        self.encoding = encoding # character encoding
         self.entries = [] # list of entry-level data
         self.version = u'' # feed type/version, see SUPPORTED_VERSIONS
         self.namespacesInUse = {} # dictionary of namespaces defined by the feed
@@ -429,9 +325,6 @@ class _FeedParserMixin:
         self.inpublisher = 0
         self.insource = 0
 
-        # georss
-        self.ingeometry = 0
-
         self.sourcedata = FeedParserDict()
         self.contentparams = FeedParserDict()
         self._summaryKey = None
@@ -439,18 +332,11 @@ class _FeedParserMixin:
         self.elementstack = []
         self.basestack = []
         self.langstack = []
-        self.baseuri = baseuri or u''
-        self.lang = baselang or None
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
-        # psc_chapters_flag prevents multiple psc_chapters from being
-        # captured in a single entry or item. The transition states are
-        # None -> True -> False. psc_chapter elements will only be
-        # captured while it is True.
-        self.psc_chapters_flag = None
-        if baselang:
-            self.feeddata['language'] = baselang.replace('_','-')
+        if self.lang:
+            self.feeddata['language'] = self.lang.replace('_','-')
 
         # A map of the following form:
         #     {
@@ -460,6 +346,7 @@ class _FeedParserMixin:
         #         },
         #     }
         self.property_depth_map = {}
+        super(_FeedParserMixin, self).__init__()
 
     def _normalize_attributes(self, kv):
         k = kv[0].lower()
@@ -1038,27 +925,12 @@ class _FeedParserMixin:
         context.setdefault('authors', [])
         context['authors'].append(FeedParserDict())
     _start_managingeditor = _start_author
-    _start_dc_author = _start_author
-    _start_dc_creator = _start_author
-    _start_itunes_author = _start_author
 
     def _end_author(self):
         self.pop('author')
         self.inauthor = 0
         self._sync_author_detail()
     _end_managingeditor = _end_author
-    _end_dc_author = _end_author
-    _end_dc_creator = _end_author
-    _end_itunes_author = _end_author
-
-    def _start_itunes_owner(self, attrsD):
-        self.inpublisher = 1
-        self.push('publisher', 0)
-
-    def _end_itunes_owner(self):
-        self.pop('publisher')
-        self.inpublisher = 0
-        self._sync_author_detail('publisher')
 
     def _start_contributor(self, attrsD):
         self.incontributor = 1
@@ -1071,20 +943,8 @@ class _FeedParserMixin:
         self.pop('contributor')
         self.incontributor = 0
 
-    def _start_dc_contributor(self, attrsD):
-        self.incontributor = 1
-        context = self._getContext()
-        context.setdefault('contributors', [])
-        context['contributors'].append(FeedParserDict())
-        self.push('name', 0)
-
-    def _end_dc_contributor(self):
-        self._end_name()
-        self.incontributor = 0
-
     def _start_name(self, attrsD):
         self.push('name', 0)
-    _start_itunes_name = _start_name
 
     def _end_name(self):
         value = self.pop('name')
@@ -1097,7 +957,6 @@ class _FeedParserMixin:
         elif self.intextinput:
             context = self._getContext()
             context['name'] = value
-    _end_itunes_name = _end_name
 
     def _start_width(self, attrsD):
         self.push('width', 0)
@@ -1141,7 +1000,6 @@ class _FeedParserMixin:
 
     def _start_email(self, attrsD):
         self.push('email', 0)
-    _start_itunes_email = _start_email
 
     def _end_email(self):
         value = self.pop('email')
@@ -1151,7 +1009,6 @@ class _FeedParserMixin:
             self._save_author('email', value)
         elif self.incontributor:
             self._save_contributor('email', value)
-    _end_itunes_email = _end_email
 
     def _getContext(self):
         if self.insource:
@@ -1219,21 +1076,17 @@ class _FeedParserMixin:
     def _start_subtitle(self, attrsD):
         self.pushContent('subtitle', attrsD, u'text/plain', 1)
     _start_tagline = _start_subtitle
-    _start_itunes_subtitle = _start_subtitle
 
     def _end_subtitle(self):
         self.popContent('subtitle')
     _end_tagline = _end_subtitle
-    _end_itunes_subtitle = _end_subtitle
 
     def _start_rights(self, attrsD):
         self.pushContent('rights', attrsD, u'text/plain', 1)
-    _start_dc_rights = _start_rights
     _start_copyright = _start_rights
 
     def _end_rights(self):
         self.popContent('rights')
-    _end_dc_rights = _end_rights
     _end_copyright = _end_rights
 
     def _start_item(self, attrsD):
@@ -1242,7 +1095,6 @@ class _FeedParserMixin:
         self.inentry = 1
         self.guidislink = 0
         self.title_depth = -1
-        self.psc_chapters_flag = None
         id = self._getAttribute(attrsD, 'rdf:about')
         if id:
             context = self._getContext()
@@ -1255,55 +1107,33 @@ class _FeedParserMixin:
         self.inentry = 0
     _end_entry = _end_item
 
-    def _start_dc_language(self, attrsD):
+    def _start_language(self, attrsD):
         self.push('language', 1)
-    _start_language = _start_dc_language
 
-    def _end_dc_language(self):
+    def _end_language(self):
         self.lang = self.pop('language')
-    _end_language = _end_dc_language
 
-    def _start_dc_publisher(self, attrsD):
+    def _start_webmaster(self, attrsD):
         self.push('publisher', 1)
-    _start_webmaster = _start_dc_publisher
 
-    def _end_dc_publisher(self):
+    def _end_webmaster(self):
         self.pop('publisher')
         self._sync_author_detail('publisher')
-    _end_webmaster = _end_dc_publisher
-
-    def _start_dcterms_valid(self, attrsD):
-        self.push('validity', 1)
-
-    def _end_dcterms_valid(self):
-        for validity_detail in self.pop('validity').split(';'):
-            if '=' in validity_detail:
-                key, value = validity_detail.split('=', 1)
-                if key == 'start':
-                    self._save('validity_start', value, overwrite=True)
-                    self._save('validity_start_parsed', _parse_date(value), overwrite=True)
-                elif key == 'end':
-                    self._save('validity_end', value, overwrite=True)
-                    self._save('validity_end_parsed', _parse_date(value), overwrite=True)
 
     def _start_published(self, attrsD):
         self.push('published', 1)
-    _start_dcterms_issued = _start_published
     _start_issued = _start_published
     _start_pubdate = _start_published
 
     def _end_published(self):
         value = self.pop('published')
         self._save('published_parsed', _parse_date(value), overwrite=True)
-    _end_dcterms_issued = _end_published
     _end_issued = _end_published
     _end_pubdate = _end_published
 
     def _start_updated(self, attrsD):
         self.push('updated', 1)
     _start_modified = _start_updated
-    _start_dcterms_modified = _start_updated
-    _start_dc_date = _start_updated
     _start_lastbuilddate = _start_updated
 
     def _end_updated(self):
@@ -1311,170 +1141,20 @@ class _FeedParserMixin:
         parsed_value = _parse_date(value)
         self._save('updated_parsed', parsed_value, overwrite=True)
     _end_modified = _end_updated
-    _end_dcterms_modified = _end_updated
-    _end_dc_date = _end_updated
     _end_lastbuilddate = _end_updated
 
     def _start_created(self, attrsD):
         self.push('created', 1)
-    _start_dcterms_created = _start_created
 
     def _end_created(self):
         value = self.pop('created')
         self._save('created_parsed', _parse_date(value), overwrite=True)
-    _end_dcterms_created = _end_created
 
     def _start_expirationdate(self, attrsD):
         self.push('expired', 1)
 
     def _end_expirationdate(self):
         self._save('expired_parsed', _parse_date(self.pop('expired')), overwrite=True)
-
-    # geospatial location, or "where", from georss.org
-
-    def _start_georssgeom(self, attrsD):
-        self.push('geometry', 0)
-        context = self._getContext()
-        context['where'] = FeedParserDict()
-
-    _start_georss_point = _start_georssgeom
-    _start_georss_line = _start_georssgeom
-    _start_georss_polygon = _start_georssgeom
-    _start_georss_box = _start_georssgeom
-
-    def _save_where(self, geometry):
-        context = self._getContext()
-        context['where'].update(geometry)
-
-    def _end_georss_point(self):
-        geometry = _parse_georss_point(self.pop('geometry'))
-        if geometry:
-            self._save_where(geometry)
-
-    def _end_georss_line(self):
-        geometry = _parse_georss_line(self.pop('geometry'))
-        if geometry:
-            self._save_where(geometry)
-
-    def _end_georss_polygon(self):
-        this = self.pop('geometry')
-        geometry = _parse_georss_polygon(this)
-        if geometry:
-            self._save_where(geometry)
-
-    def _end_georss_box(self):
-        geometry = _parse_georss_box(self.pop('geometry'))
-        if geometry:
-            self._save_where(geometry)
-
-    def _start_where(self, attrsD):
-        self.push('where', 0)
-        context = self._getContext()
-        context['where'] = FeedParserDict()
-    _start_georss_where = _start_where
-
-    def _parse_srs_attrs(self, attrsD):
-        srsName = attrsD.get('srsname')
-        try:
-            srsDimension = int(attrsD.get('srsdimension', '2'))
-        except ValueError:
-            srsDimension = 2
-        context = self._getContext()
-        context['where']['srsName'] = srsName
-        context['where']['srsDimension'] = srsDimension
-
-    def _start_gml_point(self, attrsD):
-        self._parse_srs_attrs(attrsD)
-        self.ingeometry = 1
-        self.push('geometry', 0)
-
-    def _start_gml_linestring(self, attrsD):
-        self._parse_srs_attrs(attrsD)
-        self.ingeometry = 'linestring'
-        self.push('geometry', 0)
-
-    def _start_gml_polygon(self, attrsD):
-        self._parse_srs_attrs(attrsD)
-        self.push('geometry', 0)
-
-    def _start_gml_exterior(self, attrsD):
-        self.push('geometry', 0)
-
-    def _start_gml_linearring(self, attrsD):
-        self.ingeometry = 'polygon'
-        self.push('geometry', 0)
-
-    def _start_gml_pos(self, attrsD):
-        self.push('pos', 0)
-
-    def _end_gml_pos(self):
-        this = self.pop('pos')
-        context = self._getContext()
-        srsName = context['where'].get('srsName')
-        srsDimension = context['where'].get('srsDimension', 2)
-        swap = True
-        if srsName and "EPSG" in srsName:
-            epsg = int(srsName.split(":")[-1])
-            swap = bool(epsg in _geogCS)
-        geometry = _parse_georss_point(this, swap=swap, dims=srsDimension)
-        if geometry:
-            self._save_where(geometry)
-
-    def _start_gml_poslist(self, attrsD):
-        self.push('pos', 0)
-
-    def _end_gml_poslist(self):
-        this = self.pop('pos')
-        context = self._getContext()
-        srsName = context['where'].get('srsName')
-        srsDimension = context['where'].get('srsDimension', 2)
-        swap = True
-        if srsName and "EPSG" in srsName:
-            epsg = int(srsName.split(":")[-1])
-            swap = bool(epsg in _geogCS)
-        geometry = _parse_poslist(
-            this, self.ingeometry, swap=swap, dims=srsDimension)
-        if geometry:
-            self._save_where(geometry)
-
-    def _end_geom(self):
-        self.ingeometry = 0
-        self.pop('geometry')
-    _end_gml_point = _end_geom
-    _end_gml_linestring = _end_geom
-    _end_gml_linearring = _end_geom
-    _end_gml_exterior = _end_geom
-    _end_gml_polygon = _end_geom
-
-    def _end_where(self):
-        self.pop('where')
-    _end_georss_where = _end_where
-
-    # end geospatial
-
-    def _start_cc_license(self, attrsD):
-        context = self._getContext()
-        value = self._getAttribute(attrsD, 'rdf:resource')
-        attrsD = FeedParserDict()
-        attrsD['rel'] = u'license'
-        if value:
-            attrsD['href']=value
-        context.setdefault('links', []).append(attrsD)
-
-    def _start_creativecommons_license(self, attrsD):
-        self.push('license', 1)
-    _start_creativeCommons_license = _start_creativecommons_license
-
-    def _end_creativecommons_license(self):
-        value = self.pop('license')
-        context = self._getContext()
-        attrsD = FeedParserDict()
-        attrsD['rel'] = u'license'
-        if value:
-            attrsD['href'] = value
-        context.setdefault('links', []).append(attrsD)
-        del context['license']
-    _end_creativeCommons_license = _end_creativecommons_license
 
     def _addTag(self, term, scheme, label):
         context = self._getContext()
@@ -1501,26 +1181,7 @@ class _FeedParserMixin:
         label = attrsD.get('label')
         self._addTag(term, scheme, label)
         self.push('category', 1)
-    _start_dc_subject = _start_category
     _start_keywords = _start_category
-
-    def _start_media_category(self, attrsD):
-        attrsD.setdefault('scheme', u'http://search.yahoo.com/mrss/category_schema')
-        self._start_category(attrsD)
-
-    def _end_itunes_keywords(self):
-        for term in self.pop('itunes_keywords').split(','):
-            if term.strip():
-                self._addTag(term.strip(), u'http://www.itunes.com/', None)
-
-    def _end_media_keywords(self):
-        for term in self.pop('media_keywords').split(','):
-            if term.strip():
-                self._addTag(term.strip(), None, None)
-
-    def _start_itunes_category(self, attrsD):
-        self._addTag(attrsD.get('text'), u'http://www.itunes.com/', None)
-        self.push('category', 1)
 
     def _end_category(self):
         value = self.pop('category')
@@ -1532,10 +1193,7 @@ class _FeedParserMixin:
             tags[-1]['term'] = value
         else:
             self._addTag(value, None, None)
-    _end_dc_subject = _end_category
     _end_keywords = _end_category
-    _end_itunes_category = _end_category
-    _end_media_category = _end_category
 
     def _start_cloud(self, attrsD):
         self._getContext()['cloud'] = FeedParserDict(attrsD)
@@ -1582,8 +1240,6 @@ class _FeedParserMixin:
         if self.svgOK:
             return self.unknown_starttag('title', attrsD.items())
         self.pushContent('title', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
-    _start_dc_title = _start_title
-    _start_media_title = _start_title
 
     def _end_title(self):
         if self.svgOK:
@@ -1592,12 +1248,6 @@ class _FeedParserMixin:
         if not value:
             return
         self.title_depth = self.depth
-    _end_dc_title = _end_title
-
-    def _end_media_title(self):
-        title_depth = self.title_depth
-        self._end_title()
-        self.title_depth = title_depth
 
     def _start_description(self, attrsD):
         context = self._getContext()
@@ -1606,8 +1256,6 @@ class _FeedParserMixin:
             self._start_content(attrsD)
         else:
             self.pushContent('description', attrsD, u'text/html', self.infeed or self.inentry or self.insource)
-    _start_dc_description = _start_description
-    _start_media_description = _start_description
 
     def _start_abstract(self, attrsD):
         self.pushContent('description', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
@@ -1619,8 +1267,6 @@ class _FeedParserMixin:
             value = self.popContent('description')
         self._summaryKey = None
     _end_abstract = _end_description
-    _end_dc_description = _end_description
-    _end_media_description = _end_description
 
     def _start_info(self, attrsD):
         self.pushContent('info', attrsD, u'text/plain', 1)
@@ -1644,21 +1290,6 @@ class _FeedParserMixin:
         if 'generator_detail' in context:
             context['generator_detail']['name'] = value
 
-    def _start_admin_generatoragent(self, attrsD):
-        self.push('generator', 1)
-        value = self._getAttribute(attrsD, 'rdf:resource')
-        if value:
-            self.elementstack[-1][2].append(value)
-        self.pop('generator')
-        self._getContext()['generator_detail'] = FeedParserDict({'href': value})
-
-    def _start_admin_errorreportsto(self, attrsD):
-        self.push('errorreportsto', 1)
-        value = self._getAttribute(attrsD, 'rdf:resource')
-        if value:
-            self.elementstack[-1][2].append(value)
-        self.pop('errorreportsto')
-
     def _start_summary(self, attrsD):
         context = self._getContext()
         if 'summary' in context:
@@ -1667,7 +1298,6 @@ class _FeedParserMixin:
         else:
             self._summaryKey = 'summary'
             self.pushContent(self._summaryKey, attrsD, u'text/plain', 1)
-    _start_itunes_summary = _start_summary
 
     def _end_summary(self):
         if self._summaryKey == 'content':
@@ -1675,7 +1305,6 @@ class _FeedParserMixin:
         else:
             self.popContent(self._summaryKey or 'summary')
         self._summaryKey = None
-    _end_itunes_summary = _end_summary
 
     def _start_enclosure(self, attrsD):
         attrsD = self._itsAnHrefDamnIt(attrsD)
@@ -1725,101 +1354,6 @@ class _FeedParserMixin:
     _end_content_encoded = _end_content
     _end_fullitem = _end_content
 
-    def _start_itunes_image(self, attrsD):
-        self.push('itunes_image', 0)
-        if attrsD.get('href'):
-            self._getContext()['image'] = FeedParserDict({'href': attrsD.get('href')})
-        elif attrsD.get('url'):
-            self._getContext()['image'] = FeedParserDict({'href': attrsD.get('url')})
-    _start_itunes_link = _start_itunes_image
-
-    def _end_itunes_block(self):
-        value = self.pop('itunes_block', 0)
-        self._getContext()['itunes_block'] = (value == 'yes') and 1 or 0
-
-    def _end_itunes_explicit(self):
-        value = self.pop('itunes_explicit', 0)
-        # Convert 'yes' -> True, 'clean' to False, and any other value to None
-        # False and None both evaluate as False, so the difference can be ignored
-        # by applications that only need to know if the content is explicit.
-        self._getContext()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
-
-    def _start_media_group(self, attrsD):
-        # don't do anything, but don't break the enclosed tags either
-        pass
-
-    def _start_media_rating(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_rating', attrsD)
-        self.push('rating', 1)
-
-    def _end_media_rating(self):
-        rating = self.pop('rating')
-        if rating is not None and rating.strip():
-            context = self._getContext()
-            context['media_rating']['content'] = rating
-
-    def _start_media_credit(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_credit', [])
-        context['media_credit'].append(attrsD)
-        self.push('credit', 1)
-
-    def _end_media_credit(self):
-        credit = self.pop('credit')
-        if credit != None and len(credit.strip()) != 0:
-            context = self._getContext()
-            context['media_credit'][-1]['content'] = credit
-
-    def _start_media_restriction(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_restriction', attrsD)
-        self.push('restriction', 1)
-
-    def _end_media_restriction(self):
-        restriction = self.pop('restriction')
-        if restriction != None and len(restriction.strip()) != 0:
-            context = self._getContext()
-            context['media_restriction']['content'] = [cc.strip().lower() for cc in restriction.split(' ')]
-
-    def _start_media_license(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_license', attrsD)
-        self.push('license', 1)
-
-    def _end_media_license(self):
-        license = self.pop('license')
-        if license != None and len(license.strip()) != 0:
-            context = self._getContext()
-            context['media_license']['content'] = license
-
-    def _start_media_content(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_content', [])
-        context['media_content'].append(attrsD)
-
-    def _start_media_thumbnail(self, attrsD):
-        context = self._getContext()
-        context.setdefault('media_thumbnail', [])
-        self.push('url', 1) # new
-        context['media_thumbnail'].append(attrsD)
-
-    def _end_media_thumbnail(self):
-        url = self.pop('url')
-        context = self._getContext()
-        if url != None and len(url.strip()) != 0:
-            if 'url' not in context['media_thumbnail'][-1]:
-                context['media_thumbnail'][-1]['url'] = url
-
-    def _start_media_player(self, attrsD):
-        self.push('media_player', 0)
-        self._getContext()['media_player'] = FeedParserDict(attrsD)
-
-    def _end_media_player(self):
-        value = self.pop('media_player')
-        context = self._getContext()
-        context['media_player']['content'] = value
-
     def _start_newlocation(self, attrsD):
         self.push('newlocation', 1)
 
@@ -1831,34 +1365,17 @@ class _FeedParserMixin:
             return
         context['newlocation'] = _makeSafeAbsoluteURI(self.baseuri, url.strip())
 
-    def _start_psc_chapters(self, attrsD):
-        if self.psc_chapters_flag is None:
-	    # Transition from None -> True
-            self.psc_chapters_flag = True
-            attrsD['chapters'] = []
-            self._getContext()['psc_chapters'] = FeedParserDict(attrsD)
-
-    def _end_psc_chapters(self):
-        # Transition from True -> False
-        self.psc_chapters_flag = False
-
-    def _start_psc_chapter(self, attrsD):
-        if self.psc_chapters_flag:
-            start = self._getAttribute(attrsD, 'start')
-            attrsD['start_parsed'] = _parse_psc_chapter_start(start)
-
-            context = self._getContext()['psc_chapters']
-            context['chapters'].append(FeedParserDict(attrsD))
-
 
 if _XML_AVAILABLE:
     class _StrictFeedParser(_FeedParserMixin, xml.sax.handler.ContentHandler):
         def __init__(self, baseuri, baselang, encoding):
-            xml.sax.handler.ContentHandler.__init__(self)
-            _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
             self.bozo = 0
             self.exc = None
             self.decls = {}
+            self.baseuri = baseuri or u''
+            self.lang = baselang
+            self.encoding = encoding
+            super(_StrictFeedParser, self).__init__()
 
         def startPrefixMapping(self, prefix, uri):
             if not uri:
@@ -1950,11 +1467,12 @@ if _XML_AVAILABLE:
             raise exc
 
 class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
-    def __init__(self, baseuri, baselang, encoding, entities):
-        sgmllib.SGMLParser.__init__(self)
-        _FeedParserMixin.__init__(self, baseuri, baselang, encoding)
-        _BaseHTMLProcessor.__init__(self, encoding, 'application/xhtml+xml')
-        self.entities=entities
+    def __init__(self, baseuri=None, baselang=None, encoding=None, entities=None):
+        self.baseuri = baseuri or u''
+        self.lang = baselang or None
+        self.encoding = encoding or u'utf-8' # character encoding
+        self.entities = entities or {}
+        super(_LooseFeedParser, self).__init__()
 
     def decodeEntities(self, element, data):
         data = data.replace('&#60;', '&lt;')
@@ -2069,17 +1587,6 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     if isinstance(url_file_stream_or_string, unicode):
         return _StringIO(url_file_stream_or_string.encode('utf-8'))
     return _StringIO(url_file_stream_or_string)
-
-def _parse_psc_chapter_start(start):
-    FORMAT = r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$'
-
-    m = re.compile(FORMAT).match(start)
-    if m is None:
-        return None
-
-    _, h, m, s, _, ms = m.groups()
-    h, m, s, ms = (int(h or 0), int(m), int(s), int(ms or 0))
-    return datetime.timedelta(0, h*60*60 + m*60 + s, ms*1000)
 
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
@@ -2368,74 +1875,6 @@ def replace_doctype(data):
     return version, data, safe_entities
 
 
-# GeoRSS geometry parsers. Each return a dict with 'type' and 'coordinates'
-# items, or None in the case of a parsing error.
-
-def _parse_poslist(value, geom_type, swap=True, dims=2):
-    if geom_type == 'linestring':
-        return _parse_georss_line(value, swap, dims)
-    elif geom_type == 'polygon':
-        ring = _parse_georss_line(value, swap, dims)
-        return {'type': u'Polygon', 'coordinates': (ring['coordinates'],)}
-    else:
-        return None
-
-def _gen_georss_coords(value, swap=True, dims=2):
-    # A generator of (lon, lat) pairs from a string of encoded GeoRSS
-    # coordinates. Converts to floats and swaps order.
-    latlons = itertools.imap(float, value.strip().replace(',', ' ').split())
-    nxt = latlons.next
-    while True:
-        t = [nxt(), nxt()][::swap and -1 or 1]
-        if dims == 3:
-            t.append(nxt())
-        yield tuple(t)
-
-def _parse_georss_point(value, swap=True, dims=2):
-    # A point contains a single latitude-longitude pair, separated by
-    # whitespace. We'll also handle comma separators.
-    try:
-        coords = list(_gen_georss_coords(value, swap, dims))
-        return {u'type': u'Point', u'coordinates': coords[0]}
-    except (IndexError, ValueError):
-        return None
-
-def _parse_georss_line(value, swap=True, dims=2):
-    # A line contains a space separated list of latitude-longitude pairs in
-    # WGS84 coordinate reference system, with each pair separated by
-    # whitespace. There must be at least two pairs.
-    try:
-        coords = list(_gen_georss_coords(value, swap, dims))
-        return {u'type': u'LineString', u'coordinates': coords}
-    except (IndexError, ValueError):
-        return None
-
-def _parse_georss_polygon(value, swap=True, dims=2):
-    # A polygon contains a space separated list of latitude-longitude pairs,
-    # with each pair separated by whitespace. There must be at least four
-    # pairs, with the last being identical to the first (so a polygon has a
-    # minimum of three actual points).
-    try:
-        ring = list(_gen_georss_coords(value, swap, dims))
-    except (IndexError, ValueError):
-        return None
-    if len(ring) < 4:
-        return None
-    return {u'type': u'Polygon', u'coordinates': (ring,)}
-
-def _parse_georss_box(value, swap=True, dims=2):
-    # A bounding box is a rectangular region, often used to define the extents
-    # of a map or a rough area of interest. A box contains two space seperate
-    # latitude-longitude pairs, with each pair separated by whitespace. The
-    # first pair is the lower corner, the second is the upper corner.
-    try:
-        coords = list(_gen_georss_coords(value, swap, dims))
-        return {u'type': u'Box', u'coordinates': tuple(coords)}
-    except (IndexError, ValueError):
-        return None
-
-# end geospatial parsers
-
 
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
     '''Parse a feed from a URL, file, stream, or string.
@@ -2487,7 +1926,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         if gzip and 'gzip' in http_headers.get('content-encoding', ''):
             try:
                 data = gzip.GzipFile(fileobj=_StringIO(data)).read()
-            except (IOError, struct.error), e:
+            except (EOFError, IOError, struct.error), e:
                 # IOError can occur if the gzip header is bad.
                 # struct.error can occur if the data is damaged.
                 result['bozo'] = 1
@@ -2589,41 +2028,3 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['version'] = result['version'] or feedparser.version
     result['namespaces'] = feedparser.namespacesInUse
     return result
-
-# The list of EPSG codes for geographic (latitude/longitude) coordinate
-# systems to support decoding of GeoRSS GML profiles.
-_geogCS = [
-3819, 3821, 3824, 3889, 3906, 4001, 4002, 4003, 4004, 4005, 4006, 4007, 4008,
-4009, 4010, 4011, 4012, 4013, 4014, 4015, 4016, 4018, 4019, 4020, 4021, 4022,
-4023, 4024, 4025, 4027, 4028, 4029, 4030, 4031, 4032, 4033, 4034, 4035, 4036,
-4041, 4042, 4043, 4044, 4045, 4046, 4047, 4052, 4053, 4054, 4055, 4075, 4081,
-4120, 4121, 4122, 4123, 4124, 4125, 4126, 4127, 4128, 4129, 4130, 4131, 4132,
-4133, 4134, 4135, 4136, 4137, 4138, 4139, 4140, 4141, 4142, 4143, 4144, 4145,
-4146, 4147, 4148, 4149, 4150, 4151, 4152, 4153, 4154, 4155, 4156, 4157, 4158,
-4159, 4160, 4161, 4162, 4163, 4164, 4165, 4166, 4167, 4168, 4169, 4170, 4171,
-4172, 4173, 4174, 4175, 4176, 4178, 4179, 4180, 4181, 4182, 4183, 4184, 4185,
-4188, 4189, 4190, 4191, 4192, 4193, 4194, 4195, 4196, 4197, 4198, 4199, 4200,
-4201, 4202, 4203, 4204, 4205, 4206, 4207, 4208, 4209, 4210, 4211, 4212, 4213,
-4214, 4215, 4216, 4218, 4219, 4220, 4221, 4222, 4223, 4224, 4225, 4226, 4227,
-4228, 4229, 4230, 4231, 4232, 4233, 4234, 4235, 4236, 4237, 4238, 4239, 4240,
-4241, 4242, 4243, 4244, 4245, 4246, 4247, 4248, 4249, 4250, 4251, 4252, 4253,
-4254, 4255, 4256, 4257, 4258, 4259, 4260, 4261, 4262, 4263, 4264, 4265, 4266,
-4267, 4268, 4269, 4270, 4271, 4272, 4273, 4274, 4275, 4276, 4277, 4278, 4279,
-4280, 4281, 4282, 4283, 4284, 4285, 4286, 4287, 4288, 4289, 4291, 4292, 4293,
-4294, 4295, 4296, 4297, 4298, 4299, 4300, 4301, 4302, 4303, 4304, 4306, 4307,
-4308, 4309, 4310, 4311, 4312, 4313, 4314, 4315, 4316, 4317, 4318, 4319, 4322,
-4324, 4326, 4463, 4470, 4475, 4483, 4490, 4555, 4558, 4600, 4601, 4602, 4603,
-4604, 4605, 4606, 4607, 4608, 4609, 4610, 4611, 4612, 4613, 4614, 4615, 4616,
-4617, 4618, 4619, 4620, 4621, 4622, 4623, 4624, 4625, 4626, 4627, 4628, 4629,
-4630, 4631, 4632, 4633, 4634, 4635, 4636, 4637, 4638, 4639, 4640, 4641, 4642,
-4643, 4644, 4645, 4646, 4657, 4658, 4659, 4660, 4661, 4662, 4663, 4664, 4665,
-4666, 4667, 4668, 4669, 4670, 4671, 4672, 4673, 4674, 4675, 4676, 4677, 4678,
-4679, 4680, 4681, 4682, 4683, 4684, 4685, 4686, 4687, 4688, 4689, 4690, 4691,
-4692, 4693, 4694, 4695, 4696, 4697, 4698, 4699, 4700, 4701, 4702, 4703, 4704,
-4705, 4706, 4707, 4708, 4709, 4710, 4711, 4712, 4713, 4714, 4715, 4716, 4717,
-4718, 4719, 4720, 4721, 4722, 4723, 4724, 4725, 4726, 4727, 4728, 4729, 4730,
-4731, 4732, 4733, 4734, 4735, 4736, 4737, 4738, 4739, 4740, 4741, 4742, 4743,
-4744, 4745, 4746, 4747, 4748, 4749, 4750, 4751, 4752, 4753, 4754, 4755, 4756,
-4757, 4758, 4759, 4760, 4761, 4762, 4763, 4764, 4765, 4801, 4802, 4803, 4804,
-4805, 4806, 4807, 4808, 4809, 4810, 4811, 4813, 4814, 4815, 4816, 4817, 4818,
-4819, 4820, 4821, 4823, 4824, 4901, 4902, 4903, 4904, 4979 ]

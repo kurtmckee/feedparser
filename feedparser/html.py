@@ -33,7 +33,7 @@ _cp1252 = {
     159: unichr( 376), # latin capital letter y with diaeresis
 }
 
-class _BaseHTMLProcessor(sgmllib.SGMLParser):
+class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
     special = re.compile('''[<>'"]''')
     bare_ampersand = re.compile("&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
     elements_no_end_tag = set([
@@ -42,10 +42,11 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser):
       'source', 'track', 'wbr'
     ])
 
-    def __init__(self, encoding, _type):
-        self.encoding = encoding
+    def __init__(self, encoding=None, _type='application/xhtml+xml'):
+        if encoding:
+            self.encoding = encoding
         self._type = _type
-        sgmllib.SGMLParser.__init__(self)
+        super(_BaseHTMLProcessor, self).__init__()
 
     def reset(self):
         self.pieces = []
