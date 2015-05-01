@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 __author__ = "Mark Pilgrim <http://diveintomark.org/>"
 __license__ = """
@@ -42,12 +42,16 @@ import sys
 import threading
 import time
 import unittest
-import urllib
 import warnings
 import xml.sax
 import zlib
-import BaseHTTPServer
-import SimpleHTTPServer
+
+# Account for stdlib differences between Python 2 and Python 3.
+try:
+    from BaseHTTPServer import HTTPServer
+    from SimpleHTTPServer import SimpleHTTPRequestHandler
+except ImportError:
+    from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import feedparser
 import feedparser.urls
@@ -73,16 +77,13 @@ except LookupError:
 else:
     _UTF32_AVAILABLE = True
 
-_s2bytes = feedparser._s2bytes
-_l2bytes = feedparser._l2bytes
-
 #---------- custom HTTP server (used to serve test feeds) ----------
 
 _PORT = 8097 # not really configurable, must match hardcoded port in tests
 _HOST = '127.0.0.1' # also not really configurable
 
-class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-    headers_re = re.compile(_s2bytes(r"^Header:\s+([^:]+):(.+)$"), re.MULTILINE)
+class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
+    headers_re = re.compile(br"^Header:\s+([^:]+):(.+)$", re.MULTILINE)
 
     def send_head(self):
         """Send custom headers defined in test case
@@ -98,7 +99,7 @@ class FeedParserTestRequestHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_response(304)
             self.send_header('Content-type', 'text/xml')
             self.end_headers()
-            return feedparser._StringIO(u''.encode('utf-8'))
+            return feedparser._StringIO(b'')
         path = self.translate_path(self.path)
         # the compression tests' filenames determine the header sent
         if self.path.startswith('/tests/compression'):
@@ -138,7 +139,7 @@ class FeedParserTestServer(threading.Thread):
         self.ready = threading.Event()
 
     def run(self):
-        self.httpd = BaseHTTPServer.HTTPServer((_HOST, _PORT), FeedParserTestRequestHandler)
+        self.httpd = HTTPServer((_HOST, _PORT), FeedParserTestRequestHandler)
         self.ready.set()
         while self.requests:
             self.httpd.handle_request()
@@ -146,17 +147,17 @@ class FeedParserTestServer(threading.Thread):
         self.ready.clear()
 
 #---------- dummy test case class (test methods are added dynamically) ----------
-unicode1_re = re.compile(_s2bytes(" u'"))
-unicode2_re = re.compile(_s2bytes(' u"'))
-unicode3_re = re.compile(_s2bytes("\[u'"))
+unicode1_re = re.compile(b" u'")
+unicode2_re = re.compile(b' u"')
+unicode3_re = re.compile(b"\[u'")
 
 # _bytes is only used in everythingIsUnicode().
 # In Python 2 it's str, and in Python 3 it's bytes.
-_bytes = type(_s2bytes(''))
+_bytes = type(b'')
 
 def everythingIsUnicode(d):
     """Takes a dictionary, recursively verifies that every value is unicode"""
-    for k, v in d.iteritems():
+    for k, v in d.items():
         if isinstance(v, dict) and k != 'headers':
             if not everythingIsUnicode(v):
                 return False
@@ -176,18 +177,18 @@ def failUnlessEval(self, xmlfile, evalString, msg=None):
     try:
         if not eval(evalString, globals(), env):
             failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-            raise self.failureException, failure
+            raise self.failureException(failure)
         if not everythingIsUnicode(env):
-            raise self.failureException, "not everything is unicode \nWITH env(%s)" % (pprint.pformat(env), )
+            raise self.failureException("not everything is unicode \nWITH env(%s)" % (pprint.pformat(env), ))
     except SyntaxError:
         # Python 3 doesn't have the `u""` syntax, so evalString needs to be modified,
         # which will require the failure message to be updated
-        evalString = re.sub(unicode1_re, _s2bytes(" '"), evalString)
-        evalString = re.sub(unicode2_re, _s2bytes(' "'), evalString)
-        evalString = re.sub(unicode3_re, _s2bytes("['"), evalString)
+        evalString = re.sub(unicode1_re, b" '", evalString)
+        evalString = re.sub(unicode2_re, b' "', evalString)
+        evalString = re.sub(unicode3_re, b"['", evalString)
         if not eval(evalString, globals(), env):
             failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
-            raise self.failureException, failure
+            raise self.failureException(failure)
 
 class BaseTestCase(unittest.TestCase):
     failUnlessEval = failUnlessEval
@@ -201,10 +202,10 @@ class TestTemporaryFallbackBehavior(unittest.TestCase):
         warnings.filterwarnings('error')
 
         d = feedparser.FeedParserDict()
-        d['published'] = u'pub string'
-        d['published_parsed'] = u'pub tuple'
-        d['updated'] = u'upd string'
-        d['updated_parsed'] = u'upd tuple'
+        d['published'] = 'pub string'
+        d['published_parsed'] = 'pub tuple'
+        d['updated'] = 'upd string'
+        d['updated_parsed'] = 'upd tuple'
         # Ensure that `updated` doesn't map to `published` when it exists
         self.assertTrue('published' in d)
         self.assertTrue('published_parsed' in d)
@@ -216,8 +217,8 @@ class TestTemporaryFallbackBehavior(unittest.TestCase):
         self.assertEqual(d['updated_parsed'], 'upd tuple')
 
         d = feedparser.FeedParserDict()
-        d['published'] = u'pub string'
-        d['published_parsed'] = u'pub tuple'
+        d['published'] = 'pub string'
+        d['published_parsed'] = 'pub tuple'
         # Ensure that `updated` doesn't actually exist
         self.assertTrue('updated' not in d)
         self.assertTrue('updated_parsed' not in d)
@@ -240,8 +241,8 @@ class TestTemporaryFallbackBehavior(unittest.TestCase):
             self.assertEqual(True, False)
         # Ensure that `updated` maps to `published`
         warnings.filterwarnings('ignore')
-        self.assertEqual(d['updated'], u'pub string')
-        self.assertEqual(d['updated_parsed'], u'pub tuple')
+        self.assertEqual(d['updated'], 'pub string')
+        self.assertEqual(d['updated_parsed'], 'pub tuple')
         warnings.resetwarnings()
 
 
@@ -249,13 +250,13 @@ class TestEverythingIsUnicode(unittest.TestCase):
     "Ensure that `everythingIsUnicode()` is working appropriately"
     def test_everything_is_unicode(self):
         self.assertTrue(everythingIsUnicode(
-            {'a': u'a', 'b': [u'b', {'c': u'c'}], 'd': {'e': u'e'}}
+            {'a': 'a', 'b': ['b', {'c': 'c'}], 'd': {'e': 'e'}}
         ))
     def test_not_everything_is_unicode(self):
-        self.assertFalse(everythingIsUnicode({'a': _s2bytes('a')}))
-        self.assertFalse(everythingIsUnicode({'a': [_s2bytes('a')]}))
-        self.assertFalse(everythingIsUnicode({'a': {'b': _s2bytes('b')}}))
-        self.assertFalse(everythingIsUnicode({'a': [{'b': _s2bytes('b')}]}))
+        self.assertFalse(everythingIsUnicode({'a': b'a'}))
+        self.assertFalse(everythingIsUnicode({'a': [b'a']}))
+        self.assertFalse(everythingIsUnicode({'a': {'b': b'b'}}))
+        self.assertFalse(everythingIsUnicode({'a': [{'b': b'b'}]}))
 
 class TestLooseParser(BaseTestCase):
     "Test the sgmllib-based parser by manipulating feedparser " \
@@ -284,10 +285,10 @@ class TestEncodings(BaseTestCase):
         <feed><title type="html">&exponential3;</title></feed>"""
         doc = codecs.BOM_UTF16_BE + doc.encode('utf-16be')
         result = feedparser.parse(doc)
-        self.assertEqual(result['feed']['title'], u'&amp;exponential3')
+        self.assertEqual(result['feed']['title'], '&amp;exponential3')
     def test_gb2312_converted_to_gb18030_in_xml_encoding(self):
         # \u55de was chosen because it exists in gb18030 but not gb2312
-        feed = u'''<?xml version="1.0" encoding="gb2312"?>
+        feed = '''<?xml version="1.0" encoding="gb2312"?>
                   <feed><title>\u55de</title></feed>'''
         result = feedparser.parse(feed.encode('gb18030'), response_headers={
             'Content-Type': 'text/xml'
@@ -378,31 +379,31 @@ class TestOpenResource(unittest.TestCase):
         r = feedparser._open_resource(sys.stdin, '', '', '', '', [], {})
         self.assertTrue(r is sys.stdin)
     def test_feed(self):
-        f = feedparser.parse(u'feed://localhost:8097/tests/http/target.xml')
-        self.assertEqual(f.href, u'http://localhost:8097/tests/http/target.xml')
+        f = feedparser.parse('feed://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
     def test_feed_http(self):
-        f = feedparser.parse(u'feed:http://localhost:8097/tests/http/target.xml')
-        self.assertEqual(f.href, u'http://localhost:8097/tests/http/target.xml')
+        f = feedparser.parse('feed:http://localhost:8097/tests/http/target.xml')
+        self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
     def test_bytes(self):
-        s = '<feed><item><title>text</title></item></feed>'.encode('utf-8')
+        s = b'<feed><item><title>text</title></item></feed>'
         r = feedparser._open_resource(s, '', '', '', '', [], {})
         self.assertEqual(s, r.read())
     def test_string(self):
-        s = '<feed><item><title>text</title></item></feed>'
+        s = b'<feed><item><title>text</title></item></feed>'
         r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s.encode('utf-8'), r.read())
+        self.assertEqual(s, r.read())
     def test_unicode_1(self):
-        s = u'<feed><item><title>text</title></item></feed>'
+        s = b'<feed><item><title>text</title></item></feed>'
         r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s.encode('utf-8'), r.read())
+        self.assertEqual(s, r.read())
     def test_unicode_2(self):
-        s = u'<feed><item><title>t\u00e9xt</title></item></feed>'
+        s = b'<feed><item><title>t\u00e9xt</title></item></feed>'
         r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s.encode('utf-8'), r.read())
+        self.assertEqual(s, r.read())
 
 class TestMakeSafeAbsoluteURI(unittest.TestCase):
     "Exercise the URI joining and sanitization code"
-    base = u'http://d.test/d/f.ext'
+    base = 'http://d.test/d/f.ext'
     def _mktest(rel, expect, doc):
         def fn(self):
             value = feedparser._makeSafeAbsoluteURI(self.base, rel)
@@ -412,14 +413,14 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
 
     # make the test cases; the call signature is:
     # (relative_url, expected_return_value, test_doc_string)
-    test_abs = _mktest(u'https://s.test/', u'https://s.test/', 'absolute uri')
-    test_rel = _mktest(u'/new', u'http://d.test/new', 'relative uri')
-    test_bad = _mktest(u'x://bad.test/', u'', 'unacceptable uri protocol')
-    test_mag = _mktest(u'magnet:?xt=a', u'magnet:?xt=a', 'magnet uri')
+    test_abs = _mktest('https://s.test/', 'https://s.test/', 'absolute uri')
+    test_rel = _mktest('/new', 'http://d.test/new', 'relative uri')
+    test_bad = _mktest('x://bad.test/', '', 'unacceptable uri protocol')
+    test_mag = _mktest('magnet:?xt=a', 'magnet:?xt=a', 'magnet uri')
 
     def test_catch_ValueError(self):
         'catch ValueError in Python 2.7 and up'
-        uri = u'http://bad]test/'
+        uri = 'http://bad]test/'
         value1 = feedparser._makeSafeAbsoluteURI(uri)
         value2 = feedparser._makeSafeAbsoluteURI(self.base, uri)
         swap = feedparser.urls.ACCEPTABLE_URI_SCHEMES
@@ -427,24 +428,24 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
         value3 = feedparser._makeSafeAbsoluteURI(self.base, uri)
         feedparser.urls.ACCEPTABLE_URI_SCHEMES = swap
         # Only Python 2.7 and up throw a ValueError, otherwise uri is returned
-        self.assertTrue(value1 in (uri, u''))
-        self.assertTrue(value2 in (uri, u''))
-        self.assertTrue(value3 in (uri, u''))
+        self.assertTrue(value1 in (uri, ''))
+        self.assertTrue(value2 in (uri, ''))
+        self.assertTrue(value3 in (uri, ''))
 
 class TestConvertToIdn(unittest.TestCase):
     "Test IDN support (unavailable in Jython as of Jython 2.5.2)"
     # this is the greek test domain
-    hostname = u'\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
-    hostname += u'.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
+    hostname = '\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
+    hostname += '.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
     def test_control(self):
-        r = feedparser._convert_to_idn(u'http://example.test/')
-        self.assertEqual(r, u'http://example.test/')
+        r = feedparser._convert_to_idn('http://example.test/')
+        self.assertEqual(r, 'http://example.test/')
     def test_idn(self):
-        r = feedparser._convert_to_idn(u'http://%s/' % (self.hostname,))
-        self.assertEqual(r, u'http://xn--hxajbheg2az3al.xn--jxalpdlp/')
+        r = feedparser._convert_to_idn('http://%s/' % (self.hostname,))
+        self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp/')
     def test_port(self):
-        r = feedparser._convert_to_idn(u'http://%s:8080/' % (self.hostname,))
-        self.assertEqual(r, u'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
+        r = feedparser._convert_to_idn('http://%s:8080/' % (self.hostname,))
+        self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
 
 class TestCompression(unittest.TestCase):
     "Test the gzip and deflate support in the HTTP code"
@@ -507,8 +508,6 @@ class TestHTTPStatus(unittest.TestCase):
         ms = f.updated
         mt = f.updated_parsed
         md = datetime.datetime(*mt[0:7])
-        self.assertTrue(isinstance(mh, basestring))
-        self.assertTrue(isinstance(ms, basestring))
         self.assertTrue(isinstance(mt, time.struct_time))
         self.assertTrue(isinstance(md, datetime.datetime))
         # test that sending back the etag results in a 304
@@ -550,114 +549,114 @@ class TestDateParsers(unittest.TestCase):
         # On some systems this date string will trigger an OverflowError.
         # On Jython and x64 systems, however, it's interpreted just fine.
         try:
-            date = _parse_date_rfc822(u'Sun, 31 Dec 9999 23:59:59 -9999')
+            date = _parse_date_rfc822('Sun, 31 Dec 9999 23:59:59 -9999')
         except OverflowError:
             date = None
         self.assertTrue(date in (None, (10000, 1, 5, 4, 38, 59, 2, 5, 0)))
 
 date_tests = {
     _parse_date_greek: (
-        (u'', None), # empty string
-        (u'\u039a\u03c5\u03c1, 11 \u0399\u03bf\u03cd\u03bb 2004 12:00:00 EST', (2004, 7, 11, 17, 0, 0, 6, 193, 0)),
+        ('', None), # empty string
+        ('\u039a\u03c5\u03c1, 11 \u0399\u03bf\u03cd\u03bb 2004 12:00:00 EST', (2004, 7, 11, 17, 0, 0, 6, 193, 0)),
     ),
     _parse_date_hungarian: (
-        (u'', None), # empty string
-        (u'2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)),
+        ('', None), # empty string
+        ('2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)),
     ),
     _parse_date_iso8601: (
-        (u'', None), # empty string
-        (u'-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only variant
-        (u'031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only, no hyphens
-        (u'03-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only
-        (u'-03-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only
-        (u'03335', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/ordinal, no hyphens
-        (u'2003-12-31T10:14:55.1234Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # fractional seconds
+        ('', None), # empty string
+        ('-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only variant
+        ('031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only, no hyphens
+        ('03-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only
+        ('-03-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only
+        ('03335', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/ordinal, no hyphens
+        ('2003-12-31T10:14:55.1234Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # fractional seconds
         # Special case for Google's extra zero in the month
-        (u'2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
+        ('2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
     ),
     _parse_date_nate: (
-        (u'', None), # empty string
-        (u'2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
+        ('', None), # empty string
+        ('2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
     ),
     _parse_date_onblog: (
-        (u'', None), # empty string
-        (u'2004\ub144 05\uc6d4 28\uc77c  01:31:15', (2004, 5, 27, 16, 31, 15, 3, 148, 0)),
+        ('', None), # empty string
+        ('2004\ub144 05\uc6d4 28\uc77c  01:31:15', (2004, 5, 27, 16, 31, 15, 3, 148, 0)),
     ),
     _parse_date_perforce: (
-        (u'', None), # empty string
-        (u'Fri, 2006/09/15 08:19:53 EDT', (2006, 9, 15, 12, 19, 53, 4, 258, 0)),
+        ('', None), # empty string
+        ('Fri, 2006/09/15 08:19:53 EDT', (2006, 9, 15, 12, 19, 53, 4, 258, 0)),
     ),
     _parse_date_rfc822: (
-        (u'', None), # empty string
-        (u'Thu, 30 Apr 2015 08:57:00 MET', (2015, 4, 30, 7, 57, 0, 3, 120, 0)),
-        (u'Thu, 30 Apr 2015 08:57:00 MEST', (2015, 4, 30, 6, 57, 0, 3, 120, 0)),
-        (u'Thu, 01 Jan 0100 00:00:01 +0100', (99, 12, 31, 23, 0, 1, 3, 365, 0)), # ancient date
-        (u'Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
-        (u'Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year
-        (u'Thu,  5 Apr 2012 10:00:00 GMT', (2012, 4, 5, 10, 0, 0, 3, 96, 0)), # 1-digit day
-        (u'Wed, 19 Aug 2009 18:28:00 Etc/GMT', (2009, 8, 19, 18, 28, 0, 2, 231, 0)), # etc/gmt timezone
-        (u'Wed, 19 Feb 2012 22:40:00 GMT-01:01', (2012, 2, 19, 23, 41, 0, 6, 50, 0)), # gmt+hh:mm timezone
-        (u'Mon, 13 Feb, 2012 06:28:00 UTC', (2012, 2, 13, 6, 28, 0, 0, 44, 0)), # extraneous comma
-        (u'Thu, 01 Jan 2004 00:00 GMT', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no seconds
-        (u'Thu, 01 Jan 2004', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no time
+        ('', None), # empty string
+        ('Thu, 30 Apr 2015 08:57:00 MET', (2015, 4, 30, 7, 57, 0, 3, 120, 0)),
+        ('Thu, 30 Apr 2015 08:57:00 MEST', (2015, 4, 30, 6, 57, 0, 3, 120, 0)),
+        ('Thu, 01 Jan 0100 00:00:01 +0100', (99, 12, 31, 23, 0, 1, 3, 365, 0)), # ancient date
+        ('Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
+        ('Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year
+        ('Thu,  5 Apr 2012 10:00:00 GMT', (2012, 4, 5, 10, 0, 0, 3, 96, 0)), # 1-digit day
+        ('Wed, 19 Aug 2009 18:28:00 Etc/GMT', (2009, 8, 19, 18, 28, 0, 2, 231, 0)), # etc/gmt timezone
+        ('Wed, 19 Feb 2012 22:40:00 GMT-01:01', (2012, 2, 19, 23, 41, 0, 6, 50, 0)), # gmt+hh:mm timezone
+        ('Mon, 13 Feb, 2012 06:28:00 UTC', (2012, 2, 13, 6, 28, 0, 0, 44, 0)), # extraneous comma
+        ('Thu, 01 Jan 2004 00:00 GMT', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no seconds
+        ('Thu, 01 Jan 2004', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no time
         # Additional tests to handle Disney's long month names and invalid timezones
-        (u'Mon, 26 January 2004 16:31:00 AT', (2004, 1, 26, 20, 31, 0, 0, 26, 0)),
-        (u'Mon, 26 January 2004 16:31:00 ET', (2004, 1, 26, 21, 31, 0, 0, 26, 0)),
-        (u'Mon, 26 January 2004 16:31:00 CT', (2004, 1, 26, 22, 31, 0, 0, 26, 0)),
-        (u'Mon, 26 January 2004 16:31:00 MT', (2004, 1, 26, 23, 31, 0, 0, 26, 0)),
-        (u'Mon, 26 January 2004 16:31:00 PT', (2004, 1, 27, 0, 31, 0, 1, 27, 0)),
+        ('Mon, 26 January 2004 16:31:00 AT', (2004, 1, 26, 20, 31, 0, 0, 26, 0)),
+        ('Mon, 26 January 2004 16:31:00 ET', (2004, 1, 26, 21, 31, 0, 0, 26, 0)),
+        ('Mon, 26 January 2004 16:31:00 CT', (2004, 1, 26, 22, 31, 0, 0, 26, 0)),
+        ('Mon, 26 January 2004 16:31:00 MT', (2004, 1, 26, 23, 31, 0, 0, 26, 0)),
+        ('Mon, 26 January 2004 16:31:00 PT', (2004, 1, 27, 0, 31, 0, 1, 27, 0)),
         # Swapped month and day
-        (u'Thu Aug 30 2012 17:26:16 +0200', (2012, 8, 30, 15, 26, 16, 3, 243, 0)),
-        (u'Sun, 16 Dec 2012 1:2:3:4 GMT', None), # invalid time
-        (u'Sun, 16 zzz 2012 11:47:32 GMT', None), # invalid month
-        (u'Sun, Dec x 2012 11:47:32 GMT', None), # invalid day (swapped day/month)
+        ('Thu Aug 30 2012 17:26:16 +0200', (2012, 8, 30, 15, 26, 16, 3, 243, 0)),
+        ('Sun, 16 Dec 2012 1:2:3:4 GMT', None), # invalid time
+        ('Sun, 16 zzz 2012 11:47:32 GMT', None), # invalid month
+        ('Sun, Dec x 2012 11:47:32 GMT', None), # invalid day (swapped day/month)
         ('Sun, 16 Dec zz 11:47:32 GMT', None), # invalid year
         ('Sun, 16 Dec 2012 11:47:32 +zz:00', None), # invalid timezone hour
         ('Sun, 16 Dec 2012 11:47:32 +00:zz', None), # invalid timezone minute
         ('Sun, 99 Jun 2009 12:00:00 GMT', None), # out-of-range day
     ),
     _parse_date_asctime: (
-        (u'Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
-        (u'Sun Jul 15 01:16:00 +0000 2012', (2012, 7, 15, 1, 16, 0, 6, 197, 0)),
+        ('Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
+        ('Sun Jul 15 01:16:00 +0000 2012', (2012, 7, 15, 1, 16, 0, 6, 197, 0)),
     ),
     _parse_date_w3dtf: (
-        (u'', None), # empty string
-        (u'2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # UTC
-        (u'2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)), # San Francisco timezone
-        (u'2003-12-31T18:14:55+08:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # Tokyo timezone
-        (u'2007-04-23T23:25:47.538+10:00', (2007, 4, 23, 13, 25, 47, 0, 113, 0)), # fractional seconds
-        (u'2003-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # year/month/day only
-        (u'2003-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # year/month only
-        (u'2003', (2003, 1, 1, 0, 0, 0, 2, 1, 0)), # year only
+        ('', None), # empty string
+        ('2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # UTC
+        ('2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)), # San Francisco timezone
+        ('2003-12-31T18:14:55+08:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # Tokyo timezone
+        ('2007-04-23T23:25:47.538+10:00', (2007, 4, 23, 13, 25, 47, 0, 113, 0)), # fractional seconds
+        ('2003-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # year/month/day only
+        ('2003-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # year/month only
+        ('2003', (2003, 1, 1, 0, 0, 0, 2, 1, 0)), # year only
         # Special cases for rollovers in leap years
-        (u'2004-02-28T18:14:55-08:00', (2004, 2, 29, 2, 14, 55, 6, 60, 0)), # feb 28 in leap year
-        (u'2003-02-28T18:14:55-08:00', (2003, 3, 1, 2, 14, 55, 5, 60, 0)), # feb 28 in non-leap year
-        (u'2000-02-28T18:14:55-08:00', (2000, 2, 29, 2, 14, 55, 1, 60, 0)), # feb 28 in leap year on century divisible by 400
+        ('2004-02-28T18:14:55-08:00', (2004, 2, 29, 2, 14, 55, 6, 60, 0)), # feb 28 in leap year
+        ('2003-02-28T18:14:55-08:00', (2003, 3, 1, 2, 14, 55, 5, 60, 0)), # feb 28 in non-leap year
+        ('2000-02-28T18:14:55-08:00', (2000, 2, 29, 2, 14, 55, 1, 60, 0)), # feb 28 in leap year on century divisible by 400
         # Out-of-range times
-        (u'9999-12-31T23:59:59-99:99', None), # Date is out-of-range
-        (u'2003-12-31T25:14:55Z', None), # invalid (25 hours)
-        (u'2003-12-31T10:61:55Z', None), # invalid (61 minutes)
-        (u'2003-12-31T10:14:61Z', None), # invalid (61 seconds)
+        ('9999-12-31T23:59:59-99:99', None), # Date is out-of-range
+        ('2003-12-31T25:14:55Z', None), # invalid (25 hours)
+        ('2003-12-31T10:61:55Z', None), # invalid (61 minutes)
+        ('2003-12-31T10:14:61Z', None), # invalid (61 seconds)
         # Invalid formats
-        (u'22013', None), # Year is too long
-        (u'013', None), # Year is too short
-        (u'2013-01-27-01', None), # Date has to many parts
-        (u'2013-01-28T11:30:00-06:00Textra', None), # Too many 't's
+        ('22013', None), # Year is too long
+        ('013', None), # Year is too short
+        ('2013-01-27-01', None), # Date has to many parts
+        ('2013-01-28T11:30:00-06:00Textra', None), # Too many 't's
         # Non-integer values
-        (u'2013-xx-27', None), # Date
-        (u'2013-01-28T09:xx:00Z', None), # Time
-        (u'2013-01-28T09:00:00+00:xx', None), # Timezone
+        ('2013-xx-27', None), # Date
+        ('2013-01-28T09:xx:00Z', None), # Time
+        ('2013-01-28T09:00:00+00:xx', None), # Timezone
         # MSSQL-style dates
-        (u'2004-07-08 23:56:58 -00:20', (2004, 7, 9, 0, 16, 58, 4, 191, 0)), # with timezone
-        (u'2004-07-08 23:56:58', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # without timezone
-        (u'2004-07-08 23:56:58.0', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # with fractional second
+        ('2004-07-08 23:56:58 -00:20', (2004, 7, 9, 0, 16, 58, 4, 191, 0)), # with timezone
+        ('2004-07-08 23:56:58', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # without timezone
+        ('2004-07-08 23:56:58.0', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # with fractional second
     )
 }
 
 def make_date_test(f, s, t):
     return lambda self: self._check_date(f, s, t)
 
-for func, items in date_tests.iteritems():
+for func, items in date_tests.items():
     for i, (dtstring, dttuple) in enumerate(items):
         uniqfunc = make_date_test(func, dtstring, dttuple)
         setattr(TestDateParsers, 'test_%s_%02i' % (func.__name__, i), uniqfunc)
@@ -672,17 +671,17 @@ class TestHTMLGuessing(unittest.TestCase):
         fn.__doc__ = doc
         return fn
 
-    test_text_1 = _mktest(u'plain text', False, u'plain text')
-    test_text_2 = _mktest(u'2 < 3', False, u'plain text with angle bracket')
-    test_html_1 = _mktest(u'<a href="">a</a>', True, u'anchor tag')
-    test_html_2 = _mktest(u'<i>i</i>', True, u'italics tag')
-    test_html_3 = _mktest(u'<b>b</b>', True, u'bold tag')
-    test_html_4 = _mktest(u'<code>', False, u'allowed tag, no end tag')
-    test_html_5 = _mktest(u'<rss> .. </rss>', False, u'disallowed tag')
-    test_entity_1 = _mktest(u'AT&T', False, u'corporation name')
-    test_entity_2 = _mktest(u'&copy;', True, u'named entity reference')
-    test_entity_3 = _mktest(u'&#169;', True, u'numeric entity reference')
-    test_entity_4 = _mktest(u'&#xA9;', True, u'hex numeric entity reference')
+    test_text_1 = _mktest('plain text', False, 'plain text')
+    test_text_2 = _mktest('2 < 3', False, 'plain text with angle bracket')
+    test_html_1 = _mktest('<a href="">a</a>', True, 'anchor tag')
+    test_html_2 = _mktest('<i>i</i>', True, 'italics tag')
+    test_html_3 = _mktest('<b>b</b>', True, 'bold tag')
+    test_html_4 = _mktest('<code>', False, 'allowed tag, no end tag')
+    test_html_5 = _mktest('<rss> .. </rss>', False, 'disallowed tag')
+    test_entity_1 = _mktest('AT&T', False, 'corporation name')
+    test_entity_2 = _mktest('&copy;', True, 'named entity reference')
+    test_entity_3 = _mktest('&#169;', True, 'numeric entity reference')
+    test_entity_4 = _mktest('&#xA9;', True, 'hex numeric entity reference')
 
 #---------- additional api unit tests, not backed by files
 
@@ -708,7 +707,7 @@ class TestLxmlBug(unittest.TestCase):
         except ImportError:
             pass
         else:
-            doc = u"<feed>&illformed_charref</feed>".encode('utf8')
+            doc = b"<feed>&illformed_charref</feed>"
             # Importing lxml.etree currently causes libxml2 to
             # throw SAXException instead of SAXParseException.
             feedparser.parse(feedparser._StringIO(doc))
@@ -718,39 +717,39 @@ class TestLxmlBug(unittest.TestCase):
 def convert_to_utf8(data):
     "Identify data's encoding using its byte order mark" \
     "and convert it to its utf-8 equivalent"
-    if data[:4] == _l2bytes([0x4c, 0x6f, 0xa7, 0x94]):
+    if data[:4] == b'\x4c\x6f\xa7\x94':
         return data.decode('cp037').encode('utf-8')
-    elif data[:4] == _l2bytes([0x00, 0x00, 0xfe, 0xff]):
+    elif data[:4] == b'\x00\x00\xfe\xff':
         if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32be').encode('utf-8')
-    elif data[:4] == _l2bytes([0xff, 0xfe, 0x00, 0x00]):
+    elif data[:4] == b'\xff\xfe\x00\x00':
         if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32le').encode('utf-8')
-    elif data[:4] == _l2bytes([0x00, 0x00, 0x00, 0x3c]):
+    elif data[:4] == b'\x00\x00\x00\x3c':
         if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32be').encode('utf-8')
-    elif data[:4] == _l2bytes([0x3c, 0x00, 0x00, 0x00]):
+    elif data[:4] == b'\x3c\x00\x00\x00':
         if not _UTF32_AVAILABLE:
             return None
         return data.decode('utf-32le').encode('utf-8')
-    elif data[:4] == _l2bytes([0x00, 0x3c, 0x00, 0x3f]):
+    elif data[:4] == b'\x00\x3c\x00\x3f':
         return data.decode('utf-16be').encode('utf-8')
-    elif data[:4] == _l2bytes([0x3c, 0x00, 0x3f, 0x00]):
+    elif data[:4] == b'\x3c\x00\x3f\x00':
         return data.decode('utf-16le').encode('utf-8')
-    elif (data[:2] == _l2bytes([0xfe, 0xff])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+    elif (data[:2] == b'\xfe\xff') and (data[2:4] != b'\x00\x00'):
         return data[2:].decode('utf-16be').encode('utf-8')
-    elif (data[:2] == _l2bytes([0xff, 0xfe])) and (data[2:4] != _l2bytes([0x00, 0x00])):
+    elif (data[:2] == b'\xff\xfe') and (data[2:4] != b'\x00\x00'):
         return data[2:].decode('utf-16le').encode('utf-8')
-    elif data[:3] == _l2bytes([0xef, 0xbb, 0xbf]):
+    elif data[:3] == b'\xef\xbb\xbf':
         return data[3:]
     # no byte order mark was found
     return data
 
-skip_re = re.compile(_s2bytes("SkipUnless:\s*(.*?)\n"))
-desc_re = re.compile(_s2bytes("Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->"))
+skip_re = re.compile(b"SkipUnless:\s*(.*?)\n")
+desc_re = re.compile(b"Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->")
 def getDescription(xmlfile, data):
     """Extract test data
 
@@ -759,7 +758,7 @@ def getDescription(xmlfile, data):
     would expect the parser to create when it parses the feed.  Example:
     <!--
     Description: feed title
-    Expect:      feed['title'] == u'Example feed'
+    Expect:      feed['title'] == 'Example feed'
     -->
     """
     skip_results = skip_re.search(data)
@@ -769,9 +768,9 @@ def getDescription(xmlfile, data):
         skipUnless = '1'
     search_results = desc_re.search(data)
     if not search_results:
-        raise RuntimeError, "can't parse %s" % xmlfile
-    description, evalString = map(lambda s: s.strip(), list(search_results.groups()))
-    description = xmlfile + ": " + unicode(description, 'utf8')
+        raise RuntimeError("can't parse %s" % xmlfile)
+    description, evalString = [s.strip() for s in list(search_results.groups())]
+    description = xmlfile + ": " + description.decode('utf8')
     return description, evalString, skipUnless
 
 def buildTestCase(xmlfile, description, evalString):
@@ -822,7 +821,8 @@ def runtests():
         testName = 'test_%06d' % c
         ishttp = 'http' in xmlfile
         try:
-            if not eval(skipUnless): raise NotImplementedError
+            if not eval(skipUnless):
+                raise NotImplementedError
         except (ImportError, LookupError, NotImplementedError, AttributeError):
             if ishttp:
                 httpcount -= 1 + (xmlfile in wellformedfiles)
