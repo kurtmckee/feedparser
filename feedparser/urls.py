@@ -1,7 +1,11 @@
 from __future__ import absolute_import, unicode_literals
 
 import re
-import urlparse
+
+try:
+    import urllib.parse as urlparse
+except ImportError:
+    import urlparse as urlparse
 
 from .html import _BaseHTMLProcessor
 
