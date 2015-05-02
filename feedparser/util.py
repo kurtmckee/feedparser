@@ -57,10 +57,10 @@ class FeedParserDict(dict):
                 raise KeyError, "object doesn't have key 'category'"
         elif key == 'enclosures':
             norel = lambda link: FeedParserDict([(name,value) for (name,value) in link.items() if name!='rel'])
-            return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']==u'enclosure']
+            return [norel(link) for link in dict.__getitem__(self, 'links') if link['rel']=='enclosure']
         elif key == 'license':
             for link in dict.__getitem__(self, 'links'):
-                if link['rel']==u'license' and 'href' in link:
+                if link['rel']=='license' and 'href' in link:
                     return link['href']
         elif key == 'updated':
             # Temporarily help developers out by keeping the old
