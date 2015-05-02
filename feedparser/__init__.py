@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 """Universal feed parser
 
@@ -90,26 +90,6 @@ else:
     # Python 3.1 deprecates decodestring in favor of decodebytes
     _base64decode = getattr(base64, 'decodebytes', base64.decodestring)
 
-# _s2bytes: convert a UTF-8 str to bytes if the interpreter is Python 3
-# _l2bytes: convert a list of ints to bytes if the interpreter is Python 3
-try:
-    if bytes is str:
-        # In Python 2.5 and below, bytes doesn't exist (NameError)
-        # In Python 2.6 and above, bytes and str are the same type
-        raise NameError
-except NameError:
-    # Python 2
-    def _s2bytes(s):
-        return s
-    def _l2bytes(l):
-        return ''.join(map(chr, l))
-else:
-    # Python 3
-    def _s2bytes(s):
-        return bytes(s, 'utf8')
-    def _l2bytes(l):
-        return bytes(l)
-
 # ---------- required modules (should come with any Python distribution) ----------
 import cgi
 import codecs
@@ -200,24 +180,25 @@ class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe): pass
 class NonXMLContentType(ThingsNobodyCaresAboutButMe): pass
 class UndeclaredNamespace(Exception): pass
 
-SUPPORTED_VERSIONS = {'': u'unknown',
-                      'rss090': u'RSS 0.90',
-                      'rss091n': u'RSS 0.91 (Netscape)',
-                      'rss091u': u'RSS 0.91 (Userland)',
-                      'rss092': u'RSS 0.92',
-                      'rss093': u'RSS 0.93',
-                      'rss094': u'RSS 0.94',
-                      'rss20': u'RSS 2.0',
-                      'rss10': u'RSS 1.0',
-                      'rss': u'RSS (unknown version)',
-                      'atom01': u'Atom 0.1',
-                      'atom02': u'Atom 0.2',
-                      'atom03': u'Atom 0.3',
-                      'atom10': u'Atom 1.0',
-                      'atom': u'Atom (unknown version)',
-                      'cdf': u'CDF',
+SUPPORTED_VERSIONS = {'': 'unknown',
+                      'rss090': 'RSS 0.90',
+                      'rss091n': 'RSS 0.91 (Netscape)',
+                      'rss091u': 'RSS 0.91 (Userland)',
+                      'rss092': 'RSS 0.92',
+                      'rss093': 'RSS 0.93',
+                      'rss094': 'RSS 0.94',
+                      'rss20': 'RSS 2.0',
+                      'rss10': 'RSS 1.0',
+                      'rss': 'RSS (unknown version)',
+                      'atom01': 'Atom 0.1',
+                      'atom02': 'Atom 0.2',
+                      'atom03': 'Atom 0.3',
+                      'atom10': 'Atom 1.0',
+                      'atom': 'Atom (unknown version)',
+                      'cdf': 'CDF',
                       }
 
+bytes_ = type(b'')
 
 class _FeedParserMixin(
         cc.Namespace,
@@ -302,7 +283,7 @@ class _FeedParserMixin(
     can_be_relative_uri = set(['link', 'id', 'wfw_comment', 'wfw_commentrss', 'docs', 'url', 'href', 'comments', 'icon', 'logo'])
     can_contain_relative_uris = set(['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description'])
     can_contain_dangerous_markup = set(['content', 'title', 'summary', 'info', 'tagline', 'subtitle', 'copyright', 'rights', 'description'])
-    html_types = [u'text/html', u'application/xhtml+xml']
+    html_types = ['text/html', 'application/xhtml+xml']
 
     def __init__(self):
         if not self._matchnamespaces:
@@ -310,7 +291,7 @@ class _FeedParserMixin(
                 self._matchnamespaces[k.lower()] = v
         self.feeddata = FeedParserDict() # feed-level data
         self.entries = [] # list of entry-level data
-        self.version = u'' # feed type/version, see SUPPORTED_VERSIONS
+        self.version = '' # feed type/version, see SUPPORTED_VERSIONS
         self.namespacesInUse = {} # dictionary of namespaces defined by the feed
 
         # the following are used internally to track state;
@@ -356,8 +337,6 @@ class _FeedParserMixin(
         # strict xml parsers do -- account for this difference
         if isinstance(self, _LooseFeedParser):
             v = v.replace('&amp;', '&')
-            if not isinstance(v, unicode):
-                v = v.decode('utf-8')
         return (k, v)
 
     def unknown_starttag(self, tag, attrs):
@@ -370,7 +349,7 @@ class _FeedParserMixin(
         # track xml:base and xml:lang
         attrsD = dict(attrs)
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
-        if not isinstance(baseuri, unicode):
+        if isinstance(baseuri, bytes_):
             baseuri = baseuri.decode(self.encoding, 'ignore')
         # ensure that self.baseuri is always an absolute URI that
         # uses a whitelisted URI scheme (e.g. not `javscript:`)
@@ -400,12 +379,12 @@ class _FeedParserMixin(
                 self.trackNamespace(None, uri)
 
         # track inline content
-        if self.incontent and not self.contentparams.get('type', u'xml').endswith(u'xml'):
+        if self.incontent and not self.contentparams.get('type', 'xml').endswith('xml'):
             if tag in ('xhtml:div', 'div'):
                 return # typepad does this 10/2007
             # element declared itself as escaped markup, but it isn't really
-            self.contentparams['type'] = u'application/xhtml+xml'
-        if self.incontent and self.contentparams.get('type') == u'application/xhtml+xml':
+            self.contentparams['type'] = 'application/xhtml+xml'
+        if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
             if tag.find(':') <> -1:
                 prefix, tag = tag.split(':', 1)
                 namespace = self.namespacesInUse.get(prefix, '')
@@ -471,12 +450,12 @@ class _FeedParserMixin(
             self.pop(prefix + suffix)
 
         # track inline content
-        if self.incontent and not self.contentparams.get('type', u'xml').endswith(u'xml'):
+        if self.incontent and not self.contentparams.get('type', 'xml').endswith('xml'):
             # element declared itself as escaped markup, but it isn't really
             if tag in ('xhtml:div', 'div'):
                 return # typepad does this 10/2007
-            self.contentparams['type'] = u'application/xhtml+xml'
-        if self.incontent and self.contentparams.get('type') == u'application/xhtml+xml':
+            self.contentparams['type'] = 'application/xhtml+xml'
+        if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
             tag = tag.split(':')[-1]
             self.handle_data('</%s>' % tag, escape=0)
 
@@ -531,7 +510,7 @@ class _FeedParserMixin(
         # not containing any character or entity references
         if not self.elementstack:
             return
-        if escape and self.contentparams.get('type') == u'application/xhtml+xml':
+        if escape and self.contentparams.get('type') == 'application/xhtml+xml':
             text = _xmlescape(text)
         self.elementstack[-1][2].append(text)
 
@@ -567,25 +546,25 @@ class _FeedParserMixin(
     def mapContentType(self, contentType):
         contentType = contentType.lower()
         if contentType == 'text' or contentType == 'plain':
-            contentType = u'text/plain'
+            contentType = 'text/plain'
         elif contentType == 'html':
-            contentType = u'text/html'
+            contentType = 'text/html'
         elif contentType == 'xhtml':
-            contentType = u'application/xhtml+xml'
+            contentType = 'application/xhtml+xml'
         return contentType
 
     def trackNamespace(self, prefix, uri):
         loweruri = uri.lower()
         if not self.version:
             if (prefix, loweruri) == (None, 'http://my.netscape.com/rdf/simple/0.9/'):
-                self.version = u'rss090'
+                self.version = 'rss090'
             elif loweruri == 'http://purl.org/rss/1.0/':
-                self.version = u'rss10'
+                self.version = 'rss10'
             elif loweruri == 'http://www.w3.org/2005/atom':
-                self.version = u'atom10'
-        if loweruri.find(u'backend.userland.com/rss') <> -1:
+                self.version = 'atom10'
+        if loweruri.find('backend.userland.com/rss') <> -1:
             # match any backend.userland.com namespace
-            uri = u'http://backend.userland.com/rss'
+            uri = 'http://backend.userland.com/rss'
             loweruri = uri
         if loweruri in self._matchnamespaces:
             self.namespacemap[prefix] = self._matchnamespaces[loweruri]
@@ -594,7 +573,7 @@ class _FeedParserMixin(
             self.namespacesInUse[prefix or ''] = uri
 
     def resolveURI(self, uri):
-        return _urljoin(self.baseuri or u'', uri)
+        return _urljoin(self.baseuri or '', uri)
 
     def decodeEntities(self, element, data):
         return data
@@ -613,7 +592,7 @@ class _FeedParserMixin(
 
         element, expectingText, pieces = self.elementstack.pop()
 
-        if self.version == u'atom10' and self.contentparams.get('type', u'text') == u'application/xhtml+xml':
+        if self.version == 'atom10' and self.contentparams.get('type', 'text') == 'application/xhtml+xml':
             # remove enclosing child element, but only if it is a <div> and
             # only if all the remaining content is nested underneath it.
             # This means that the divs would be retained in the following:
@@ -636,10 +615,10 @@ class _FeedParserMixin(
 
         # Ensure each piece is a str for Python 3
         for (i, v) in enumerate(pieces):
-            if not isinstance(v, unicode):
+            if isinstance(v, bytes_):
                 pieces[i] = v.decode('utf-8')
 
-        output = u''.join(pieces)
+        output = ''.join(pieces)
         if stripWhitespace:
             output = output.strip()
         if not expectingText:
@@ -670,9 +649,9 @@ class _FeedParserMixin(
 
         # some feed formats require consumers to guess
         # whether the content is html or plain text
-        if not self.version.startswith(u'atom') and self.contentparams.get('type') == u'text/plain':
+        if not self.version.startswith('atom') and self.contentparams.get('type') == 'text/plain':
             if self.lookslikehtml(output):
-                self.contentparams['type'] = u'text/html'
+                self.contentparams['type'] = 'text/html'
 
         # remove temporary cruft from contentparams
         try:
@@ -684,30 +663,30 @@ class _FeedParserMixin(
         except KeyError:
             pass
 
-        is_htmlish = self.mapContentType(self.contentparams.get('type', u'text/html')) in self.html_types
+        is_htmlish = self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types
         # resolve relative URIs within embedded markup
         if is_htmlish and RESOLVE_RELATIVE_URIS:
             if element in self.can_contain_relative_uris:
-                output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', u'text/html'))
+                output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
 
         # sanitize embedded markup
         if is_htmlish and SANITIZE_HTML:
             if element in self.can_contain_dangerous_markup:
-                output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', u'text/html'))
+                output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
 
-        if self.encoding and not isinstance(output, unicode):
+        if self.encoding and isinstance(output, bytes_):
             output = output.decode(self.encoding, 'ignore')
 
         # address common error where people take data that is already
         # utf-8, presume that it is iso-8859-1, and re-encode it.
-        if self.encoding in (u'utf-8', u'utf-8_INVALID_PYTHON_3') and isinstance(output, unicode):
+        if self.encoding in ('utf-8', 'utf-8_INVALID_PYTHON_3') and not isinstance(output, bytes_):
             try:
                 output = output.encode('iso-8859-1').decode('utf-8')
             except (UnicodeEncodeError, UnicodeDecodeError):
                 pass
 
         # map win-1252 extensions to the proper code points
-        if isinstance(output, unicode):
+        if not isinstance(output, bytes_):
             output = output.translate(_cp1252)
 
         # categories/tags/keywords/whatever are handled in _end_category or _end_tags or _end_itunes_keywords
@@ -814,11 +793,11 @@ class _FeedParserMixin(
     def _isBase64(self, attrsD, contentparams):
         if attrsD.get('mode', '') == 'base64':
             return 1
-        if self.contentparams['type'].startswith(u'text/'):
+        if self.contentparams['type'].startswith('text/'):
             return 0
-        if self.contentparams['type'].endswith(u'+xml'):
+        if self.contentparams['type'].endswith('+xml'):
             return 0
-        if self.contentparams['type'].endswith(u'/xml'):
+        if self.contentparams['type'].endswith('/xml'):
             return 0
         return 1
 
@@ -844,22 +823,22 @@ class _FeedParserMixin(
             context.setdefault(key, value)
 
     def _start_rss(self, attrsD):
-        versionmap = {'0.91': u'rss091u',
-                      '0.92': u'rss092',
-                      '0.93': u'rss093',
-                      '0.94': u'rss094'}
+        versionmap = {'0.91': 'rss091u',
+                      '0.92': 'rss092',
+                      '0.93': 'rss093',
+                      '0.94': 'rss094'}
         #If we're here then this is an RSS feed.
         #If we don't have a version or have a version that starts with something
         #other than RSS then there's been a mistake. Correct it.
-        if not self.version or not self.version.startswith(u'rss'):
+        if not self.version or not self.version.startswith('rss'):
             attr_version = attrsD.get('version', '')
             version = versionmap.get(attr_version)
             if version:
                 self.version = version
             elif attr_version.startswith('2.'):
-                self.version = u'rss20'
+                self.version = 'rss20'
             else:
-                self.version = u'rss'
+                self.version = 'rss'
 
     def _start_channel(self, attrsD):
         self.infeed = 1
@@ -877,16 +856,16 @@ class _FeedParserMixin(
 
     def _start_feed(self, attrsD):
         self.infeed = 1
-        versionmap = {'0.1': u'atom01',
-                      '0.2': u'atom02',
-                      '0.3': u'atom03'}
+        versionmap = {'0.1': 'atom01',
+                      '0.2': 'atom02',
+                      '0.3': 'atom03'}
         if not self.version:
             attr_version = attrsD.get('version')
             version = versionmap.get(attr_version)
             if version:
                 self.version = version
             else:
-                self.version = u'atom'
+                self.version = 'atom'
 
     def _end_channel(self):
         self.infeed = 0
@@ -1043,7 +1022,7 @@ class _FeedParserMixin(
             name = detail.get('name')
             email = detail.get('email')
             if name and email:
-                context[key] = u'%s (%s)' % (name, email)
+                context[key] = '%s (%s)' % (name, email)
             elif name:
                 context[key] = name
             elif email:
@@ -1052,18 +1031,18 @@ class _FeedParserMixin(
             author, email = context.get(key), None
             if not author:
                 return
-            emailmatch = re.search(ur'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))(\?subject=\S+)?''', author)
+            emailmatch = re.search(r'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))(\?subject=\S+)?''', author)
             if emailmatch:
                 email = emailmatch.group(0)
                 # probably a better way to do the following, but it passes all the tests
-                author = author.replace(email, u'')
-                author = author.replace(u'()', u'')
-                author = author.replace(u'<>', u'')
-                author = author.replace(u'&lt;&gt;', u'')
+                author = author.replace(email, '')
+                author = author.replace('()', '')
+                author = author.replace('<>', '')
+                author = author.replace('&lt;&gt;', '')
                 author = author.strip()
-                if author and (author[0] == u'('):
+                if author and (author[0] == '('):
                     author = author[1:]
-                if author and (author[-1] == u')'):
+                if author and (author[-1] == ')'):
                     author = author[:-1]
                 author = author.strip()
             if author or email:
@@ -1074,7 +1053,7 @@ class _FeedParserMixin(
                 detail['email'] = email
 
     def _start_subtitle(self, attrsD):
-        self.pushContent('subtitle', attrsD, u'text/plain', 1)
+        self.pushContent('subtitle', attrsD, 'text/plain', 1)
     _start_tagline = _start_subtitle
 
     def _end_subtitle(self):
@@ -1082,7 +1061,7 @@ class _FeedParserMixin(
     _end_tagline = _end_subtitle
 
     def _start_rights(self, attrsD):
-        self.pushContent('rights', attrsD, u'text/plain', 1)
+        self.pushContent('rights', attrsD, 'text/plain', 1)
     _start_copyright = _start_rights
 
     def _end_rights(self):
@@ -1199,11 +1178,11 @@ class _FeedParserMixin(
         self._getContext()['cloud'] = FeedParserDict(attrsD)
 
     def _start_link(self, attrsD):
-        attrsD.setdefault('rel', u'alternate')
-        if attrsD['rel'] == u'self':
-            attrsD.setdefault('type', u'application/atom+xml')
+        attrsD.setdefault('rel', 'alternate')
+        if attrsD['rel'] == 'self':
+            attrsD.setdefault('type', 'application/atom+xml')
         else:
-            attrsD.setdefault('type', u'text/html')
+            attrsD.setdefault('type', 'text/html')
         context = self._getContext()
         attrsD = self._itsAnHrefDamnIt(attrsD)
         if 'href' in attrsD:
@@ -1214,7 +1193,7 @@ class _FeedParserMixin(
             context['links'].append(FeedParserDict(attrsD))
         if 'href' in attrsD:
             expectingText = 0
-            if (attrsD.get('rel') == u'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
+            if (attrsD.get('rel') == 'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
                 context['link'] = attrsD['href']
         else:
             self.push('link', expectingText)
@@ -1239,7 +1218,7 @@ class _FeedParserMixin(
     def _start_title(self, attrsD):
         if self.svgOK:
             return self.unknown_starttag('title', attrsD.items())
-        self.pushContent('title', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
+        self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_title(self):
         if self.svgOK:
@@ -1255,10 +1234,10 @@ class _FeedParserMixin(
             self._summaryKey = 'content'
             self._start_content(attrsD)
         else:
-            self.pushContent('description', attrsD, u'text/html', self.infeed or self.inentry or self.insource)
+            self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
 
     def _start_abstract(self, attrsD):
-        self.pushContent('description', attrsD, u'text/plain', self.infeed or self.inentry or self.insource)
+        self.pushContent('description', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_description(self):
         if self._summaryKey == 'content':
@@ -1269,7 +1248,7 @@ class _FeedParserMixin(
     _end_abstract = _end_description
 
     def _start_info(self, attrsD):
-        self.pushContent('info', attrsD, u'text/plain', 1)
+        self.pushContent('info', attrsD, 'text/plain', 1)
     _start_feedburner_browserfriendly = _start_info
 
     def _end_info(self):
@@ -1297,7 +1276,7 @@ class _FeedParserMixin(
             self._start_content(attrsD)
         else:
             self._summaryKey = 'summary'
-            self.pushContent(self._summaryKey, attrsD, u'text/plain', 1)
+            self.pushContent(self._summaryKey, attrsD, 'text/plain', 1)
 
     def _end_summary(self):
         if self._summaryKey == 'content':
@@ -1309,13 +1288,13 @@ class _FeedParserMixin(
     def _start_enclosure(self, attrsD):
         attrsD = self._itsAnHrefDamnIt(attrsD)
         context = self._getContext()
-        attrsD['rel'] = u'enclosure'
+        attrsD['rel'] = 'enclosure'
         context.setdefault('links', []).append(FeedParserDict(attrsD))
 
     def _start_source(self, attrsD):
         if 'url' in attrsD:
             # This means that we're processing a source element from an RSS 2.0 feed
-            self.sourcedata['href'] = attrsD[u'url']
+            self.sourcedata['href'] = attrsD['url']
         self.push('source', 1)
         self.insource = 1
         self.title_depth = -1
@@ -1329,22 +1308,22 @@ class _FeedParserMixin(
         self.sourcedata.clear()
 
     def _start_content(self, attrsD):
-        self.pushContent('content', attrsD, u'text/plain', 1)
+        self.pushContent('content', attrsD, 'text/plain', 1)
         src = attrsD.get('src')
         if src:
             self.contentparams['src'] = src
         self.push('content', 1)
 
     def _start_body(self, attrsD):
-        self.pushContent('content', attrsD, u'application/xhtml+xml', 1)
+        self.pushContent('content', attrsD, 'application/xhtml+xml', 1)
     _start_xhtml_body = _start_body
 
     def _start_content_encoded(self, attrsD):
-        self.pushContent('content', attrsD, u'text/html', 1)
+        self.pushContent('content', attrsD, 'text/html', 1)
     _start_fullitem = _start_content_encoded
 
     def _end_content(self):
-        copyToSummary = self.mapContentType(self.contentparams.get('type')) in ([u'text/plain'] + self.html_types)
+        copyToSummary = self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types)
         value = self.popContent('content')
         if copyToSummary:
             self._save('summary', value)
@@ -1372,7 +1351,7 @@ if _XML_AVAILABLE:
             self.bozo = 0
             self.exc = None
             self.decls = {}
-            self.baseuri = baseuri or u''
+            self.baseuri = baseuri or ''
             self.lang = baselang
             self.encoding = encoding
             super(_StrictFeedParser, self).__init__()
@@ -1389,9 +1368,9 @@ if _XML_AVAILABLE:
         def startElementNS(self, name, qname, attrs):
             namespace, localname = name
             lowernamespace = str(namespace or '').lower()
-            if lowernamespace.find(u'backend.userland.com/rss') <> -1:
+            if lowernamespace.find('backend.userland.com/rss') <> -1:
                 # match any backend.userland.com namespace
-                namespace = u'http://backend.userland.com/rss'
+                namespace = 'http://backend.userland.com/rss'
                 lowernamespace = namespace
             if qname and qname.find(':') > 0:
                 givenprefix = qname.split(':')[0]
@@ -1468,9 +1447,9 @@ if _XML_AVAILABLE:
 
 class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
     def __init__(self, baseuri=None, baselang=None, encoding=None, entities=None):
-        self.baseuri = baseuri or u''
+        self.baseuri = baseuri or ''
         self.lang = baselang or None
-        self.encoding = encoding or u'utf-8' # character encoding
+        self.encoding = encoding or 'utf-8' # character encoding
         self.entities = entities or {}
         super(_LooseFeedParser, self).__init__()
 
@@ -1487,7 +1466,7 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
         data = data.replace('&#x22;', '&quot;')
         data = data.replace('&#39;', '&apos;')
         data = data.replace('&#x27;', '&apos;')
-        if not self.contentparams.get('type', u'xml').endswith(u'xml'):
+        if not self.contentparams.get('type', 'xml').endswith('xml'):
             data = data.replace('&lt;', '<')
             data = data.replace('&gt;', '>')
             data = data.replace('&amp;', '&')
@@ -1558,7 +1537,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
                     auth = base64.standard_b64encode(user_passwd).strip()
 
         # iri support
-        if isinstance(url_file_stream_or_string, unicode):
+        if not isinstance(url_file_stream_or_string, bytes_):
             url_file_stream_or_string = _convert_to_idn(url_file_stream_or_string)
 
         # try to open with urllib2 (to use optional headers)
@@ -1584,19 +1563,19 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         pass
 
     # treat url_file_stream_or_string as string
-    if isinstance(url_file_stream_or_string, unicode):
+    if not isinstance(url_file_stream_or_string, bytes_):
         return _StringIO(url_file_stream_or_string.encode('utf-8'))
     return _StringIO(url_file_stream_or_string)
 
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
-EBCDIC_MARKER = _l2bytes([0x4C, 0x6F, 0xA7, 0x94])
-UTF16BE_MARKER = _l2bytes([0x00, 0x3C, 0x00, 0x3F])
-UTF16LE_MARKER = _l2bytes([0x3C, 0x00, 0x3F, 0x00])
-UTF32BE_MARKER = _l2bytes([0x00, 0x00, 0x00, 0x3C])
-UTF32LE_MARKER = _l2bytes([0x3C, 0x00, 0x00, 0x00])
+EBCDIC_MARKER = b'\x4C\x6F\xA7\x94'
+UTF16BE_MARKER = b'\x00\x3C\x00\x3F'
+UTF16LE_MARKER = b'\x3C\x00\x3F\x00'
+UTF32BE_MARKER = b'\x00\x00\x00\x3C'
+UTF32LE_MARKER = b'\x3C\x00\x00\x00'
 
-ZERO_BYTES = _l2bytes([0x00, 0x00])
+ZERO_BYTES = '\x00\x00'
 
 # Match the opening XML declaration.
 # Example: <?xml version="1.0" encoding="utf-8"?>
@@ -1604,7 +1583,7 @@ RE_XML_DECLARATION = re.compile('^<\?xml[^>]*?>')
 
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_PI_ENCODING = re.compile(_s2bytes('^<\?.*encoding=[\'"](.*?)[\'"].*\?>'))
+RE_XML_PI_ENCODING = re.compile(b'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
 
 def convert_to_utf8(http_headers, data):
     '''Detect and convert the character encoding to UTF-8.
@@ -1653,9 +1632,9 @@ def convert_to_utf8(http_headers, data):
     # you should definitely install it if you can.
     # http://cjkpython.i18n.org/
 
-    bom_encoding = u''
-    xml_encoding = u''
-    rfc3023_encoding = u''
+    bom_encoding = ''
+    xml_encoding = ''
+    rfc3023_encoding = ''
 
     # Look at the first few bytes of the document to guess what
     # its encoding may be. We only need to decode enough of the
@@ -1665,31 +1644,31 @@ def convert_to_utf8(http_headers, data):
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
     # Check for BOMs first.
     if data[:4] == codecs.BOM_UTF32_BE:
-        bom_encoding = u'utf-32be'
+        bom_encoding = 'utf-32be'
         data = data[4:]
     elif data[:4] == codecs.BOM_UTF32_LE:
-        bom_encoding = u'utf-32le'
+        bom_encoding = 'utf-32le'
         data = data[4:]
     elif data[:2] == codecs.BOM_UTF16_BE and data[2:4] != ZERO_BYTES:
-        bom_encoding = u'utf-16be'
+        bom_encoding = 'utf-16be'
         data = data[2:]
     elif data[:2] == codecs.BOM_UTF16_LE and data[2:4] != ZERO_BYTES:
-        bom_encoding = u'utf-16le'
+        bom_encoding = 'utf-16le'
         data = data[2:]
     elif data[:3] == codecs.BOM_UTF8:
-        bom_encoding = u'utf-8'
+        bom_encoding = 'utf-8'
         data = data[3:]
     # Check for the characters '<?xm' in several encodings.
     elif data[:4] == EBCDIC_MARKER:
-        bom_encoding = u'cp037'
+        bom_encoding = 'cp037'
     elif data[:4] == UTF16BE_MARKER:
-        bom_encoding = u'utf-16be'
+        bom_encoding = 'utf-16be'
     elif data[:4] == UTF16LE_MARKER:
-        bom_encoding = u'utf-16le'
+        bom_encoding = 'utf-16le'
     elif data[:4] == UTF32BE_MARKER:
-        bom_encoding = u'utf-32be'
+        bom_encoding = 'utf-32be'
     elif data[:4] == UTF32LE_MARKER:
-        bom_encoding = u'utf-32le'
+        bom_encoding = 'utf-32le'
 
     tempdata = data
     try:
@@ -1707,10 +1686,10 @@ def convert_to_utf8(http_headers, data):
         xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
         # Normalize the xml_encoding if necessary.
         if bom_encoding and (xml_encoding in (
-            u'u16', u'utf-16', u'utf16', u'utf_16',
-            u'u32', u'utf-32', u'utf32', u'utf_32',
-            u'iso-10646-ucs-2', u'iso-10646-ucs-4',
-            u'csucs4', u'csunicode', u'ucs-2', u'ucs-4'
+            'u16', 'utf-16', 'utf16', 'utf_16',
+            'u32', 'utf-32', 'utf32', 'utf_32',
+            'iso-10646-ucs-2', 'iso-10646-ucs-4',
+            'csucs4', 'csunicode', 'ucs-2', 'ucs-4'
         )):
             xml_encoding = bom_encoding
 
@@ -1722,35 +1701,35 @@ def convert_to_utf8(http_headers, data):
     http_content_type = http_headers.get('content-type') or ''
     http_content_type, params = cgi.parse_header(http_content_type)
     http_encoding = params.get('charset', '').replace("'", "")
-    if not isinstance(http_encoding, unicode):
+    if isinstance(http_encoding, bytes_):
         http_encoding = http_encoding.decode('utf-8', 'ignore')
 
     acceptable_content_type = 0
-    application_content_types = (u'application/xml', u'application/xml-dtd',
-                                 u'application/xml-external-parsed-entity')
-    text_content_types = (u'text/xml', u'text/xml-external-parsed-entity')
+    application_content_types = ('application/xml', 'application/xml-dtd',
+                                 'application/xml-external-parsed-entity')
+    text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
     if (http_content_type in application_content_types) or \
-       (http_content_type.startswith(u'application/') and
-        http_content_type.endswith(u'+xml')):
+       (http_content_type.startswith('application/') and
+        http_content_type.endswith('+xml')):
         acceptable_content_type = 1
-        rfc3023_encoding = http_encoding or xml_encoding or u'utf-8'
+        rfc3023_encoding = http_encoding or xml_encoding or 'utf-8'
     elif (http_content_type in text_content_types) or \
-         (http_content_type.startswith(u'text/') and
-          http_content_type.endswith(u'+xml')):
+         (http_content_type.startswith('text/') and
+          http_content_type.endswith('+xml')):
         acceptable_content_type = 1
-        rfc3023_encoding = http_encoding or u'us-ascii'
-    elif http_content_type.startswith(u'text/'):
-        rfc3023_encoding = http_encoding or u'us-ascii'
+        rfc3023_encoding = http_encoding or 'us-ascii'
+    elif http_content_type.startswith('text/'):
+        rfc3023_encoding = http_encoding or 'us-ascii'
     elif http_headers and 'content-type' not in http_headers:
-        rfc3023_encoding = xml_encoding or u'iso-8859-1'
+        rfc3023_encoding = xml_encoding or 'iso-8859-1'
     else:
-        rfc3023_encoding = xml_encoding or u'utf-8'
+        rfc3023_encoding = xml_encoding or 'utf-8'
     # gb18030 is a superset of gb2312, so always replace gb2312
     # with gb18030 for greater compatibility.
-    if rfc3023_encoding.lower() == u'gb2312':
-        rfc3023_encoding = u'gb18030'
-    if xml_encoding.lower() == u'gb2312':
-        xml_encoding = u'gb18030'
+    if rfc3023_encoding.lower() == 'gb2312':
+        rfc3023_encoding = 'gb18030'
+    if xml_encoding.lower() == 'gb2312':
+        xml_encoding = 'gb18030'
 
     # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
@@ -1775,12 +1754,12 @@ def convert_to_utf8(http_headers, data):
             chardet_encoding = chardet.detect(data)['encoding']
             if not chardet_encoding:
                 chardet_encoding = ''
-            if not isinstance(chardet_encoding, unicode):
-                chardet_encoding = unicode(chardet_encoding, 'ascii', 'ignore')
+            if isinstance(chardet_encoding, bytes_):
+                chardet_encoding = chardet_encoding.encode('ascii', 'ignore')
             return chardet_encoding
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
     for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
-                              lazy_chardet_encoding, u'utf-8', u'windows-1252', u'iso-8859-2'):
+                              lazy_chardet_encoding, 'utf-8', 'windows-1252', 'iso-8859-2'):
         if callable(proposed_encoding):
             proposed_encoding = proposed_encoding()
         if not proposed_encoding:
@@ -1799,7 +1778,7 @@ def convert_to_utf8(http_headers, data):
             if RE_XML_DECLARATION.search(data):
                 data = RE_XML_DECLARATION.sub(new_declaration, data)
             else:
-                data = new_declaration + u'\n' + data
+                data = new_declaration + '\n' + data
             data = data.encode('utf-8')
             break
     # if still no luck, give up
@@ -1808,7 +1787,7 @@ def convert_to_utf8(http_headers, data):
             'document encoding unknown, I tried ' +
             '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' %
             (rfc3023_encoding, xml_encoding))
-        rfc3023_encoding = u''
+        rfc3023_encoding = ''
     elif proposed_encoding != rfc3023_encoding:
         error = CharacterEncodingOverride(
             'document declared as %s, but parsed as %s' %
@@ -1819,11 +1798,11 @@ def convert_to_utf8(http_headers, data):
 
 # Match XML entity declarations.
 # Example: <!ENTITY copyright "(C)">
-RE_ENTITY_PATTERN = re.compile(_s2bytes(r'^\s*<!ENTITY([^>]*?)>'), re.MULTILINE)
+RE_ENTITY_PATTERN = re.compile(br'^\s*<!ENTITY([^>]*?)>', re.MULTILINE)
 
 # Match XML DOCTYPE declarations.
 # Example: <!DOCTYPE feed [ ]>
-RE_DOCTYPE_PATTERN = re.compile(_s2bytes(r'^\s*<!DOCTYPE([^>]*?)>'), re.MULTILINE)
+RE_DOCTYPE_PATTERN = re.compile(br'^\s*<!DOCTYPE([^>]*?)>', re.MULTILINE)
 
 # Match safe entity declarations.
 # This will allow hexadecimal character references through,
@@ -1831,7 +1810,7 @@ RE_DOCTYPE_PATTERN = re.compile(_s2bytes(r'^\s*<!DOCTYPE([^>]*?)>'), re.MULTILIN
 # Example: cubed "&#179;"
 # Example: copyright "(C)"
 # Forbidden: explode1 "&explode2;&explode2;"
-RE_SAFE_ENTITY_PATTERN = re.compile(_s2bytes('\s+(\w+)\s+"(&#\w+;|[^&"]*)"'))
+RE_SAFE_ENTITY_PATTERN = re.compile(b'\s+(\w+)\s+"(&#\w+;|[^&"]*)"')
 
 def replace_doctype(data):
     '''Strips and replaces the DOCTYPE, returns (rss_version, stripped_data)
@@ -1842,31 +1821,31 @@ def replace_doctype(data):
 
     # Divide the document into two groups by finding the location
     # of the first element that doesn't begin with '<?' or '<!'.
-    start = re.search(_s2bytes('<\w'), data)
+    start = re.search(b'<\w', data)
     start = start and start.start() or -1
     head, data = data[:start+1], data[start+1:]
 
     # Save and then remove all of the ENTITY declarations.
     entity_results = RE_ENTITY_PATTERN.findall(head)
-    head = RE_ENTITY_PATTERN.sub(_s2bytes(''), head)
+    head = RE_ENTITY_PATTERN.sub(b'', head)
 
     # Find the DOCTYPE declaration and check the feed type.
     doctype_results = RE_DOCTYPE_PATTERN.findall(head)
-    doctype = doctype_results and doctype_results[0] or _s2bytes('')
-    if _s2bytes('netscape') in doctype.lower():
-        version = u'rss091n'
+    doctype = doctype_results and doctype_results[0] or b''
+    if b'netscape' in doctype.lower():
+        version = 'rss091n'
     else:
         version = None
 
     # Re-insert the safe ENTITY declarations if a DOCTYPE was found.
-    replacement = _s2bytes('')
+    replacement = b''
     if len(doctype_results) == 1 and entity_results:
         match_safe_entities = lambda e: RE_SAFE_ENTITY_PATTERN.match(e)
         safe_entities = filter(match_safe_entities, entity_results)
         if safe_entities:
-            replacement = _s2bytes('<!DOCTYPE feed [\n<!ENTITY') \
-                        + _s2bytes('>\n<!ENTITY ').join(safe_entities) \
-                        + _s2bytes('>\n]>')
+            replacement = b'<!DOCTYPE feed [\n<!ENTITY' \
+                        + b'>\n<!ENTITY '.join(safe_entities) \
+                        + b'>\n]>'
     data = RE_DOCTYPE_PATTERN.sub(replacement, head) + data
 
     # Precompute the safe entities for the loose parser.
@@ -1950,18 +1929,18 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # save HTTP headers
     if http_headers:
         if 'etag' in http_headers:
-            etag = http_headers.get('etag', u'')
-            if not isinstance(etag, unicode):
+            etag = http_headers.get('etag', '')
+            if isinstance(etag, bytes_):
                 etag = etag.decode('utf-8', 'ignore')
             if etag:
                 result['etag'] = etag
         if 'last-modified' in http_headers:
-            modified = http_headers.get('last-modified', u'')
+            modified = http_headers.get('last-modified', '')
             if modified:
                 result['modified'] = modified
                 result['modified_parsed'] = _parse_date(modified)
     if hasattr(f, 'url'):
-        if not isinstance(f.url, unicode):
+        if isinstance(f.url, bytes_):
             result['href'] = f.url.decode('utf-8', 'ignore')
         else:
             result['href'] = f.url
@@ -1976,7 +1955,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
 
     # Stop processing if the server sent HTTP 304 Not Modified.
     if getattr(f, 'code', 0) == 304:
-        result['version'] = u''
+        result['version'] = ''
         result['debug_message'] = 'The feed has not changed since you last checked, ' + \
             'so the server sent no data.  This is a feature, not a bug!'
         return result
@@ -1990,12 +1969,12 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['version'], data, entities = replace_doctype(data)
 
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
-    contentloc = http_headers.get('content-location', u'')
-    href = result.get('href', u'')
+    contentloc = http_headers.get('content-location', '')
+    href = result.get('href', '')
     baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
 
     baselang = http_headers.get('content-language', None)
-    if not isinstance(baselang, unicode) and baselang is not None:
+    if isinstance(baselang, bytes_) and baselang is not None:
         baselang = baselang.decode('utf-8', 'ignore')
 
     if not _XML_AVAILABLE:
