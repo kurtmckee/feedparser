@@ -1,7 +1,11 @@
 from __future__ import absolute_import, unicode_literals
 
-from htmlentitydefs import name2codepoint
 import re
+
+try:
+    from html.entities import name2codepoint
+except ImportError:
+    from htmlentitydefs import name2codepoint
 
 from .sgml import *
 
@@ -68,11 +72,17 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
     # they're declared above, not as they're declared in sgmllib.
     def goahead(self, i):
         pass
-    goahead.func_code = sgmllib.SGMLParser.goahead.func_code
+    try:
+        goahead.__code__ = sgmllib.SGMLParser.goahead.__code__
+    except AttributeError:
+        goahead.func_code = sgmllib.SGMLParser.goahead.func_code
 
     def __parse_starttag(self, i):
         pass
-    __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
+    try:
+        __parse_starttag.__code__ = sgmllib.SGMLParser.parse_starttag.__code__
+    except AttributeError:
+        __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
 
     def parse_starttag(self,i):
         j = self.__parse_starttag(i)
