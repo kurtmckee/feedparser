@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re
 import urlparse
@@ -25,14 +25,10 @@ ACCEPTABLE_URI_SCHEMES = (
 _urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
 def _urljoin(base, uri):
     uri = _urifixer.sub(r'\1\3', uri)
-    if not isinstance(uri, unicode):
-        uri = uri.decode('utf-8', 'ignore')
     try:
         uri = urlparse.urljoin(base, uri)
     except ValueError:
-        uri = u''
-    if not isinstance(uri, unicode):
-        return uri.decode('utf-8', 'ignore')
+        uri = ''
     return uri
 
 def _convert_to_idn(url):
@@ -47,7 +43,7 @@ def _convert_to_idn(url):
         # the url needs to be converted to idn notation
         host = parts[1].rsplit(':', 1)
         newhost = []
-        port = u''
+        port = ''
         if len(host) == 2:
             port = host.pop()
         for h in host[0].split('.'):
@@ -62,20 +58,20 @@ def _convert_to_idn(url):
 def _makeSafeAbsoluteURI(base, rel=None):
     # bail if ACCEPTABLE_URI_SCHEMES is empty
     if not ACCEPTABLE_URI_SCHEMES:
-        return _urljoin(base, rel or u'')
+        return _urljoin(base, rel or '')
     if not base:
-        return rel or u''
+        return rel or ''
     if not rel:
         try:
             scheme = urlparse.urlparse(base)[0]
         except ValueError:
-            return u''
+            return ''
         if not scheme or scheme in ACCEPTABLE_URI_SCHEMES:
             return base
-        return u''
+        return ''
     uri = _urljoin(base, rel)
     if uri.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
-        return u''
+        return ''
     return uri
 
 class _RelativeURIResolver(_BaseHTMLProcessor):
