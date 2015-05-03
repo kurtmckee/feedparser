@@ -1,9 +1,23 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import datetime
 import re
-import urllib2
-import urlparse
+
+try:
+    import urllib.parse
+    import urllib.request
+except ImportError:
+    from urllib2 import HTTPDigestAuthHandler, HTTPRedirectHandler, HTTPDefaultErrorHandler, Request
+    from urlparse import urlparse
+
+    class urllib(object):
+        class parse(object):
+            urlparse = staticmethod(urlparse)
+        class request(object):
+            HTTPDigestAuthHandler = HTTPDigestAuthHandler
+            HTTPRedirectHandler = HTTPRedirectHandler
+            HTTPDefaultErrorHandler = HTTPDefaultErrorHandler
+            Request = Request
 
 try:
     import base64, binascii
@@ -24,7 +38,12 @@ except ImportError:
 
 from .datetimes import _parse_date
 
-class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler, urllib2.HTTPDefaultErrorHandler):
+try:
+    basestring
+except NameError:
+    basestring = str
+
+class _FeedURLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPRedirectHandler, urllib.request.HTTPDefaultErrorHandler):
     def http_error_default(self, req, fp, code, msg, headers):
         # The default implementation just raises HTTPError.
         # Forget that.
@@ -32,12 +51,12 @@ class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler
         return fp
 
     def http_error_301(self, req, fp, code, msg, hdrs):
-        result = urllib2.HTTPRedirectHandler.http_error_301(self, req, fp,
+        result = urllib.request.HTTPRedirectHandler.http_error_301(self, req, fp,
                                                             code, msg, hdrs)
         result.status = code
         result.newurl = result.geturl()
         return result
-    # The default implementations in urllib2.HTTPRedirectHandler
+    # The default implementations in urllib.request.HTTPRedirectHandler
     # are identical, so hardcoding a http_error_301 call above
     # won't affect anything
     http_error_300 = http_error_301
@@ -55,7 +74,7 @@ class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler
         # header the server sent back (for the realm) and retry
         # the request with the appropriate digest auth headers instead.
         # This evil genius hack has been brought to you by Aaron Swartz.
-        host = urlparse.urlparse(req.get_full_url())[1]
+        host = urllib.parse.urlparse(req.get_full_url())[1]
         if base64 is None or 'Authorization' not in req.headers \
                           or 'WWW-Authenticate' not in headers:
             return self.http_error_default(req, fp, code, msg, headers)
@@ -68,7 +87,7 @@ class _FeedURLHandler(urllib2.HTTPDigestAuthHandler, urllib2.HTTPRedirectHandler
         return retry
 
 def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, auth, request_headers):
-    request = urllib2.Request(url)
+    request = urllib.request.Request(url)
     request.add_header('User-Agent', agent)
     if etag:
         request.add_header('If-None-Match', etag)
