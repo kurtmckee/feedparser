@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -322,7 +322,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if key in acceptable_attributes:
                 key=keymap.get(key,key)
                 # make sure the uri uses an acceptable uri scheme
-                if key == u'href':
+                if key == 'href':
                     value = _makeSafeAbsoluteURI(value)
                 clean_attrs.append((key,value))
             elif key=='style':
