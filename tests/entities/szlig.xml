@@ -1,6 +1,6 @@
 <!--
 Description: szlig
-Expect:      feed['title'] == u'testing \xdf entity'
+Expect:      feed['title'] == 'testing \xdf entity'
 -->
 <rss>
 <channel>

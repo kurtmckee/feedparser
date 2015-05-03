@@ -1,6 +1,6 @@
 <!--
 Description: multiple enclosures
-Expect:      not bozo and entries[0]['enclosures'][1] == {'href': u'http://example.com/2', 'length': u'200000', 'type': u'image/gif'}
+Expect:      not bozo and entries[0]['enclosures'][1] == {'href': 'http://example.com/2', 'length': '200000', 'type': 'image/gif'}
 -->
 <rss version="2.0">
 <channel>

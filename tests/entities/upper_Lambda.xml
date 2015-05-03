@@ -1,6 +1,6 @@
 <!--
 Description: Lambda
-Expect:      feed['title'] == u'testing \u039b entity'
+Expect:      feed['title'] == 'testing \u039b entity'
 -->
 <rss>
 <channel>

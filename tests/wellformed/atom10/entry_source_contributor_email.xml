@@ -1,6 +1,6 @@
 <!--
 Description: entry source contributor email
-Expect:      not bozo and entries[0]['source']['contributors'][0]['email'] == u'me@example.com'
+Expect:      not bozo and entries[0]['source']['contributors'][0]['email'] == 'me@example.com'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

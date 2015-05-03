@@ -1,6 +1,6 @@
 <!--
 Description: Pi
-Expect:      feed['title'] == u'testing \u03a0 entity'
+Expect:      feed['title'] == 'testing \u03a0 entity'
 -->
 <rss>
 <channel>

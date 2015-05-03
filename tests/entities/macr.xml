@@ -1,6 +1,6 @@
 <!--
 Description: macr
-Expect:      feed['title'] == u'testing \xaf entity'
+Expect:      feed['title'] == 'testing \xaf entity'
 -->
 <rss>
 <channel>

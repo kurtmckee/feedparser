@@ -1,6 +1,6 @@
 <!--
 Description: divide
-Expect:      feed['title'] == u'testing \xf7 entity'
+Expect:      feed['title'] == 'testing \xf7 entity'
 -->
 <rss>
 <channel>

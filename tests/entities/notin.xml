@@ -1,6 +1,6 @@
 <!--
 Description: notin
-Expect:      feed['title'] == u'testing \u2209 entity'
+Expect:      feed['title'] == 'testing \u2209 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: image url
-Expect:      not bozo and feed['image']['url'] == u'http://example.org/url'
+Expect:      not bozo and feed['image']['url'] == 'http://example.org/url'
 -->
 <rss version="2.0">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: Iuml
-Expect:      feed['title'] == u'testing \xcf entity'
+Expect:      feed['title'] == 'testing \xcf entity'
 -->
 <rss>
 <channel>

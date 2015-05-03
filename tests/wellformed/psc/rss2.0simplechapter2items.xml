@@ -1,6 +1,6 @@
 <!--
 Description:  Simple-Chapters: podlove.org/simple-chapters with two items
-Expect:       not bozo and entries[0]['psc_chapters']['chapters'][0]['title'] == u'Livekalender' and entries[0]['psc_chapters']['chapters'][0]['start_parsed'] == datetime.timedelta(0, 12)
+Expect:       not bozo and entries[0]['psc_chapters']['chapters'][0]['title'] == 'Livekalender' and entries[0]['psc_chapters']['chapters'][0]['start_parsed'] == datetime.timedelta(0, 12)
 -->
 <rss version="2.0">
   <channel>

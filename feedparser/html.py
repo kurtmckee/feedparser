@@ -1,36 +1,42 @@
-from htmlentitydefs import name2codepoint
+from __future__ import absolute_import, unicode_literals
+
 import re
+
+try:
+    from html.entities import name2codepoint
+except ImportError:
+    from htmlentitydefs import name2codepoint
 
 from .sgml import *
 
 _cp1252 = {
-    128: unichr(8364), # euro sign
-    130: unichr(8218), # single low-9 quotation mark
-    131: unichr( 402), # latin small letter f with hook
-    132: unichr(8222), # double low-9 quotation mark
-    133: unichr(8230), # horizontal ellipsis
-    134: unichr(8224), # dagger
-    135: unichr(8225), # double dagger
-    136: unichr( 710), # modifier letter circumflex accent
-    137: unichr(8240), # per mille sign
-    138: unichr( 352), # latin capital letter s with caron
-    139: unichr(8249), # single left-pointing angle quotation mark
-    140: unichr( 338), # latin capital ligature oe
-    142: unichr( 381), # latin capital letter z with caron
-    145: unichr(8216), # left single quotation mark
-    146: unichr(8217), # right single quotation mark
-    147: unichr(8220), # left double quotation mark
-    148: unichr(8221), # right double quotation mark
-    149: unichr(8226), # bullet
-    150: unichr(8211), # en dash
-    151: unichr(8212), # em dash
-    152: unichr( 732), # small tilde
-    153: unichr(8482), # trade mark sign
-    154: unichr( 353), # latin small letter s with caron
-    155: unichr(8250), # single right-pointing angle quotation mark
-    156: unichr( 339), # latin small ligature oe
-    158: unichr( 382), # latin small letter z with caron
-    159: unichr( 376), # latin capital letter y with diaeresis
+    128: '\u20ac', # euro sign
+    130: '\u201a', # single low-9 quotation mark
+    131: '\u0192', # latin small letter f with hook
+    132: '\u201e', # double low-9 quotation mark
+    133: '\u2026', # horizontal ellipsis
+    134: '\u2020', # dagger
+    135: '\u2021', # double dagger
+    136: '\u02c6', # modifier letter circumflex accent
+    137: '\u2030', # per mille sign
+    138: '\u0160', # latin capital letter s with caron
+    139: '\u2039', # single left-pointing angle quotation mark
+    140: '\u0152', # latin capital ligature oe
+    142: '\u017d', # latin capital letter z with caron
+    145: '\u2018', # left single quotation mark
+    146: '\u2019', # right single quotation mark
+    147: '\u201c', # left double quotation mark
+    148: '\u201d', # right double quotation mark
+    149: '\u2022', # bullet
+    150: '\u2013', # en dash
+    151: '\u2014', # em dash
+    152: '\u02dc', # small tilde
+    153: '\u2122', # trade mark sign
+    154: '\u0161', # latin small letter s with caron
+    155: '\u203a', # single right-pointing angle quotation mark
+    156: '\u0153', # latin small ligature oe
+    158: '\u017e', # latin small letter z with caron
+    159: '\u0178', # latin capital letter y with diaeresis
 }
 
 class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
@@ -66,11 +72,17 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
     # they're declared above, not as they're declared in sgmllib.
     def goahead(self, i):
         pass
-    goahead.func_code = sgmllib.SGMLParser.goahead.func_code
+    try:
+        goahead.__code__ = sgmllib.SGMLParser.goahead.__code__
+    except AttributeError:
+        goahead.func_code = sgmllib.SGMLParser.goahead.func_code
 
     def __parse_starttag(self, i):
         pass
-    __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
+    try:
+        __parse_starttag.__code__ = sgmllib.SGMLParser.parse_starttag.__code__
+    except AttributeError:
+        __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
 
     def parse_starttag(self,i):
         j = self.__parse_starttag(i)
@@ -84,14 +96,6 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
         data = re.sub(r'<([^<>\s]+?)\s*/>', self._shorttag_replace, data)
         data = data.replace('&#39;', "'")
         data = data.replace('&#34;', '"')
-        try:
-            bytes
-            if bytes is str:
-                raise NameError
-            self.encoding = self.encoding + u'_INVALID_PYTHON_3'
-        except NameError:
-            if self.encoding and isinstance(data, unicode):
-                data = data.encode(self.encoding)
         sgmllib.SGMLParser.feed(self, data)
         sgmllib.SGMLParser.close(self)
 
@@ -114,20 +118,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
             for key, value in attrs:
                 value=value.replace('>','&gt;').replace('<','&lt;').replace('"','&quot;')
                 value = self.bare_ampersand.sub("&amp;", value)
-                # thanks to Kevin Marks for this breathtaking hack to deal with (valid) high-bit attribute values in UTF-8 feeds
-                if not isinstance(value, unicode):
-                    value = value.decode(self.encoding, 'ignore')
-                try:
-                    # Currently, in Python 3 the key is already a str, and cannot be decoded again
-                    uattrs.append((unicode(key, self.encoding), value))
-                except TypeError:
-                    uattrs.append((key, value))
-            strattrs = u''.join([u' %s="%s"' % (key, value) for key, value in uattrs])
-            if self.encoding:
-                try:
-                    strattrs = strattrs.encode(self.encoding)
-                except (UnicodeEncodeError, LookupError):
-                    pass
+                uattrs.append((key, value))
+            strattrs = ''.join([' %s="%s"' % (key, value) for key, value in uattrs])
         if tag in self.elements_no_end_tag:
             self.pieces.append('<%s%s />' % (tag, strattrs))
         else:
@@ -210,7 +202,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
 
     def output(self):
         '''Return processed HTML as a single string'''
-        return ''.join([str(p) for p in self.pieces])
+        return ''.join(self.pieces)
 
     def parse_declaration(self, i):
         try:

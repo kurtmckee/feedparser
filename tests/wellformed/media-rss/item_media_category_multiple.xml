@@ -1,6 +1,6 @@
 <!--
 Description: multiple media:category tags - multiple categories
-Expect: not bozo and len(entries[0].tags) == 2 and entries[0].tags[1].term == u'cat2'
+Expect: not bozo and len(entries[0].tags) == 2 and entries[0].tags[1].term == 'cat2'
 -->
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss">
    <channel>

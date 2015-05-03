@@ -1,6 +1,6 @@
 <!--
 Description: feed subtitle content type defaults to 'text/plain'
-Expect:      not bozo and feed['subtitle_detail']['type'] == u'text/plain'
+Expect:      not bozo and feed['subtitle_detail']['type'] == 'text/plain'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
   <subtitle>Example Atom</subtitle>

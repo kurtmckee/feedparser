@@ -1,6 +1,6 @@
 <!--
 Description: frac12
-Expect:      feed['title'] == u'testing \xbd entity'
+Expect:      feed['title'] == 'testing \xbd entity'
 -->
 <rss>
 <channel>

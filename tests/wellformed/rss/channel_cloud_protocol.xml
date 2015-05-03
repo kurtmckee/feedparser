@@ -1,6 +1,6 @@
 <!--
 Description: cloud protocol
-Expect:      not bozo and feed['cloud']['protocol'] == u'xml-rpc'
+Expect:      not bozo and feed['cloud']['protocol'] == 'xml-rpc'
 -->
 <rss version="2.0">
 <channel>

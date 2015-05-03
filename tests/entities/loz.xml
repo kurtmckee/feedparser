@@ -1,6 +1,6 @@
 <!--
 Description: loz
-Expect:      feed['title'] == u'testing \u25ca entity'
+Expect:      feed['title'] == 'testing \u25ca entity'
 -->
 <rss>
 <channel>

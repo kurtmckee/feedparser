@@ -1,6 +1,6 @@
 <!--
 Description: iTunes duration
-Expect:      not bozo and entries[0]['itunes_duration'] == u'3:00'
+Expect:      not bozo and entries[0]['itunes_duration'] == '3:00'
 -->
 <rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd">
 <channel>

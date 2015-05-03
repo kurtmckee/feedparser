@@ -1,6 +1,6 @@
 <!--
 Description: feed link rel='related'
-Expect:      not bozo and feed['links'][0]['rel'] == u'related'
+Expect:      not bozo and feed['links'][0]['rel'] == 'related'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
   <link rel="related" type="text/html" href="http://www.example.com/"/>

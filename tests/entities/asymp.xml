@@ -1,6 +1,6 @@
 <!--
 Description: asymp
-Expect:      feed['title'] == u'testing \u2248 entity'
+Expect:      feed['title'] == 'testing \u2248 entity'
 -->
 <rss>
 <channel>

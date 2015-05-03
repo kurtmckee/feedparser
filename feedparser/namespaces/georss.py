@@ -28,8 +28,6 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import itertools
-
 from ..util import FeedParserDict
 
 class Namespace(object):
@@ -177,12 +175,11 @@ def _parse_poslist(value, geom_type, swap=True, dims=2):
 def _gen_georss_coords(value, swap=True, dims=2):
     # A generator of (lon, lat) pairs from a string of encoded GeoRSS
     # coordinates. Converts to floats and swaps order.
-    latlons = itertools.imap(float, value.strip().replace(',', ' ').split())
-    nxt = latlons.next
+    latlons = (float(ll) for ll in value.replace(',', ' ').split())
     while True:
-        t = [nxt(), nxt()][::swap and -1 or 1]
+        t = [next(latlons), next(latlons)][::swap and -1 or 1]
         if dims == 3:
-            t.append(nxt())
+            t.append(next(latlons))
         yield tuple(t)
 
 def _parse_georss_point(value, swap=True, dims=2):

@@ -1,6 +1,6 @@
 <!--
 Description: acute
-Expect:      feed['title'] == u'testing \xb4 entity'
+Expect:      feed['title'] == 'testing \xb4 entity'
 -->
 <rss>
 <channel>

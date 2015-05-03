@@ -1,6 +1,6 @@
 <!--
 Description: rfloor
-Expect:      feed['title'] == u'testing \u230b entity'
+Expect:      feed['title'] == 'testing \u230b entity'
 -->
 <rss>
 <channel>

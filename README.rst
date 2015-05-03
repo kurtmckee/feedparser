@@ -13,9 +13,6 @@ Feedparser can be installed using distutils or setuptools by running::
 
     $ python setup.py install
 
-If you're using Python 3, feedparser will automatically be updated by the 2to3
-tool; installation should be seamless across Python 2 and Python 3.
-
 Note: sgmllib3k is a Python 3 dependency. It will be installed automatically.
 
 

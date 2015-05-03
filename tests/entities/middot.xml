@@ -1,6 +1,6 @@
 <!--
 Description: middot
-Expect:      feed['title'] == u'testing \xb7 entity'
+Expect:      feed['title'] == 'testing \xb7 entity'
 -->
 <rss>
 <channel>

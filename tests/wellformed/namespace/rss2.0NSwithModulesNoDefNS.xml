@@ -1,7 +1,7 @@
 <!--
 Credits:     Simon Fell - http://www.pocketsoap.com/rssTests/rss2.0NSwithModulesNoDefNS.xml - included here with permission
 Description: RSS 2.0 in Username namespace, no default namespace
-Expect:      not bozo and entries[0]['title'] == u'Test Item - - RSS2.0 w/ NS no default NS'
+Expect:      not bozo and entries[0]['title'] == 'Test Item - - RSS2.0 w/ NS no default NS'
 -->
 <r:rss 		 version="2.0"
 		 xmlns:r="http://backend.userland.com/rss2"

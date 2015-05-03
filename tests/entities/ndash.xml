@@ -1,6 +1,6 @@
 <!--
 Description: ndash
-Expect:      feed['title'] == u'testing \u2013 entity'
+Expect:      feed['title'] == 'testing \u2013 entity'
 -->
 <rss>
 <channel>

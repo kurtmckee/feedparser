@@ -1,6 +1,6 @@
 <!--
 Description: feed title base64-encoded
-Expect:      not bozo and feed['title'] == u'<p>History of the &lt;blink&gt; tag</p>'
+Expect:      not bozo and feed['title'] == '<p>History of the &lt;blink&gt; tag</p>'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <title mode="base64">

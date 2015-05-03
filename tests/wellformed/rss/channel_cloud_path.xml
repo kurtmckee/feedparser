@@ -1,6 +1,6 @@
 <!--
 Description: cloud path
-Expect:      not bozo and feed['cloud']['path'] == u'/RPC2'
+Expect:      not bozo and feed['cloud']['path'] == '/RPC2'
 -->
 <rss version="2.0">
 <channel>

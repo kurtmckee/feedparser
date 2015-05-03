@@ -40,7 +40,7 @@ class Namespace(object):
     }
 
     def _start_media_category(self, attrsD):
-        attrsD.setdefault('scheme', u'http://search.yahoo.com/mrss/category_schema')
+        attrsD.setdefault('scheme', 'http://search.yahoo.com/mrss/category_schema')
         self._start_category(attrsD)
 
     def _end_media_category(self):

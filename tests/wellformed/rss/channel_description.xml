@@ -1,6 +1,6 @@
 <!--
 Description: normal description
-Expect:      not bozo and feed['description'] == u'Example description'
+Expect:      not bozo and feed['description'] == 'Example description'
 -->
 <rss version="2.0">
 <channel>

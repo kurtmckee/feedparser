@@ -1,6 +1,6 @@
 <!--
 Description: omicron
-Expect:      feed['title'] == u'testing \u03bf entity'
+Expect:      feed['title'] == 'testing \u03bf entity'
 -->
 <rss>
 <channel>

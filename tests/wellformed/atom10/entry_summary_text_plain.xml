@@ -1,6 +1,6 @@
 <!--
 Description: entry summary with explicit type='text'
-Expect:      not bozo and entries[0]['summary'] == u'Example Atom'
+Expect:      not bozo and entries[0]['summary'] == 'Example Atom'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

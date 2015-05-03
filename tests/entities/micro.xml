@@ -1,6 +1,6 @@
 <!--
 Description: micro
-Expect:      feed['title'] == u'testing \xb5 entity'
+Expect:      feed['title'] == 'testing \xb5 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: textInput link does not conflict with channel link
-Expect:      not bozo and feed['link'] == u'http://channel.example.com/'
+Expect:      not bozo and feed['link'] == 'http://channel.example.com/'
 -->
 <rss version="2.0">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: ge
-Expect:      feed['title'] == u'testing \u2265 entity'
+Expect:      feed['title'] == 'testing \u2265 entity'
 -->
 <rss>
 <channel>

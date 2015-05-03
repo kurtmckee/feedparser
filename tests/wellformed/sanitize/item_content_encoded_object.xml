@@ -1,6 +1,6 @@
 <!--
 Description: item content:encoded contains object
-Expect:      not bozo and entries[0]['description'] == u'safe description'
+Expect:      not bozo and entries[0]['description'] == 'safe description'
 -->
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: missing itunes:image@href doesn't overwrite existing image information
-Expect: not bozo and feed['image']['href'] == u'http://i.INVALID/i.gif'
+Expect: not bozo and feed['image']['href'] == 'http://i.INVALID/i.gif'
 -->
 <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0"> 
 <channel> 

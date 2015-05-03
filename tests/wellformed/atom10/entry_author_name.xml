@@ -1,6 +1,6 @@
 <!--
 Description: entry author name
-Expect:      not bozo and entries[0]['author_detail']['name'] == u'Example author'
+Expect:      not bozo and entries[0]['author_detail']['name'] == 'Example author'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

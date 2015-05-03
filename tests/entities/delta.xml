@@ -1,6 +1,6 @@
 <!--
 Description: delta
-Expect:      feed['title'] == u'testing \u03b4 entity'
+Expect:      feed['title'] == 'testing \u03b4 entity'
 -->
 <rss>
 <channel>

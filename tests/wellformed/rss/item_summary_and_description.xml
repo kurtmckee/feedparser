@@ -1,6 +1,6 @@
 <!--
 Description: item contains both summary and description elements
-Expect:      not bozo and entries[0]['summary'] == u'Example summary' and entries[0]['content'][0]['value'] == u'Example description'
+Expect:      not bozo and entries[0]['summary'] == 'Example summary' and entries[0]['content'][0]['value'] == 'Example description'
 -->
 <rss version="2.0">
 <channel>

@@ -1,7 +1,7 @@
 <!--
 Credits:     Simon Fell - http://www.pocketsoap.com/rssTests/rss2.0noNSwithModulesLocalNameClash.xml - included here with permission
 Description: RSS 2.0 with modules, local namespace clash
-Expect:      not bozo and entries[0]['description'] == u'correct description'
+Expect:      not bozo and entries[0]['description'] == 'correct description'
 -->
 <rss 		version="2.0" 
 		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 

@@ -1,6 +1,6 @@
 <!--
 Description: Ouml
-Expect:      feed['title'] == u'testing \xd6 entity'
+Expect:      feed['title'] == 'testing \xd6 entity'
 -->
 <rss>
 <channel>

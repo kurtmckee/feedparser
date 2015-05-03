@@ -1,6 +1,6 @@
 <!--
 Description: CDF item abstract xml:base
-Expect:      not bozo and entries[0]['summary_detail']['base'] == u'http://base.example.org/'
+Expect:      not bozo and entries[0]['summary_detail']['base'] == 'http://base.example.org/'
 -->
 <CHANNEL
   BASE="http://base.example.org/"

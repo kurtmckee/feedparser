@@ -1,6 +1,6 @@
 <!--
 Description: lrm
-Expect:      feed['title'] == u'testing \u200e entity'
+Expect:      feed['title'] == 'testing \u200e entity'
 -->
 <rss>
 <channel>

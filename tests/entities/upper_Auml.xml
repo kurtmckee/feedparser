@@ -1,6 +1,6 @@
 <!--
 Description: Auml
-Expect:      feed['title'] == u'testing \xc4 entity'
+Expect:      feed['title'] == 'testing \xc4 entity'
 -->
 <rss>
 <channel>

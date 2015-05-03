@@ -1,6 +1,6 @@
 <!--
 Description: lfloor
-Expect:      feed['title'] == u'testing \u230a entity'
+Expect:      feed['title'] == 'testing \u230a entity'
 -->
 <rss>
 <channel>

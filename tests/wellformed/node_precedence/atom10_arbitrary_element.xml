@@ -1,6 +1,6 @@
 <!--
 Description: The arbitrarily named node of the least depth should be preferred to those with the same name of greater depth.
-Expect:      not bozo and entries[0]['abcdefg'] == entries[1]['abcdefg'] == u'Correct Value'
+Expect:      not bozo and entries[0]['abcdefg'] == entries[1]['abcdefg'] == 'Correct Value'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
 <entry>

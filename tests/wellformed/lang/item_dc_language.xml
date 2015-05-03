@@ -1,6 +1,6 @@
 <!--
 Description: item dc:language
-Expect:      not bozo and entries[0]['language'] == u'en'
+Expect:      not bozo and entries[0]['language'] == 'en'
 -->
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
 <channel>

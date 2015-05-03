@@ -1,6 +1,6 @@
 <!--
 Description: item description contains script (maps to content)
-Expect:      not bozo and entries[0]['summary'] == u'safe description'
+Expect:      not bozo and entries[0]['summary'] == 'safe description'
 -->
 <rss version="2.0">
 <channel>

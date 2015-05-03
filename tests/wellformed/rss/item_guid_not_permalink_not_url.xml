@@ -1,6 +1,6 @@
 <!--
 Description: item guid not permalink is not resolved as a URL
-Expect:      not bozo and entries[0]['id'] == u'abc'
+Expect:      not bozo and entries[0]['id'] == 'abc'
 -->
 <rss version="2.0" xml:base="http://dom.test/">
 <channel>

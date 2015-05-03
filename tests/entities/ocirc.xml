@@ -1,6 +1,6 @@
 <!--
 Description: ocirc
-Expect:      feed['title'] == u'testing \xf4 entity'
+Expect:      feed['title'] == 'testing \xf4 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: Theta
-Expect:      feed['title'] == u'testing \u0398 entity'
+Expect:      feed['title'] == 'testing \u0398 entity'
 -->
 <rss>
 <channel>

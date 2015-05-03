@@ -1,6 +1,6 @@
 <!--
 Description: item content:encoded is crazy
-Expect:      not bozo and entries[0]['description'] == u'Crazy HTML -' + u'- Can Your Regex Parse This?\n\n\n\n<!-' + u'- <script> -' + u'->\n\n<!-' + u'- \n\t<script> \n-' + u'->\n\n\n\nfunction executeMe()\n{\n\n\n\n\n/* \n<h1>Did The Javascript Execute?</h1>\n<div>\nI will execute here, too, if you mouse over me\n</div>'
+Expect:      not bozo and entries[0]['description'] == 'Crazy HTML -' + '- Can Your Regex Parse This?\n\n\n\n<!-' + '- <script> -' + '->\n\n<!-' + '- \n\t<script> \n-' + '->\n\n\n\nfunction executeMe()\n{\n\n\n\n\n/* \n<h1>Did The Javascript Execute?</h1>\n<div>\nI will execute here, too, if you mouse over me\n</div>'
 -->
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/">
 <channel>

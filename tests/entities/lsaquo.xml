@@ -1,6 +1,6 @@
 <!--
 Description: lsaquo
-Expect:      feed['title'] == u'testing \u2039 entity'
+Expect:      feed['title'] == 'testing \u2039 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: Uuml
-Expect:      feed['title'] == u'testing \xdc entity'
+Expect:      feed['title'] == 'testing \xdc entity'
 -->
 <rss>
 <channel>

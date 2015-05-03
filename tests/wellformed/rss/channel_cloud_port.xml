@@ -1,6 +1,6 @@
 <!--
 Description: cloud port
-Expect:      not bozo and feed['cloud']['port'] == u'80'
+Expect:      not bozo and feed['cloud']['port'] == '80'
 -->
 <rss version="2.0">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: iTunes channel owner name
-Expect:      not bozo and feed['publisher_detail']['name'] == u'Mark Pilgrim'
+Expect:      not bozo and feed['publisher_detail']['name'] == 'Mark Pilgrim'
 -->
 <rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd">
 <channel>

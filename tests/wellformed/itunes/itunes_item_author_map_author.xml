@@ -1,6 +1,6 @@
 <!--
 Description: iTunes item author maps to author
-Expect:      not bozo and entries[0]['author'] == u'Mark Pilgrim'
+Expect:      not bozo and entries[0]['author'] == 'Mark Pilgrim'
 -->
 <rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd">
 <channel>

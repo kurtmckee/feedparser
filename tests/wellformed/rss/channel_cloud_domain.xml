@@ -1,6 +1,6 @@
 <!--
 Description: cloud domain
-Expect:      not bozo and feed['cloud']['domain'] == u'rpc.sys.com'
+Expect:      not bozo and feed['cloud']['domain'] == 'rpc.sys.com'
 -->
 <rss version="2.0">
 <channel>

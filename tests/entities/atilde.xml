@@ -1,6 +1,6 @@
 <!--
 Description: atilde
-Expect:      feed['title'] == u'testing \xe3 entity'
+Expect:      feed['title'] == 'testing \xe3 entity'
 -->
 <rss>
 <channel>

@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -7,22 +7,22 @@ from .w3dtf import _parse_date_w3dtf
 # Unicode strings for Hungarian date strings
 _hungarian_months = \
   { \
-    u'janu\u00e1r':   u'01',  # e1 in iso-8859-2
-    u'febru\u00e1ri': u'02',  # e1 in iso-8859-2
-    u'm\u00e1rcius':  u'03',  # e1 in iso-8859-2
-    u'\u00e1prilis':  u'04',  # e1 in iso-8859-2
-    u'm\u00e1ujus':   u'05',  # e1 in iso-8859-2
-    u'j\u00fanius':   u'06',  # fa in iso-8859-2
-    u'j\u00falius':   u'07',  # fa in iso-8859-2
-    u'augusztus':     u'08',
-    u'szeptember':    u'09',
-    u'okt\u00f3ber':  u'10',  # f3 in iso-8859-2
-    u'november':      u'11',
-    u'december':      u'12',
+    'janu\u00e1r':   '01',  # e1 in iso-8859-2
+    'febru\u00e1ri': '02',  # e1 in iso-8859-2
+    'm\u00e1rcius':  '03',  # e1 in iso-8859-2
+    '\u00e1prilis':  '04',  # e1 in iso-8859-2
+    'm\u00e1ujus':   '05',  # e1 in iso-8859-2
+    'j\u00fanius':   '06',  # fa in iso-8859-2
+    'j\u00falius':   '07',  # fa in iso-8859-2
+    'augusztus':     '08',
+    'szeptember':    '09',
+    'okt\u00f3ber':  '10',  # f3 in iso-8859-2
+    'november':      '11',
+    'december':      '12',
   }
 
 _hungarian_date_format_re = \
-  re.compile(u'(\d{4})-([^-]+)-(\d{,2})T(\d{,2}):(\d{2})((\+|-)(\d{,2}:\d{2}))')
+  re.compile('(\d{4})-([^-]+)-(\d{,2})T(\d{,2}):(\d{2})((\+|-)(\d{,2}:\d{2}))')
 
 def _parse_date_hungarian(dateString):
     '''Parse a string according to a Hungarian 8-bit date format.'''

@@ -1,6 +1,6 @@
 <!--
 Description: entry title is crazy
-Expect:      not bozo and entries[0]['title'] == u'Crazy HTML -' + u'- Can Your Regex Parse This?\n\n\n\n<!-' + u'- <script> -' + u'->\n\n<!-' + u'- \n\t<script> \n-' + u'->\n\n\n\nfunction executeMe()\n{\n\n\n\n\n/* \n<h1>Did The Javascript Execute?</h1>\n<div>\nI will execute here, too, if you mouse over me\n</div>'
+Expect:      not bozo and entries[0]['title'] == 'Crazy HTML -' + '- Can Your Regex Parse This?\n\n\n\n<!-' + '- <script> -' + '->\n\n<!-' + '- \n\t<script> \n-' + '->\n\n\n\nfunction executeMe()\n{\n\n\n\n\n/* \n<h1>Did The Javascript Execute?</h1>\n<div>\nI will execute here, too, if you mouse over me\n</div>'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <entry>

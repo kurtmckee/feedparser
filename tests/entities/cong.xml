@@ -1,6 +1,6 @@
 <!--
 Description: cong
-Expect:      feed['title'] == u'testing \u2245 entity'
+Expect:      feed['title'] == 'testing \u2245 entity'
 -->
 <rss>
 <channel>

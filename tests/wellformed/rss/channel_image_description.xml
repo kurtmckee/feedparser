@@ -1,6 +1,6 @@
 <!--
 Description: image description
-Expect:      not bozo and feed['image']['description'] == u'Available in Netscape RSS 0.91'
+Expect:      not bozo and feed['image']['description'] == 'Available in Netscape RSS 0.91'
 -->
 <rss version="0.91">
 <channel>

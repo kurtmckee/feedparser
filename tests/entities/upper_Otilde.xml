@@ -1,6 +1,6 @@
 <!--
 Description: Otilde
-Expect:      feed['title'] == u'testing \xd5 entity'
+Expect:      feed['title'] == 'testing \xd5 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: rArr
-Expect:      feed['title'] == u'testing \u21d2 entity'
+Expect:      feed['title'] == 'testing \u21d2 entity'
 -->
 <rss>
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: eth
-Expect:      feed['title'] == u'testing \xf0 entity'
+Expect:      feed['title'] == 'testing \xf0 entity'
 -->
 <rss>
 <channel>

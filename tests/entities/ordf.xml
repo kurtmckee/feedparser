@@ -1,6 +1,6 @@
 <!--
 Description: ordf
-Expect:      feed['title'] == u'testing \xaa entity'
+Expect:      feed['title'] == 'testing \xaa entity'
 -->
 <rss>
 <channel>

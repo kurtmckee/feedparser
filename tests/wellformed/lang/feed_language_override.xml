@@ -1,6 +1,6 @@
 <!--
 Description: feed language from language
-Expect:      not bozo and feed['language'] == u'en'
+Expect:      not bozo and feed['language'] == 'en'
 -->
 <rss>
 <channel>

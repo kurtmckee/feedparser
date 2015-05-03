@@ -1,6 +1,6 @@
 <!--
 Description: entry id retrieved when element contains attributes
-Expect: not bozo and entries[0]['id'] == u'right'
+Expect: not bozo and entries[0]['id'] == 'right'
 -->
 <feed xmlns:bogus="http://dom.test/ns">
     <entry>

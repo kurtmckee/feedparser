@@ -1,6 +1,6 @@
 <!--
 Description: entry title contains frame
-Expect:      not bozo and entries[0]['title'] == u'safe description'
+Expect:      not bozo and entries[0]['title'] == 'safe description'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <entry>

@@ -1,6 +1,6 @@
 <!--
 Description: entry title inline XHTML
-Expect:      not bozo and entries[0]['title'] == u'<div>Example <b>Atom</b></div>'
+Expect:      not bozo and entries[0]['title'] == '<div>Example <b>Atom</b></div>'
 -->
 <feed version="0.3" xmlns="http://purl.org/atom/ns#">
 <entry>

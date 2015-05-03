@@ -1,6 +1,6 @@
 <!--
 Description: creative commons license
-Expect:      not bozo and entries[0]['license'] == u'http://www.creativecommons.org/licenses/by-nc/1.0'
+Expect:      not bozo and entries[0]['license'] == 'http://www.creativecommons.org/licenses/by-nc/1.0'
 -->
 <rss version="2.0" xmlns:creativeCommons="http://backend.userland.com/creativeCommonsRssModule">
 <channel>

@@ -1,6 +1,6 @@
 <!--
 Description: ccedil
-Expect:      feed['title'] == u'testing \xe7 entity'
+Expect:      feed['title'] == 'testing \xe7 entity'
 -->
 <rss>
 <channel>

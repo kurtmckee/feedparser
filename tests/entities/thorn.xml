@@ -1,6 +1,6 @@
 <!--
 Description: thorn
-Expect:      feed['title'] == u'testing \xfe entity'
+Expect:      feed['title'] == 'testing \xfe entity'
 -->
 <rss>
 <channel>

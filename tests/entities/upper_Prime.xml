@@ -1,6 +1,6 @@
 <!--
 Description: Prime
-Expect:      feed['title'] == u'testing \u2033 entity'
+Expect:      feed['title'] == 'testing \u2033 entity'
 -->
 <rss>
 <channel>

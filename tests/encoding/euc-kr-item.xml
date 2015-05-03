@@ -2,7 +2,7 @@
 <!--
 SkipUnless:   __import__('codecs').lookup('euc-kr')
 Description:  euc-kr encoding in item description
-Expect:       not bozo and entries[0]['description'] == u'\ub144'
+Expect:       not bozo and entries[0]['description'] == '\ub144'
 -->
 <rss version="2.0">
 <channel>

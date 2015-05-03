@@ -1,4 +1,4 @@
-from __future__ import absolute_import
+from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -313,7 +313,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
         # declare xlink namespace, if needed
         if self.mathmlOK or self.svgOK:
-            if filter(lambda (n,v): n.startswith('xlink:'),attrs):
+            if any((a for a in attrs if a[0].startswith('xlink:'))):
                 if not ('xmlns:xlink','http://www.w3.org/1999/xlink') in attrs:
                     attrs.append(('xmlns:xlink','http://www.w3.org/1999/xlink'))
 
@@ -322,7 +322,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
             if key in acceptable_attributes:
                 key=keymap.get(key,key)
                 # make sure the uri uses an acceptable uri scheme
-                if key == u'href':
+                if key == 'href':
                     value = _makeSafeAbsoluteURI(value)
                 clean_attrs.append((key,value))
             elif key=='style':

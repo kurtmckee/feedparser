@@ -1,7 +1,7 @@
 <!--
 Credits:     Simon Fell - http://www.pocketsoap.com/rssTests/rss2.0NSwithModulesNoDefNSLocalNameClash.xml - included here with permission
 Description: RSS 2.0 in Username namespace, no default namespace, local namespace clash
-Expect:      not bozo and entries[0]['description'] == u'correct description'
+Expect:      not bozo and entries[0]['description'] == 'correct description'
 -->
 <r:rss 		version="2.0" 
 		xmlns:r="http://backend.userland.com/rss2"
