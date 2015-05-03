@@ -101,11 +101,11 @@ import re
 import struct
 import time
 import types
-import urllib
-import urllib2
-import urlparse
 
-from htmlentitydefs import name2codepoint, codepoint2name, entitydefs
+try:
+    from html.entities import name2codepoint, entitydefs
+except ImportError:
+    from htmlentitydefs import name2codepoint, entitydefs
 
 try:
     from io import BytesIO as _StringIO
@@ -114,6 +114,23 @@ except ImportError:
         from cStringIO import StringIO as _StringIO
     except ImportError:
         from StringIO import StringIO as _StringIO
+
+try:
+    import urllib.parse
+    import urllib.request
+except ImportError:
+    from urllib import splithost, splittype, splituser
+    from urllib2 import build_opener
+    from urlparse import urlparse
+
+    class urllib(object):
+        class parse(object):
+            splithost = staticmethod(splithost)
+            splittype = staticmethod(splittype)
+            splituser = staticmethod(splituser)
+            urlparse = staticmethod(urlparse)
+        class request(object):
+            build_opener = staticmethod(build_opener)
 
 # ---------- optional modules (feedparser will work without these, but with reduced functionality) ----------
 
@@ -200,6 +217,13 @@ SUPPORTED_VERSIONS = {'': 'unknown',
                       }
 
 bytes_ = type(b'')
+unicode_ = type('')
+try:
+    unichr
+    basestring
+except NameError:
+    unichr = chr
+    basestring = str
 
 class _FeedParserMixin(
         cc.Namespace,
@@ -345,7 +369,7 @@ class _FeedParserMixin(
         self.depth += 1
 
         # normalize attrs
-        attrs = map(self._normalize_attributes, attrs)
+        attrs = [self._normalize_attributes(attr) for attr in attrs]
 
         # track xml:base and xml:lang
         attrsD = dict(attrs)
@@ -765,16 +789,15 @@ class _FeedParserMixin(
     @staticmethod
     def lookslikehtml(s):
         # must have a close tag or an entity reference to qualify
-        if not (re.search(r'</(\w+)>',s) or re.search("&#?\w+;",s)):
+        if not (re.search(r'</(\w+)>', s) or re.search(r'&#?\w+;', s)):
             return
 
         # all tags must be in a restricted subset of valid HTML tags
-        if filter(lambda t: t.lower() not in _HTMLSanitizer.acceptable_elements,
-            re.findall(r'</?(\w+)',s)):
+        if any((t for t in re.findall(r'</?(\w+)', s) if t.lower() not in _HTMLSanitizer.acceptable_elements)):
             return
 
         # all entities must have been defined as valid HTML entities
-        if filter(lambda e: e not in entitydefs.keys(), re.findall(r'&(\w+);', s)):
+        if any((e for e in re.findall(r'&(\w+);', s) if e not in entitydefs)):
             return
 
         return 1
@@ -1218,7 +1241,7 @@ class _FeedParserMixin(
 
     def _start_title(self, attrsD):
         if self.svgOK:
-            return self.unknown_starttag('title', attrsD.items())
+            return self.unknown_starttag('title', list(attrsD.items()))
         self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_title(self):
@@ -1412,7 +1435,7 @@ if _XML_AVAILABLE:
             for qname in attrs.getQNames():
                 attrsD[str(qname).lower()] = attrs.getValueByQName(qname)
             localname = str(localname).lower()
-            self.unknown_starttag(localname, attrsD.items())
+            self.unknown_starttag(localname, list(attrsD.items()))
 
         def characters(self, text):
             self.handle_data(text)
@@ -1518,7 +1541,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         return url_file_stream_or_string
 
     if isinstance(url_file_stream_or_string, basestring) \
-       and urlparse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
+       and urllib.parse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
         # Deal with the feed URI scheme
         if url_file_stream_or_string.startswith('feed:http'):
             url_file_stream_or_string = url_file_stream_or_string[5:]
@@ -1529,10 +1552,10 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         # Test for inline user:password credentials for HTTP basic auth
         auth = None
         if base64 and not url_file_stream_or_string.startswith('ftp:'):
-            urltype, rest = urllib.splittype(url_file_stream_or_string)
-            realhost, rest = urllib.splithost(rest)
+            urltype, rest = urllib.parse.splittype(url_file_stream_or_string)
+            realhost, rest = urllib.parse.splithost(rest)
             if realhost:
-                user_passwd, realhost = urllib.splituser(realhost)
+                user_passwd, realhost = urllib.parse.splituser(realhost)
                 if user_passwd:
                     url_file_stream_or_string = '%s://%s%s' % (urltype, realhost, rest)
                     auth = base64.standard_b64encode(user_passwd).strip()
@@ -1543,7 +1566,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
 
         # try to open with urllib2 (to use optional headers)
         request = _build_urllib2_request(url_file_stream_or_string, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)
-        opener = urllib2.build_opener(*tuple(handlers + [_FeedURLHandler()]))
+        opener = urllib.request.build_opener(*tuple(handlers + [_FeedURLHandler()]))
         opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
         try:
             return opener.open(request)
@@ -1842,7 +1865,7 @@ def replace_doctype(data):
     replacement = b''
     if len(doctype_results) == 1 and entity_results:
         match_safe_entities = lambda e: RE_SAFE_ENTITY_PATTERN.match(e)
-        safe_entities = filter(match_safe_entities, entity_results)
+        safe_entities = [e for e in entity_results if match_safe_entities(e)]
         if safe_entities:
             replacement = b'<!DOCTYPE feed [\n<!ENTITY' \
                         + b'>\n<!ENTITY '.join(safe_entities) \
