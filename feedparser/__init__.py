@@ -54,10 +54,6 @@ __contributors__ = ["Jason Diamond <http://injektilo.org/>",
 # change this to your application name and URL.
 USER_AGENT = "feedparser/%s +https://github.com/kurtmckee/feedparser/" % __version__
 
-# HTTP "Accept" header to send to servers when downloading feeds.  If you don't
-# want to send an Accept header, set this to None.
-ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
-
 # List of preferred XML parsers, by SAX driver name.  These will be tried first,
 # but if they're not installed, Python will keep searching through its own list
 # of pre-installed parsers until it finds one that supports everything we need.
@@ -84,7 +80,6 @@ else:
 # ---------- required modules (should come with any Python distribution) ----------
 import copy
 import re
-import struct
 
 try:
     from html.entities import name2codepoint, entitydefs
@@ -101,32 +96,14 @@ except ImportError:
 
 try:
     import urllib.parse
-    import urllib.request
 except ImportError:
-    from urllib import splithost, splittype, splituser
-    from urllib2 import build_opener
     from urlparse import urlparse
 
     class urllib(object):
         class parse(object):
-            splithost = staticmethod(splithost)
-            splittype = staticmethod(splittype)
-            splituser = staticmethod(splituser)
             urlparse = staticmethod(urlparse)
-        class request(object):
-            build_opener = staticmethod(build_opener)
 
 # ---------- optional modules (feedparser will work without these, but with reduced functionality) ----------
-
-# gzip is included with most Python distributions, but may not be available if you compiled your own
-try:
-    import gzip
-except ImportError:
-    gzip = None
-try:
-    import zlib
-except ImportError:
-    zlib = None
 
 # If a real XML parser is available, feedparser will attempt to use it.  feedparser has
 # been tested with the built-in SAX parser and libxml2.  On platforms where the
@@ -156,7 +133,7 @@ from .datetimes import registerDateHandler, _parse_date
 from .encodings import convert_to_utf8
 from .exceptions import *
 from .html import _BaseHTMLProcessor, _cp1252
-from .http import _build_urllib2_request, _FeedURLHandler
+from . import http
 from .namespaces import _base, cc, dc, georss, itunes, mediarss, psc
 from .sanitizer import _sanitizeHTML, _HTMLSanitizer
 from .sgml import *
@@ -1029,7 +1006,7 @@ class _LooseFeedParser(_FeedParserMixin, _BaseHTMLProcessor):
     def strattrs(self, attrs):
         return ''.join([' %s="%s"' % (n,v.replace('"','&quot;')) for n,v in attrs])
 
-def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers):
+def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result):
     """URL, filename, or string --> stream
 
     This function lets you define parsers that take any input source
@@ -1064,44 +1041,16 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     """
 
     if hasattr(url_file_stream_or_string, 'read'):
-        return url_file_stream_or_string
+        return url_file_stream_or_string.read()
 
     if isinstance(url_file_stream_or_string, basestring) \
        and urllib.parse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
-        # Deal with the feed URI scheme
-        if url_file_stream_or_string.startswith('feed:http'):
-            url_file_stream_or_string = url_file_stream_or_string[5:]
-        elif url_file_stream_or_string.startswith('feed:'):
-            url_file_stream_or_string = 'http:' + url_file_stream_or_string[5:]
-        if not agent:
-            agent = USER_AGENT
-        # Test for inline user:password credentials for HTTP basic auth
-        auth = None
-        if base64 and not url_file_stream_or_string.startswith('ftp:'):
-            urltype, rest = urllib.parse.splittype(url_file_stream_or_string)
-            realhost, rest = urllib.parse.splithost(rest)
-            if realhost:
-                user_passwd, realhost = urllib.parse.splituser(realhost)
-                if user_passwd:
-                    url_file_stream_or_string = '%s://%s%s' % (urltype, realhost, rest)
-                    auth = base64.standard_b64encode(user_passwd).strip()
-
-        # iri support
-        if not isinstance(url_file_stream_or_string, bytes_):
-            url_file_stream_or_string = _convert_to_idn(url_file_stream_or_string)
-
-        # try to open with urllib2 (to use optional headers)
-        request = _build_urllib2_request(url_file_stream_or_string, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)
-        opener = urllib.request.build_opener(*tuple(handlers + [_FeedURLHandler()]))
-        opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
-        try:
-            return opener.open(request)
-        finally:
-            opener.close() # JohnD
+        return http.get(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
 
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
-        return open(url_file_stream_or_string, 'rb')
+        with open(url_file_stream_or_string, 'rb') as f:
+            data = f.read()
     except (IOError, UnicodeEncodeError, TypeError):
         # if url_file_stream_or_string is a unicode object that
         # cannot be converted to the encoding returned by
@@ -1111,11 +1060,13 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         # (such as an XML document encoded in UTF-32), TypeError will
         # be thrown.
         pass
+    else:
+        return data
 
     # treat url_file_stream_or_string as string
     if not isinstance(url_file_stream_or_string, bytes_):
-        return _StringIO(url_file_stream_or_string.encode('utf-8'))
-    return _StringIO(url_file_stream_or_string)
+        return url_file_stream_or_string.encode('utf-8')
+    return url_file_stream_or_string
 
 # Match XML entity declarations.
 # Example: <!ENTITY copyright "(C)">
@@ -1175,7 +1126,7 @@ def replace_doctype(data):
     return version, data, safe_entities
 
 
-def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
+def parse(url_file_stream_or_string, etag=None, modified=None, agent=USER_AGENT, referrer=None, handlers=None, request_headers=None, response_headers=None):
     '''Parse a feed from a URL, file, stream, or string.
 
     request_headers, if given, is a dict from http header name to value to add
@@ -1184,116 +1135,32 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     :return: A :class:`FeedParserDict`.
     '''
 
-    if handlers is None:
-        handlers = []
-    if request_headers is None:
-        request_headers = {}
-    if response_headers is None:
-        response_headers = {}
+    result = FeedParserDict(
+        bozo = False,
+        entries = [],
+        feed = FeedParserDict(),
+        headers = {},
+    )
 
-    result = FeedParserDict()
-    result['feed'] = FeedParserDict()
-    result['entries'] = []
-    result['bozo'] = 0
-    if not isinstance(handlers, list):
-        handlers = [handlers]
-    try:
-        f = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers)
-        data = f.read()
-    except Exception as e:
-        result['bozo'] = 1
-        result['bozo_exception'] = e
-        data = None
-        f = None
+    data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
 
-    if hasattr(f, 'headers'):
-        result['headers'] = dict(f.headers)
+    if not data:
+        return result
+
     # overwrite existing headers using response_headers
-    if 'headers' in result:
-        result['headers'].update(response_headers)
-    elif response_headers:
-        result['headers'] = copy.deepcopy(response_headers)
+    result['headers'].update(response_headers or {})
 
-    # lowercase all of the HTTP headers for comparisons per RFC 2616
-    if 'headers' in result:
-        http_headers = dict((k.lower(), v) for k, v in result['headers'].items())
-    else:
-        http_headers = {}
-
-    # if feed is gzip-compressed, decompress it
-    if f and data and http_headers:
-        if gzip and 'gzip' in http_headers.get('content-encoding', ''):
-            try:
-                data = gzip.GzipFile(fileobj=_StringIO(data)).read()
-            except (EOFError, IOError, struct.error) as e:
-                # IOError can occur if the gzip header is bad.
-                # struct.error can occur if the data is damaged.
-                result['bozo'] = 1
-                result['bozo_exception'] = e
-                if isinstance(e, struct.error):
-                    # A gzip header was found but the data is corrupt.
-                    # Ideally, we should re-request the feed without the
-                    # 'Accept-encoding: gzip' header, but we don't.
-                    data = None
-        elif zlib and 'deflate' in http_headers.get('content-encoding', ''):
-            try:
-                data = zlib.decompress(data)
-            except zlib.error as e:
-                try:
-                    # The data may have no headers and no checksum.
-                    data = zlib.decompress(data, -15)
-                except zlib.error as e:
-                    result['bozo'] = 1
-                    result['bozo_exception'] = e
-
-    # save HTTP headers
-    if http_headers:
-        if 'etag' in http_headers:
-            etag = http_headers.get('etag', '')
-            if isinstance(etag, bytes_):
-                etag = etag.decode('utf-8', 'ignore')
-            if etag:
-                result['etag'] = etag
-        if 'last-modified' in http_headers:
-            modified = http_headers.get('last-modified', '')
-            if modified:
-                result['modified'] = modified
-                result['modified_parsed'] = _parse_date(modified)
-    if hasattr(f, 'url'):
-        if isinstance(f.url, bytes_):
-            result['href'] = f.url.decode('utf-8', 'ignore')
-        else:
-            result['href'] = f.url
-        result['status'] = 200
-    if hasattr(f, 'status'):
-        result['status'] = f.status
-    if hasattr(f, 'close'):
-        f.close()
-
-    if data is None:
-        return result
-
-    # Stop processing if the server sent HTTP 304 Not Modified.
-    if getattr(f, 'code', 0) == 304:
-        result['version'] = ''
-        result['debug_message'] = 'The feed has not changed since you last checked, ' + \
-            'so the server sent no data.  This is a feature, not a bug!'
-        return result
-
-    data, result['encoding'], error = convert_to_utf8(http_headers, data)
+    data = convert_to_utf8(result['headers'], data, result)
     use_strict_parser = result['encoding'] and True or False
-    if error is not None:
-        result['bozo'] = 1
-        result['bozo_exception'] = error
 
     result['version'], data, entities = replace_doctype(data)
 
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
-    contentloc = http_headers.get('content-location', '')
+    contentloc = result['headers'].get('content-location', '')
     href = result.get('href', '')
     baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
 
-    baselang = http_headers.get('content-language', None)
+    baselang = result['headers'].get('content-language', None)
     if isinstance(baselang, bytes_) and baselang is not None:
         baselang = baselang.decode('utf-8', 'ignore')
 

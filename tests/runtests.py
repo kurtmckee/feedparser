@@ -363,8 +363,8 @@ class TestOpenResource(unittest.TestCase):
     "Ensure that `_open_resource()` interprets its arguments as URIs, " \
     "file-like objects, or in-memory feeds as expected"
     def test_fileobj(self):
-        r = feedparser._open_resource(sys.stdin, '', '', '', '', [], {})
-        self.assertTrue(r is sys.stdin)
+        r = feedparser._open_resource(feedparser._StringIO(b''), '', '', '', '', [], {}, {})
+        self.assertEqual(r, b'')
     def test_feed(self):
         f = feedparser.parse('feed://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
@@ -373,20 +373,20 @@ class TestOpenResource(unittest.TestCase):
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
     def test_bytes(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
     def test_string(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
     def test_unicode_1(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
     def test_unicode_2(self):
         s = b'<feed><item><title>t\u00e9xt</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
 
 class TestMakeSafeAbsoluteURI(unittest.TestCase):
     "Exercise the URI joining and sanitization code"

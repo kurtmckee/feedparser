@@ -72,7 +72,7 @@ RE_XML_DECLARATION = re.compile('^<\?xml[^>]*?>')
 # Example: <?xml version="1.0" encoding="utf-8"?>
 RE_XML_PI_ENCODING = re.compile(b'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
 
-def convert_to_utf8(http_headers, data):
+def convert_to_utf8(http_headers, data, result):
     '''Detect and convert the character encoding to UTF-8.
 
     http_headers is a dictionary
@@ -272,4 +272,8 @@ def convert_to_utf8(http_headers, data):
             (rfc3023_encoding, proposed_encoding))
         rfc3023_encoding = proposed_encoding
 
-    return data, rfc3023_encoding, error
+    result['encoding'] = rfc3023_encoding
+    if error:
+        result['bozo'] = True
+        result['bozo_exception'] = error
+    return data
