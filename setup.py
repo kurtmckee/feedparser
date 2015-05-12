@@ -15,7 +15,7 @@ setup(
     url = 'https://github.com/kurtmckee/feedparser',
     download_url = 'https://pypi.python.org/pypi/feedparser',
     platforms = ['POSIX', 'Windows'],
-    packages = ['feedparser', 'feedparser.datetimes', 'feedparser.namespaces'],
+    packages = ['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
     keywords = ['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers = [
         'Development Status :: 5 - Production/Stable',
