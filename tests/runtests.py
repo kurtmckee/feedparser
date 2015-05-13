@@ -68,15 +68,6 @@ if not feedparser._XML_AVAILABLE:
     sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
     sys.exit(1)
 
-try:
-    # the utf_32 codec was introduced in Python 2.6; it's necessary to
-    # check this as long as feedparser supports Python 2.4 and 2.5
-    codecs.lookup('utf_32')
-except LookupError:
-    _UTF32_AVAILABLE = False
-else:
-    _UTF32_AVAILABLE = True
-
 #---------- custom HTTP server (used to serve test feeds) ----------
 
 _PORT = 8097 # not really configurable, must match hardcoded port in tests
@@ -707,20 +698,12 @@ def convert_to_utf8(data):
     if data[:4] == b'\x4c\x6f\xa7\x94':
         return data.decode('cp037').encode('utf-8')
     elif data[:4] == b'\x00\x00\xfe\xff':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32be').encode('utf-8')
     elif data[:4] == b'\xff\xfe\x00\x00':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32le').encode('utf-8')
     elif data[:4] == b'\x00\x00\x00\x3c':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32be').encode('utf-8')
     elif data[:4] == b'\x3c\x00\x00\x00':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32le').encode('utf-8')
     elif data[:4] == b'\x00\x3c\x00\x3f':
         return data.decode('utf-16be').encode('utf-8')
