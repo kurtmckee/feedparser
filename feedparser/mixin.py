@@ -190,23 +190,26 @@ class _FeedParserMixin(
         super(_FeedParserMixin, self).__init__()
 
     def unknown_starttag(self, tag, attrs):
-        # increment depth counter
+        # Increment the element hierarchy depth counter.
         self.depth += 1
 
-        # normalize attrs
+        # Normalize the attributes.
         attrs = [self._normalize_attributes(attr) for attr in attrs]
-
-        # track xml:base and xml:lang
         attrsD = dict(attrs)
+
+        # Track xml:base
         baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
         if isinstance(baseuri, bytes_):
             baseuri = baseuri.decode(self.encoding, 'ignore')
-        # ensure that self.baseuri is always an absolute URI that
+        # Ensure that self.baseuri is always an absolute URI that
         # uses a whitelisted URI scheme (e.g. not `javscript:`)
         if self.baseuri:
             self.baseuri = _makeSafeAbsoluteURI(self.baseuri, baseuri) or self.baseuri
         else:
             self.baseuri = _urljoin(self.baseuri, baseuri)
+        self.basestack.append(self.baseuri)
+
+        # Track xml:lang
         lang = attrsD.get('xml:lang', attrsD.get('lang'))
         if lang == '':
             # xml:lang could be explicitly set to '', we need to capture that
@@ -216,104 +219,107 @@ class _FeedParserMixin(
             lang = self.lang
         if lang:
             if tag in ('feed', 'rss', 'rdf:RDF'):
-                self.feeddata['language'] = lang.replace('_','-')
+                self.feeddata['language'] = lang.replace('_', '-')
         self.lang = lang
-        self.basestack.append(self.baseuri)
         self.langstack.append(lang)
 
-        # track namespaces
-        for prefix, uri in attrs:
-            if prefix.startswith('xmlns:'):
-                self.trackNamespace(prefix[6:], uri)
-            elif prefix == 'xmlns':
-                self.trackNamespace(None, uri)
+        # Track namespaces
+        for key, value in attrs:
+            if key.startswith('xmlns:'):
+                self.trackNamespace(key[6:], value)
+            elif key == 'xmlns':
+                self.trackNamespace(None, value)
 
-        # track inline content
-        if self.incontent and not self.contentparams.get('type', 'xml').endswith('xml'):
-            if tag in ('xhtml:div', 'div'):
-                return # typepad does this 10/2007
-            # element declared itself as escaped markup, but it isn't really
-            self.contentparams['type'] = 'application/xhtml+xml'
-        if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
-            if tag.find(':') != -1:
-                prefix, tag = tag.split(':', 1)
-                namespace = self.namespacesInUse.get(prefix, '')
-                if tag=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
-                    attrs.append(('xmlns',namespace))
-                if tag=='svg' and namespace=='http://www.w3.org/2000/svg':
-                    attrs.append(('xmlns',namespace))
-            if tag == 'svg':
+        # If unknown_starttag is called while in content, reinterpret the tag
+        # and its attributes as inline content.
+        if self.incontent:
+            if not self.contentparams.get('type', 'xml').endswith('xml'):
+                # If the content is enclosed in a div tag, skip it.
+                if tag in ('xhtml:div', 'div'):
+                    return
+                # This was supposed to be escaped markup, but it isn't.
+                # Update the true content type.
+                self.contentparams['type'] = 'application/xhtml+xml'
+            # Reinterpret this tag and its attributes as XML-escaped content.
+            prefix, _, name = tag.rpartition(':')
+            if prefix:
+                uri = self.namespacesInUse.get(prefix, '')
+                if name == 'math' and uri == 'http://www.w3.org/1998/Math/MathML':
+                    attrs.append(('xmlns', uri))
+                if name == 'svg' and uri == 'http://www.w3.org/2000/svg':
+                    attrs.append(('xmlns', uri))
+            if name == 'svg':
                 self.svgOK += 1
-            return self.handle_data('<%s%s>' % (tag, self.strattrs(attrs)), escape=0)
+            return self.handle_data('<{tag}{attrs}>'.format(tag=name, attrs=self.strattrs(attrs)), escape=0)
 
-        # match namespaces
-        if tag.find(':') != -1:
-            prefix, suffix = tag.split(':', 1)
-        else:
-            prefix, suffix = '', tag
+        # Normalize the given prefix to an expected prefix.
+        prefix, _, name = tag.rpartition(':')
         prefix = self.namespacemap.get(prefix, prefix)
         if prefix:
             prefix = prefix + '_'
 
-        # special hack for better tracking of empty textinput/image elements in illformed feeds
-        if (not prefix) and tag not in ('title', 'link', 'description', 'name'):
+        # textinput and image elements only have specific subelements. If the
+        # current tag name is not in the list of allowed subelements, assume
+        # that the feed is illformed.
+        if (not prefix) and name not in ('title', 'link', 'description', 'name'):
             self.intextinput = 0
-        if (not prefix) and tag not in ('title', 'link', 'description', 'url', 'href', 'width', 'height'):
+        if (not prefix) and name not in ('title', 'link', 'description', 'url', 'href', 'width', 'height'):
             self.inimage = 0
 
-        # call special handler (if defined) or default handler
-        methodname = '_start_' + prefix + suffix
+        # Call a handler method (if defined).
+        methodname = '_start_' + prefix + name
         try:
             method = getattr(self, methodname)
             return method(attrsD)
         except AttributeError:
             # Since there's no handler or something has gone wrong we explicitly add the element and its attributes
-            unknown_tag = prefix + suffix
-            if len(attrsD) == 0:
-                # No attributes so merge it into the encosing dictionary
-                return self.push(unknown_tag, 1)
-            else:
+            unknown_tag = prefix + name
+            if attrsD:
                 # Has attributes so create it in its own dictionary
                 context = self._getContext()
                 context[unknown_tag] = attrsD
+            else:
+                # No attributes so merge it into the encosing dictionary
+                return self.push(unknown_tag, 1)
 
     def unknown_endtag(self, tag):
-        # match namespaces
-        if tag.find(':') != -1:
-            prefix, suffix = tag.split(':', 1)
-        else:
-            prefix, suffix = '', tag
+        # Normalize the given prefix to an expected prefix.
+        prefix, _, name = tag.rpartition(':')
         prefix = self.namespacemap.get(prefix, prefix)
         if prefix:
             prefix = prefix + '_'
-        if suffix == 'svg' and self.svgOK:
+        if name == 'svg' and self.svgOK:
             self.svgOK -= 1
 
-        # call special handler (if defined) or default handler
-        methodname = '_end_' + prefix + suffix
+        # Call a handler method (if defined).
+        methodname = '_end_' + prefix + name
         try:
             if self.svgOK:
                 raise AttributeError()
             method = getattr(self, methodname)
             method()
         except AttributeError:
-            self.pop(prefix + suffix)
+            self.pop(prefix + name)
 
-        # track inline content
-        if self.incontent and not self.contentparams.get('type', 'xml').endswith('xml'):
-            # element declared itself as escaped markup, but it isn't really
-            if tag in ('xhtml:div', 'div'):
-                return # typepad does this 10/2007
-            self.contentparams['type'] = 'application/xhtml+xml'
-        if self.incontent and self.contentparams.get('type') == 'application/xhtml+xml':
-            tag = tag.split(':')[-1]
-            self.handle_data('</%s>' % tag, escape=0)
+        # If unknown_endtag is called while in content, reinterpret the tag as
+        # inline content.
+        if self.incontent:
+            if not self.contentparams.get('type', 'xml').endswith('xml'):
+                # If the content is enclosed in a div tag, skip it.
+                if tag in ('xhtml:div', 'div'):
+                    return
+                # This was supposed to be escaped markup, but it isn't.
+                # Update the true content type.
+                self.contentparams['type'] = 'application/xhtml+xml'
+            self.handle_data('</{tag}>'.format(tag=name), escape=0)
 
-        # track xml:base and xml:lang going out of scope
+        # Track xml:base going out of scope
         if self.basestack:
             self.basestack.pop()
-            if self.basestack and self.basestack[-1]:
+            if self.basestack: # and self.basestack[-1]:
                 self.baseuri = self.basestack[-1]
+
+        # Track xml:lang going out of scope
         if self.langstack:
             self.langstack.pop()
             if self.langstack: # and (self.langstack[-1] is not None):
