@@ -1,33 +1,32 @@
-#!/usr/bin/env python
+# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2004-2008 Mark Pilgrim
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import absolute_import, unicode_literals
 
-__author__ = "Mark Pilgrim <http://diveintomark.org/>"
-__license__ = """
-Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
-Copyright 2004-2008 Mark Pilgrim
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
-
-* Redistributions of source code must retain the above copyright notice,
-  this list of conditions and the following disclaimer.
-* Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE."""
+__author__ = "Kurt McKee <contactme@kurtmckee.org>"
+__license__ = "BSD 2-clause"
 
 import codecs
 import datetime
@@ -54,7 +53,11 @@ except ImportError:
     from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import feedparser
+import feedparser.api
+import feedparser.datetimes
+import feedparser.mixin
 import feedparser.urls
+import feedparser.util
 from feedparser.datetimes.asctime import _parse_date_asctime
 from feedparser.datetimes.greek import _parse_date_greek
 from feedparser.datetimes.hungarian import _parse_date_hungarian
@@ -63,19 +66,6 @@ from feedparser.datetimes.korean import _parse_date_onblog, _parse_date_nate
 from feedparser.datetimes.perforce import _parse_date_perforce
 from feedparser.datetimes.rfc822 import _parse_date_rfc822
 from feedparser.datetimes.w3dtf import _parse_date_w3dtf
-
-if not feedparser._XML_AVAILABLE:
-    sys.stderr.write('No XML parsers available, unit testing can not proceed\n')
-    sys.exit(1)
-
-try:
-    # the utf_32 codec was introduced in Python 2.6; it's necessary to
-    # check this as long as feedparser supports Python 2.4 and 2.5
-    codecs.lookup('utf_32')
-except LookupError:
-    _UTF32_AVAILABLE = False
-else:
-    _UTF32_AVAILABLE = True
 
 #---------- custom HTTP server (used to serve test feeds) ----------
 
@@ -99,7 +89,7 @@ class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(304)
             self.send_header('Content-type', 'text/xml')
             self.end_headers()
-            return feedparser._StringIO(b'')
+            return feedparser.api._StringIO(b'')
         path = self.translate_path(self.path)
         # the compression tests' filenames determine the header sent
         if self.path.startswith('/tests/compression'):
@@ -188,7 +178,7 @@ class TestTemporaryFallbackBehavior(unittest.TestCase):
     def test_issue_328_fallback_behavior(self):
         warnings.filterwarnings('error')
 
-        d = feedparser.FeedParserDict()
+        d = feedparser.util.FeedParserDict()
         d['published'] = 'pub string'
         d['published_parsed'] = 'pub tuple'
         d['updated'] = 'upd string'
@@ -203,7 +193,7 @@ class TestTemporaryFallbackBehavior(unittest.TestCase):
         self.assertEqual(d['updated'], 'upd string')
         self.assertEqual(d['updated_parsed'], 'upd tuple')
 
-        d = feedparser.FeedParserDict()
+        d = feedparser.util.FeedParserDict()
         d['published'] = 'pub string'
         d['published_parsed'] = 'pub tuple'
         # Ensure that `updated` doesn't actually exist
@@ -250,11 +240,11 @@ class TestLooseParser(BaseTestCase):
     "into believing no XML parsers are installed"
     def __init__(self, arg):
         unittest.TestCase.__init__(self, arg)
-        self._xml_available = feedparser._XML_AVAILABLE
+        self._xml_available = feedparser.api._XML_AVAILABLE
     def setUp(self):
-        feedparser._XML_AVAILABLE = 0
+        feedparser.api._XML_AVAILABLE = False
     def tearDown(self):
-        feedparser._XML_AVAILABLE = self._xml_available
+        feedparser.api._XML_AVAILABLE = self._xml_available
 
 class TestStrictParser(BaseTestCase):
     pass
@@ -285,7 +275,7 @@ class TestEncodings(BaseTestCase):
 class TestFeedParserDict(unittest.TestCase):
     "Ensure that FeedParserDict returns values as expected and won't crash"
     def setUp(self):
-        self.d = feedparser.FeedParserDict()
+        self.d = feedparser.util.FeedParserDict()
     def _check_key(self, k):
         self.assertTrue(k in self.d)
         self.assertTrue(hasattr(self.d, k))
@@ -363,8 +353,8 @@ class TestOpenResource(unittest.TestCase):
     "Ensure that `_open_resource()` interprets its arguments as URIs, " \
     "file-like objects, or in-memory feeds as expected"
     def test_fileobj(self):
-        r = feedparser._open_resource(sys.stdin, '', '', '', '', [], {})
-        self.assertTrue(r is sys.stdin)
+        r = feedparser.api._open_resource(feedparser.api._StringIO(b''), '', '', '', '', [], {}, {})
+        self.assertEqual(r, b'')
     def test_feed(self):
         f = feedparser.parse('feed://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
@@ -373,27 +363,27 @@ class TestOpenResource(unittest.TestCase):
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
     def test_bytes(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
     def test_string(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
     def test_unicode_1(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
     def test_unicode_2(self):
         s = b'<feed><item><title>t\u00e9xt</title></item></feed>'
-        r = feedparser._open_resource(s, '', '', '', '', [], {})
-        self.assertEqual(s, r.read())
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        self.assertEqual(s, r)
 
 class TestMakeSafeAbsoluteURI(unittest.TestCase):
     "Exercise the URI joining and sanitization code"
     base = 'http://d.test/d/f.ext'
     def _mktest(rel, expect, doc):
         def fn(self):
-            value = feedparser._makeSafeAbsoluteURI(self.base, rel)
+            value = feedparser.urls._makeSafeAbsoluteURI(self.base, rel)
             self.assertEqual(value, expect)
         fn.__doc__ = doc
         return fn
@@ -408,11 +398,11 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
     def test_catch_ValueError(self):
         'catch ValueError in Python 2.7 and up'
         uri = 'http://bad]test/'
-        value1 = feedparser._makeSafeAbsoluteURI(uri)
-        value2 = feedparser._makeSafeAbsoluteURI(self.base, uri)
+        value1 = feedparser.urls._makeSafeAbsoluteURI(uri)
+        value2 = feedparser.urls._makeSafeAbsoluteURI(self.base, uri)
         swap = feedparser.urls.ACCEPTABLE_URI_SCHEMES
         feedparser.urls.ACCEPTABLE_URI_SCHEMES = ()
-        value3 = feedparser._makeSafeAbsoluteURI(self.base, uri)
+        value3 = feedparser.urls._makeSafeAbsoluteURI(self.base, uri)
         feedparser.urls.ACCEPTABLE_URI_SCHEMES = swap
         # Only Python 2.7 and up throw a ValueError, otherwise uri is returned
         self.assertTrue(value1 in (uri, ''))
@@ -425,13 +415,13 @@ class TestConvertToIdn(unittest.TestCase):
     hostname = '\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
     hostname += '.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
     def test_control(self):
-        r = feedparser._convert_to_idn('http://example.test/')
+        r = feedparser.urls._convert_to_idn('http://example.test/')
         self.assertEqual(r, 'http://example.test/')
     def test_idn(self):
-        r = feedparser._convert_to_idn('http://%s/' % (self.hostname,))
+        r = feedparser.urls._convert_to_idn('http://%s/' % (self.hostname,))
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp/')
     def test_port(self):
-        r = feedparser._convert_to_idn('http://%s:8080/' % (self.hostname,))
+        r = feedparser.urls._convert_to_idn('http://%s:8080/' % (self.hostname,))
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
 
 class TestCompression(unittest.TestCase):
@@ -524,7 +514,7 @@ class TestDateParsers(unittest.TestCase):
     "Test the various date parsers; most of the test cases are constructed " \
     "dynamically based on the contents of the `date_tests` dict, below"
     def test_None(self):
-        self.assertTrue(feedparser._parse_date(None) is None)
+        self.assertTrue(feedparser.datetimes._parse_date(None) is None)
     def _check_date(self, func, dtstring, expected_value):
         try:
             parsed_value = func(dtstring)
@@ -653,7 +643,7 @@ class TestHTMLGuessing(unittest.TestCase):
     "Exercise the HTML sniffing code"
     def _mktest(text, expect, doc):
         def fn(self):
-            value = bool(feedparser._FeedParserMixin.lookslikehtml(text))
+            value = bool(feedparser.mixin._FeedParserMixin.lookslikehtml(text))
             self.assertEqual(value, expect)
         fn.__doc__ = doc
         return fn
@@ -697,7 +687,7 @@ class TestLxmlBug(unittest.TestCase):
             doc = b"<feed>&illformed_charref</feed>"
             # Importing lxml.etree currently causes libxml2 to
             # throw SAXException instead of SAXParseException.
-            feedparser.parse(feedparser._StringIO(doc))
+            feedparser.parse(feedparser.api._StringIO(doc))
         self.assertTrue(True)
 
 #---------- parse test files and create test methods ----------
@@ -707,20 +697,12 @@ def convert_to_utf8(data):
     if data[:4] == b'\x4c\x6f\xa7\x94':
         return data.decode('cp037').encode('utf-8')
     elif data[:4] == b'\x00\x00\xfe\xff':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32be').encode('utf-8')
     elif data[:4] == b'\xff\xfe\x00\x00':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32le').encode('utf-8')
     elif data[:4] == b'\x00\x00\x00\x3c':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32be').encode('utf-8')
     elif data[:4] == b'\x3c\x00\x00\x00':
-        if not _UTF32_AVAILABLE:
-            return None
         return data.decode('utf-32le').encode('utf-8')
     elif data[:4] == b'\x00\x3c\x00\x3f':
         return data.decode('utf-16be').encode('utf-8')

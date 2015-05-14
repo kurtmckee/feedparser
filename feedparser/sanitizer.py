@@ -407,3 +407,60 @@ def _sanitizeHTML(htmlSource, encoding, _type):
     data = p.output()
     data = data.strip().replace('\r\n', '\n')
     return data
+
+# Match XML entity declarations.
+# Example: <!ENTITY copyright "(C)">
+RE_ENTITY_PATTERN = re.compile(br'^\s*<!ENTITY([^>]*?)>', re.MULTILINE)
+
+# Match XML DOCTYPE declarations.
+# Example: <!DOCTYPE feed [ ]>
+RE_DOCTYPE_PATTERN = re.compile(br'^\s*<!DOCTYPE([^>]*?)>', re.MULTILINE)
+
+# Match safe entity declarations.
+# This will allow hexadecimal character references through,
+# as well as text, but not arbitrary nested entities.
+# Example: cubed "&#179;"
+# Example: copyright "(C)"
+# Forbidden: explode1 "&explode2;&explode2;"
+RE_SAFE_ENTITY_PATTERN = re.compile(b'\s+(\w+)\s+"(&#\w+;|[^&"]*)"')
+
+def replace_doctype(data):
+    '''Strips and replaces the DOCTYPE, returns (rss_version, stripped_data)
+
+    rss_version may be 'rss091n' or None
+    stripped_data is the same XML document with a replaced DOCTYPE
+    '''
+
+    # Divide the document into two groups by finding the location
+    # of the first element that doesn't begin with '<?' or '<!'.
+    start = re.search(b'<\w', data)
+    start = start and start.start() or -1
+    head, data = data[:start+1], data[start+1:]
+
+    # Save and then remove all of the ENTITY declarations.
+    entity_results = RE_ENTITY_PATTERN.findall(head)
+    head = RE_ENTITY_PATTERN.sub(b'', head)
+
+    # Find the DOCTYPE declaration and check the feed type.
+    doctype_results = RE_DOCTYPE_PATTERN.findall(head)
+    doctype = doctype_results and doctype_results[0] or b''
+    if b'netscape' in doctype.lower():
+        version = 'rss091n'
+    else:
+        version = None
+
+    # Re-insert the safe ENTITY declarations if a DOCTYPE was found.
+    replacement = b''
+    if len(doctype_results) == 1 and entity_results:
+        match_safe_entities = lambda e: RE_SAFE_ENTITY_PATTERN.match(e)
+        safe_entities = [e for e in entity_results if match_safe_entities(e)]
+        if safe_entities:
+            replacement = b'<!DOCTYPE feed [\n<!ENTITY' \
+                        + b'>\n<!ENTITY '.join(safe_entities) \
+                        + b'>\n]>'
+    data = RE_DOCTYPE_PATTERN.sub(replacement, head) + data
+
+    # Precompute the safe entities for the loose parser.
+    safe_entities = dict((k.decode('utf-8'), v.decode('utf-8'))
+                      for k, v in RE_SAFE_ENTITY_PATTERN.findall(replacement))
+    return version, data, safe_entities

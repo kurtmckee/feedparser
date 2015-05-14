@@ -1,8 +1,9 @@
+# Exceptions used throughout feedparser
 # Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
-# This file is part of feedparser.
+# This file is a part of feedparser.
 #
 # Redistribution and use in source and binary forms, with or without modification,
 # are permitted provided that the following conditions are met:
@@ -23,22 +24,29 @@
 # INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE."""
+# POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import absolute_import, unicode_literals
 
-__author__ = 'Kurt McKee <contactme@kurtmckee.org>'
-__license__ = 'BSD 2-clause'
-__version__ = '5.2.0'
+__all__ = [
+    'ThingsNobodyCaresAboutButMe',
+    'CharacterEncodingOverride',
+    'CharacterEncodingUnknown',
+    'NonXMLContentType',
+    'UndeclaredNamespace',
+]
 
-# HTTP "User-Agent" header to send to servers when downloading feeds.
-# If you are embedding feedparser in a larger application, you should
-# change this to your application name and URL.
-USER_AGENT = "feedparser/%s +https://github.com/kurtmckee/feedparser/" % __version__
+class ThingsNobodyCaresAboutButMe(Exception):
+    pass
 
-from . import api
-from .api import parse
-from .datetimes import registerDateHandler
-from .exceptions import *
+class CharacterEncodingOverride(ThingsNobodyCaresAboutButMe):
+    pass
 
-api.USER_AGENT = USER_AGENT
+class CharacterEncodingUnknown(ThingsNobodyCaresAboutButMe):
+    pass
+
+class NonXMLContentType(ThingsNobodyCaresAboutButMe):
+    pass
+
+class UndeclaredNamespace(Exception):
+    pass
