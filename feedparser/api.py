@@ -70,11 +70,6 @@ except NameError:
     unichr = chr
     basestring = str
 
-# List of preferred XML parsers, by SAX driver name.  These will be tried first,
-# but if they're not installed, Python will keep searching through its own list
-# of pre-installed parsers until it finds one that supports everything we need.
-PREFERRED_XML_PARSERS = ["drv_libxml2"]
-
 # If you want feedparser to automatically resolve all relative URIs, set this
 # to 1.
 RESOLVE_RELATIVE_URIS = 1
@@ -220,7 +215,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if use_strict_parser:
         # initialize the SAX parser
         feedparser = StrictFeedParser(baseuri, baselang, 'utf-8')
-        saxparser = xml.sax.make_parser(PREFERRED_XML_PARSERS)
+        saxparser = xml.sax.make_parser()
         saxparser.setFeature(xml.sax.handler.feature_namespaces, 1)
         try:
             # disable downloading external doctype references, if possible

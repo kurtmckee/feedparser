@@ -127,9 +127,6 @@ class _StrictFeedParser(object):
         self.bozo = 1
         self.exc = exc
 
-    # drv_libxml2 calls warning() in some cases
-    warning = error
-
     def fatalError(self, exc):
         self.error(exc)
         raise exc
