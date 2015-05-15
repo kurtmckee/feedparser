@@ -3,6 +3,7 @@ coming in the next release:
     * Unify the codebase so that 2to3 conversion is no longer required
     * Remove references to iconv_codecs
     * Remove libxml2 as an XML parser backend
+    * Remove Jython as a mostly-supported platform
     * Update the Creative Commons namespace URI's
     * Update the default User-Agent name and URL
     * Catch EOFError when using gzip in Python 3.4

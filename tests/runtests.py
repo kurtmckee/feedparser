@@ -410,7 +410,7 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
         self.assertTrue(value3 in (uri, ''))
 
 class TestConvertToIdn(unittest.TestCase):
-    "Test IDN support (unavailable in Jython as of Jython 2.5.2)"
+    "Test IDN support"
     # this is the greek test domain
     hostname = '\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
     hostname += '.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
@@ -524,7 +524,7 @@ class TestDateParsers(unittest.TestCase):
         # self.assertEqual(parsed_value, feedparser._parse_date(dtstring))
     def test_year_10000_date(self):
         # On some systems this date string will trigger an OverflowError.
-        # On Jython and x64 systems, however, it's interpreted just fine.
+        # On x64 systems, however, it's interpreted just fine.
         try:
             date = _parse_date_rfc822('Sun, 31 Dec 9999 23:59:59 -9999')
         except OverflowError:

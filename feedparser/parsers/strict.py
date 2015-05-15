@@ -48,8 +48,6 @@ class _StrictFeedParser(object):
     def startPrefixMapping(self, prefix, uri):
         if not uri:
             return
-        # Jython uses '' instead of None; standardize on None
-        prefix = prefix or None
         self.trackNamespace(prefix, uri)
         if prefix and uri == 'http://www.w3.org/1999/xlink':
             self.decls['xmlns:' + prefix] = uri
