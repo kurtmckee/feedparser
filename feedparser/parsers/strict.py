@@ -28,6 +28,12 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from xml.sax.saxutils import escape as _xmlescape
+
+from ..urls import _urljoin, _makeSafeAbsoluteURI
+
+bytes_ = type(b'')
+
 class _StrictFeedParser(object):
     def __init__(self, baseuri, baselang, encoding):
         self.bozo = 0
@@ -78,7 +84,81 @@ class _StrictFeedParser(object):
                 )
             attrsD[attrlocalname.lower()] = attrvalue
 
-        self.unknown_starttag(localname, list(attrsD.items()))
+        tag = localname
+        attrs = list(attrsD.items())
+
+        # Increment the element hierarchy depth counter.
+        self.depth += 1
+
+        # Normalize the attributes.
+        attrs = [self._normalize_attributes(attr) for attr in attrs]
+        attrsD = dict(attrs)
+
+        # Track xml:base
+        baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
+        if isinstance(baseuri, bytes_):
+            baseuri = baseuri.decode(self.encoding, 'ignore')
+        # Ensure that self.baseuri is always an absolute URI that
+        # uses a whitelisted URI scheme (e.g. not `javscript:`)
+        if self.baseuri:
+            self.baseuri = _makeSafeAbsoluteURI(self.baseuri, baseuri) or self.baseuri
+        else:
+            self.baseuri = _urljoin(self.baseuri, baseuri)
+        self.basestack.append(self.baseuri)
+
+        # Track xml:lang
+        lang = attrsD.get('xml:lang', attrsD.get('lang'))
+        if lang == '':
+            # xml:lang could be explicitly set to '', we need to capture that
+            lang = None
+        elif lang is None:
+            # if no xml:lang is specified, use parent lang
+            lang = self.lang
+        if lang:
+            if tag in ('feed', 'rss', 'rdf:RDF'):
+                self.feeddata['language'] = lang.replace('_', '-')
+        self.lang = lang
+        self.langstack.append(lang)
+
+        # If unknown_starttag is called while in content, reinterpret the tag
+        # and its attributes as inline content.
+        if self.incontent:
+            if not self.contentparams.get('type', 'xml').endswith('xml'):
+                # If the content is enclosed in a div tag, skip it.
+                if tag in ('xhtml:div', 'div'):
+                    return
+                # This was supposed to be escaped markup, but it isn't.
+                # Update the true content type.
+                self.contentparams['type'] = 'application/xhtml+xml'
+            # Reinterpret this tag and its attributes as XML-escaped content.
+            prefix, _, name = tag.rpartition(':')
+            if prefix:
+                uri = self.namespacesInUse.get(prefix, '')
+            if name == 'svg':
+                self.svgOK += 1
+            return self.handle_data('<{tag}{attrs}>'.format(tag=name, attrs=self.strattrs(attrs)), escape=0)
+
+        # Normalize the given prefix to an expected prefix.
+        prefix, _, name = tag.rpartition(':')
+        prefix = self.namespacemap.get(prefix, prefix)
+        if prefix:
+            prefix = prefix + '_'
+
+        # Call a handler method (if defined).
+        methodname = '_start_' + prefix + name
+        try:
+            method = getattr(self, methodname)
+            return method(attrsD)
+        except AttributeError:
+            # Since there's no handler or something has gone wrong we explicitly add the element and its attributes
+            unknown_tag = prefix + name
+            if attrsD:
+                # Has attributes so create it in its own dictionary
+                context = self._getContext()
+                context[unknown_tag] = attrsD
+            else:
+                # No attributes so merge it into the encosing dictionary
+                return self.push(unknown_tag, 1)
 
     def endElementNS(self, name, qname):
         uri, localname = name
@@ -93,7 +173,60 @@ class _StrictFeedParser(object):
                 )
                 break
 
-        self.unknown_endtag(localname)
+        tag = localname
+
+        # Normalize the given prefix to an expected prefix.
+        prefix, _, name = tag.rpartition(':')
+        prefix = self.namespacemap.get(prefix, prefix)
+        if prefix:
+            prefix = prefix + '_'
+        if name == 'svg' and self.svgOK:
+            self.svgOK -= 1
+
+        # Call a handler method (if defined).
+        methodname = '_end_' + prefix + name
+        try:
+            if self.svgOK:
+                raise AttributeError()
+            method = getattr(self, methodname)
+            method()
+        except AttributeError:
+            self.pop(prefix + name)
+
+        # If unknown_endtag is called while in content, reinterpret the tag as
+        # inline content.
+        if self.incontent:
+            if not self.contentparams.get('type', 'xml').endswith('xml'):
+                # If the content is enclosed in a div tag, skip it.
+                if tag in ('xhtml:div', 'div'):
+                    return
+                # This was supposed to be escaped markup, but it isn't.
+                # Update the true content type.
+                self.contentparams['type'] = 'application/xhtml+xml'
+            self.handle_data('</{tag}>'.format(tag=name), escape=0)
+
+        # Track xml:base going out of scope
+        if self.basestack:
+            self.basestack.pop()
+            if self.basestack: # and self.basestack[-1]:
+                self.baseuri = self.basestack[-1]
+
+        # Track xml:lang going out of scope
+        if self.langstack:
+            self.langstack.pop()
+            if self.langstack: # and (self.langstack[-1] is not None):
+                self.lang = self.langstack[-1]
+
+        self.depth -= 1
+
+    def handle_data(self, text, escape=1):
+        # called for each block of plain text, i.e. outside of any tag and
+        # not containing any character or entity references
+        if not self.elementstack:
+            return
+        if escape and self.contentparams.get('type') == 'application/xhtml+xml':
+            text = _xmlescape(text)
+        self.elementstack[-1][2].append(text)
 
     def characters(self, text):
         self.handle_data(text)

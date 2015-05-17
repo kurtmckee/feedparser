@@ -28,6 +28,21 @@
 
 from __future__ import absolute_import, unicode_literals
 
+from xml.sax.saxutils import escape as _xmlescape
+
+try:
+    from html.entities import name2codepoint
+except ImportError:
+    from htmlentitydefs import name2codepoint
+
+from ..urls import _urljoin, _makeSafeAbsoluteURI
+
+bytes_ = type(b'')
+try:
+    chr = unichr
+except NameError:
+    pass
+
 class _LooseFeedParser(object):
     def __init__(self, baseuri=None, baselang=None, encoding=None, entities=None):
         self.baseuri = baseuri or ''
@@ -35,6 +50,216 @@ class _LooseFeedParser(object):
         self.encoding = encoding or 'utf-8' # character encoding
         self.entities = entities or {}
         super(_LooseFeedParser, self).__init__()
+
+    def parse_declaration(self, i):
+        # override internal declaration handler to handle CDATA blocks
+        if self.rawdata[i:i+9] == '<![CDATA[':
+            k = self.rawdata.find(']]>', i)
+            if k == -1:
+                # CDATA block began but didn't finish
+                k = len(self.rawdata)
+                return k
+            self.handle_data(_xmlescape(self.rawdata[i+9:k]), 0)
+            return k+3
+        else:
+            k = self.rawdata.find('>', i)
+            if k >= 0:
+                return k+1
+            else:
+                # We have an incomplete CDATA block.
+                return k
+
+    def unknown_starttag(self, tag, attrs):
+        # Increment the element hierarchy depth counter.
+        self.depth += 1
+
+        # Normalize the attributes.
+        attrs = [self._normalize_attributes(attr) for attr in attrs]
+        attrsD = dict(attrs)
+
+        # Track xml:base
+        baseuri = attrsD.get('xml:base', attrsD.get('base')) or self.baseuri
+        if isinstance(baseuri, bytes_):
+            baseuri = baseuri.decode(self.encoding, 'ignore')
+        # Ensure that self.baseuri is always an absolute URI that
+        # uses a whitelisted URI scheme (e.g. not `javscript:`)
+        if self.baseuri:
+            self.baseuri = _makeSafeAbsoluteURI(self.baseuri, baseuri) or self.baseuri
+        else:
+            self.baseuri = _urljoin(self.baseuri, baseuri)
+        self.basestack.append(self.baseuri)
+
+        # Track xml:lang
+        lang = attrsD.get('xml:lang', attrsD.get('lang'))
+        if lang == '':
+            # xml:lang could be explicitly set to '', we need to capture that
+            lang = None
+        elif lang is None:
+            # if no xml:lang is specified, use parent lang
+            lang = self.lang
+        if lang:
+            if tag in ('feed', 'rss', 'rdf:RDF'):
+                self.feeddata['language'] = lang.replace('_', '-')
+        self.lang = lang
+        self.langstack.append(lang)
+
+        # Track namespaces
+        for key, value in attrs:
+            if key.startswith('xmlns:'):
+                self.trackNamespace(key[6:], value)
+            elif key == 'xmlns':
+                self.trackNamespace(None, value)
+
+        # If unknown_starttag is called while in content, reinterpret the tag
+        # and its attributes as inline content.
+        if self.incontent:
+            if not self.contentparams.get('type', 'xml').endswith('xml'):
+                # If the content is enclosed in a div tag, skip it.
+                if tag in ('xhtml:div', 'div'):
+                    return
+                # This was supposed to be escaped markup, but it isn't.
+                # Update the true content type.
+                self.contentparams['type'] = 'application/xhtml+xml'
+            # Reinterpret this tag and its attributes as XML-escaped content.
+            prefix, _, name = tag.rpartition(':')
+            if prefix:
+                uri = self.namespacesInUse.get(prefix, '')
+                if name == 'math' and uri == 'http://www.w3.org/1998/Math/MathML':
+                    attrs.append(('xmlns', uri))
+                if name == 'svg' and uri == 'http://www.w3.org/2000/svg':
+                    attrs.append(('xmlns', uri))
+            if name == 'svg':
+                self.svgOK += 1
+            return self.handle_data('<{tag}{attrs}>'.format(tag=name, attrs=self.strattrs(attrs)), escape=0)
+
+        # Normalize the given prefix to an expected prefix.
+        prefix, _, name = tag.rpartition(':')
+        prefix = self.namespacemap.get(prefix, prefix)
+        if prefix:
+            prefix = prefix + '_'
+
+        # textinput and image elements only have specific subelements. If the
+        # current tag name is not in the list of allowed subelements, assume
+        # that the feed is illformed.
+        if (not prefix) and name not in ('title', 'link', 'description', 'name'):
+            self.intextinput = 0
+        if (not prefix) and name not in ('title', 'link', 'description', 'url', 'href', 'width', 'height'):
+            self.inimage = 0
+
+        # Call a handler method (if defined).
+        methodname = '_start_' + prefix + name
+        try:
+            method = getattr(self, methodname)
+            return method(attrsD)
+        except AttributeError:
+            # Since there's no handler or something has gone wrong we explicitly add the element and its attributes
+            unknown_tag = prefix + name
+            if attrsD:
+                # Has attributes so create it in its own dictionary
+                context = self._getContext()
+                context[unknown_tag] = attrsD
+            else:
+                # No attributes so merge it into the encosing dictionary
+                return self.push(unknown_tag, 1)
+
+    def unknown_endtag(self, tag):
+        # Normalize the given prefix to an expected prefix.
+        prefix, _, name = tag.rpartition(':')
+        prefix = self.namespacemap.get(prefix, prefix)
+        if prefix:
+            prefix = prefix + '_'
+        if name == 'svg' and self.svgOK:
+            self.svgOK -= 1
+
+        # Call a handler method (if defined).
+        methodname = '_end_' + prefix + name
+        try:
+            if self.svgOK:
+                raise AttributeError()
+            method = getattr(self, methodname)
+            method()
+        except AttributeError:
+            self.pop(prefix + name)
+
+        # If unknown_endtag is called while in content, reinterpret the tag as
+        # inline content.
+        if self.incontent:
+            if not self.contentparams.get('type', 'xml').endswith('xml'):
+                # If the content is enclosed in a div tag, skip it.
+                if tag in ('xhtml:div', 'div'):
+                    return
+                # This was supposed to be escaped markup, but it isn't.
+                # Update the true content type.
+                self.contentparams['type'] = 'application/xhtml+xml'
+            self.handle_data('</{tag}>'.format(tag=name), escape=0)
+
+        # Track xml:base going out of scope
+        if self.basestack:
+            self.basestack.pop()
+            if self.basestack: # and self.basestack[-1]:
+                self.baseuri = self.basestack[-1]
+
+        # Track xml:lang going out of scope
+        if self.langstack:
+            self.langstack.pop()
+            if self.langstack: # and (self.langstack[-1] is not None):
+                self.lang = self.langstack[-1]
+
+        self.depth -= 1
+
+    def handle_charref(self, ref):
+        # called for each character reference, e.g. for '&#160;', ref will be '160'
+        if not self.elementstack:
+            return
+        ref = ref.lower()
+        if ref in ('34', '38', '39', '60', '62', 'x22', 'x26', 'x27', 'x3c', 'x3e'):
+            text = '&#%s;' % ref
+        else:
+            if ref[0] == 'x':
+                c = int(ref[1:], 16)
+            else:
+                c = int(ref)
+            text = chr(c).encode('utf-8')
+        self.elementstack[-1][2].append(text)
+
+    def handle_entityref(self, ref):
+        # called for each entity reference, e.g. for '&copy;', ref will be 'copy'
+        if not self.elementstack:
+            return
+        if ref in ('lt', 'gt', 'quot', 'amp', 'apos'):
+            text = '&%s;' % ref
+        elif ref in self.entities:
+            text = self.entities[ref]
+            if text.startswith('&#') and text.endswith(';'):
+                return self.handle_entityref(text)
+        else:
+            try:
+                name2codepoint[ref]
+            except KeyError:
+                text = '&%s;' % ref
+            else:
+                text = chr(name2codepoint[ref]).encode('utf-8')
+        self.elementstack[-1][2].append(text)
+
+    def handle_data(self, text, escape=1):
+        # called for each block of plain text, i.e. outside of any tag and
+        # not containing any character or entity references
+        if not self.elementstack:
+            return
+        if escape and self.contentparams.get('type') == 'application/xhtml+xml':
+            text = _xmlescape(text)
+        self.elementstack[-1][2].append(text)
+
+    def handle_comment(self, text):
+        # called for each comment, e.g. <!-- insert message here -->
+        pass
+
+    def handle_pi(self, text):
+        # called for each processing instruction, e.g. <?instruction>
+        pass
+
+    def handle_decl(self, text):
+        pass
 
     def _normalize_attributes(self, kv):
         k = kv[0].lower()
