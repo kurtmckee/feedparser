@@ -38,7 +38,6 @@ class _StrictFeedParser(object):
     def __init__(self, baseuri, baselang, encoding):
         self.bozo = 0
         self.exc = None
-        self.decls = {}
         self.baseuri = baseuri or ''
         self.lang = baselang
         self.encoding = encoding
@@ -53,8 +52,6 @@ class _StrictFeedParser(object):
         if not uri:
             return
         self.trackNamespace(prefix, uri)
-        if prefix and uri == 'http://www.w3.org/1999/xlink':
-            self.decls['xmlns:' + prefix] = uri
 
     def startElementNS(self, name, qname, attrs):
         uri, localname = name
@@ -62,7 +59,7 @@ class _StrictFeedParser(object):
         loweruri = (uri or '').lower()
         prefix = self._matchnamespaces.get(loweruri)
 
-        attrsD, self.decls = self.decls, {}
+        attrsD = {}
         if localname == 'math' and uri == 'http://www.w3.org/1998/Math/MathML':
             attrsD['xmlns'] = uri
         if localname == 'svg' and uri == 'http://www.w3.org/2000/svg':
@@ -164,41 +161,47 @@ class _StrictFeedParser(object):
         uri, localname = name
         localname = localname.lower()
         loweruri = str(uri or '').lower()
-        prefix = self._matchnamespaces.get(loweruri)
+        prefix = self._matchnamespaces.get(loweruri, '')
 
-        for key, value in self.namespacesInUse.items():
-            if key and value == uri:
-                localname = '{prefix}:{localname}'.format(
-                    prefix=key.lower(), localname=localname
-                )
-                break
+        # for key, value in self.namespacesInUse.items():
+        #     if key and value == uri:
+        #         localname = '{prefix}:{localname}'.format(
+        #             prefix=key.lower(), localname=localname
+        #         )
+        #         break
 
-        tag = localname
+        # tag = localname
 
         # Normalize the given prefix to an expected prefix.
-        prefix, _, name = tag.rpartition(':')
-        prefix = self.namespacemap.get(prefix, prefix)
-        if prefix:
-            prefix = prefix + '_'
+        # prefix, _, name = tag.rpartition(':')
+        # prefix = self.namespacemap.get(prefix, prefix)
+        # if prefix:
+        #     prefix = prefix + '_'
+        name = localname
         if name == 'svg' and self.svgOK:
             self.svgOK -= 1
 
         # Call a handler method (if defined).
-        methodname = '_end_' + prefix + name
+        if prefix:
+            methodname = '_end_{prefix}_{localname}'
+        else:
+            methodname = '_end_{localname}'
+        methodname = methodname.format(prefix=prefix, localname=name)
+
         try:
             if self.svgOK:
                 raise AttributeError()
             method = getattr(self, methodname)
             method()
         except AttributeError:
-            self.pop(prefix + name)
+            self.pop((prefix and (prefix + '_') or '') + name)
 
         # If unknown_endtag is called while in content, reinterpret the tag as
         # inline content.
         if self.incontent:
             if not self.contentparams.get('type', 'xml').endswith('xml'):
                 # If the content is enclosed in a div tag, skip it.
-                if tag in ('xhtml:div', 'div'):
+                if localname in ('xhtml:div', 'div'):
                     return
                 # This was supposed to be escaped markup, but it isn't.
                 # Update the true content type.
