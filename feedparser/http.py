@@ -224,6 +224,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
 
     # Stop processing if the server sent HTTP 304 Not Modified.
     if getattr(f, 'code', 0) == 304:
+        result['status'] = 304
         result['version'] = ''
         result['debug_message'] = 'The feed has not changed since you last checked, ' + \
             'so the server sent no data.  This is a feature, not a bug!'
