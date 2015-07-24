@@ -29,7 +29,7 @@ from __future__ import absolute_import, unicode_literals
 
 __author__ = 'Kurt McKee <contactme@kurtmckee.org>'
 __license__ = 'BSD 2-clause'
-__version__ = '5.2.0'
+__version__ = '5.2.1'
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should

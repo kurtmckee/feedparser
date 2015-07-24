@@ -7,6 +7,9 @@ coming in the next release:
     * Catch EOFError when using gzip in Python 3.4
     * Issue 20: Support Middle European (Summer) Time timezones
 
+5.2.1 - July 23, 2015
+    * Fix #22 (pip package keeps upgrading all the time)
+
 5.2.0 - April 16, 2015
     * Support PyPy
     * Remove the HTTP Status 9001 test that caused unit test tracebacks
