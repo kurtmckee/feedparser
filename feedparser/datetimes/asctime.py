@@ -28,5 +28,5 @@ def _parse_date_asctime(dt):
 
     # Reassemble the parts in an RFC822-compatible order and parse them.
     return _parse_date_rfc822(' '.join([
-        parts[0], parts[2], parts[1], parts[5], parts[3], parts[4],
+        parts[0], parts[2], parts[1], parts[3], parts[4], parts[5],
     ]))
