@@ -13,6 +13,12 @@ timezonenames = {
     'm': -12, 'y': 12,
     'met': 1, 'mest': 2,
 }
+daynames = ('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun')
+months = {
+    'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+    'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
+}
+
 
 def _parse_date_rfc822(date):
     """Parse RFC 822 dates and times
@@ -24,12 +30,6 @@ def _parse_date_rfc822(date):
     3. Additional timezone names are supported.
     4. A default time and timezone are assumed if only a date is present.
     """
-
-    daynames = set(['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'])
-    months = {
-        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
-        'jul': 7, 'aug': 8, 'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12,
-    }
 
     parts = date.lower().split()
     if len(parts) < 5:
