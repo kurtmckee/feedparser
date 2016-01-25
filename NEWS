@@ -297,7 +297,7 @@ coming in the next release:
 
 3.0b15 - 2/11/2004 - MAP - fixed bug resolving relative links in wfw:commentRSS;
   fixed bug capturing author and contributor URL; fixed bug resolving relative
-  links in author and contributor URL; fixed bug resolvin relative links in
+  links in author and contributor URL; fixed bug resolving relative links in
   generator URL; added support for recognizing RSS 1.0; passed Simon Fell's
   namespace tests, and included them permanently in the test suite with his
   permission; fixed namespace handling under Python 2.1

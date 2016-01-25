@@ -216,7 +216,7 @@ def _parse_georss_polygon(value, swap=True, dims=2):
 
 def _parse_georss_box(value, swap=True, dims=2):
     # A bounding box is a rectangular region, often used to define the extents
-    # of a map or a rough area of interest. A box contains two space seperate
+    # of a map or a rough area of interest. A box contains two space separate
     # latitude-longitude pairs, with each pair separated by whitespace. The
     # first pair is the lower corner, the second is the upper corner.
     try:

@@ -270,7 +270,7 @@ class _FeedParserMixin(
             # Since there's no handler or something has gone wrong we explicitly add the element and its attributes
             unknown_tag = prefix + suffix
             if len(attrsD) == 0:
-                # No attributes so merge it into the encosing dictionary
+                # No attributes so merge it into the enclosing dictionary
                 return self.push(unknown_tag, 1)
             else:
                 # Has attributes so create it in its own dictionary

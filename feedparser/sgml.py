@@ -18,7 +18,7 @@ __all__ = [
 ]
 
 # sgmllib is not available by default in Python 3; if the end user doesn't have
-# it available then we'll lose illformed XML parsing and content santizing
+# it available then we'll lose illformed XML parsing and content sanitizing
 try:
     import sgmllib
 except ImportError:
