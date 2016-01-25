@@ -3,7 +3,7 @@ import sys
 
 extra = {}
 if sys.version_info >= (3, ):
-    extra['use_2to3'] = True
+    extra['install_requires'] = ['sgmllib3k']
 
 setup(
     name = 'feedparser',
@@ -15,8 +15,7 @@ setup(
     url = 'https://github.com/kurtmckee/feedparser',
     download_url = 'https://pypi.python.org/pypi/feedparser',
     platforms = ['POSIX', 'Windows'],
-    package_dir = {'': 'feedparser'},
-    py_modules = ['feedparser'],
+    packages = ['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
     keywords = ['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -25,13 +24,9 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.4',
-        'Programming Language :: Python :: 2.5',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.0',
-        'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',

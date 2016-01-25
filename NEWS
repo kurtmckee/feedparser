@@ -1,3 +1,12 @@
+coming in the next release:
+    * Convert feedparser from a monolithic file to a package
+    * Unify the codebase so that 2to3 conversion is no longer required
+    * Remove references to iconv_codecs
+    * Update the Creative Commons namespace URI's
+    * Update the default User-Agent name and URL
+    * Catch EOFError when using gzip in Python 3.4
+    * Issue 20: Support Middle European (Summer) Time timezones
+
 5.2.1 - July 23, 2015
     * Fix #22 (pip package keeps upgrading all the time)
 
@@ -288,7 +297,7 @@
 
 3.0b15 - 2/11/2004 - MAP - fixed bug resolving relative links in wfw:commentRSS;
   fixed bug capturing author and contributor URL; fixed bug resolving relative
-  links in author and contributor URL; fixed bug resolvin relative links in
+  links in author and contributor URL; fixed bug resolving relative links in
   generator URL; added support for recognizing RSS 1.0; passed Simon Fell's
   namespace tests, and included them permanently in the test suite with his
   permission; fixed namespace handling under Python 2.1

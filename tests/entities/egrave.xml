@@ -1,0 +1,9 @@
+<!--
+Description: egrave
+Expect:      feed['title'] == 'testing \xe8 entity'
+-->
+<rss>
+<channel>
+<title>testing &egrave; entity</title>
+</channel>
+</rss>

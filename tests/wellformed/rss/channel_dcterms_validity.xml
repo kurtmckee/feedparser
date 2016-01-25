@@ -1,0 +1,9 @@
+<!--
+Description: channel dcterms:valid start/end
+Expect:      not bozo and feed['validity_end'] == '2002-10-17T17:00+01:00' and feed['validity_start'] == '2002-10-13T09:00+01:00'
+-->
+<rss version="2.0" xmlns:dcterms="http://purl.org/dc/terms/">
+<channel>
+<dcterms:valid>start=2002-10-13T09:00+01:00;end=2002-10-17T17:00+01:00;scheme=W3C-DTF</dcterms:valid>
+</channel>
+</rss>

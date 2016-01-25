@@ -19,7 +19,7 @@ form's submit button.
 ------------------------------
 
 The link of the script which processes the text input form, which would go in
-the action attirbute of the form.
+the action attribute of the form.
 
 If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 :ref:`resolved according to a set of rules <advanced.base>`.

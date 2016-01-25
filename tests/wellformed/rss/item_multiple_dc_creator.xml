@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Description: item contains multiple dc:creator
+Expect:      not bozo and (entries[0]['authors'][0]['name'] == 'First Author') and (entries[0]['authors'][1]['name'] == 'Second Author')
+-->
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<item>
+<dc:creator>First Author</dc:creator>
+<dc:creator>Second Author</dc:creator>
+</item>
+</channel>
+</rss>

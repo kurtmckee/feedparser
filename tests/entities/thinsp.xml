@@ -1,0 +1,9 @@
+<!--
+Description: thinsp
+Expect:      feed['title'] == 'testing \u2009 entity'
+-->
+<rss>
+<channel>
+<title>testing &thinsp; entity</title>
+</channel>
+</rss>

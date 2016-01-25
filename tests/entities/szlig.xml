@@ -1,0 +1,9 @@
+<!--
+Description: szlig
+Expect:      feed['title'] == 'testing \xdf entity'
+-->
+<rss>
+<channel>
+<title>testing &szlig; entity</title>
+</channel>
+</rss>

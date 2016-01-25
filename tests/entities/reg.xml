@@ -1,0 +1,9 @@
+<!--
+Description: reg
+Expect:      feed['title'] == 'testing \xae entity'
+-->
+<rss>
+<channel>
+<title>testing &reg; entity</title>
+</channel>
+</rss>
