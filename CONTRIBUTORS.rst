@@ -15,8 +15,10 @@ bug report!
 * `Jason Diamond <http://injektilo.org/>`_
 * `Fazal Majid <https://majid.info/blog/>`_
 * `Kevin Marks <http://epeus.blogspot.com/>`_
+* `Nik Nyby <http://nikolas.us.to/>`_
 * `Ade Oshineye <http://blog.oshineye.com/>`_
 * `Martin Pool <http://sourcefrog.net/>`_
 * `Sam Ruby <http://intertwingly.net/>`_
 * `Bernd Schlapsi <https://github.com/brot>`_
 * `Aaron Swartz <http://www.aaronsw.com/>`_
+* `Jakub Wilk <http://jwilk.net/>`_
