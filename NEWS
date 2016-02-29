@@ -1,4 +1,5 @@
 coming in the next release:
+    * Support Python 3.5
     * Convert feedparser from a monolithic file to a package
     * Unify the codebase so that 2to3 conversion is no longer required
     * Remove references to iconv_codecs
