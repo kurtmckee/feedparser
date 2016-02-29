@@ -151,7 +151,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     try:
         with open(url_file_stream_or_string, 'rb') as f:
             data = f.read()
-    except (IOError, UnicodeEncodeError, TypeError):
+    except (IOError, UnicodeEncodeError, TypeError, ValueError):
         # if url_file_stream_or_string is a unicode object that
         # cannot be converted to the encoding returned by
         # sys.getfilesystemencoding(), a UnicodeEncodeError
