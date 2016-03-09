@@ -72,7 +72,7 @@ RE_XML_DECLARATION = re.compile('^<\?xml[^>]*?>')
 # Example: <?xml version="1.0" encoding="utf-8"?>
 RE_XML_PI_ENCODING = re.compile(b'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
 
-def convert_to_utf8(http_headers, data, result):
+def convert_to_utf8(http_headers, data, result, forced_encode):
     '''Detect and convert the character encoding to UTF-8.
 
     http_headers is a dictionary
@@ -118,6 +118,24 @@ def convert_to_utf8(http_headers, data, result):
     # correctly, which many are not).  iconv_codec can help a lot;
     # you should definitely install it if you can.
     # http://cjkpython.i18n.org/
+
+    # If the user force to define the encode in data, use the ignore 
+    # mode when decode.
+    if forced_encode is not None:
+        result['encoding'] = forced_encode
+        try:
+            data = data.decode(forced_encode, 'ignore')
+        except (UnicodeDecodeError, LookupError):
+            raise
+
+        new_declaration = '''<?xml version='1.0' encoding='utf-8'?>'''
+        if RE_XML_DECLARATION.search(data):
+            data = RE_XML_DECLARATION.sub(new_declaration, data)
+        else:
+            data = new_declaration + '\n' + data
+        data = data.encode('utf-8')
+        result['bozo'] = False
+        return data
 
     bom_encoding = ''
     xml_encoding = ''

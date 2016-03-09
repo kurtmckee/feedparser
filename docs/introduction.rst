@@ -69,6 +69,14 @@ Parsing a feed from a string
     >>> d['feed']['title']
     u'Sample Feed'
 
+Specify the encoding of URL
+---------------------------
+::
+
+    >>> d = feedparser.parse('https://bbs.ustc.edu.cn/cgi/bbsrss?board=Intern', forced_encode='gb2312')
+    >>> print d.entries[2].title
+    达能亚太（上海）
+
 
 Values are returned as :program:`Python` Unicode strings (except when they're
 not -- see :ref:`advanced.encoding` for all the gory details).
