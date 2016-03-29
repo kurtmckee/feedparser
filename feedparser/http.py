@@ -145,6 +145,8 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
         handlers = [handlers]
     if request_headers is None:
         request_headers = {}
+    if request is None:
+        request = {}
 
     # Deal with the feed URI scheme
     if url.startswith('feed:http'):
