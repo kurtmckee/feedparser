@@ -175,7 +175,7 @@ StrictFeedParser = type(str('StrictFeedParser'), (
     _StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object
 ), {})
 
-def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
+def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None, forced_encode=None):
     '''Parse a feed from a URL, file, stream, or string.
 
     request_headers, if given, is a dict from http header name to value to add
@@ -200,8 +200,10 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
 
     # overwrite existing headers using response_headers
     result['headers'].update(response_headers or {})
-
-    data = convert_to_utf8(result['headers'], data, result)
+    try:
+        data = convert_to_utf8(result['headers'], data, result, forced_encode)
+    except (UnicodeDecodeError, LookupError):
+        raise
     use_strict_parser = result['encoding'] and True or False
 
     result['version'], data, entities = replace_doctype(data)
