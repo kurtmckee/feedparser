@@ -3,14 +3,6 @@
 Character Encoding Detection
 ============================
 
-.. tip::
-
-    Feeds may be published in any character encoding.  :program:`Python`
-    supports only a few character encodings by default.  To support the maximum
-    number of character encodings (and be able to parse the maximum number of
-    feeds), you should install :file:`cjkcodecs` and :file:`iconv_codec`.  Both are
-    available at `http://cjkpython.i18n.org/ <http://cjkpython.i18n.org/>`_.
-
 `RFC 3023 <http://www.ietf.org/rfc/rfc3023.txt>`_ defines the interaction
 between :abbr:`XML (Extensible Markup Language)` and :abbr:`HTTP (Hypertext Transfer Protocol)`
 as it relates to character encoding.  :abbr:`XML (Extensible Markup Language)`
@@ -130,5 +122,3 @@ set the ``bozo`` bit to ``1`` and set ``bozo_exception`` to
     * `Section F of the XML specification <http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info>`_
 
     * `On the well-formedness of XML documents served as text/plain <http://www.imc.org/atom-syntax/mail-archive/msg05575.html>`_
-
-    * `CJKCodecs and iconv_codec <http://cjkpython.i18n.org/>`_
