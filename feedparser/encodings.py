@@ -39,7 +39,7 @@ except ImportError:
     chardet = None
     lazy_chardet_encoding = None
 else:
-    def lazy_chardet_encoding():
+    def lazy_chardet_encoding(data):
         chardet_encoding = chardet.detect(data)['encoding']
         if not chardet_encoding:
             chardet_encoding = ''
@@ -239,7 +239,7 @@ def convert_to_utf8(http_headers, data, result):
     for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
                               lazy_chardet_encoding, 'utf-8', 'windows-1252', 'iso-8859-2'):
         if isinstance(proposed_encoding, collections.Callable):
-            proposed_encoding = proposed_encoding()
+            proposed_encoding = proposed_encoding(data)
         if not proposed_encoding:
             continue
         if proposed_encoding in tried_encodings:
