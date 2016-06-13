@@ -353,7 +353,7 @@ class TestOpenResource(unittest.TestCase):
     "Ensure that `_open_resource()` interprets its arguments as URIs, " \
     "file-like objects, or in-memory feeds as expected"
     def test_fileobj(self):
-        r = feedparser.api._open_resource(feedparser.api._StringIO(b''), '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(feedparser.api._StringIO(b''), '', '', '', '', [], {}, False, {})
         self.assertEqual(r, b'')
     def test_feed(self):
         f = feedparser.parse('feed://localhost:8097/tests/http/target.xml')
@@ -363,19 +363,19 @@ class TestOpenResource(unittest.TestCase):
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
     def test_bytes(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, False, {})
         self.assertEqual(s, r)
     def test_string(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, False, {})
         self.assertEqual(s, r)
     def test_unicode_1(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, False, {})
         self.assertEqual(s, r)
     def test_unicode_2(self):
         s = b'<feed><item><title>t\u00e9xt</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, False, {})
         self.assertEqual(s, r)
 
 class TestMakeSafeAbsoluteURI(unittest.TestCase):
@@ -439,6 +439,9 @@ class TestCompression(unittest.TestCase):
         self.assertEqual(f.bozo, 1)
         # Python 3.4 throws an EOFError that gets overwritten as xml.sax.SAXException later.
         self.assertTrue(isinstance(f.bozo_exception, (xml.sax.SAXException, struct.error)))
+    def test_gzip_has_no_etag(self):
+        f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
+        self.assertTrue('etag' not in f)
     def test_zlib_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate.z')
         self.assertEqual(f.version, 'atom10')
@@ -761,7 +764,7 @@ def runtests():
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
     # and a few `_open_resource`-related tests
-    httpcount = 6 + 16 + 2
+    httpcount = 7 + 16 + 2
     httpcount += len([f for f in allfiles if 'http' in f])
     httpcount += len([f for f in wellformedfiles if 'http' in f])
     httpcount += len([f for f in illformedfiles if 'http' in f])

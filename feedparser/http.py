@@ -100,7 +100,7 @@ class _FeedURLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPR
         self.reset_retry_count()
         return retry
 
-def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, auth, request_headers):
+def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, auth, request_headers, no_gzip):
     request = urllib.request.Request(url)
     request.add_header('User-Agent', agent)
     if etag:
@@ -119,9 +119,9 @@ def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, 
         request.add_header('If-Modified-Since', '%s, %02d %s %04d %02d:%02d:%02d GMT' % (short_weekdays[modified[6]], modified[2], months[modified[1] - 1], modified[0], modified[3], modified[4], modified[5]))
     if referrer:
         request.add_header('Referer', referrer)
-    if gzip and zlib:
+    if gzip and zlib and not no_gzip:
         request.add_header('Accept-encoding', 'gzip, deflate')
-    elif gzip:
+    elif gzip and not no_gzip:
         request.add_header('Accept-encoding', 'gzip')
     elif zlib:
         request.add_header('Accept-encoding', 'deflate')
@@ -138,7 +138,7 @@ def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, 
     request.add_header('A-IM', 'feed') # RFC 3229 support
     return request
 
-def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, result=None):
+def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, no_gzip=False, result=None):
     if handlers is None:
         handlers = []
     elif not isinstance(handlers, list):
@@ -169,7 +169,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
         url = _convert_to_idn(url)
 
     # try to open with urllib2 (to use optional headers)
-    request = _build_urllib2_request(url, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)
+    request = _build_urllib2_request(url, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers, no_gzip)
     opener = urllib.request.build_opener(*tuple(handlers + [_FeedURLHandler()]))
     opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
     f = opener.open(request)
