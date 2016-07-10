@@ -57,6 +57,10 @@ bytes_ = type(b'')
 # want to send an Accept header, set this to None.
 ACCEPT_HEADER = "application/atom+xml,application/rdf+xml,application/rss+xml,application/x-netcdf,application/xml;q=0.9,text/xml;q=0.2,*/*;q=0.1"
 
+# Have a default timeout of 30s on all feed url requests
+FEED_URL_REQUEST_TIMEOUT = 30
+
+
 class _FeedURLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPRedirectHandler, urllib.request.HTTPDefaultErrorHandler):
     def http_error_default(self, req, fp, code, msg, headers):
         # The default implementation just raises HTTPError.
@@ -172,7 +176,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
     request = _build_urllib2_request(url, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)
     opener = urllib.request.build_opener(*tuple(handlers + [_FeedURLHandler()]))
     opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
-    f = opener.open(request)
+    f = opener.open(request, timeout=FEED_URL_REQUEST_TIMEOUT)
     data = f.read()
     f.close()
 
