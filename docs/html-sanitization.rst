@@ -811,5 +811,5 @@ Explorer for Windows will treat as executable code.
 
 .. seealso::
 
-    `How to consume RSS safely <http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely>`_
+    `How to consume RSS safely <https://web.archive.org/web/20060420044218/http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely>`_
         Explains the platypus attack.
