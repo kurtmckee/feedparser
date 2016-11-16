@@ -13,6 +13,7 @@ bug report!
 
 * `John Beimler <http://john.beimler.org/>`_
 * `François Boulogne <http://www.sciunto.org/>`_
+* `Ian Denhardt` <https://www.zenhack.net/>`_
 * `Jason Diamond <http://injektilo.org/>`_
 * `Fazal Majid <https://majid.info/blog/>`_
 * `Kevin Marks <http://epeus.blogspot.com/>`_
