@@ -1151,6 +1151,9 @@ class _FeedParserMixin:
         context = self._getContext()
         context.setdefault('authors', [])
         context['authors'].append(FeedParserDict())
+        # Reset the author and author_detail keys in the context in the case this is the second author encountered
+        context.pop('author',None)
+        context.pop('author_detail',None)
     _start_managingeditor = _start_author
     _start_dc_author = _start_author
     _start_dc_creator = _start_author
@@ -1160,6 +1163,7 @@ class _FeedParserMixin:
         self.pop('author')
         self.inauthor = 0
         self._sync_author_detail()
+        self._push_detail_to_authors()
     _end_managingeditor = _end_author
     _end_dc_author = _end_author
     _end_dc_creator = _end_author
@@ -1285,8 +1289,12 @@ class _FeedParserMixin:
         context.setdefault(prefix + '_detail', FeedParserDict())
         context[prefix + '_detail'][key] = value
         self._sync_author_detail()
+
+    def _push_detail_to_authors(self, prefix='author'):
+        context = self._getContext()
         context.setdefault('authors', [FeedParserDict()])
-        context['authors'][-1][key] = value
+        if prefix + '_detail' in context:
+            context['authors'][-1] = FeedParserDict(context[prefix + '_detail'])
 
     def _save_contributor(self, key, value):
         context = self._getContext()
