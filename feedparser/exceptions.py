@@ -50,3 +50,8 @@ class NonXMLContentType(ThingsNobodyCaresAboutButMe):
 
 class UndeclaredNamespace(Exception):
     pass
+
+
+class ReadTimeoutError(RuntimeError):
+    def __init__(self, url, timeout):
+        super(ReadTimeoutError, self).__init__(url, timeout)
