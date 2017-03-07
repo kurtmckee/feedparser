@@ -591,6 +591,9 @@ date_tests = {
         ('Sun, 16 Dec 2012 11:47:32 +zz:00', None), # invalid timezone hour
         ('Sun, 16 Dec 2012 11:47:32 +00:zz', None), # invalid timezone minute
         ('Sun, 99 Jun 2009 12:00:00 GMT', None), # out-of-range day
+        # Insert timezone ahead of year (when called from _parse_date_asctime)
+        ('Mon, Mar 06 -0100 17 05:57:31', None), 
+        ('Mon, Mar 06 +0100 17 05:57:31', None),
     ),
     _parse_date_asctime: (
         ('Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
