@@ -65,6 +65,11 @@ def _parse_date_rfc822(date):
         return None
 
     # Handle the year.
+    # If this funtion is called from _parse_date_asctime with 
+    # an rfc822 date, the year and timezone get swapped. We can
+    # detect this early and quit.
+    if parts[2][0] in ('-', '+'):
+        return None
     try:
         year = int(parts[2])
     except ValueError:
