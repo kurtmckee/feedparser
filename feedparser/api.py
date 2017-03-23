@@ -247,7 +247,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['namespaces'] = feedparser.namespacesInUse
     return result
 
-def stream(url, id_tag='id', snooze_time=5, **kwargs):
+def stream(url, id_tag='id', snooze_time=30, **kwargs):
     seen_ids = set()
     while True:
         feed_data = parse(url, **kwargs)
