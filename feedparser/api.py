@@ -29,6 +29,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import xml.sax
+from time import sleep
 
 try:
     from io import BytesIO as _StringIO
@@ -245,3 +246,18 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['version'] = result['version'] or feedparser.version
     result['namespaces'] = feedparser.namespacesInUse
     return result
+
+def stream(url, id_tag='id', snooze_time=5, **kwargs):
+    seen_ids = set()
+    while True:
+        feed_data = parse(url, **kwargs)
+        for entry in reversed(feed_data['entries']):
+            try:
+                entry_id = entry[id_tag]
+            except KeyError:
+                message = '"{}" is not a tag on your entries. Set one with the `id_tag` parameter.'.format(id_tag)
+                raise IdTagNotFound(message)
+            if entry_id not in seen_ids:
+                yield entry
+                seen_ids.add(entry_id)
+        sleep(snooze_time)

@@ -37,7 +37,7 @@ __version__ = '5.2.1'
 USER_AGENT = "feedparser/%s +https://github.com/kurtmckee/feedparser/" % __version__
 
 from . import api
-from .api import parse
+from .api import parse, stream
 from .datetimes import registerDateHandler
 from .exceptions import *
 
