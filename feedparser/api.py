@@ -247,10 +247,10 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['namespaces'] = feedparser.namespacesInUse
     return result
 
-def stream(url, id_tag='id', snooze_time=30, **kwargs):
+def stream_entries(url_file_stream_or_string, id_tag='id', snooze_time=30, **kwargs):
     seen_ids = set()
     while True:
-        feed_data = parse(url, **kwargs)
+        feed_data = parse(url_file_stream_or_string, **kwargs)
         for entry in reversed(feed_data['entries']):
             try:
                 entry_id = entry[id_tag]
