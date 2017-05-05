@@ -106,7 +106,7 @@ SUPPORTED_VERSIONS = {
     'cdf': 'CDF',
 }
 
-def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result):
+def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result, timeout=None):
     """URL, filename, or string --> stream
 
     This function lets you define parsers that take any input source
@@ -145,7 +145,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
 
     if isinstance(url_file_stream_or_string, basestring) \
        and urllib.parse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
-        return http.get(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
+        return http.get(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result, timeout)
 
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
@@ -175,7 +175,7 @@ StrictFeedParser = type(str('StrictFeedParser'), (
     _StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object
 ), {})
 
-def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
+def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None, timeout=None):
     '''Parse a feed from a URL, file, stream, or string.
 
     request_headers, if given, is a dict from http header name to value to add
@@ -193,7 +193,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         headers = {},
     )
 
-    data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
+    data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result, timeout)
 
     if not data:
         return result

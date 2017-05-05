@@ -14,6 +14,7 @@ bug report!
 * `John Beimler <http://john.beimler.org/>`_
 * `François Boulogne <http://www.sciunto.org/>`_
 * `Jason Diamond <http://injektilo.org/>`_
+* `Andrea Esuli <http://www.esuli.it/>`_
 * `Fazal Majid <https://majid.info/blog/>`_
 * `Kevin Marks <http://epeus.blogspot.com/>`_
 * `Nik Nyby <http://nikolas.us.to/>`_
