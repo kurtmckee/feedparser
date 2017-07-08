@@ -1,0 +1,22 @@
+{
+    "__TEST__": "Description: basic JSON tests Expect: not bozo and feed.title == 'My Example Feed' and len(entries) == 2 -->",
+    "version": "https://jsonfeed.org/version/1",
+    "title": "My Example Feed",
+    "home_page_url": "https://example.org/",
+    "feed_url": "https://example.org/feed.json",
+    "icon": "https://example.org/feed.png",
+    "items": [
+        {
+            "id": "2",
+            "title": "post 2",
+            "content_text": "This is a second item.",
+            "url": "https://example.org/second-item",
+            "tags": ["test", "JSON"]
+        },
+        {
+            "id": "1",
+            "content_html": "<p>Hello, world!</p>\n\n<script>alert();</script>",
+            "url": "https://example.org/initial-post"
+        }
+    ]
+}
