@@ -7,7 +7,8 @@ and parsing syndicated feeds.  It can handle :abbr:`RSS (Rich Site Summary)`
 Site Summary)` 0.91, :abbr:`RSS (Rich Site Summary)` 0.92, :abbr:`RSS (Rich
 Site Summary)` 0.93, :abbr:`RSS (Rich Site Summary)` 0.94, :abbr:`RSS (Rich
 Site Summary)` 1.0, :abbr:`RSS (Rich Site Summary)` 2.0, Atom 0.3, Atom 1.0,
-and :abbr:`CDF (Channel Definition Format)` feeds.  It also parses several
+:abbr:`CDF (Channel Definition Format)` and :abbr:`JSON (JavaScript Object
+Notation)` feeds.  It also parses several
 popular extension modules, including Dublin Core and Apple's :program:`iTunes`
 extensions.
 
