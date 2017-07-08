@@ -265,6 +265,10 @@ class TestStrictParser(BaseTestCase):
     pass
 
 
+class TestJsonParser(BaseTestCase):
+    pass
+
+
 class TestEncodings(BaseTestCase):
     def test_doctype_replacement(self):
         """Ensure that non-ASCII-compatible encodings don't hide disallowed ENTITY declarations"""
@@ -883,6 +887,7 @@ def runtests():
     illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
     encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
     entitiesfiles = glob.glob(os.path.join('.', 'tests', 'entities', '*.xml'))
+    jsonfiles = glob.glob(os.path.join('.', 'tests', 'json', '*.json'))
 
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
@@ -893,7 +898,8 @@ def runtests():
     httpcount += len([f for f in illformedfiles if 'http' in f])
     httpcount += len([f for f in encodingfiles if 'http' in f])
 
-    for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles + entitiesfiles):
+    for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles +
+                                entitiesfiles + jsonfiles):
         add_to = TestCase
         if xmlfile in encodingfiles:
             add_to = TestEncodings
@@ -901,6 +907,8 @@ def runtests():
             add_to = (TestStrictParser, TestLooseParser)
         elif xmlfile in wellformedfiles:
             add_to = (TestStrictParser, TestLooseParser)
+        elif xmlfile in jsonfiles:
+            add_to = TestJsonParser
         f = open(xmlfile, 'rb')
         data = f.read()
         f.close()
