@@ -76,6 +76,8 @@ Here is the complete list of known feed types and versions that may be returned 
     `CDF <http://www.w3.org/TR/NOTE-CDFsubmit.html>`_
 
 ``json1``
-    `JSONFeed v1 <https://jsonfeed.org>`_
+    `JSONFeed v1 <https://jsonfeed.org>`_. In cases where no MIME type is
+    available, JSON is assumed if the first non-whitespace character of the
+    data is an opening brace ``{``.
 
 If the feed type is completely unknown, ``version`` will be an empty string.
