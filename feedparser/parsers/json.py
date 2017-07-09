@@ -69,7 +69,9 @@ class _JsonFeedParser(object):
         for src, dst in self.FEED_FIELDS:
             if src in data:
                 self.feeddata[dst] = data[src]
-        # TODO: author, hubs; expired has no RSS equivalent
+        if 'author' in data:
+            self.parse_author(data['author'], self.feeddata)
+        # TODO: hubs; expired has no RSS equivalent
 
         self.entries = [self.parse_entry(e) for e in data['items']]
 
@@ -99,4 +101,17 @@ class _JsonFeedParser(object):
         if 'tags' in e:
             entry['category'] = e['tags']
 
+        if 'author' in e:
+            self.parse_author(e['author'], entry)
+
         return entry
+
+    def parse_author(self, parent, dest):
+        dest['author_detail'] = detail = FeedParserDict()
+        if 'name' in parent:
+            dest['author'] = detail['name'] = parent['name']
+        if 'url' in parent:
+            if parent['url'].startswith('mailto:'):
+                detail['email'] = parent['url'][7:]
+            else:
+                detail['href'] = parent['url']

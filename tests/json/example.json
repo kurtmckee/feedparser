@@ -5,6 +5,7 @@
     "home_page_url": "https://example.org/",
     "feed_url": "https://example.org/feed.json",
     "icon": "https://example.org/feed.png",
+    "author": { "name": "me" },
     "items": [
         {
             "id": "2",
@@ -15,6 +16,7 @@
         },
         {
             "id": "1",
+            "author": { "name": "you", "url": "http://example.net/~you" },
             "content_html": "<p>Hello, world!</p>\n\n<script>alert();</script>",
             "url": "https://example.org/initial-post"
         }
