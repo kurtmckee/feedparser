@@ -104,6 +104,9 @@ class _JsonFeedParser(object):
         if 'author' in e:
             self.parse_author(e['author'], entry)
 
+        if 'attachments' in e:
+            entry['enclosures'] = [self.parse_attachment(a) for a in e['attachments']]
+
         return entry
 
     def parse_author(self, parent, dest):
@@ -115,3 +118,11 @@ class _JsonFeedParser(object):
                 detail['email'] = parent['url'][7:]
             else:
                 detail['href'] = parent['url']
+
+    def parse_attachment(self, attachment):
+        enc = FeedParserDict()
+        enc['href'] = attachment['url']
+        enc['type'] = attachment['mime_type']
+        if 'size_in_bytes' in attachment:
+            enc['length'] = attachment['size_in_bytes']
+        return enc
