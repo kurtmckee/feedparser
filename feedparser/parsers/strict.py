@@ -28,7 +28,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
-from ..exceptions import UndeclaredNamespace
+from feedparser.exceptions import UndeclaredNamespace
 
 class _StrictFeedParser(object):
     def __init__(self, baseuri, baselang, encoding):
