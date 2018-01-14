@@ -1,6 +1,7 @@
 coming in the next release:
     * Support Python 3.5
     * Convert feedparser from a monolithic file to a package
+         * The ``feedparser.SANITIZE_HTML`` flag has moved to ``feedparser.api.SANITIZE_HTML``.
     * Unify the codebase so that 2to3 conversion is no longer required
     * Remove references to iconv_codecs
     * Update the Creative Commons namespace URI's
