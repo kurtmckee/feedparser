@@ -201,8 +201,9 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     :type response_headers: :class:`dict` mapping :class:`str` to :class:`str`
 
     :param bool resolve_relative_uris:
-        Should feedparser attempt to resolve relative URIs in the feed to absolute ones?
-        Defaults to the value of :data:`feedparser.RESOLVE_RELATIVE_URIS`, which is ``True``.
+        Should feedparser attempt to resolve relative URIs absolute ones within
+        HTML content?  Defaults to the value of
+        :data:`feedparser.RESOLVE_RELATIVE_URIS`, which is ``True``.
     :param bool sanitize_html:
         Should feedparser skip HTML sanitization? Only disable this if you know
         what you are doing!  Defaults to the value of
