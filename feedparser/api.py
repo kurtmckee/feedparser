@@ -183,7 +183,9 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         (see ``response_headers`` below).
 
     :param str etag: HTTP ``ETag`` request header.
-    :param str modified: HTTP ``Last-Modified`` request header.
+    :param modified: HTTP ``Last-Modified`` request header.
+    :type modified: :class:`str`, :class:`time.struct_time` 9-tuple, or
+        :class:`datetime.datetime`
     :param str agent: HTTP ``User-Agent`` request header, which defaults to
         the value of :data:`feedparser.USER_AGENT`.
     :param referrer: HTTP ``Referer`` [sic] request header.
