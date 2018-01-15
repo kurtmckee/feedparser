@@ -31,7 +31,6 @@ __license__ = "BSD 2-clause"
 import codecs
 import datetime
 import glob
-import operator
 import os
 import posixpath
 import pprint
