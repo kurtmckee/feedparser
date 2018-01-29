@@ -34,7 +34,10 @@ import collections
 import re
 
 try:
-    import chardet
+    try:
+        import cchardet as chardet
+    except ImportError:
+        import chardet
 except ImportError:
     chardet = None
     lazy_chardet_encoding = None
