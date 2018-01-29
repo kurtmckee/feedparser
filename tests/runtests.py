@@ -31,7 +31,7 @@ __license__ = "BSD 2-clause"
 import codecs
 import datetime
 import glob
-import operator
+import io
 import os
 import posixpath
 import pprint
@@ -690,6 +690,50 @@ class TestLxmlBug(unittest.TestCase):
             feedparser.parse(feedparser.api._StringIO(doc))
         self.assertTrue(True)
 
+
+class TestParseFlags(unittest.TestCase):
+    feed_xml = b"""
+        <rss version="2.0">
+            <channel>
+                <item>
+                    <body><script>alert("boo!")</script></body>
+                </item>
+                <item>
+                    <body><a href="/boo.html">boo</a></body>
+                </item>
+            </channel>
+        </rss>
+    """
+    def test_sanitize_html_default(self):
+        d = feedparser.parse(io.BytesIO(self.feed_xml))
+        self.assertEqual(u'', d.entries[0].content[0].value)
+
+    def test_sanitize_html_on(self):
+        d = feedparser.parse(io.BytesIO(self.feed_xml), sanitize_html=True)
+        self.assertEqual(u'', d.entries[0].content[0].value)
+
+    def test_sanitize_html_off(self):
+        d = feedparser.parse(io.BytesIO(self.feed_xml), sanitize_html=False)
+        self.assertEqual(u'<script>alert("boo!")</script>', d.entries[0].content[0].value)
+
+    def test_resolve_relative_uris_default(self):
+        d = feedparser.parse(io.BytesIO(self.feed_xml),
+                             response_headers={'content-location': 'http://example.com/feed'})
+        self.assertEqual(u'<a href="http://example.com/boo.html">boo</a>', d.entries[1].content[0].value)
+
+    def test_resolve_relative_uris_on(self):
+        d = feedparser.parse(io.BytesIO(self.feed_xml),
+                             response_headers={'content-location': 'http://example.com/feed'},
+                             resolve_relative_uris=True)
+        self.assertEqual(u'<a href="http://example.com/boo.html">boo</a>', d.entries[1].content[0].value)
+
+    def test_resolve_relative_uris_off(self):
+        d = feedparser.parse(io.BytesIO(self.feed_xml),
+                             response_headers={'content-location': 'http://example.com/feed.xml'},
+                             resolve_relative_uris=False)
+        self.assertEqual(u'<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
+
+
 #---------- parse test files and create test methods ----------
 def convert_to_utf8(data):
     "Identify data's encoding using its byte order mark" \
@@ -826,6 +870,7 @@ def runtests():
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEverythingIsUnicode))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestTemporaryFallbackBehavior))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestLxmlBug))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestParseFlags))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure

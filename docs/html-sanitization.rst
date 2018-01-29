@@ -809,6 +809,13 @@ attributes that I have not explicitly investigated. And I have no confidence at
 all in my ability to detect strings within attribute values that Internet
 Explorer for Windows will treat as executable code.
 
+Disabling HTML Sanitization
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Though not recommended, it is possible to disable :program:`Universal Feed Parser`\'s
+HTML sanitization by passing ``sanitize_html=False`` to :func:`feedparser.parse()`.
+When passing this flag you are responsible for manually sanitizing HTML from the feed.
+
 .. seealso::
 
     `How to consume RSS safely <http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely>`_

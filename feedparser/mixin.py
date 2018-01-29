@@ -515,12 +515,12 @@ class _FeedParserMixin(
 
         is_htmlish = self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types
         # resolve relative URIs within embedded markup
-        if is_htmlish and RESOLVE_RELATIVE_URIS:
+        if is_htmlish and self.resolve_relative_uris:
             if element in self.can_contain_relative_uris:
                 output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
 
         # sanitize embedded markup
-        if is_htmlish and SANITIZE_HTML:
+        if is_htmlish and self.sanitize_html:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
 
