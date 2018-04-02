@@ -577,6 +577,7 @@ class _FeedParserMixin(
         elif (self.infeed or self.insource):# and (not self.intextinput) and (not self.inimage):
             context = self._getContext()
             if element == 'description':
+                context[element] = output
                 element = 'subtitle'
             context[element] = output
             if element == 'link':
