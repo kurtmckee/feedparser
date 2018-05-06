@@ -31,7 +31,7 @@ Changes in earlier versions
 
 - removed unnecessary :file:`>urllib` code -- :file:`urllib2` should always be available anyway
 
-- return actual ``url``, ``status``, and full :abbr:`HTTP (Hypertext Transfer Protocol)` headers (as ``result['url']``, ``result['status']``, and ``result['headers']``) if parsing a remote feed over :abbr:`HTTP (Hypertext Transfer Protocol)`.  This should pass all the `Aggregator client :abbr:`HTTP (Hypertext Transfer Protocol)` tests <http://diveintomark.org/tests/client/http/>`_.
+- return actual ``url``, ``status``, and full :abbr:`HTTP (Hypertext Transfer Protocol)` headers (as ``result['url']``, ``result['status']``, and ``result['headers']``) if parsing a remote feed over :abbr:`HTTP (Hypertext Transfer Protocol)`.  This should pass all the `Aggregator client :abbr:`HTTP (Hypertext Transfer Protocol)` tests <https://web.archive.org/web/20110404234421/http://diveintomark.org/tests/client/http/>`_.
 
 - added the latest namespace-of-the-week for :abbr:`RSS (Rich Site Summary)` 2.0
 
@@ -104,7 +104,7 @@ Changes in earlier versions
 
 :program:`Ultra-liberal RSS Parser` was first released on August 13, 2002.
 
-`Announcement <http://diveintomark.org/archives/2002/08/13/ultraliberal_rss_parser>`_:
+`Announcement <https://web.archive.org/web/20110424133115/http://diveintomark.org/archives/2002/08/13/ultraliberal_rss_parser>`_:
 
     Aaron Swartz has been looking for an ultra-liberal :abbr:`RSS (Rich Site Summary)` parser. Now that I'm experimenting with a homegrown :abbr:`RSS (Rich Site Summary)`-to-email news aggregator, so am I. You see, most :abbr:`RSS (Rich Site Summary)` feeds suck. Invalid characters, unescaped ampersands (Blogger feeds), invalid entities (Radio feeds), unescaped and invalid HTML (The Register's feed most days). Or just a bastardized mix of :abbr:`RSS (Rich Site Summary)` 0.9x elements with :abbr:`RSS (Rich Site Summary)` 1.0 elements (Movable Type feeds).
 

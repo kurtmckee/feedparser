@@ -714,7 +714,7 @@ default in style attributes (all others are stripped):
     Not all possible CSS values are allowed for these properties.  The
     allowable values are restricted by a whitelist and a regular expression that
     allows color values and lengths.  :abbr:`URI (Uniform Resource Identifier)`\s
-    are not allowed, to prevent `platypus attacks <http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely>`_.
+    are not allowed, to prevent `platypus attacks <https://web.archive.org/web/20080826033749/http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely>`_.
     See the _HTMLSanitizer class for more details.
 
 
@@ -818,5 +818,5 @@ When passing this flag you are responsible for manually sanitizing HTML from the
 
 .. seealso::
 
-    `How to consume RSS safely <http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely>`_
+    `How to consume RSS safely <https://web.archive.org/web/20080826033749/http://diveintomark.org/archives/2003/06/12/how_to_consume_rss_safely>`_
         Explains the platypus attack.
