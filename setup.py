@@ -13,6 +13,7 @@ setup(
     packages = ['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
     install_requires = [
         'sgmllib3k;python_version>="3.0"',
+        'python-dateutil;python_version>="3.0"',
     ],
     keywords = ['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers = [
