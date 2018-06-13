@@ -128,7 +128,7 @@ def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, 
     else:
         request.add_header('Accept-encoding', '')
     if auth:
-        request.add_header('Authorization', 'Basic %s' % auth)
+        request.add_header('Authorization', 'Basic %s' % auth.decode('utf-8'))
     if accept_header:
         request.add_header('Accept', accept_header)
     # use this for whatever -- cookies, special headers, etc
@@ -162,7 +162,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
             user_passwd, realhost = urllib.parse.splituser(realhost)
             if user_passwd:
                 url = '%s://%s%s' % (urltype, realhost, rest)
-                auth = base64.standard_b64encode(user_passwd).strip()
+                auth = base64.standard_b64encode(user_passwd.encode('utf-8')).strip()
 
     # iri support
     if not isinstance(url, bytes_):
