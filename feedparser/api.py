@@ -165,6 +165,18 @@ StrictFeedParser = type(str('StrictFeedParser'), (
     _StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object
 ), {})
 
+
+def _make_empty_result():
+    """Create an empty FeedParserDict to serve as basis to the parse() result."""
+    result = FeedParserDict(
+        bozo = False,
+        entries = [],
+        feed = FeedParserDict(),
+        headers = {},
+    )
+    return result
+
+
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None, resolve_relative_uris=None, sanitize_html=None):
     '''Parse a feed from a URL, file, stream, or string.
 
@@ -220,20 +232,87 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if resolve_relative_uris is None:
         resolve_relative_uris = feedparser.RESOLVE_RELATIVE_URIS
 
-    result = FeedParserDict(
-        bozo = False,
-        entries = [],
-        feed = FeedParserDict(),
-        headers = {},
-    )
+    result = _make_empty_result()
 
     data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
 
     if not data:
         return result
 
+    # lowercase all of the HTTP headers for comparisons per RFC 2616
+    if response_headers:
+        response_headers = dict((k.lower(), v) for k, v in response_headers.items())
+
     # overwrite existing headers using response_headers
     result['headers'].update(response_headers or {})
+
+    return _parse_data(data, result, resolve_relative_uris, sanitize_html)
+
+
+def parse_data(data, href=None, response_headers=None,
+               resolve_relative_uris=None, sanitize_html=None):
+    '''Parse a feed from a string.
+
+    :param data:
+        String. Both byte and text strings are accepted. If necessary,
+        encoding will be derived from the response headers or automatically
+        detected.
+
+    :param str href:
+        Feed URL. Used for relative URL resolution.
+
+        When a URL is not passed the feed location to use in relative URL
+        resolution should be passed in the ``Content-Location`` response header
+        (see ``response_headers`` below).
+
+    :param response_headers:
+        A mapping of HTTP header name to HTTP header value corresponding to
+        the HTTP response that contained ``data``, if any. Multiple values may
+        be joined with a comma.
+    :type response_headers: :class:`dict` mapping :class:`str` to :class:`str`
+
+    :param bool resolve_relative_uris:
+        Should feedparser attempt to resolve relative URIs absolute ones within
+        HTML content?  Defaults to the value of
+        :data:`feedparser.RESOLVE_RELATIVE_URIS`, which is ``True``.
+    :param bool sanitize_html:
+        Should feedparser skip HTML sanitization? Only disable this if you know
+        what you are doing!  Defaults to the value of
+        :data:`feedparser.SANITIZE_HTML`, which is ``True``.
+
+    :return: A :class:`FeedParserDict`.
+    '''
+
+    if sanitize_html is None or resolve_relative_uris is None:
+        import feedparser
+    if sanitize_html is None:
+        sanitize_html = feedparser.SANITIZE_HTML
+    if resolve_relative_uris is None:
+        resolve_relative_uris = feedparser.RESOLVE_RELATIVE_URIS
+
+    result = _make_empty_result()
+
+    if href:
+        result['href'] = href
+    if response_headers:
+        # lowercase all of the HTTP headers for comparisons per RFC 2616
+        response_headers = dict((k.lower(), v) for k, v in response_headers.items())
+        result['headers'] = response_headers or {}
+
+    return _parse_data(data, result, resolve_relative_uris, sanitize_html)
+
+
+def _parse_data(data, result, resolve_relative_uris, sanitize_html):
+    """Parse a feed from a string.
+
+    This function implements the feed parsing logic *after* the feed has
+    been retrieved.
+
+    result should be a FeedParserDict (e.g. as created by _make_empty_result).
+    result['headers'] should be a dict with the headers correponding to the
+    request.
+
+    """
 
     data = convert_to_utf8(result['headers'], data, result)
     use_strict_parser = result['encoding'] and True or False
