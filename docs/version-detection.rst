@@ -37,7 +37,7 @@ Here is the complete list of known feed types and versions that may be returned 
     `Netscape RSS 0.91 <http://my.netscape.com/publish/formats/rss-spec-0.91.html>`_
 
 ``rss091u``
-    `Userland RSS 0.91 <http://backend.userland.com/rss091>`_ (`differences from Netscape RSS 0.91 <http://diveintomark.org/archives/2004/02/04/incompatible-rss#example3>`_)
+    `Userland RSS 0.91 <http://backend.userland.com/rss091>`_ (`differences from Netscape RSS 0.91 <https://web.archive.org/web/20110927015220/http://diveintomark.org/archives/2004/02/04/incompatible-rss#example3>`_)
 
 ``rss10``
     `RSS 1.0 <http://purl.org/rss/1.0/>`_
@@ -61,7 +61,7 @@ Here is the complete list of known feed types and versions that may be returned 
     `Atom 0.1 <http://www.intertwingly.net/blog/1506.html>`_
 
 ``atom02``
-    `Atom 0.2 <http://diveintomark.org/public/2003/08/atom02spec.txt>`_
+    `Atom 0.2 <https://web.archive.org/web/20080612041743/http://diveintomark.org/public/2003/08/atom02spec.txt>`_
 
 ``atom03``
     `Atom 0.3 <http://www.mnot.net/drafts/draft-nottingham-atom-format-02.html>`_
