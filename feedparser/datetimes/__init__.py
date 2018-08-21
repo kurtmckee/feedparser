@@ -8,6 +8,7 @@ from .korean import _parse_date_onblog, _parse_date_nate
 from .perforce import _parse_date_perforce
 from .rfc822 import _parse_date_rfc822
 from .w3dtf import _parse_date_w3dtf
+from .cryptopanic import _parse_date_cryptopanic
 
 _date_handlers = []
 def registerDateHandler(func):
@@ -29,7 +30,6 @@ def _parse_date(dateString):
             continue
         return date9tuple
     return None
-
 registerDateHandler(_parse_date_onblog)
 registerDateHandler(_parse_date_nate)
 registerDateHandler(_parse_date_greek)
@@ -39,3 +39,4 @@ registerDateHandler(_parse_date_asctime)
 registerDateHandler(_parse_date_iso8601)
 registerDateHandler(_parse_date_rfc822)
 registerDateHandler(_parse_date_w3dtf)
+registerDateHandler(_parse_date_cryptopanic)
