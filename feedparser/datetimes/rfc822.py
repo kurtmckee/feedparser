@@ -95,8 +95,12 @@ def _parse_date_rfc822(date):
     # Handle timezones like '-0500', '+0500', and 'EST'
     if parts[4] and parts[4][0] in ('-', '+'):
         try:
-            timezone_hours = int(parts[4][1:3])
-            timezone_minutes = int(parts[4][3:])
+            if ':' in parts[4]:
+                timezone_hours = int(parts[4][1:3])
+                timezone_minutes = int(parts[4][4:])
+            else:
+                timezone_hours = int(parts[4][1:3])
+                timezone_minutes = int(parts[4][3:])
         except ValueError:
             return None
         if parts[4].startswith('-'):
