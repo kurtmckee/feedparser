@@ -8,7 +8,7 @@ banner, or a picture of the author.
 .. _reference.feed.image.title:
 
 :py:attr:`feed.image.title`
-----------------===========
+---------------------------
 
 The alternate text of the feed image, which would go in the alt attribute if
 you rendered the feed image as an :abbr:`HTML (HyperText Markup Language)` img

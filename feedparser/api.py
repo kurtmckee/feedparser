@@ -75,17 +75,7 @@ except NameError:
 # of pre-installed parsers until it finds one that supports everything we need.
 PREFERRED_XML_PARSERS = ["drv_libxml2"]
 
-# If you want feedparser to automatically resolve all relative URIs, set this
-# to 1.
-RESOLVE_RELATIVE_URIS = 1
-
-# If you want feedparser to automatically sanitize all potentially unsafe
-# HTML content, set this to 1.
-SANITIZE_HTML = 1
-
 _XML_AVAILABLE = True
-mixin.RESOLVE_RELATIVE_URIS = RESOLVE_RELATIVE_URIS
-mixin.SANITIZE_HTML = SANITIZE_HTML
 
 SUPPORTED_VERSIONS = {
     '': 'unknown',
@@ -175,17 +165,61 @@ StrictFeedParser = type(str('StrictFeedParser'), (
     _StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object
 ), {})
 
-def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None):
+def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None, resolve_relative_uris=None, sanitize_html=None):
     '''Parse a feed from a URL, file, stream, or string.
 
-    request_headers, if given, is a dict from http header name to value to add
-    to the request; this overrides internally generated values.
+    :param url_file_stream_or_string:
+        File-like object, URL, file path, or string. Both byte and text strings
+        are accepted. If necessary, encoding will be derived from the response
+        headers or automatically detected.
+
+        Note that strings may trigger network I/O or filesystem access
+        depending on the value. Wrap an untrusted string in
+        a :class:`io.StringIO` or :class:`io.BytesIO` to avoid this. Do not
+        pass untrusted strings to this function.
+
+        When a URL is not passed the feed location to use in relative URL
+        resolution should be passed in the ``Content-Location`` response header
+        (see ``response_headers`` below).
+
+    :param str etag: HTTP ``ETag`` request header.
+    :param modified: HTTP ``Last-Modified`` request header.
+    :type modified: :class:`str`, :class:`time.struct_time` 9-tuple, or
+        :class:`datetime.datetime`
+    :param str agent: HTTP ``User-Agent`` request header, which defaults to
+        the value of :data:`feedparser.USER_AGENT`.
+    :param referrer: HTTP ``Referer`` [sic] request header.
+    :param request_headers:
+        A mapping of HTTP header name to HTTP header value to add to the
+        request, overriding internally generated values.
+    :type request_headers: :class:`dict` mapping :class:`str` to :class:`str`
+    :param response_headers:
+        A mapping of HTTP header name to HTTP header value. Multiple values may
+        be joined with a comma. If a HTTP request was made, these headers
+        override any matching headers in the response. Otherwise this specifies
+        the entirety of the response headers.
+    :type response_headers: :class:`dict` mapping :class:`str` to :class:`str`
+
+    :param bool resolve_relative_uris:
+        Should feedparser attempt to resolve relative URIs absolute ones within
+        HTML content?  Defaults to the value of
+        :data:`feedparser.RESOLVE_RELATIVE_URIS`, which is ``True``.
+    :param bool sanitize_html:
+        Should feedparser skip HTML sanitization? Only disable this if you know
+        what you are doing!  Defaults to the value of
+        :data:`feedparser.SANITIZE_HTML`, which is ``True``.
 
     :return: A :class:`FeedParserDict`.
     '''
-
+    if not agent or sanitize_html is None or resolve_relative_uris is None:
+        import feedparser
     if not agent:
-        agent = USER_AGENT
+        agent = feedparser.USER_AGENT
+    if sanitize_html is None:
+        sanitize_html = feedparser.SANITIZE_HTML
+    if resolve_relative_uris is None:
+        resolve_relative_uris = feedparser.RESOLVE_RELATIVE_URIS
+
     result = FeedParserDict(
         bozo = False,
         entries = [],
@@ -220,6 +254,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if use_strict_parser:
         # initialize the SAX parser
         feedparser = StrictFeedParser(baseuri, baselang, 'utf-8')
+        feedparser.resolve_relative_uris = resolve_relative_uris
+        feedparser.sanitize_html = sanitize_html
         saxparser = xml.sax.make_parser(PREFERRED_XML_PARSERS)
         saxparser.setFeature(xml.sax.handler.feature_namespaces, 1)
         try:
@@ -239,6 +275,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             use_strict_parser = 0
     if not use_strict_parser and _SGML_AVAILABLE:
         feedparser = LooseFeedParser(baseuri, baselang, 'utf-8', entities)
+        feedparser.resolve_relative_uris = resolve_relative_uris
+        feedparser.sanitize_html = sanitize_html
         feedparser.feed(data.decode('utf-8', 'replace'))
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries

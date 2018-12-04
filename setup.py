@@ -1,9 +1,4 @@
 from setuptools import setup
-import sys
-
-extra = {}
-if sys.version_info >= (3, ):
-    extra['install_requires'] = ['sgmllib3k']
 
 setup(
     name = 'feedparser',
@@ -16,6 +11,9 @@ setup(
     download_url = 'https://pypi.python.org/pypi/feedparser',
     platforms = ['POSIX', 'Windows'],
     packages = ['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
+    install_requires = [
+        'sgmllib3k;python_version>="3.0"',
+    ],
     keywords = ['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers = [
         'Development Status :: 5 - Production/Stable',
@@ -33,5 +31,4 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Markup :: XML',
     ],
-    **extra
 )

@@ -442,6 +442,11 @@ class _FeedParserMixin(
 
         element, expectingText, pieces = self.elementstack.pop()
 
+        # Ensure each piece is a str for Python 3
+        for (i, v) in enumerate(pieces):
+            if isinstance(v, bytes_):
+                pieces[i] = v.decode('utf-8')
+
         if self.version == 'atom10' and self.contentparams.get('type', 'text') == 'application/xhtml+xml':
             # remove enclosing child element, but only if it is a <div> and
             # only if all the remaining content is nested underneath it.
@@ -462,11 +467,6 @@ class _FeedParserMixin(
                         depth += 1
                 else:
                     pieces = pieces[1:-1]
-
-        # Ensure each piece is a str for Python 3
-        for (i, v) in enumerate(pieces):
-            if isinstance(v, bytes_):
-                pieces[i] = v.decode('utf-8')
 
         output = ''.join(pieces)
         if stripWhitespace:
@@ -515,12 +515,12 @@ class _FeedParserMixin(
 
         is_htmlish = self.mapContentType(self.contentparams.get('type', 'text/html')) in self.html_types
         # resolve relative URIs within embedded markup
-        if is_htmlish and RESOLVE_RELATIVE_URIS:
+        if is_htmlish and self.resolve_relative_uris:
             if element in self.can_contain_relative_uris:
                 output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
 
         # sanitize embedded markup
-        if is_htmlish and SANITIZE_HTML:
+        if is_htmlish and self.sanitize_html:
             if element in self.can_contain_dangerous_markup:
                 output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
 

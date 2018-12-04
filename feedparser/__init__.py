@@ -41,4 +41,10 @@ from .api import parse
 from .datetimes import registerDateHandler
 from .exceptions import *
 
-api.USER_AGENT = USER_AGENT
+# If you want feedparser to automatically resolve all relative URIs, set this
+# to 1.
+RESOLVE_RELATIVE_URIS = 1
+
+# If you want feedparser to automatically sanitize all potentially unsafe
+# HTML content, set this to 1.
+SANITIZE_HTML = 1
