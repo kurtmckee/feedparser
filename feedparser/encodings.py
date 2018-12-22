@@ -69,11 +69,11 @@ ZERO_BYTES = '\x00\x00'
 
 # Match the opening XML declaration.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_DECLARATION = re.compile('^<\?xml[^>]*?>')
+RE_XML_DECLARATION = re.compile(r'^<\?xml[^>]*?>')
 
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_PI_ENCODING = re.compile(b'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
+RE_XML_PI_ENCODING = re.compile(br'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
 
 def convert_to_utf8(http_headers, data, result):
     '''Detect and convert the character encoding to UTF-8.

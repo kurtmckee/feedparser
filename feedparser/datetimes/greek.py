@@ -40,7 +40,7 @@ _greek_wdays = \
   }
 
 _greek_date_format_re = \
-    re.compile('([^,]+),\s+(\d{2})\s+([^\s]+)\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s+([^\s]+)')
+    re.compile(r'([^,]+),\s+(\d{2})\s+([^\s]+)\s+(\d{4})\s+(\d{2}):(\d{2}):(\d{2})\s+([^\s]+)')
 
 def _parse_date_greek(dateString):
     '''Parse a string according to a Greek 8-bit date format.'''

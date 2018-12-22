@@ -66,8 +66,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
       'pointer', 'purple', 'red', 'right', 'solid', 'silver', 'teal', 'top',
       'transparent', 'underline', 'white', 'yellow'])
 
-    valid_css_values = re.compile('^(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|' +
-      '\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$')
+    valid_css_values = re.compile(r'^(#[0-9a-f]+|rgb\(\d+%?,\d*%?,?\d*%?\)?|' +
+      r'\d{0,2}\.?\d{0,2}(cm|em|ex|in|mm|pc|pt|px|%|,|\))?)$')
 
     mathml_elements = set([
         'annotation',
@@ -358,17 +358,17 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
     def sanitize_style(self, style):
         # disallow urls
-        style=re.compile('url\s*\(\s*[^\s)]+?\s*\)\s*').sub(' ',style)
+        style=re.compile(r'url\s*\(\s*[^\s)]+?\s*\)\s*').sub(' ',style)
 
         # gauntlet
-        if not re.match("""^([:,;#%.\sa-zA-Z0-9!]|\w-\w|'[\s\w]+'|"[\s\w]+"|\([\d,\s]+\))*$""", style):
+        if not re.match(r"""^([:,;#%.\sa-zA-Z0-9!]|\w-\w|'[\s\w]+'|"[\s\w]+"|\([\d,\s]+\))*$""", style):
             return ''
         # This replaced a regexp that used re.match and was prone to pathological back-tracking.
-        if re.sub("\s*[-\w]+\s*:\s*[^:;]*;?", '', style).strip():
+        if re.sub(r"\s*[-\w]+\s*:\s*[^:;]*;?", '', style).strip():
             return ''
 
         clean = []
-        for prop,value in re.findall("([-\w]+)\s*:\s*([^:;]*)",style):
+        for prop,value in re.findall(r"([-\w]+)\s*:\s*([^:;]*)",style):
             if not value:
                 continue
             if prop.lower() in self.acceptable_css_properties:
@@ -422,7 +422,7 @@ RE_DOCTYPE_PATTERN = re.compile(br'^\s*<!DOCTYPE([^>]*?)>', re.MULTILINE)
 # Example: cubed "&#179;"
 # Example: copyright "(C)"
 # Forbidden: explode1 "&explode2;&explode2;"
-RE_SAFE_ENTITY_PATTERN = re.compile(b'\s+(\w+)\s+"(&#\w+;|[^&"]*)"')
+RE_SAFE_ENTITY_PATTERN = re.compile(br'\s+(\w+)\s+"(&#\w+;|[^&"]*)"')
 
 def replace_doctype(data):
     '''Strips and replaces the DOCTYPE, returns (rss_version, stripped_data)
@@ -433,7 +433,7 @@ def replace_doctype(data):
 
     # Divide the document into two groups by finding the location
     # of the first element that doesn't begin with '<?' or '<!'.
-    start = re.search(b'<\w', data)
+    start = re.search(br'<\w', data)
     start = start and start.start() or -1
     head, data = data[:start+1], data[start+1:]
 
