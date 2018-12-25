@@ -6,9 +6,9 @@ import re
 import struct
 import zlib
 import ssl
+import certifi
 
 try:
-    import certifi
     import urllib.parse
     import urllib.request
 except ImportError:

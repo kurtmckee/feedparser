@@ -1,0 +1,9 @@
+<!--
+Description: Double-struck X
+Expect:      feed['title'] == 'testing \U0001d54f entity'
+-->
+<rss>
+<channel>
+<title>testing &#x1d54f; entity</title>
+</channel>
+</rss>

@@ -129,6 +129,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         'alttext',
         'bevelled',
         'charalign',
+        'class',
         'close',
         'columnalign',
         'columnlines',
