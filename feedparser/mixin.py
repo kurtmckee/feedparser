@@ -30,6 +30,7 @@ from __future__ import absolute_import, unicode_literals
 
 import copy
 import re
+import struct
 
 from xml.sax.saxutils import escape as _xmlescape
 
@@ -321,6 +322,12 @@ class _FeedParserMixin(
 
         self.depth -= 1
 
+    def unichar(self, i):
+        try:
+            return unichr(i)
+        except ValueError:
+            return struct.pack('i', i).decode('utf-32')
+
     def handle_charref(self, ref):
         # called for each character reference, e.g. for '&#160;', ref will be '160'
         if not self.elementstack:
@@ -333,7 +340,7 @@ class _FeedParserMixin(
                 c = int(ref[1:], 16)
             else:
                 c = int(ref)
-            text = chr(c).encode('utf-8')
+            text = self.unichar(c).encode('utf-8')
         self.elementstack[-1][2].append(text)
 
     def handle_entityref(self, ref):
