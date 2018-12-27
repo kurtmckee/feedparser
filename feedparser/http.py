@@ -13,7 +13,7 @@ try:
     import urllib.request
 except ImportError:
     from urllib import splithost, splittype, splituser
-    from urllib2 import install_opener, urlopen, build_opener, HTTPDigestAuthHandler, HTTPRedirectHandler, HTTPDefaultErrorHandler, Request
+    from urllib2 import install_opener, build_opener, HTTPSHandler, HTTPDigestAuthHandler, HTTPRedirectHandler, HTTPDefaultErrorHandler, Request
     from urlparse import urlparse
 
     class urllib(object):
@@ -172,12 +172,11 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
 
     # try to open with urllib2 (to use optional headers)
     request = _build_urllib2_request(url, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)
-    opener = urllib.request.build_opener(*tuple(handlers + [_FeedURLHandler()]))
-    opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
-    install_opener(opener)
     context = ssl.SSLContext(ssl.PROTOCOL_TLS)
     context.load_verify_locations(cafile=certifi.where())
-    f = urlopen(request, context=context)
+    opener = urllib.request.build_opener(*tuple(handlers + [HTTPSHandler(context=context)] + [_FeedURLHandler()]))
+    opener.addheaders = [] # RMK - must clear so we only send our custom User-Agent
+    f = opener.open(request)
     data = f.read()
     f.close()
 
