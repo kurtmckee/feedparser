@@ -13,7 +13,7 @@ try:
     import urllib.request
 except ImportError:
     from urllib import splithost, splittype, splituser
-    from urllib2 import install_opener, build_opener, HTTPSHandler, HTTPDigestAuthHandler, HTTPRedirectHandler, HTTPDefaultErrorHandler, Request
+    from urllib2 import build_opener, HTTPSHandler, HTTPDigestAuthHandler, HTTPRedirectHandler, HTTPDefaultErrorHandler, Request
     from urlparse import urlparse
 
     class urllib(object):

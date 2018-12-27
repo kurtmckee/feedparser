@@ -324,7 +324,7 @@ class _FeedParserMixin(
 
     def unichar(self, i):
         try:
-            return unichr(i)
+            return chr(i)
         except ValueError:
             return struct.pack('i', i).decode('utf-32')
 
