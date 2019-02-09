@@ -177,6 +177,7 @@ class _FeedParserMixin(
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
+        self.hasContent = 0
         if self.lang:
             self.feeddata['language'] = self.lang.replace('_','-')
 
