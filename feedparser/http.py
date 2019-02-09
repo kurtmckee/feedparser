@@ -11,6 +11,7 @@ import certifi
 try:
     import urllib.parse
     import urllib.request
+    from urllib.request import HTTPSHandler
 except ImportError:
     from urllib import splithost, splittype, splituser
     from urllib2 import build_opener, HTTPSHandler, HTTPDigestAuthHandler, HTTPRedirectHandler, HTTPDefaultErrorHandler, Request
