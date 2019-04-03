@@ -374,7 +374,7 @@ class TestOpenResource(unittest.TestCase):
         r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
         self.assertEqual(s, r)
     def test_unicode_2(self):
-        s = b'<feed><item><title>t\u00e9xt</title></item></feed>'
+        s = br'<feed><item><title>t\u00e9xt</title></item></feed>'
         r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
         self.assertEqual(s, r)
 
@@ -761,8 +761,8 @@ def convert_to_utf8(data):
     # no byte order mark was found
     return data
 
-skip_re = re.compile(b"SkipUnless:\s*(.*?)\n")
-desc_re = re.compile(b"Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->")
+skip_re = re.compile(br"SkipUnless:\s*(.*?)\n")
+desc_re = re.compile(br"Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->")
 def getDescription(xmlfile, data):
     """Extract test data
 
