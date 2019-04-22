@@ -21,7 +21,7 @@ def _parse_date(dateString):
     for handler in _date_handlers:
         try:
             date9tuple = handler(dateString)
-        except (KeyError, OverflowError, ValueError):
+        except (KeyError, OverflowError, ValueError, AttributeError):
             continue
         if not date9tuple:
             continue
