@@ -8,10 +8,10 @@ coming in the next release:
     * Remove references to iconv_codecs
     * Update the Creative Commons namespace URI's
     * Update the default User-Agent name and URL
-    * Issue 20: Support Middle European (Summer) Time timezones
-    * Issue 50: Pass ``data`` to ``lazy_chardet_encoding()``
-    * Issue 51: Document that datetimes are returned in UTC
-    * Issue 57: Remove cjkpython references in the documentation
+    * Support Middle European (Summer) Time timezones (#20)
+    * Pass ``data`` to ``lazy_chardet_encoding()`` (#50)
+    * Document that datetimes are returned in UTC (#51)
+    * Remove cjkpython references in the documentation (#57)
 
 5.2.1 - July 23, 2015
     * Fix #22 (pip package keeps upgrading all the time)
