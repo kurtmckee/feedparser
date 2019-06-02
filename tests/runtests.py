@@ -99,7 +99,12 @@ class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
                 headers = {'Content-Encoding': 'deflate'}
             headers['Content-type'] = 'application/xml'
         else:
-            headers = dict([(k.decode('utf-8'), v.decode('utf-8').strip()) for k, v in self.headers_re.findall(open(path, 'rb').read())])
+            with open(path, 'rb') as f:
+                blob = f.read()
+            headers = {
+                k.decode('utf-8'): v.decode('utf-8').strip()
+                for k, v in self.headers_re.findall(blob)
+            }
         f = open(path, 'rb')
         if (self.headers.get('if-modified-since') == headers.get('Last-Modified', 'nom')) \
             or (self.headers.get('if-none-match') == headers.get('ETag', 'nomatch')):

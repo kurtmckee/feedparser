@@ -12,6 +12,7 @@ coming in the next release:
     * Pass ``data`` to ``lazy_chardet_encoding()`` (#50)
     * Document that datetimes are returned in UTC (#51)
     * Remove cjkpython references in the documentation (#57)
+    * Resolve ResourceWarnings thrown during unit tests (#170)
 
 5.2.1 - July 23, 2015
     * Fix #22 (pip package keeps upgrading all the time)
