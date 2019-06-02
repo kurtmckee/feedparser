@@ -1,5 +1,6 @@
 coming in the next release:
-    * Support Python 3.5
+    * Support Python 3.5, 3.6, and 3.7
+    * Drop support for Python 3.4 (#169)
     * Convert feedparser from a monolithic file to a package
     * ``feedparser.parse(sanitize_html=bool)`` argument replaces the ``feedparser.SANITIZE_HTML`` global
     * ``feedparser.parse(resolve_relative_uris=bool)`` replaces the ``feedparser.RESOLVE_RELATIVE_URIS`` global
@@ -7,7 +8,6 @@ coming in the next release:
     * Remove references to iconv_codecs
     * Update the Creative Commons namespace URI's
     * Update the default User-Agent name and URL
-    * Catch EOFError when using gzip in Python 3.4
     * Issue 20: Support Middle European (Summer) Time timezones
     * Issue 50: Pass ``data`` to ``lazy_chardet_encoding()``
     * Issue 51: Document that datetimes are returned in UTC
