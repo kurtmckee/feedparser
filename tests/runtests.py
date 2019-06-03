@@ -140,6 +140,7 @@ class FeedParserTestServer(threading.Thread):
             self.httpd.handle_request()
             self.requests -= 1
         self.ready.clear()
+        self.httpd.shutdown()
 
 #---------- dummy test case class (test methods are added dynamically) ----------
 
