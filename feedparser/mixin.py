@@ -49,7 +49,7 @@ except ImportError:
 
 from .html import _cp1252
 from .namespaces import _base, cc, dc, georss, itunes, mediarss, psc
-from .sanitizer import _sanitizeHTML, _HTMLSanitizer
+from .sanitizer import _sanitize_html, _HTMLSanitizer
 from .util import FeedParserDict
 from .urls import _urljoin, _makeSafeAbsoluteURI, _resolveRelativeURIs
 
@@ -522,7 +522,7 @@ class _FeedParserMixin(
         # sanitize embedded markup
         if is_htmlish and self.sanitize_html:
             if element in self.can_contain_dangerous_markup:
-                output = _sanitizeHTML(output, self.encoding, self.contentparams.get('type', 'text/html'))
+                output = _sanitize_html(output, self.encoding, self.contentparams.get('type', 'text/html'))
 
         if self.encoding and isinstance(output, bytes_):
             output = output.decode(self.encoding, 'ignore')
