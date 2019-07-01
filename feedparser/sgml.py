@@ -54,12 +54,30 @@ except ImportError:
 
     # Mock sgmllib enough to allow subclassing later on
     class sgmllib(object):
+        SGMLParseError = EnvironmentError
+
         class SGMLParser(object):
+            lasttag = None
+            rawdata = None
+
+            def close(self):
+                pass
+
+            def feed(self, data):
+                pass
+
             def goahead(self, i):
+                pass
+
+            def parse_declaration(self, i):
                 pass
 
             def parse_starttag(self, i):
                 pass
+
+            def reset(self):
+                pass
+
 else:
     _SGML_AVAILABLE = 1
 
