@@ -45,7 +45,7 @@ class _LooseFeedParser(object):
         v = v.replace('&amp;', '&')
         return (k, v)
 
-    def decodeEntities(self, element, data):
+    def decode_entities(self, element, data):
         data = data.replace('&#60;', '&lt;')
         data = data.replace('&#x3c;', '&lt;')
         data = data.replace('&#x3C;', '&lt;')

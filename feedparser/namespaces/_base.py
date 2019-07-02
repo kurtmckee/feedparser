@@ -108,7 +108,7 @@ class Namespace(object):
     _end_feed = _end_channel
 
     def _start_image(self, attrsD):
-        context = self._getContext()
+        context = self._get_context()
         if not self.inentry:
             context.setdefault('image', FeedParserDict())
         self.inimage = 1
@@ -120,7 +120,7 @@ class Namespace(object):
         self.inimage = 0
 
     def _start_textinput(self, attrsD):
-        context = self._getContext()
+        context = self._get_context()
         context.setdefault('textinput', FeedParserDict())
         self.intextinput = 1
         self.title_depth = -1
@@ -136,7 +136,7 @@ class Namespace(object):
         self.inauthor = 1
         self.push('author', 1)
         # Append a new FeedParserDict when expecting an author
-        context = self._getContext()
+        context = self._get_context()
         context.setdefault('authors', [])
         context['authors'].append(FeedParserDict())
     _start_managingeditor = _start_author
@@ -149,7 +149,7 @@ class Namespace(object):
 
     def _start_contributor(self, attrsD):
         self.incontributor = 1
-        context = self._getContext()
+        context = self._get_context()
         context.setdefault('contributors', [])
         context['contributors'].append(FeedParserDict())
         self.push('contributor', 0)
@@ -170,7 +170,7 @@ class Namespace(object):
         elif self.incontributor:
             self._save_contributor('name', value)
         elif self.intextinput:
-            context = self._getContext()
+            context = self._get_context()
             context['name'] = value
 
     def _start_width(self, attrsD):
@@ -183,7 +183,7 @@ class Namespace(object):
         except ValueError:
             value = 0
         if self.inimage:
-            context = self._getContext()
+            context = self._get_context()
             context['width'] = value
 
     def _start_height(self, attrsD):
@@ -196,7 +196,7 @@ class Namespace(object):
         except ValueError:
             value = 0
         if self.inimage:
-            context = self._getContext()
+            context = self._get_context()
             context['height'] = value
 
     def _start_url(self, attrsD):
@@ -226,19 +226,19 @@ class Namespace(object):
             self._save_contributor('email', value)
 
     def _start_subtitle(self, attrsD):
-        self.pushContent('subtitle', attrsD, 'text/plain', 1)
+        self.push_content('subtitle', attrsD, 'text/plain', 1)
     _start_tagline = _start_subtitle
 
     def _end_subtitle(self):
-        self.popContent('subtitle')
+        self.pop_content('subtitle')
     _end_tagline = _end_subtitle
 
     def _start_rights(self, attrsD):
-        self.pushContent('rights', attrsD, 'text/plain', 1)
+        self.push_content('rights', attrsD, 'text/plain', 1)
     _start_copyright = _start_rights
 
     def _end_rights(self):
-        self.popContent('rights')
+        self.pop_content('rights')
     _end_copyright = _end_rights
 
     def _start_item(self, attrsD):
@@ -247,9 +247,9 @@ class Namespace(object):
         self.inentry = 1
         self.guidislink = 0
         self.title_depth = -1
-        id = self._getAttribute(attrsD, 'rdf:about')
+        id = self._get_attribute(attrsD, 'rdf:about')
         if id:
-            context = self._getContext()
+            context = self._get_context()
             context['id'] = id
         self._cdf_common(attrsD)
     _start_entry = _start_item
@@ -312,7 +312,7 @@ class Namespace(object):
         term = attrsD.get('term')
         scheme = attrsD.get('scheme', attrsD.get('domain'))
         label = attrsD.get('label')
-        self._addTag(term, scheme, label)
+        self._add_tag(term, scheme, label)
         self.push('category', 1)
     _start_keywords = _start_category
 
@@ -320,16 +320,16 @@ class Namespace(object):
         value = self.pop('category')
         if not value:
             return
-        context = self._getContext()
+        context = self._get_context()
         tags = context['tags']
         if value and len(tags) and not tags[-1]['term']:
             tags[-1]['term'] = value
         else:
-            self._addTag(value, None, None)
+            self._add_tag(value, None, None)
     _end_keywords = _end_category
 
     def _start_cloud(self, attrsD):
-        self._getContext()['cloud'] = FeedParserDict(attrsD)
+        self._get_context()['cloud'] = FeedParserDict(attrsD)
 
     def _start_link(self, attrsD):
         attrsD.setdefault('rel', 'alternate')
@@ -337,17 +337,17 @@ class Namespace(object):
             attrsD.setdefault('type', 'application/atom+xml')
         else:
             attrsD.setdefault('type', 'text/html')
-        context = self._getContext()
-        attrsD = self._itsAnHrefDamnIt(attrsD)
+        context = self._get_context()
+        attrsD = self._enforce_href(attrsD)
         if 'href' in attrsD:
-            attrsD['href'] = self.resolveURI(attrsD['href'])
+            attrsD['href'] = self.resolve_uri(attrsD['href'])
         expectingText = self.infeed or self.inentry or self.insource
         context.setdefault('links', [])
         if not (self.inentry and self.inimage):
             context['links'].append(FeedParserDict(attrsD))
         if 'href' in attrsD:
             expectingText = 0
-            if (attrsD.get('rel') == 'alternate') and (self.mapContentType(attrsD.get('type')) in self.html_types):
+            if (attrsD.get('rel') == 'alternate') and (self.map_content_type(attrsD.get('type')) in self.html_types):
                 context['link'] = attrsD['href']
         else:
             self.push('link', expectingText)
@@ -362,7 +362,7 @@ class Namespace(object):
 
     def _end_guid(self):
         value = self.pop('id')
-        self._save('guidislink', self.guidislink and 'link' not in self._getContext())
+        self._save('guidislink', self.guidislink and 'link' not in self._get_context())
         if self.guidislink:
             # guid acts as link, but only if 'ispermalink' is not present or is 'true',
             # and only if the item doesn't already have a link element
@@ -372,76 +372,76 @@ class Namespace(object):
     def _start_title(self, attrsD):
         if self.svgOK:
             return self.unknown_starttag('title', list(attrsD.items()))
-        self.pushContent('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
+        self.push_content('title', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_title(self):
         if self.svgOK:
             return
-        value = self.popContent('title')
+        value = self.pop_content('title')
         if not value:
             return
         self.title_depth = self.depth
 
     def _start_description(self, attrsD):
-        context = self._getContext()
+        context = self._get_context()
         if 'summary' in context:
             self._summaryKey = 'content'
             self._start_content(attrsD)
         else:
-            self.pushContent('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
+            self.push_content('description', attrsD, 'text/html', self.infeed or self.inentry or self.insource)
 
     def _start_abstract(self, attrsD):
-        self.pushContent('description', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
+        self.push_content('description', attrsD, 'text/plain', self.infeed or self.inentry or self.insource)
 
     def _end_description(self):
         if self._summaryKey == 'content':
             self._end_content()
         else:
-            value = self.popContent('description')
+            value = self.pop_content('description')
         self._summaryKey = None
     _end_abstract = _end_description
 
     def _start_info(self, attrsD):
-        self.pushContent('info', attrsD, 'text/plain', 1)
+        self.push_content('info', attrsD, 'text/plain', 1)
     _start_feedburner_browserfriendly = _start_info
 
     def _end_info(self):
-        self.popContent('info')
+        self.pop_content('info')
     _end_feedburner_browserfriendly = _end_info
 
     def _start_generator(self, attrsD):
         if attrsD:
-            attrsD = self._itsAnHrefDamnIt(attrsD)
+            attrsD = self._enforce_href(attrsD)
             if 'href' in attrsD:
-                attrsD['href'] = self.resolveURI(attrsD['href'])
-        self._getContext()['generator_detail'] = FeedParserDict(attrsD)
+                attrsD['href'] = self.resolve_uri(attrsD['href'])
+        self._get_context()['generator_detail'] = FeedParserDict(attrsD)
         self.push('generator', 1)
 
     def _end_generator(self):
         value = self.pop('generator')
-        context = self._getContext()
+        context = self._get_context()
         if 'generator_detail' in context:
             context['generator_detail']['name'] = value
 
     def _start_summary(self, attrsD):
-        context = self._getContext()
+        context = self._get_context()
         if 'summary' in context:
             self._summaryKey = 'content'
             self._start_content(attrsD)
         else:
             self._summaryKey = 'summary'
-            self.pushContent(self._summaryKey, attrsD, 'text/plain', 1)
+            self.push_content(self._summaryKey, attrsD, 'text/plain', 1)
 
     def _end_summary(self):
         if self._summaryKey == 'content':
             self._end_content()
         else:
-            self.popContent(self._summaryKey or 'summary')
+            self.pop_content(self._summaryKey or 'summary')
         self._summaryKey = None
 
     def _start_enclosure(self, attrsD):
-        attrsD = self._itsAnHrefDamnIt(attrsD)
-        context = self._getContext()
+        attrsD = self._enforce_href(attrsD)
+        context = self._get_context()
         attrsD['rel'] = 'enclosure'
         context.setdefault('links', []).append(FeedParserDict(attrsD))
 
@@ -458,27 +458,27 @@ class Namespace(object):
         value = self.pop('source')
         if value:
             self.sourcedata['title'] = value
-        self._getContext()['source'] = copy.deepcopy(self.sourcedata)
+        self._get_context()['source'] = copy.deepcopy(self.sourcedata)
         self.sourcedata.clear()
 
     def _start_content(self, attrsD):
-        self.pushContent('content', attrsD, 'text/plain', 1)
+        self.push_content('content', attrsD, 'text/plain', 1)
         src = attrsD.get('src')
         if src:
             self.contentparams['src'] = src
         self.push('content', 1)
 
     def _start_body(self, attrsD):
-        self.pushContent('content', attrsD, 'application/xhtml+xml', 1)
+        self.push_content('content', attrsD, 'application/xhtml+xml', 1)
     _start_xhtml_body = _start_body
 
     def _start_content_encoded(self, attrsD):
-        self.pushContent('content', attrsD, 'text/html', 1)
+        self.push_content('content', attrsD, 'text/html', 1)
     _start_fullitem = _start_content_encoded
 
     def _end_content(self):
-        copyToSummary = self.mapContentType(self.contentparams.get('type')) in (['text/plain'] + self.html_types)
-        value = self.popContent('content')
+        copyToSummary = self.map_content_type(self.contentparams.get('type')) in ({'text/plain'} | self.html_types)
+        value = self.pop_content('content')
         if copyToSummary:
             self._save('summary', value)
 
@@ -492,7 +492,7 @@ class Namespace(object):
 
     def _end_newlocation(self):
         url = self.pop('newlocation')
-        context = self._getContext()
+        context = self._get_context()
         # don't set newlocation if the context isn't right
         if context is not self.feeddata:
             return

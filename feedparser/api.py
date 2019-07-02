@@ -281,5 +281,5 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
     result['version'] = result['version'] or feedparser.version
-    result['namespaces'] = feedparser.namespacesInUse
+    result['namespaces'] = feedparser.namespaces_in_use
     return result

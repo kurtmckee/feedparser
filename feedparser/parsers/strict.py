@@ -50,7 +50,7 @@ class _StrictFeedParser(object):
             return
         # Jython uses '' instead of None; standardize on None
         prefix = prefix or None
-        self.trackNamespace(prefix, uri)
+        self.track_namespace(prefix, uri)
         if prefix and uri == 'http://www.w3.org/1999/xlink':
             self.decls['xmlns:' + prefix] = uri
 
@@ -66,7 +66,7 @@ class _StrictFeedParser(object):
         else:
             givenprefix = None
         prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
-        if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and givenprefix not in self.namespacesInUse:
+        if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and givenprefix not in self.namespaces_in_use:
             raise UndeclaredNamespace("'%s' is not associated with a namespace" % givenprefix)
         localname = str(localname).lower()
 
@@ -86,7 +86,7 @@ class _StrictFeedParser(object):
         if prefix:
             localname = prefix.lower() + ':' + localname
         elif namespace and not qname: #Expat
-            for name,value in self.namespacesInUse.items():
+            for name,value in self.namespaces_in_use.items():
                 if name and value == namespace:
                     localname = name + ':' + localname
                     break
@@ -116,7 +116,7 @@ class _StrictFeedParser(object):
         if prefix:
             localname = prefix + ':' + localname
         elif namespace and not qname: #Expat
-            for name,value in self.namespacesInUse.items():
+            for name,value in self.namespaces_in_use.items():
                 if name and value == namespace:
                     localname = name + ':' + localname
                     break

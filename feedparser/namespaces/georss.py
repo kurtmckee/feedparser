@@ -43,7 +43,7 @@ class Namespace(object):
 
     def _start_georssgeom(self, attrsD):
         self.push('geometry', 0)
-        context = self._getContext()
+        context = self._get_context()
         context['where'] = FeedParserDict()
 
     _start_georss_point = _start_georssgeom
@@ -52,7 +52,7 @@ class Namespace(object):
     _start_georss_box = _start_georssgeom
 
     def _save_where(self, geometry):
-        context = self._getContext()
+        context = self._get_context()
         context['where'].update(geometry)
 
     def _end_georss_point(self):
@@ -78,7 +78,7 @@ class Namespace(object):
 
     def _start_where(self, attrsD):
         self.push('where', 0)
-        context = self._getContext()
+        context = self._get_context()
         context['where'] = FeedParserDict()
     _start_georss_where = _start_where
 
@@ -88,7 +88,7 @@ class Namespace(object):
             srsDimension = int(attrsD.get('srsdimension', '2'))
         except ValueError:
             srsDimension = 2
-        context = self._getContext()
+        context = self._get_context()
         context['where']['srsName'] = srsName
         context['where']['srsDimension'] = srsDimension
 
@@ -118,7 +118,7 @@ class Namespace(object):
 
     def _end_gml_pos(self):
         this = self.pop('pos')
-        context = self._getContext()
+        context = self._get_context()
         srsName = context['where'].get('srsName')
         srsDimension = context['where'].get('srsDimension', 2)
         swap = True
@@ -134,7 +134,7 @@ class Namespace(object):
 
     def _end_gml_poslist(self):
         this = self.pop('pos')
-        context = self._getContext()
+        context = self._get_context()
         srsName = context['where'].get('srsName')
         srsDimension = context['where'].get('srsDimension', 2)
         swap = True

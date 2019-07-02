@@ -649,7 +649,7 @@ class TestHTMLGuessing(unittest.TestCase):
     "Exercise the HTML sniffing code"
     def _mktest(text, expect, doc):
         def fn(self):
-            value = bool(feedparser.mixin._FeedParserMixin.lookslikehtml(text))
+            value = bool(feedparser.mixin._FeedParserMixin.looks_like_html(text))
             self.assertEqual(value, expect)
         fn.__doc__ = doc
         return fn

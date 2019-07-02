@@ -40,15 +40,15 @@ class Namespace(object):
 
     def _start_admin_generatoragent(self, attrsD):
         self.push('generator', 1)
-        value = self._getAttribute(attrsD, 'rdf:resource')
+        value = self._get_attribute(attrsD, 'rdf:resource')
         if value:
             self.elementstack[-1][2].append(value)
         self.pop('generator')
-        self._getContext()['generator_detail'] = FeedParserDict({'href': value})
+        self._get_context()['generator_detail'] = FeedParserDict({'href': value})
 
     def _start_admin_errorreportsto(self, attrsD):
         self.push('errorreportsto', 1)
-        value = self._getAttribute(attrsD, 'rdf:resource')
+        value = self._get_attribute(attrsD, 'rdf:resource')
         if value:
             self.elementstack[-1][2].append(value)
         self.pop('errorreportsto')

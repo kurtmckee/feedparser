@@ -46,8 +46,8 @@ class Namespace(object):
     }
 
     def _start_cc_license(self, attrsD):
-        context = self._getContext()
-        value = self._getAttribute(attrsD, 'rdf:resource')
+        context = self._get_context()
+        value = self._get_attribute(attrsD, 'rdf:resource')
         attrsD = FeedParserDict()
         attrsD['rel'] = 'license'
         if value:
@@ -60,7 +60,7 @@ class Namespace(object):
 
     def _end_creativecommons_license(self):
         value = self.pop('license')
-        context = self._getContext()
+        context = self._get_context()
         attrsD = FeedParserDict()
         attrsD['rel'] = 'license'
         if value:

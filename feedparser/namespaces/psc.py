@@ -43,7 +43,7 @@ class Namespace(object):
         super(Namespace, self).__init__()
 
     def _start_psc_chapters(self, attrsD):
-        context = self._getContext()
+        context = self._get_context()
         if 'psc_chapters' not in context:
             self.psc_chapters_flag = True
             attrsD['chapters'] = []
@@ -54,10 +54,10 @@ class Namespace(object):
 
     def _start_psc_chapter(self, attrsD):
         if self.psc_chapters_flag:
-            start = self._getAttribute(attrsD, 'start')
+            start = self._get_attribute(attrsD, 'start')
             attrsD['start_parsed'] = _parse_psc_chapter_start(start)
 
-            context = self._getContext()['psc_chapters']
+            context = self._get_context()['psc_chapters']
             context['chapters'].append(util.FeedParserDict(attrsD))
 
 def _parse_psc_chapter_start(start):

@@ -84,28 +84,28 @@ class Namespace(object):
     def _end_itunes_keywords(self):
         for term in self.pop('itunes_keywords').split(','):
             if term.strip():
-                self._addTag(term.strip(), 'http://www.itunes.com/', None)
+                self._add_tag(term.strip(), 'http://www.itunes.com/', None)
 
     def _start_itunes_category(self, attrsD):
-        self._addTag(attrsD.get('text'), 'http://www.itunes.com/', None)
+        self._add_tag(attrsD.get('text'), 'http://www.itunes.com/', None)
         self.push('category', 1)
 
     def _start_itunes_image(self, attrsD):
         self.push('itunes_image', 0)
         if attrsD.get('href'):
-            self._getContext()['image'] = FeedParserDict({'href': attrsD.get('href')})
+            self._get_context()['image'] = FeedParserDict({'href': attrsD.get('href')})
         elif attrsD.get('url'):
-            self._getContext()['image'] = FeedParserDict({'href': attrsD.get('url')})
+            self._get_context()['image'] = FeedParserDict({'href': attrsD.get('url')})
     _start_itunes_link = _start_itunes_image
 
     def _end_itunes_block(self):
         value = self.pop('itunes_block', 0)
-        self._getContext()['itunes_block'] = (value == 'yes') and 1 or 0
+        self._get_context()['itunes_block'] = (value == 'yes') and 1 or 0
 
     def _end_itunes_explicit(self):
         value = self.pop('itunes_explicit', 0)
         # Convert 'yes' -> True, 'clean' to False, and any other value to None
         # False and None both evaluate as False, so the difference can be ignored
         # by applications that only need to know if the content is explicit.
-        self._getContext()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
+        self._get_context()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
 
