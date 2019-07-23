@@ -6,6 +6,9 @@ import re
 import struct
 import zlib
 
+import ssl
+ssl.PROTOCOL_SSLv23 = ssl.PROTOCOL_TLSv1
+
 try:
     import urllib.parse
     import urllib.request
