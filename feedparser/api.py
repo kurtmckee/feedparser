@@ -1,5 +1,5 @@
 # The public API for feedparser
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -26,13 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import xml.sax
 
 try:
     from io import BytesIO as _StringIO
 except ImportError:
+    # Python 2.7
     try:
         from cStringIO import StringIO as _StringIO
     except ImportError:
@@ -96,6 +98,7 @@ SUPPORTED_VERSIONS = {
     'cdf': 'CDF',
 }
 
+
 def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result):
     """URL, filename, or string --> stream
 
@@ -158,15 +161,22 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         return url_file_stream_or_string.encode('utf-8')
     return url_file_stream_or_string
 
-LooseFeedParser = type(str('LooseFeedParser'), (
-    _LooseFeedParser, _FeedParserMixin, _BaseHTMLProcessor, object
-), {})
-StrictFeedParser = type(str('StrictFeedParser'), (
-    _StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object
-), {})
+
+LooseFeedParser = type(
+    str('LooseFeedParser'),  # `str()` call required for Python 2.7
+    (_LooseFeedParser, _FeedParserMixin, _BaseHTMLProcessor, object),
+    {},
+)
+
+StrictFeedParser = type(
+    str('StrictFeedParser'),  # `str()` call required for Python 2.7
+    (_StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object),
+    {},
+)
+
 
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None, resolve_relative_uris=None, sanitize_html=None):
-    '''Parse a feed from a URL, file, stream, or string.
+    """Parse a feed from a URL, file, stream, or string.
 
     :param url_file_stream_or_string:
         File-like object, URL, file path, or string. Both byte and text strings
@@ -210,7 +220,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         :data:`feedparser.SANITIZE_HTML`, which is ``True``.
 
     :return: A :class:`FeedParserDict`.
-    '''
+    """
+
     if not agent or sanitize_html is None or resolve_relative_uris is None:
         import feedparser
     if not agent:
@@ -221,10 +232,10 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         resolve_relative_uris = feedparser.RESOLVE_RELATIVE_URIS
 
     result = FeedParserDict(
-        bozo = False,
-        entries = [],
-        feed = FeedParserDict(),
-        headers = {},
+        bozo=False,
+        entries=[],
+        feed=FeedParserDict(),
+        headers={},
     )
 
     data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
