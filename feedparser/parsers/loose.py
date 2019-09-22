@@ -1,5 +1,5 @@
 # The loose feed parser that interfaces with an SGML parsing library
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -26,26 +26,31 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
 
 class _LooseFeedParser(object):
+    contentparams = None
+
     def __init__(self, baseuri=None, baselang=None, encoding=None, entities=None):
         self.baseuri = baseuri or ''
         self.lang = baselang or None
-        self.encoding = encoding or 'utf-8' # character encoding
+        self.encoding = encoding or 'utf-8'  # character encoding
         self.entities = entities or {}
         super(_LooseFeedParser, self).__init__()
 
-    def _normalize_attributes(self, kv):
+    @staticmethod
+    def _normalize_attributes(kv):
         k = kv[0].lower()
         v = k in ('rel', 'type') and kv[1].lower() or kv[1]
         # the sgml parser doesn't handle entities in attributes, nor
         # does it pass the attribute values through as unicode, while
         # strict xml parsers do -- account for this difference
         v = v.replace('&amp;', '&')
-        return (k, v)
+        return k, v
 
-    def decodeEntities(self, element, data):
+    def decode_entities(self, element, data):
         data = data.replace('&#60;', '&lt;')
         data = data.replace('&#x3c;', '&lt;')
         data = data.replace('&#x3C;', '&lt;')
@@ -68,5 +73,9 @@ class _LooseFeedParser(object):
             data = data.replace('&#x2F;', '/')
         return data
 
-    def strattrs(self, attrs):
-        return ''.join([' %s="%s"' % (n,v.replace('"','&quot;')) for n,v in attrs])
+    @staticmethod
+    def strattrs(attrs):
+        return ''.join(
+            ' %s="%s"' % (n, v.replace('"', '&quot;'))
+            for n, v in attrs
+        )

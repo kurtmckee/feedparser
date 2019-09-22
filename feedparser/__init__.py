@@ -1,4 +1,4 @@
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -25,7 +25,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE."""
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
+
+from .api import parse
+from .datetimes import registerDateHandler
+from .exceptions import *
 
 __author__ = 'Kurt McKee <contactme@kurtmckee.org>'
 __license__ = 'BSD 2-clause'
@@ -35,11 +40,6 @@ __version__ = '5.2.1'
 # If you are embedding feedparser in a larger application, you should
 # change this to your application name and URL.
 USER_AGENT = "feedparser/%s +https://github.com/kurtmckee/feedparser/" % __version__
-
-from . import api
-from .api import parse
-from .datetimes import registerDateHandler
-from .exceptions import *
 
 # If you want feedparser to automatically resolve all relative URIs, set this
 # to 1.

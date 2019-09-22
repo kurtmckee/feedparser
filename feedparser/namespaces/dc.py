@@ -1,12 +1,12 @@
 # Support for the Dublin Core metadata extensions
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
 # This file is a part of feedparser.
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
 # * Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
@@ -26,10 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
-from ..util import FeedParserDict
 from ..datetimes import _parse_date
+from ..util import FeedParserDict
+
 
 class Namespace(object):
     supported_namespaces = {
@@ -73,43 +75,43 @@ class Namespace(object):
     def _end_dcterms_modified(self):
         self._end_updated()
 
-    def _start_dc_author(self, attrsD):
-        self._start_author(attrsD)
+    def _start_dc_author(self, attrs_d):
+        self._start_author(attrs_d)
 
-    def _start_dc_creator(self, attrsD):
-        self._start_author(attrsD)
+    def _start_dc_creator(self, attrs_d):
+        self._start_author(attrs_d)
 
-    def _start_dc_date(self, attrsD):
-        self._start_updated(attrsD)
+    def _start_dc_date(self, attrs_d):
+        self._start_updated(attrs_d)
 
-    def _start_dc_description(self, attrsD):
-        self._start_description(attrsD)
+    def _start_dc_description(self, attrs_d):
+        self._start_description(attrs_d)
 
-    def _start_dc_language(self, attrsD):
-        self._start_language(attrsD)
+    def _start_dc_language(self, attrs_d):
+        self._start_language(attrs_d)
 
-    def _start_dc_publisher(self, attrsD):
-        self._start_webmaster(attrsD)
+    def _start_dc_publisher(self, attrs_d):
+        self._start_webmaster(attrs_d)
 
-    def _start_dc_rights(self, attrsD):
-        self._start_rights(attrsD)
+    def _start_dc_rights(self, attrs_d):
+        self._start_rights(attrs_d)
 
-    def _start_dc_subject(self, attrsD):
-        self._start_category(attrsD)
+    def _start_dc_subject(self, attrs_d):
+        self._start_category(attrs_d)
 
-    def _start_dc_title(self, attrsD):
-        self._start_title(attrsD)
+    def _start_dc_title(self, attrs_d):
+        self._start_title(attrs_d)
 
-    def _start_dcterms_created(self, attrsD):
-        self._start_created(attrsD)
+    def _start_dcterms_created(self, attrs_d):
+        self._start_created(attrs_d)
 
-    def _start_dcterms_issued(self, attrsD):
-        self._start_published(attrsD)
+    def _start_dcterms_issued(self, attrs_d):
+        self._start_published(attrs_d)
 
-    def _start_dcterms_modified(self, attrsD):
-        self._start_updated(attrsD)
+    def _start_dcterms_modified(self, attrs_d):
+        self._start_updated(attrs_d)
 
-    def _start_dcterms_valid(self, attrsD):
+    def _start_dcterms_valid(self, attrs_d):
         self.push('validity', 1)
 
     def _end_dcterms_valid(self):
@@ -123,9 +125,9 @@ class Namespace(object):
                     self._save('validity_end', value, overwrite=True)
                     self._save('validity_end_parsed', _parse_date(value), overwrite=True)
 
-    def _start_dc_contributor(self, attrsD):
+    def _start_dc_contributor(self, attrs_d):
         self.incontributor = 1
-        context = self._getContext()
+        context = self._get_context()
         context.setdefault('contributors', [])
         context['contributors'].append(FeedParserDict())
         self.push('name', 0)
@@ -133,4 +135,3 @@ class Namespace(object):
     def _end_dc_contributor(self):
         self._end_name()
         self.incontributor = 0
-

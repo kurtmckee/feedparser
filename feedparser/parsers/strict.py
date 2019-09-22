@@ -1,5 +1,5 @@
 # The strict feed parser that interfaces with an XML parsing library
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -30,6 +30,7 @@ from __future__ import absolute_import, unicode_literals
 
 from ..exceptions import UndeclaredNamespace
 
+
 class _StrictFeedParser(object):
     def __init__(self, baseuri, baselang, encoding):
         self.bozo = 0
@@ -40,17 +41,18 @@ class _StrictFeedParser(object):
         self.encoding = encoding
         super(_StrictFeedParser, self).__init__()
 
-    def _normalize_attributes(self, kv):
+    @staticmethod
+    def _normalize_attributes(kv):
         k = kv[0].lower()
         v = k in ('rel', 'type') and kv[1].lower() or kv[1]
-        return (k, v)
+        return k, v
 
     def startPrefixMapping(self, prefix, uri):
         if not uri:
             return
         # Jython uses '' instead of None; standardize on None
         prefix = prefix or None
-        self.trackNamespace(prefix, uri)
+        self.track_namespace(prefix, uri)
         if prefix and uri == 'http://www.w3.org/1999/xlink':
             self.decls['xmlns:' + prefix] = uri
 
@@ -66,7 +68,7 @@ class _StrictFeedParser(object):
         else:
             givenprefix = None
         prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
-        if givenprefix and (prefix == None or (prefix == '' and lowernamespace == '')) and givenprefix not in self.namespacesInUse:
+        if givenprefix and (prefix is None or (prefix == '' and lowernamespace == '')) and givenprefix not in self.namespaces_in_use:
             raise UndeclaredNamespace("'%s' is not associated with a namespace" % givenprefix)
         localname = str(localname).lower()
 
@@ -78,15 +80,15 @@ class _StrictFeedParser(object):
         # at all).  Thanks to MatejC for helping me test this and
         # tirelessly telling me that it didn't work yet.
         attrsD, self.decls = self.decls, {}
-        if localname=='math' and namespace=='http://www.w3.org/1998/Math/MathML':
-            attrsD['xmlns']=namespace
-        if localname=='svg' and namespace=='http://www.w3.org/2000/svg':
-            attrsD['xmlns']=namespace
+        if localname == 'math' and namespace == 'http://www.w3.org/1998/Math/MathML':
+            attrsD['xmlns'] = namespace
+        if localname == 'svg' and namespace == 'http://www.w3.org/2000/svg':
+            attrsD['xmlns'] = namespace
 
         if prefix:
             localname = prefix.lower() + ':' + localname
-        elif namespace and not qname: #Expat
-            for name,value in self.namespacesInUse.items():
+        elif namespace and not qname:  # Expat
+            for name, value in self.namespaces_in_use.items():
                 if name and value == namespace:
                     localname = name + ':' + localname
                     break
@@ -115,8 +117,8 @@ class _StrictFeedParser(object):
         prefix = self._matchnamespaces.get(lowernamespace, givenprefix)
         if prefix:
             localname = prefix + ':' + localname
-        elif namespace and not qname: #Expat
-            for name,value in self.namespacesInUse.items():
+        elif namespace and not qname:  # Expat
+            for name, value in self.namespaces_in_use.items():
                 if name and value == namespace:
                     localname = name + ':' + localname
                     break

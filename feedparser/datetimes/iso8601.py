@@ -1,4 +1,32 @@
-from __future__ import absolute_import, unicode_literals
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2002-2008 Mark Pilgrim
+# All rights reserved.
+#
+# This file is a part of feedparser.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+#   this list of conditions and the following disclaimer.
+# * Redistributions in binary form must reproduce the above copyright notice,
+#   this list of conditions and the following disclaimer in the documentation
+#   and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import re
 import time
@@ -12,12 +40,24 @@ import time
 # 0301-04-01), so we use templates instead.
 # Please note the order in templates is significant because we need a
 # greedy match.
-_iso8601_tmpl = ['YYYY-?MM-?DD', 'YYYY-0MM?-?DD', 'YYYY-MM', 'YYYY-?OOO',
-                'YY-?MM-?DD', 'YY-?OOO', 'YYYY',
-                '-YY-?MM', '-OOO', '-YY',
-                '--MM-?DD', '--MM',
-                '---DD',
-                'CC', '']
+_iso8601_tmpl = [
+    'YYYY-?MM-?DD',
+    'YYYY-0MM?-?DD',
+    'YYYY-MM',
+    'YYYY-?OOO',
+    'YY-?MM-?DD',
+    'YY-?OOO',
+    'YYYY',
+    '-YY-?MM',
+    '-OOO',
+    '-YY',
+    '--MM-?DD',
+    '--MM',
+    '---DD',
+    'CC',
+    '',
+]
+
 _iso8601_re = [
     tmpl.replace(
     'YYYY', r'(?P<year>\d{4})').replace(
@@ -41,11 +81,12 @@ try:
 except NameError:
     pass
 
-def _parse_date_iso8601(dateString):
-    '''Parse a variety of ISO-8601-compatible formats like 20040105'''
+
+def _parse_date_iso8601(date_string):
+    """Parse a variety of ISO-8601-compatible formats like 20040105"""
     m = None
     for _iso8601_match in _iso8601_matches:
-        m = _iso8601_match(dateString)
+        m = _iso8601_match(date_string)
         if m:
             break
     if not m:
