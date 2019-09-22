@@ -1,4 +1,4 @@
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2004-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -23,7 +23,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 __author__ = "Kurt McKee <contactme@kurtmckee.org>"
 __license__ = "BSD 2-clause"
@@ -67,10 +68,11 @@ from feedparser.datetimes.perforce import _parse_date_perforce
 from feedparser.datetimes.rfc822 import _parse_date_rfc822
 from feedparser.datetimes.w3dtf import _parse_date_w3dtf
 
-#---------- custom HTTP server (used to serve test feeds) ----------
+# ---------- custom HTTP server (used to serve test feeds) ----------
 
-_PORT = 8097 # not really configurable, must match hardcoded port in tests
-_HOST = '127.0.0.1' # also not really configurable
+_PORT = 8097  # not really configurable, must match hardcoded port in tests
+_HOST = '127.0.0.1'  # also not really configurable
+
 
 class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
     headers_re = re.compile(br"^Header:\s+([^:]+):(.+)$", re.MULTILINE)
@@ -106,8 +108,10 @@ class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
                 for k, v in self.headers_re.findall(blob)
             }
         f = open(path, 'rb')
-        if (self.headers.get('if-modified-since') == headers.get('Last-Modified', 'nom')) \
-            or (self.headers.get('if-none-match') == headers.get('ETag', 'nomatch')):
+        if (
+                self.headers.get('if-modified-since') == headers.get('Last-Modified', 'nom')
+                or self.headers.get('if-none-match') == headers.get('ETag', 'nomatch')
+        ):
             status = 304
         else:
             status = 200
@@ -125,6 +129,7 @@ class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
     def log_request(self, *args):
         pass
 
+
 class FeedParserTestServer(threading.Thread):
     """HTTP Server that runs in a thread and handles a predetermined number of requests"""
 
@@ -132,6 +137,7 @@ class FeedParserTestServer(threading.Thread):
         threading.Thread.__init__(self)
         self.requests = requests
         self.ready = threading.Event()
+        self.httpd = None
 
     def run(self):
         self.httpd = HTTPServer((_HOST, _PORT), FeedParserTestRequestHandler)
@@ -142,21 +148,23 @@ class FeedParserTestServer(threading.Thread):
         self.ready.clear()
         self.httpd.shutdown()
 
-#---------- dummy test case class (test methods are added dynamically) ----------
 
-# _bytes is only used in everythingIsUnicode().
+# ---------- dummy test case class (test methods are added dynamically) ----------
+
+# _bytes is only used in everything_is_unicode().
 # In Python 2 it's str, and in Python 3 it's bytes.
 _bytes = type(b'')
 
-def everythingIsUnicode(d):
+
+def everything_is_unicode(d):
     """Takes a dictionary, recursively verifies that every value is unicode"""
     for k, v in d.items():
         if isinstance(v, dict) and k != 'headers':
-            if not everythingIsUnicode(v):
+            if not everything_is_unicode(v):
                 return False
         elif isinstance(v, list):
             for i in v:
-                if isinstance(i, dict) and not everythingIsUnicode(i):
+                if isinstance(i, dict) and not everything_is_unicode(i):
                     return False
                 elif isinstance(i, _bytes):
                     return False
@@ -164,23 +172,27 @@ def everythingIsUnicode(d):
             return False
     return True
 
-def failUnlessEval(self, xmlfile, evalString, msg=None):
-    """Fail unless eval(evalString, env)"""
+
+def fail_unless_eval(self, xmlfile, eval_string, msg=None):
+    """Fail unless eval(eval_string, env)"""
     env = feedparser.parse(xmlfile)
-    if not eval(evalString, globals(), env):
-        failure=(msg or 'not eval(%s) \nWITH env(%s)' % (evalString, pprint.pformat(env)))
+    if not eval(eval_string, globals(), env):
+        failure = msg or 'not eval(%s) \nWITH env(%s)' % (eval_string, pprint.pformat(env))
         raise self.failureException(failure)
-    if not everythingIsUnicode(env):
+    if not everything_is_unicode(env):
         raise self.failureException("not everything is unicode \nWITH env(%s)" % (pprint.pformat(env), ))
 
+
 class BaseTestCase(unittest.TestCase):
-    failUnlessEval = failUnlessEval
+    fail_unless_eval = fail_unless_eval
+
 
 class TestCase(BaseTestCase):
     pass
 
+
 class TestTemporaryFallbackBehavior(unittest.TestCase):
-    "These tests are temporarily here because of issues 310 and 328"
+    """These tests are temporarily here because of issues 310 and 328"""
     def test_issue_328_fallback_behavior(self):
         warnings.filterwarnings('error')
 
@@ -230,35 +242,39 @@ class TestTemporaryFallbackBehavior(unittest.TestCase):
 
 
 class TestEverythingIsUnicode(unittest.TestCase):
-    "Ensure that `everythingIsUnicode()` is working appropriately"
+    """Ensure that `everything_is_unicode()` is working appropriately"""
     def test_everything_is_unicode(self):
-        self.assertTrue(everythingIsUnicode(
+        self.assertTrue(everything_is_unicode(
             {'a': 'a', 'b': ['b', {'c': 'c'}], 'd': {'e': 'e'}}
         ))
+
     def test_not_everything_is_unicode(self):
-        self.assertFalse(everythingIsUnicode({'a': b'a'}))
-        self.assertFalse(everythingIsUnicode({'a': [b'a']}))
-        self.assertFalse(everythingIsUnicode({'a': {'b': b'b'}}))
-        self.assertFalse(everythingIsUnicode({'a': [{'b': b'b'}]}))
+        self.assertFalse(everything_is_unicode({'a': b'a'}))
+        self.assertFalse(everything_is_unicode({'a': [b'a']}))
+        self.assertFalse(everything_is_unicode({'a': {'b': b'b'}}))
+        self.assertFalse(everything_is_unicode({'a': [{'b': b'b'}]}))
+
 
 class TestLooseParser(BaseTestCase):
-    "Test the sgmllib-based parser by manipulating feedparser " \
-    "into believing no XML parsers are installed"
+    """Test the sgmllib-based parser by manipulating feedparser into believing no XML parsers are installed"""
     def __init__(self, arg):
         unittest.TestCase.__init__(self, arg)
         self._xml_available = feedparser.api._XML_AVAILABLE
+
     def setUp(self):
         feedparser.api._XML_AVAILABLE = False
+
     def tearDown(self):
         feedparser.api._XML_AVAILABLE = self._xml_available
+
 
 class TestStrictParser(BaseTestCase):
     pass
 
+
 class TestEncodings(BaseTestCase):
     def test_doctype_replacement(self):
-        "Ensure that non-ASCII-compatible encodings don't hide " \
-        "disallowed ENTITY declarations"
+        """Ensure that non-ASCII-compatible encodings don't hide disallowed ENTITY declarations"""
         doc = """<?xml version="1.0" encoding="utf-16be"?>
         <!DOCTYPE feed [
             <!ENTITY exponential1 "bogus ">
@@ -269,6 +285,7 @@ class TestEncodings(BaseTestCase):
         doc = codecs.BOM_UTF16_BE + doc.encode('utf-16be')
         result = feedparser.parse(doc)
         self.assertEqual(result['feed']['title'], '&amp;exponential3')
+
     def test_gb2312_converted_to_gb18030_in_xml_encoding(self):
         # \u55de was chosen because it exists in gb18030 but not gb2312
         feed = '''<?xml version="1.0" encoding="gb2312"?>
@@ -278,131 +295,146 @@ class TestEncodings(BaseTestCase):
         })
         self.assertEqual(result.encoding, 'gb18030')
 
+
 class TestFeedParserDict(unittest.TestCase):
-    "Ensure that FeedParserDict returns values as expected and won't crash"
+    """Ensure that FeedParserDict returns values as expected and won't crash"""
+
     def setUp(self):
         self.d = feedparser.util.FeedParserDict()
+
     def _check_key(self, k):
         self.assertTrue(k in self.d)
         self.assertTrue(hasattr(self.d, k))
         self.assertEqual(self.d[k], 1)
         self.assertEqual(getattr(self.d, k), 1)
+
     def _check_no_key(self, k):
         self.assertTrue(k not in self.d)
         self.assertTrue(not hasattr(self.d, k))
+
     def test_empty(self):
         keys = (
-            'a','entries', 'id', 'guid', 'summary', 'subtitle', 'description',
+            'a', 'entries', 'id', 'guid', 'summary', 'subtitle', 'description',
             'category', 'enclosures', 'license', 'categories',
         )
         for k in keys:
             self._check_no_key(k)
         self.assertTrue('items' not in self.d)
-        self.assertTrue(hasattr(self.d, 'items')) # dict.items() exists
+        self.assertTrue(hasattr(self.d, 'items'))  # dict.items() exists
+
     def test_neutral(self):
         self.d['a'] = 1
         self._check_key('a')
+
     def test_single_mapping_target_1(self):
         self.d['id'] = 1
         self._check_key('id')
         self._check_key('guid')
+
     def test_single_mapping_target_2(self):
         self.d['guid'] = 1
         self._check_key('id')
         self._check_key('guid')
+
     def test_multiple_mapping_target_1(self):
         self.d['summary'] = 1
         self._check_key('summary')
         self._check_key('description')
+
     def test_multiple_mapping_target_2(self):
         self.d['subtitle'] = 1
         self._check_key('subtitle')
         self._check_key('description')
+
     def test_multiple_mapping_mapped_key(self):
         self.d['description'] = 1
         self._check_key('summary')
         self._check_key('description')
+
     def test_license(self):
         self.d['links'] = []
-        try:
-            self.d['license']
-            self.assertTrue(False)
-        except KeyError:
-            pass
+        self.assertNotIn('license', self.d)
+
         self.d['links'].append({'rel': 'license'})
-        try:
-            self.d['license']
-            self.assertTrue(False)
-        except KeyError:
-            pass
+        self.assertNotIn('license', self.d)
+
         self.d['links'].append({'rel': 'license', 'href': 'http://dom.test/'})
+        self.assertIn('license', self.d)
         self.assertEqual(self.d['license'], 'http://dom.test/')
+
     def test_category(self):
         self.d['tags'] = []
-        try:
-            self.d['category']
-            self.assertTrue(False)
-        except KeyError:
-            pass
+        self.assertNotIn('category', self.d)
+
         self.d['tags'] = [{}]
-        try:
-            self.d['category']
-            self.assertTrue(False)
-        except KeyError:
-            pass
+        self.assertNotIn('category', self.d)
+
         self.d['tags'] = [{'term': 'cat'}]
+        self.assertIn('category', self.d)
         self.assertEqual(self.d['category'], 'cat')
         self.d['tags'].append({'term': 'dog'})
         self.assertEqual(self.d['category'], 'cat')
 
+
 class TestOpenResource(unittest.TestCase):
-    "Ensure that `_open_resource()` interprets its arguments as URIs, " \
-    "file-like objects, or in-memory feeds as expected"
+    """Ensure that `_open_resource()` interprets its arguments as URIs, file-like objects, or in-memory feeds as expected"""
+
     def test_fileobj(self):
         r = feedparser.api._open_resource(feedparser.api._StringIO(b''), '', '', '', '', [], {}, {})
         self.assertEqual(r, b'')
+
     def test_feed(self):
         f = feedparser.parse('feed://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
+
     def test_feed_http(self):
         f = feedparser.parse('feed:http://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
+
     def test_bytes(self):
         s = b'<feed><item><title>text</title></item></feed>'
         r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
         self.assertEqual(s, r)
+
     def test_string(self):
         s = b'<feed><item><title>text</title></item></feed>'
         r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
         self.assertEqual(s, r)
+
     def test_unicode_1(self):
         s = b'<feed><item><title>text</title></item></feed>'
         r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
         self.assertEqual(s, r)
+
     def test_unicode_2(self):
         s = br'<feed><item><title>t\u00e9xt</title></item></feed>'
         r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
         self.assertEqual(s, r)
 
+
+def make_safe_uri_test(rel, expect, doc):
+    def fn(self):
+        value = feedparser.urls._makeSafeAbsoluteURI(self.base, rel)
+        self.assertEqual(value, expect)
+
+    fn.__doc__ = doc
+    return fn
+
+
 class TestMakeSafeAbsoluteURI(unittest.TestCase):
-    "Exercise the URI joining and sanitization code"
+    """Exercise the URI joining and sanitization code"""
+
     base = 'http://d.test/d/f.ext'
-    def _mktest(rel, expect, doc):
-        def fn(self):
-            value = feedparser.urls._makeSafeAbsoluteURI(self.base, rel)
-            self.assertEqual(value, expect)
-        fn.__doc__ = doc
-        return fn
 
     # make the test cases; the call signature is:
     # (relative_url, expected_return_value, test_doc_string)
-    test_abs = _mktest('https://s.test/', 'https://s.test/', 'absolute uri')
-    test_rel = _mktest('/new', 'http://d.test/new', 'relative uri')
-    test_bad = _mktest('x://bad.test/', '', 'unacceptable uri protocol')
-    test_mag = _mktest('magnet:?xt=a', 'magnet:?xt=a', 'magnet uri')
+    test_abs = make_safe_uri_test('https://s.test/', 'https://s.test/', 'absolute uri')
+    test_rel = make_safe_uri_test('/new', 'http://d.test/new', 'relative uri')
+    test_bad = make_safe_uri_test('x://bad.test/', '', 'unacceptable uri protocol')
+    test_mag = make_safe_uri_test('magnet:?xt=a', 'magnet:?xt=a', 'magnet uri')
 
     def test_catch_ValueError(self):
-        'catch ValueError in Python 2.7 and up'
+        """catch ValueError in Python 2.7 and up"""
         uri = 'http://bad]test/'
         value1 = feedparser.urls._makeSafeAbsoluteURI(uri)
         value2 = feedparser.urls._makeSafeAbsoluteURI(self.base, uri)
@@ -415,70 +447,87 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
         self.assertTrue(value2 in (uri, ''))
         self.assertTrue(value3 in (uri, ''))
 
+
 class TestConvertToIdn(unittest.TestCase):
-    "Test IDN support (unavailable in Jython as of Jython 2.5.2)"
+    """Test IDN support (unavailable in Jython as of Jython 2.5.2)"""
     # this is the greek test domain
     hostname = '\u03c0\u03b1\u03c1\u03ac\u03b4\u03b5\u03b9\u03b3\u03bc\u03b1'
     hostname += '.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
+
     def test_control(self):
         r = feedparser.urls._convert_to_idn('http://example.test/')
         self.assertEqual(r, 'http://example.test/')
+
     def test_idn(self):
         r = feedparser.urls._convert_to_idn('http://%s/' % (self.hostname,))
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp/')
+
     def test_port(self):
         r = feedparser.urls._convert_to_idn('http://%s:8080/' % (self.hostname,))
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
 
+
 class TestCompression(unittest.TestCase):
-    "Test the gzip and deflate support in the HTTP code"
+    """Test the gzip and deflate support in the HTTP code"""
+
     def test_gzip_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip.gz')
         self.assertEqual(f.version, 'atom10')
+
     def test_gzip_not_compressed(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip-not-compressed.gz')
         self.assertEqual(f.bozo, 1)
         self.assertTrue(isinstance(f.bozo_exception, IOError))
         self.assertEqual(f['feed']['title'], 'gzip')
+
     def test_gzip_struct_error(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/gzip-struct-error.gz')
         self.assertEqual(f.bozo, 1)
         # Python 3.4 throws an EOFError that gets overwritten as xml.sax.SAXException later.
         self.assertTrue(isinstance(f.bozo_exception, (xml.sax.SAXException, struct.error)))
+
     def test_zlib_good(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate.z')
         self.assertEqual(f.version, 'atom10')
+
     def test_zlib_no_headers(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate-no-headers.z')
         self.assertEqual(f.version, 'atom10')
+
     def test_zlib_not_compressed(self):
         f = feedparser.parse('http://localhost:8097/tests/compression/deflate-not-compressed.z')
         self.assertEqual(f.bozo, 1)
         self.assertTrue(isinstance(f.bozo_exception, zlib.error))
         self.assertEqual(f['feed']['title'], 'deflate')
 
+
 class TestHTTPStatus(unittest.TestCase):
-    "Test HTTP redirection and other status codes"
+    """Test HTTP redirection and other status codes"""
+
     def test_301(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_301.xml')
         self.assertEqual(f.status, 301)
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.entries[0].title, 'target')
+
     def test_302(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_302.xml')
         self.assertEqual(f.status, 302)
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.entries[0].title, 'target')
+
     def test_303(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_303.xml')
         self.assertEqual(f.status, 303)
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.entries[0].title, 'target')
+
     def test_307(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_307.xml')
         self.assertEqual(f.status, 307)
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.entries[0].title, 'target')
+
     def test_304(self):
         # first retrieve the url
         u = 'http://localhost:8097/tests/http/http_status_304.xml'
@@ -487,7 +536,6 @@ class TestHTTPStatus(unittest.TestCase):
         self.assertEqual(f.entries[0].title, 'title 304')
         # extract the etag and last-modified headers
         e = [v for k, v in f.headers.items() if k.lower() == 'etag'][0]
-        mh = [v for k, v in f.headers.items() if k.lower() == 'last-modified'][0]
         ms = f.updated
         mt = f.updated_parsed
         md = datetime.datetime(*mt[0:7])
@@ -505,9 +553,11 @@ class TestHTTPStatus(unittest.TestCase):
         # test that sending back last-modified (datetime) results in a 304
         f = feedparser.parse(u, modified=md)
         self.assertEqual(f.status, 304)
+
     def test_404(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_404.xml')
         self.assertEqual(f.status, 404)
+
     def test_redirect_to_304(self):
         # ensure that an http redirect to an http 304 doesn't
         # trigger a bozo_exception
@@ -516,18 +566,20 @@ class TestHTTPStatus(unittest.TestCase):
         self.assertTrue(f.bozo == 0)
         self.assertTrue(f.status == 302)
 
+
 class TestDateParsers(unittest.TestCase):
-    "Test the various date parsers; most of the test cases are constructed " \
-    "dynamically based on the contents of the `date_tests` dict, below"
+    """Test the various date parsers; most of the test cases are constructed dynamically based on the contents of the `date_tests` dict, below"""
+
     def test_None(self):
         self.assertTrue(feedparser.datetimes._parse_date(None) is None)
-    def _check_date(self, func, dtstring, expected_value):
+
+    def _check_date(self, fn, dt, expected_value):
         try:
-            parsed_value = func(dtstring)
+            parsed_value = fn(dt)
         except (OverflowError, ValueError):
             parsed_value = None
         self.assertEqual(parsed_value, expected_value)
-        # self.assertEqual(parsed_value, feedparser._parse_date(dtstring))
+
     def test_year_10000_date(self):
         # On some systems this date string will trigger an OverflowError.
         # On Jython and x64 systems, however, it's interpreted just fine.
@@ -537,51 +589,52 @@ class TestDateParsers(unittest.TestCase):
             date = None
         self.assertTrue(date in (None, (10000, 1, 5, 4, 38, 59, 2, 5, 0)))
 
+
 date_tests = {
     _parse_date_greek: (
-        ('', None), # empty string
+        ('', None),  # empty string
         ('\u039a\u03c5\u03c1, 11 \u0399\u03bf\u03cd\u03bb 2004 12:00:00 EST', (2004, 7, 11, 17, 0, 0, 6, 193, 0)),
     ),
     _parse_date_hungarian: (
-        ('', None), # empty string
+        ('', None),  # empty string
         ('2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)),
     ),
     _parse_date_iso8601: (
-        ('', None), # empty string
-        ('-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only variant
-        ('031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only, no hyphens
-        ('03-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # 2-digit year/month/day only
-        ('-03-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/month only
-        ('03335', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # 2-digit year/ordinal, no hyphens
-        ('2003-12-31T10:14:55.1234Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # fractional seconds
+        ('', None),  # empty string
+        ('-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)),  # 2-digit year/month only variant
+        ('031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)),  # 2-digit year/month/day only, no hyphens
+        ('03-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)),  # 2-digit year/month/day only
+        ('-03-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)),  # 2-digit year/month only
+        ('03335', (2003, 12, 1, 0, 0, 0, 0, 335, 0)),  # 2-digit year/ordinal, no hyphens
+        ('2003-12-31T10:14:55.1234Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),  # fractional seconds
         # Special case for Google's extra zero in the month
         ('2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
     ),
     _parse_date_nate: (
-        ('', None), # empty string
+        ('', None),  # empty string
         ('2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
     ),
     _parse_date_onblog: (
-        ('', None), # empty string
+        ('', None),  # empty string
         ('2004\ub144 05\uc6d4 28\uc77c  01:31:15', (2004, 5, 27, 16, 31, 15, 3, 148, 0)),
     ),
     _parse_date_perforce: (
-        ('', None), # empty string
+        ('', None),  # empty string
         ('Fri, 2006/09/15 08:19:53 EDT', (2006, 9, 15, 12, 19, 53, 4, 258, 0)),
     ),
     _parse_date_rfc822: (
-        ('', None), # empty string
+        ('', None),  # empty string
         ('Thu, 30 Apr 2015 08:57:00 MET', (2015, 4, 30, 7, 57, 0, 3, 120, 0)),
         ('Thu, 30 Apr 2015 08:57:00 MEST', (2015, 4, 30, 6, 57, 0, 3, 120, 0)),
-        ('Thu, 01 Jan 0100 00:00:01 +0100', (99, 12, 31, 23, 0, 1, 3, 365, 0)), # ancient date
-        ('Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 2-digit year
-        ('Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)), # 4-digit year
-        ('Thu,  5 Apr 2012 10:00:00 GMT', (2012, 4, 5, 10, 0, 0, 3, 96, 0)), # 1-digit day
-        ('Wed, 19 Aug 2009 18:28:00 Etc/GMT', (2009, 8, 19, 18, 28, 0, 2, 231, 0)), # etc/gmt timezone
-        ('Wed, 19 Feb 2012 22:40:00 GMT-01:01', (2012, 2, 19, 23, 41, 0, 6, 50, 0)), # gmt+hh:mm timezone
-        ('Mon, 13 Feb, 2012 06:28:00 UTC', (2012, 2, 13, 6, 28, 0, 0, 44, 0)), # extraneous comma
-        ('Thu, 01 Jan 2004 00:00 GMT', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no seconds
-        ('Thu, 01 Jan 2004', (2004, 1, 1, 0, 0, 0, 3, 1, 0)), # no time
+        ('Thu, 01 Jan 0100 00:00:01 +0100', (99, 12, 31, 23, 0, 1, 3, 365, 0)),  # ancient date
+        ('Thu, 01 Jan 04 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)),  # 2-digit year
+        ('Thu, 01 Jan 2004 19:48:21 GMT', (2004, 1, 1, 19, 48, 21, 3, 1, 0)),  # 4-digit year
+        ('Thu,  5 Apr 2012 10:00:00 GMT', (2012, 4, 5, 10, 0, 0, 3, 96, 0)),  # 1-digit day
+        ('Wed, 19 Aug 2009 18:28:00 Etc/GMT', (2009, 8, 19, 18, 28, 0, 2, 231, 0)),  # etc/gmt timezone
+        ('Wed, 19 Feb 2012 22:40:00 GMT-01:01', (2012, 2, 19, 23, 41, 0, 6, 50, 0)),  # gmt+hh:mm timezone
+        ('Mon, 13 Feb, 2012 06:28:00 UTC', (2012, 2, 13, 6, 28, 0, 0, 44, 0)),  # extraneous comma
+        ('Thu, 01 Jan 2004 00:00 GMT', (2004, 1, 1, 0, 0, 0, 3, 1, 0)),  # no seconds
+        ('Thu, 01 Jan 2004', (2004, 1, 1, 0, 0, 0, 3, 1, 0)),  # no time
         # Additional tests to handle Disney's long month names and invalid timezones
         ('Mon, 26 January 2004 16:31:00 AT', (2004, 1, 26, 20, 31, 0, 0, 26, 0)),
         ('Mon, 26 January 2004 16:31:00 ET', (2004, 1, 26, 21, 31, 0, 0, 26, 0)),
@@ -590,54 +643,56 @@ date_tests = {
         ('Mon, 26 January 2004 16:31:00 PT', (2004, 1, 27, 0, 31, 0, 1, 27, 0)),
         # Swapped month and day
         ('Thu Aug 30 2012 17:26:16 +0200', (2012, 8, 30, 15, 26, 16, 3, 243, 0)),
-        ('Sun, 16 Dec 2012 1:2:3:4 GMT', None), # invalid time
-        ('Sun, 16 zzz 2012 11:47:32 GMT', None), # invalid month
-        ('Sun, Dec x 2012 11:47:32 GMT', None), # invalid day (swapped day/month)
-        ('Sun, 16 Dec zz 11:47:32 GMT', None), # invalid year
-        ('Sun, 16 Dec 2012 11:47:32 +zz:00', None), # invalid timezone hour
-        ('Sun, 16 Dec 2012 11:47:32 +00:zz', None), # invalid timezone minute
-        ('Sun, 99 Jun 2009 12:00:00 GMT', None), # out-of-range day
+        ('Sun, 16 Dec 2012 1:2:3:4 GMT', None),  # invalid time
+        ('Sun, 16 zzz 2012 11:47:32 GMT', None),  # invalid month
+        ('Sun, Dec x 2012 11:47:32 GMT', None),  # invalid day (swapped day/month)
+        ('Sun, 16 Dec zz 11:47:32 GMT', None),  # invalid year
+        ('Sun, 16 Dec 2012 11:47:32 +zz:00', None),  # invalid timezone hour
+        ('Sun, 16 Dec 2012 11:47:32 +00:zz', None),  # invalid timezone minute
+        ('Sun, 99 Jun 2009 12:00:00 GMT', None),  # out-of-range day
     ),
     _parse_date_asctime: (
         ('Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
         ('Sun Jul 15 01:16:00 +0000 2012', (2012, 7, 15, 1, 16, 0, 6, 197, 0)),
     ),
     _parse_date_w3dtf: (
-        ('', None), # empty string
-        ('2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # UTC
-        ('2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)), # San Francisco timezone
-        ('2003-12-31T18:14:55+08:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)), # Tokyo timezone
-        ('2007-04-23T23:25:47.538+10:00', (2007, 4, 23, 13, 25, 47, 0, 113, 0)), # fractional seconds
-        ('2003-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)), # year/month/day only
-        ('2003-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)), # year/month only
-        ('2003', (2003, 1, 1, 0, 0, 0, 2, 1, 0)), # year only
+        ('', None),  # empty string
+        ('2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),  # UTC
+        ('2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)),  # San Francisco timezone
+        ('2003-12-31T18:14:55+08:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),  # Tokyo timezone
+        ('2007-04-23T23:25:47.538+10:00', (2007, 4, 23, 13, 25, 47, 0, 113, 0)),  # fractional seconds
+        ('2003-12-31', (2003, 12, 31, 0, 0, 0, 2, 365, 0)),  # year/month/day only
+        ('2003-12', (2003, 12, 1, 0, 0, 0, 0, 335, 0)),  # year/month only
+        ('2003', (2003, 1, 1, 0, 0, 0, 2, 1, 0)),  # year only
         # Special cases for rollovers in leap years
-        ('2004-02-28T18:14:55-08:00', (2004, 2, 29, 2, 14, 55, 6, 60, 0)), # feb 28 in leap year
-        ('2003-02-28T18:14:55-08:00', (2003, 3, 1, 2, 14, 55, 5, 60, 0)), # feb 28 in non-leap year
-        ('2000-02-28T18:14:55-08:00', (2000, 2, 29, 2, 14, 55, 1, 60, 0)), # feb 28 in leap year on century divisible by 400
+        ('2004-02-28T18:14:55-08:00', (2004, 2, 29, 2, 14, 55, 6, 60, 0)),  # feb 28 in leap year
+        ('2003-02-28T18:14:55-08:00', (2003, 3, 1, 2, 14, 55, 5, 60, 0)),  # feb 28 in non-leap year
+        ('2000-02-28T18:14:55-08:00', (2000, 2, 29, 2, 14, 55, 1, 60, 0)),  # feb 28 in leap year on century divisible by 400
         # Out-of-range times
-        ('9999-12-31T23:59:59-99:99', None), # Date is out-of-range
-        ('2003-12-31T25:14:55Z', None), # invalid (25 hours)
-        ('2003-12-31T10:61:55Z', None), # invalid (61 minutes)
-        ('2003-12-31T10:14:61Z', None), # invalid (61 seconds)
+        ('9999-12-31T23:59:59-99:99', None),  # Date is out-of-range
+        ('2003-12-31T25:14:55Z', None),  # invalid (25 hours)
+        ('2003-12-31T10:61:55Z', None),  # invalid (61 minutes)
+        ('2003-12-31T10:14:61Z', None),  # invalid (61 seconds)
         # Invalid formats
-        ('22013', None), # Year is too long
-        ('013', None), # Year is too short
-        ('2013-01-27-01', None), # Date has to many parts
-        ('2013-01-28T11:30:00-06:00Textra', None), # Too many 't's
+        ('22013', None),  # Year is too long
+        ('013', None),  # Year is too short
+        ('2013-01-27-01', None),  # Date has to many parts
+        ('2013-01-28T11:30:00-06:00Textra', None),  # Too many 't's
         # Non-integer values
-        ('2013-xx-27', None), # Date
-        ('2013-01-28T09:xx:00Z', None), # Time
-        ('2013-01-28T09:00:00+00:xx', None), # Timezone
+        ('2013-xx-27', None),  # Date
+        ('2013-01-28T09:xx:00Z', None),  # Time
+        ('2013-01-28T09:00:00+00:xx', None),  # Timezone
         # MSSQL-style dates
-        ('2004-07-08 23:56:58 -00:20', (2004, 7, 9, 0, 16, 58, 4, 191, 0)), # with timezone
-        ('2004-07-08 23:56:58', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # without timezone
-        ('2004-07-08 23:56:58.0', (2004, 7, 8, 23, 56, 58, 3, 190, 0)), # with fractional second
+        ('2004-07-08 23:56:58 -00:20', (2004, 7, 9, 0, 16, 58, 4, 191, 0)),  # with timezone
+        ('2004-07-08 23:56:58', (2004, 7, 8, 23, 56, 58, 3, 190, 0)),  # without timezone
+        ('2004-07-08 23:56:58.0', (2004, 7, 8, 23, 56, 58, 3, 190, 0)),  # with fractional second
     )
 }
 
+
 def make_date_test(f, s, t):
     return lambda self: self._check_date(f, s, t)
+
 
 for func, items in date_tests.items():
     for i, (dtstring, dttuple) in enumerate(items):
@@ -645,31 +700,35 @@ for func, items in date_tests.items():
         setattr(TestDateParsers, 'test_%s_%02i' % (func.__name__, i), uniqfunc)
 
 
+def make_html_guess_test(text, expect, doc):
+    def fn(self):
+        value = bool(feedparser.mixin._FeedParserMixin.looks_like_html(text))
+        self.assertEqual(value, expect)
+
+    fn.__doc__ = doc
+    return fn
+
+
 class TestHTMLGuessing(unittest.TestCase):
-    "Exercise the HTML sniffing code"
-    def _mktest(text, expect, doc):
-        def fn(self):
-            value = bool(feedparser.mixin._FeedParserMixin.looks_like_html(text))
-            self.assertEqual(value, expect)
-        fn.__doc__ = doc
-        return fn
+    """Exercise the HTML sniffing code"""
 
-    test_text_1 = _mktest('plain text', False, 'plain text')
-    test_text_2 = _mktest('2 < 3', False, 'plain text with angle bracket')
-    test_html_1 = _mktest('<a href="">a</a>', True, 'anchor tag')
-    test_html_2 = _mktest('<i>i</i>', True, 'italics tag')
-    test_html_3 = _mktest('<b>b</b>', True, 'bold tag')
-    test_html_4 = _mktest('<code>', False, 'allowed tag, no end tag')
-    test_html_5 = _mktest('<rss> .. </rss>', False, 'disallowed tag')
-    test_entity_1 = _mktest('AT&T', False, 'corporation name')
-    test_entity_2 = _mktest('&copy;', True, 'named entity reference')
-    test_entity_3 = _mktest('&#169;', True, 'numeric entity reference')
-    test_entity_4 = _mktest('&#xA9;', True, 'hex numeric entity reference')
+    test_text_1 = make_html_guess_test('plain text', False, 'plain text')
+    test_text_2 = make_html_guess_test('2 < 3', False, 'plain text with angle bracket')
+    test_html_1 = make_html_guess_test('<a href="">a</a>', True, 'anchor tag')
+    test_html_2 = make_html_guess_test('<i>i</i>', True, 'italics tag')
+    test_html_3 = make_html_guess_test('<b>b</b>', True, 'bold tag')
+    test_html_4 = make_html_guess_test('<code>', False, 'allowed tag, no end tag')
+    test_html_5 = make_html_guess_test('<rss> .. </rss>', False, 'disallowed tag')
+    test_entity_1 = make_html_guess_test('AT&T', False, 'corporation name')
+    test_entity_2 = make_html_guess_test('&copy;', True, 'named entity reference')
+    test_entity_3 = make_html_guess_test('&#169;', True, 'numeric entity reference')
+    test_entity_4 = make_html_guess_test('&#xA9;', True, 'hex numeric entity reference')
 
-#---------- additional api unit tests, not backed by files
+
+# ---------- additional api unit tests, not backed by files
 
 class TestBuildRequest(unittest.TestCase):
-    "Test that HTTP request objects are created as expected"
+    """Test that HTTP request objects are created as expected"""
     def test_extra_headers(self):
         """You can pass in extra headers and they go into the request object."""
 
@@ -710,6 +769,7 @@ class TestParseFlags(unittest.TestCase):
             </channel>
         </rss>
     """
+
     def test_sanitize_html_default(self):
         d = feedparser.parse(io.BytesIO(self.feed_xml))
         self.assertEqual(u'', d.entries[0].content[0].value)
@@ -740,10 +800,11 @@ class TestParseFlags(unittest.TestCase):
         self.assertEqual(u'<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
 
 
-#---------- parse test files and create test methods ----------
+# ---------- parse test files and create test methods ----------
+
 def convert_to_utf8(data):
-    "Identify data's encoding using its byte order mark" \
-    "and convert it to its utf-8 equivalent"
+    """Identify data's encoding using its byte order mark and convert it to its utf-8 equivalent"""
+
     if data[:4] == b'\x4c\x6f\xa7\x94':
         return data.decode('cp037').encode('utf-8')
     elif data[:4] == b'\x00\x00\xfe\xff':
@@ -767,9 +828,12 @@ def convert_to_utf8(data):
     # no byte order mark was found
     return data
 
+
 skip_re = re.compile(br"SkipUnless:\s*(.*?)\n")
 desc_re = re.compile(br"Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->")
-def getDescription(xmlfile, data):
+
+
+def get_description(xmlfile, data):
     """Extract test data
 
     Each test case is an XML file which contains not only a test feed
@@ -782,32 +846,34 @@ def getDescription(xmlfile, data):
     """
     skip_results = skip_re.search(data)
     if skip_results:
-        skipUnless = skip_results.group(1).strip()
+        skip_unless = skip_results.group(1).strip()
     else:
-        skipUnless = '1'
+        skip_unless = '1'
     search_results = desc_re.search(data)
     if not search_results:
         raise RuntimeError("can't parse %s" % xmlfile)
-    description, evalString = [s.strip() for s in list(search_results.groups())]
+    description, eval_string = [s.strip() for s in list(search_results.groups())]
     description = xmlfile + ": " + description.decode('utf8')
-    return description, evalString, skipUnless
+    return description, eval_string, skip_unless
 
-def buildTestCase(xmlfile, description, evalString):
-    func = lambda self, xmlfile=xmlfile, evalString=evalString: \
-         self.failUnlessEval(xmlfile, evalString)
-    func.__doc__ = description
-    return func
+
+def build_test_case(xmlfile, description, eval_string):
+    def fn(self, xmlfile=xmlfile, eval_string=eval_string):
+        self.fail_unless_eval(xmlfile, eval_string)
+
+    fn.__doc__ = description
+    return fn
+
 
 def runtests():
-    "Read the files in the tests/ directory, dynamically add tests to the " \
-    "TestCases above, spawn the HTTP server, and run the test suite"
+    """Read the files in the tests/ directory, dynamically add tests to the TestCases above, spawn the HTTP server, and run the test suite"""
+
     allfiles = glob.glob(os.path.join('.', 'tests', '**', '**', '*.xml'))
     wellformedfiles = glob.glob(os.path.join('.', 'tests', 'wellformed', '**', '*.xml'))
     illformedfiles = glob.glob(os.path.join('.', 'tests', 'illformed', '*.xml'))
     encodingfiles = glob.glob(os.path.join('.', 'tests', 'encoding', '*.xml'))
     entitiesfiles = glob.glob(os.path.join('.', 'tests', 'entities', '*.xml'))
 
-    httpd = None
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
     # and a few `_open_resource`-related tests
@@ -818,13 +884,13 @@ def runtests():
     httpcount += len([f for f in encodingfiles if 'http' in f])
 
     for c, xmlfile in enumerate(allfiles + encodingfiles + illformedfiles + entitiesfiles):
-        addTo = TestCase
+        add_to = TestCase
         if xmlfile in encodingfiles:
-            addTo = TestEncodings
+            add_to = TestEncodings
         elif xmlfile in entitiesfiles:
-            addTo = (TestStrictParser, TestLooseParser)
+            add_to = (TestStrictParser, TestLooseParser)
         elif xmlfile in wellformedfiles:
-            addTo = (TestStrictParser, TestLooseParser)
+            add_to = (TestStrictParser, TestLooseParser)
         f = open(xmlfile, 'rb')
         data = f.read()
         f.close()
@@ -836,24 +902,24 @@ def runtests():
                 if 'http' in xmlfile:
                     httpcount -= 1 + (xmlfile in wellformedfiles)
                 continue
-        description, evalString, skipUnless = getDescription(xmlfile, data)
-        testName = 'test_%06d' % c
-        ishttp = 'http' in xmlfile
+        description, eval_string, skip_unless = get_description(xmlfile, data)
+        test_name = 'test_%06d' % c
+        is_http = 'http' in xmlfile
         try:
-            if not eval(skipUnless):
+            if not eval(skip_unless):
                 raise NotImplementedError
         except (ImportError, LookupError, NotImplementedError, AttributeError):
-            if ishttp:
+            if is_http:
                 httpcount -= 1 + (xmlfile in wellformedfiles)
             continue
-        if ishttp:
+        if is_http:
             xmlfile = 'http://%s:%s/%s' % (_HOST, _PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
-        testFunc = buildTestCase(xmlfile, description, evalString)
-        if isinstance(addTo, tuple):
-            setattr(addTo[0], testName, testFunc)
-            setattr(addTo[1], testName, testFunc)
+        test_func = build_test_case(xmlfile, description, eval_string)
+        if isinstance(add_to, tuple):
+            setattr(add_to[0], test_name, test_func)
+            setattr(add_to[1], test_name, test_func)
         else:
-            setattr(addTo, testName, testFunc)
+            setattr(add_to, test_name, test_func)
     if httpcount:
         httpd = FeedParserTestServer(httpcount)
         httpd.daemon = True
@@ -881,6 +947,7 @@ def runtests():
 
     # Return 0 if successful, 1 if there was a failure
     sys.exit(not testresults.wasSuccessful())
+
 
 if __name__ == "__main__":
     runtests()
