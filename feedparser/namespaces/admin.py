@@ -1,12 +1,12 @@
 # Support for the administrative elements extension
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
 # This file is a part of feedparser.
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
 # * Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
@@ -26,9 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from ..util import FeedParserDict
+
 
 class Namespace(object):
     # RDF Site Summary 1.0 Modules: Administrative
@@ -38,18 +40,17 @@ class Namespace(object):
         'http://webns.net/mvcb/': 'admin',
     }
 
-    def _start_admin_generatoragent(self, attrsD):
+    def _start_admin_generatoragent(self, attrs_d):
         self.push('generator', 1)
-        value = self._get_attribute(attrsD, 'rdf:resource')
+        value = self._get_attribute(attrs_d, 'rdf:resource')
         if value:
             self.elementstack[-1][2].append(value)
         self.pop('generator')
         self._get_context()['generator_detail'] = FeedParserDict({'href': value})
 
-    def _start_admin_errorreportsto(self, attrsD):
+    def _start_admin_errorreportsto(self, attrs_d):
         self.push('errorreportsto', 1)
-        value = self._get_attribute(attrsD, 'rdf:resource')
+        value = self._get_attribute(attrs_d, 'rdf:resource')
         if value:
             self.elementstack[-1][2].append(value)
         self.pop('errorreportsto')
-

@@ -1,12 +1,12 @@
 # Support for the Creative Commons licensing extensions
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
 # This file is a part of feedparser.
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
 # * Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
@@ -26,9 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from ..util import FeedParserDict
+
 
 class Namespace(object):
     supported_namespaces = {
@@ -45,27 +47,26 @@ class Namespace(object):
         'http://backend.userland.com/creativeCommonsRssModule': 'creativecommons',
     }
 
-    def _start_cc_license(self, attrsD):
+    def _start_cc_license(self, attrs_d):
         context = self._get_context()
-        value = self._get_attribute(attrsD, 'rdf:resource')
-        attrsD = FeedParserDict()
-        attrsD['rel'] = 'license'
+        value = self._get_attribute(attrs_d, 'rdf:resource')
+        attrs_d = FeedParserDict()
+        attrs_d['rel'] = 'license'
         if value:
-            attrsD['href'] = value
-        context.setdefault('links', []).append(attrsD)
+            attrs_d['href'] = value
+        context.setdefault('links', []).append(attrs_d)
 
-    def _start_creativecommons_license(self, attrsD):
+    def _start_creativecommons_license(self, attrs_d):
         self.push('license', 1)
     _start_creativeCommons_license = _start_creativecommons_license
 
     def _end_creativecommons_license(self):
         value = self.pop('license')
         context = self._get_context()
-        attrsD = FeedParserDict()
-        attrsD['rel'] = 'license'
+        attrs_d = FeedParserDict()
+        attrs_d['rel'] = 'license'
         if value:
-            attrsD['href'] = value
-        context.setdefault('links', []).append(attrsD)
+            attrs_d['href'] = value
+        context.setdefault('links', []).append(attrs_d)
         del context['license']
     _end_creativeCommons_license = _end_creativecommons_license
-

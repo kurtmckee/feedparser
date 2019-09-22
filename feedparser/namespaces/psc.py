@@ -1,12 +1,12 @@
 # Support for the Podlove Simple Chapters format
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
 # This file is a part of feedparser.
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
 # * Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
@@ -26,12 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import datetime
 import re
 
 from .. import util
+
+
 class Namespace(object):
     supported_namespaces = {
         'http://podlove.org/simple-chapters': 'psc',
@@ -42,28 +45,30 @@ class Namespace(object):
         self.psc_chapters_flag = False
         super(Namespace, self).__init__()
 
-    def _start_psc_chapters(self, attrsD):
+    def _start_psc_chapters(self, attrs_d):
         context = self._get_context()
         if 'psc_chapters' not in context:
             self.psc_chapters_flag = True
-            attrsD['chapters'] = []
-            context['psc_chapters'] = util.FeedParserDict(attrsD)
+            attrs_d['chapters'] = []
+            context['psc_chapters'] = util.FeedParserDict(attrs_d)
 
     def _end_psc_chapters(self):
         self.psc_chapters_flag = False
 
-    def _start_psc_chapter(self, attrsD):
+    def _start_psc_chapter(self, attrs_d):
         if self.psc_chapters_flag:
-            start = self._get_attribute(attrsD, 'start')
-            attrsD['start_parsed'] = _parse_psc_chapter_start(start)
+            start = self._get_attribute(attrs_d, 'start')
+            attrs_d['start_parsed'] = _parse_psc_chapter_start(start)
 
             context = self._get_context()['psc_chapters']
-            context['chapters'].append(util.FeedParserDict(attrsD))
+            context['chapters'].append(util.FeedParserDict(attrs_d))
+
+
+format_ = re.compile(r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$')
+
 
 def _parse_psc_chapter_start(start):
-    FORMAT = r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$'
-
-    m = re.compile(FORMAT).match(start)
+    m = format_.match(start)
     if m is None:
         return None
 

@@ -1,12 +1,12 @@
 # Support for the iTunes format
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
 # This file is a part of feedparser.
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
 # * Redistributions of source code must retain the above copyright notice,
 #   this list of conditions and the following disclaimer.
@@ -26,9 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 from ..util import FeedParserDict
+
 
 class Namespace(object):
     supported_namespaces = {
@@ -39,8 +41,8 @@ class Namespace(object):
         'http://example.com/DTDs/PodCast-1.0.dtd': 'itunes',
     }
 
-    def _start_itunes_author(self, attrsD):
-        self._start_author(attrsD)
+    def _start_itunes_author(self, attrs_d):
+        self._start_author(attrs_d)
 
     def _end_itunes_author(self):
         self._end_author()
@@ -48,31 +50,31 @@ class Namespace(object):
     def _end_itunes_category(self):
         self._end_category()
 
-    def _start_itunes_name(self, attrsD):
-        self._start_name(attrsD)
+    def _start_itunes_name(self, attrs_d):
+        self._start_name(attrs_d)
 
     def _end_itunes_name(self):
         self._end_name()
 
-    def _start_itunes_email(self, attrsD):
-        self._start_email(attrsD)
+    def _start_itunes_email(self, attrs_d):
+        self._start_email(attrs_d)
 
     def _end_itunes_email(self):
         self._end_email()
 
-    def _start_itunes_subtitle(self, attrsD):
-        self._start_subtitle(attrsD)
+    def _start_itunes_subtitle(self, attrs_d):
+        self._start_subtitle(attrs_d)
 
     def _end_itunes_subtitle(self):
         self._end_subtitle()
 
-    def _start_itunes_summary(self, attrsD):
-        self._start_summary(attrsD)
+    def _start_itunes_summary(self, attrs_d):
+        self._start_summary(attrs_d)
 
     def _end_itunes_summary(self):
         self._end_summary()
 
-    def _start_itunes_owner(self, attrsD):
+    def _start_itunes_owner(self, attrs_d):
         self.inpublisher = 1
         self.push('publisher', 0)
 
@@ -86,16 +88,16 @@ class Namespace(object):
             if term.strip():
                 self._add_tag(term.strip(), 'http://www.itunes.com/', None)
 
-    def _start_itunes_category(self, attrsD):
-        self._add_tag(attrsD.get('text'), 'http://www.itunes.com/', None)
+    def _start_itunes_category(self, attrs_d):
+        self._add_tag(attrs_d.get('text'), 'http://www.itunes.com/', None)
         self.push('category', 1)
 
-    def _start_itunes_image(self, attrsD):
+    def _start_itunes_image(self, attrs_d):
         self.push('itunes_image', 0)
-        if attrsD.get('href'):
-            self._get_context()['image'] = FeedParserDict({'href': attrsD.get('href')})
-        elif attrsD.get('url'):
-            self._get_context()['image'] = FeedParserDict({'href': attrsD.get('url')})
+        if attrs_d.get('href'):
+            self._get_context()['image'] = FeedParserDict({'href': attrs_d.get('href')})
+        elif attrs_d.get('url'):
+            self._get_context()['image'] = FeedParserDict({'href': attrs_d.get('url')})
     _start_itunes_link = _start_itunes_image
 
     def _end_itunes_block(self):
@@ -108,4 +110,3 @@ class Namespace(object):
         # False and None both evaluate as False, so the difference can be ignored
         # by applications that only need to know if the content is explicit.
         self._get_context()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
-
