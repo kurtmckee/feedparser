@@ -60,7 +60,7 @@ from .parsers.loose import _LooseFeedParser
 from .parsers.strict import _StrictFeedParser
 from .sanitizer import replace_doctype
 from .sgml import *
-from .urls import _convert_to_idn, _makeSafeAbsoluteURI
+from .urls import convert_to_idn, make_safe_absolute_uri
 from .util import FeedParserDict
 
 bytes_ = type(b'')
@@ -254,7 +254,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
     contentloc = result['headers'].get('content-location', '')
     href = result.get('href', '')
-    baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
+    baseuri = make_safe_absolute_uri(href, contentloc) or make_safe_absolute_uri(contentloc) or href
 
     baselang = result['headers'].get('content-language', None)
     if isinstance(baselang, bytes_) and baselang is not None:

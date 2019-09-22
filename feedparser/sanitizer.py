@@ -32,7 +32,7 @@ import re
 
 from .html import _BaseHTMLProcessor
 from .sgml import _SGML_AVAILABLE
-from .urls import _makeSafeAbsoluteURI
+from .urls import make_safe_absolute_uri
 
 
 class _HTMLSanitizer(_BaseHTMLProcessor):
@@ -802,7 +802,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                 key = keymap.get(key, key)
                 # make sure the uri uses an acceptable uri scheme
                 if key == 'href':
-                    value = _makeSafeAbsoluteURI(value)
+                    value = make_safe_absolute_uri(value)
                 clean_attrs.append((key, value))
             elif key == 'style':
                 clean_value = self.sanitize_style(value)

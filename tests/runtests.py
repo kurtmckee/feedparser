@@ -414,7 +414,7 @@ class TestOpenResource(unittest.TestCase):
 
 def make_safe_uri_test(rel, expect, doc):
     def fn(self):
-        value = feedparser.urls._makeSafeAbsoluteURI(self.base, rel)
+        value = feedparser.urls.make_safe_absolute_uri(self.base, rel)
         self.assertEqual(value, expect)
 
     fn.__doc__ = doc
@@ -436,11 +436,11 @@ class TestMakeSafeAbsoluteURI(unittest.TestCase):
     def test_catch_ValueError(self):
         """catch ValueError in Python 2.7 and up"""
         uri = 'http://bad]test/'
-        value1 = feedparser.urls._makeSafeAbsoluteURI(uri)
-        value2 = feedparser.urls._makeSafeAbsoluteURI(self.base, uri)
+        value1 = feedparser.urls.make_safe_absolute_uri(uri)
+        value2 = feedparser.urls.make_safe_absolute_uri(self.base, uri)
         swap = feedparser.urls.ACCEPTABLE_URI_SCHEMES
         feedparser.urls.ACCEPTABLE_URI_SCHEMES = ()
-        value3 = feedparser.urls._makeSafeAbsoluteURI(self.base, uri)
+        value3 = feedparser.urls.make_safe_absolute_uri(self.base, uri)
         feedparser.urls.ACCEPTABLE_URI_SCHEMES = swap
         # Only Python 2.7 and up throw a ValueError, otherwise uri is returned
         self.assertTrue(value1 in (uri, ''))
@@ -455,15 +455,15 @@ class TestConvertToIdn(unittest.TestCase):
     hostname += '.\u03b4\u03bf\u03ba\u03b9\u03bc\u03ae'
 
     def test_control(self):
-        r = feedparser.urls._convert_to_idn('http://example.test/')
+        r = feedparser.urls.convert_to_idn('http://example.test/')
         self.assertEqual(r, 'http://example.test/')
 
     def test_idn(self):
-        r = feedparser.urls._convert_to_idn('http://%s/' % (self.hostname,))
+        r = feedparser.urls.convert_to_idn('http://%s/' % (self.hostname,))
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp/')
 
     def test_port(self):
-        r = feedparser.urls._convert_to_idn('http://%s:8080/' % (self.hostname,))
+        r = feedparser.urls.convert_to_idn('http://%s:8080/' % (self.hostname,))
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
 
 

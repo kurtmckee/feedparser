@@ -31,7 +31,7 @@ from __future__ import absolute_import, unicode_literals
 import copy
 
 from ..datetimes import registerDateHandler, _parse_date
-from ..urls import _makeSafeAbsoluteURI
+from ..urls import make_safe_absolute_uri
 from ..util import FeedParserDict
 
 class Namespace(object):
@@ -496,4 +496,4 @@ class Namespace(object):
         # don't set newlocation if the context isn't right
         if context is not self.feeddata:
             return
-        context['newlocation'] = _makeSafeAbsoluteURI(self.baseuri, url.strip())
+        context['newlocation'] = make_safe_absolute_uri(self.baseuri, url.strip())

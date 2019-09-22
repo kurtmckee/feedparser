@@ -69,7 +69,7 @@ except ImportError:
 import base64
 
 from .datetimes import _parse_date
-from .urls import _convert_to_idn
+from .urls import convert_to_idn
 
 # Python 3.1 deprecated decodestring in favor of decodebytes.
 # This can be removed after Python 2.7 support is dropped.
@@ -191,7 +191,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
 
     # iri support
     if not isinstance(url, bytes_):
-        url = _convert_to_idn(url)
+        url = convert_to_idn(url)
 
     # try to open with urllib2 (to use optional headers)
     request = _build_urllib2_request(url, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)

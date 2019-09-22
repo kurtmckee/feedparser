@@ -45,7 +45,7 @@ from .html import _cp1252
 from .namespaces import _base, cc, dc, georss, itunes, mediarss, psc
 from .sanitizer import _sanitize_html, _HTMLSanitizer
 from .util import FeedParserDict
-from .urls import _urljoin, _makeSafeAbsoluteURI, _resolveRelativeURIs
+from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
 
 
 # Python 2.7 only offers "decodestring()".
@@ -247,7 +247,7 @@ class _FeedParserMixin(
         # ensure that self.baseuri is always an absolute URI that
         # uses a whitelisted URI scheme (e.g. not `javscript:`)
         if self.baseuri:
-            self.baseuri = _makeSafeAbsoluteURI(self.baseuri, baseuri) or self.baseuri
+            self.baseuri = make_safe_absolute_uri(self.baseuri, baseuri) or self.baseuri
         else:
             self.baseuri = _urljoin(self.baseuri, baseuri)
         lang = attrs_d.get('xml:lang', attrs_d.get('lang'))
@@ -568,7 +568,7 @@ class _FeedParserMixin(
         # resolve relative URIs within embedded markup
         if is_htmlish and self.resolve_relative_uris:
             if element in self.can_contain_relative_uris:
-                output = _resolveRelativeURIs(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
+                output = resolve_relative_uris(output, self.baseuri, self.encoding, self.contentparams.get('type', 'text/html'))
 
         # sanitize embedded markup
         if is_htmlish and self.sanitize_html:
