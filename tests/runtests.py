@@ -56,6 +56,7 @@ except ImportError:
 import feedparser
 import feedparser.api
 import feedparser.datetimes
+import feedparser.http
 import feedparser.mixin
 import feedparser.urls
 import feedparser.util
@@ -732,10 +733,10 @@ class TestBuildRequest(unittest.TestCase):
     def test_extra_headers(self):
         """You can pass in extra headers and they go into the request object."""
 
-        request = feedparser._build_urllib2_request(
+        request = feedparser.http._build_urllib2_request(
           'http://example.com/feed',
           'agent-name',
-          None, None, None, None,
+          None, None, None, None, None,
           {'Cache-Control': 'max-age=0'})
         # nb, urllib2 folds the case of the headers
         self.assertEqual(
@@ -943,6 +944,7 @@ def runtests():
     testsuite.addTest(testloader.loadTestsFromTestCase(TestTemporaryFallbackBehavior))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestLxmlBug))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestParseFlags))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestBuildRequest))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
