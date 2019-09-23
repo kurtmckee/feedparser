@@ -29,7 +29,7 @@ from setuptools import setup
 
 setup(
     name='feedparser',
-    version='5.2.1',
+    version='6.0.0b1',
     description='Universal feed parser, handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
     author='Kurt McKee',
     author_email='contactme@kurtmckee.org',
