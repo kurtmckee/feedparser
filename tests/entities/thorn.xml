@@ -1,0 +1,9 @@
+<!--
+Description: thorn
+Expect:      feed['title'] == 'testing \xfe entity'
+-->
+<rss>
+<channel>
+<title>testing &thorn; entity</title>
+</channel>
+</rss>

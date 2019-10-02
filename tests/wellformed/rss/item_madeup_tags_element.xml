@@ -1,0 +1,8 @@
+<!--
+Description: item madeup tags element
+Expect:      not bozo and entries[0]['tags'][0]['term'] == 'tag one' and entries[0]['tags'][1]['term'] == 'tag two' and entries[0]['tags'][2]['term'] == 'category one'
+-->
+<rss><channel><item>
+  <tags>tag one, tag two</tags>
+  <category>category one</category>
+</item></channel></rss>

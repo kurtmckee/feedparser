@@ -6,7 +6,8 @@ Date Parsing
 Different feed types and versions use wildly different date formats.
 :program:`Universal Feed Parser` will attempt to auto-detect the date format
 used in any date element, and parse it into a standard :program:`Python`
-9-tuple, as documented in `the Python time module <http://docs.python.org/lib/module-time.html>`_.
+9-tuple in UTC, as documented in
+`the Python time module <http://docs.python.org/lib/module-time.html>`_.
 
 The following elements are parsed as dates:
 

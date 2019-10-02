@@ -1,0 +1,9 @@
+<!--
+Description: ocirc
+Expect:      feed['title'] == 'testing \xf4 entity'
+-->
+<rss>
+<channel>
+<title>testing &ocirc; entity</title>
+</channel>
+</rss>

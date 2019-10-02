@@ -1,3 +1,19 @@
+coming in the next release:
+    * Support Python 3.5, 3.6, and 3.7
+    * Drop support for Python 2.4 through 2.6, and Python 3.0 through 3.4 (#169)
+    * Convert feedparser from a monolithic file to a package
+    * ``feedparser.parse(sanitize_html=bool)`` argument replaces the ``feedparser.SANITIZE_HTML`` global
+    * ``feedparser.parse(resolve_relative_uris=bool)`` replaces the ``feedparser.RESOLVE_RELATIVE_URIS`` global
+    * Unify the codebase so that 2to3 conversion is no longer required
+    * Remove references to iconv_codecs
+    * Update the Creative Commons namespace URI's
+    * Update the default User-Agent name and URL
+    * Support Middle European (Summer) Time timezones (#20)
+    * Pass ``data`` to ``lazy_chardet_encoding()`` (#50)
+    * Document that datetimes are returned in UTC (#51)
+    * Remove cjkpython references in the documentation (#57)
+    * Resolve ResourceWarnings thrown during unit tests (#170)
+
 5.2.1 - July 23, 2015
     * Fix #22 (pip package keeps upgrading all the time)
 
@@ -288,7 +304,7 @@
 
 3.0b15 - 2/11/2004 - MAP - fixed bug resolving relative links in wfw:commentRSS;
   fixed bug capturing author and contributor URL; fixed bug resolving relative
-  links in author and contributor URL; fixed bug resolvin relative links in
+  links in author and contributor URL; fixed bug resolving relative links in
   generator URL; added support for recognizing RSS 1.0; passed Simon Fell's
   namespace tests, and included them permanently in the test suite with his
   permission; fixed namespace handling under Python 2.1

@@ -1,0 +1,9 @@
+<!--
+Description: psi
+Expect:      feed['title'] == 'testing \u03c8 entity'
+-->
+<rss>
+<channel>
+<title>testing &psi; entity</title>
+</channel>
+</rss>

@@ -1,0 +1,9 @@
+<!--
+Description: kappa
+Expect:      feed['title'] == 'testing \u03ba entity'
+-->
+<rss>
+<channel>
+<title>testing &kappa; entity</title>
+</channel>
+</rss>

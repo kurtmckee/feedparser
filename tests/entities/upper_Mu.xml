@@ -1,0 +1,9 @@
+<!--
+Description: Mu
+Expect:      feed['title'] == 'testing \u039c entity'
+-->
+<rss>
+<channel>
+<title>testing &Mu; entity</title>
+</channel>
+</rss>
