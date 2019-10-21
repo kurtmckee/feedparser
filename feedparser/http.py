@@ -121,7 +121,8 @@ class _FeedURLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPR
         host = urllib.parse.urlparse(req.get_full_url())[1]
         if 'Authorization' not in req.headers or 'WWW-Authenticate' not in headers:
             return self.http_error_default(req, fp, code, msg, headers)
-        auth = _base64decode(req.headers['Authorization'].split(' ')[1])
+        auth_header = req.headers['Authorization'].split(' ')[1]
+        auth = str(_base64decode(auth_header.encode('utf-8')), 'utf-8')
         user, passw = auth.split(':')
         realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
         self.add_password(realm, host, user, passw)
@@ -187,7 +188,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
             user_passwd, realhost = urllib.parse.splituser(realhost)
             if user_passwd:
                 url = '%s://%s%s' % (urltype, realhost, rest)
-                auth = base64.standard_b64encode(user_passwd).strip()
+                auth = str(base64.standard_b64encode(user_passwd.encode('utf-8')), 'utf-8').strip()
 
     # iri support
     if not isinstance(url, bytes_):
