@@ -15,8 +15,6 @@ feedparser can be installed by running pip:
 
     $ pip install feedparser
 
-Note: sgmllib3k is a Python 3 dependency. It will be installed automatically.
-
 
 Documentation
 =============

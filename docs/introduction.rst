@@ -12,7 +12,7 @@ popular extension modules, including Dublin Core and Apple's :program:`iTunes`
 extensions.
 
 To use :program:`Universal Feed Parser`, you will need :program:`Python` 3.5 or
-later (Python 2.7 is supported until January 2020).  :program:`Universal Feed Parser` is not meant
+later. :program:`Universal Feed Parser` is not meant
 to run standalone; it is a module for you to use as part of a larger
 :program:`Python` program.
 
