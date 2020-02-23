@@ -9,9 +9,11 @@ feedparser is open source. See the LICENSE file for more information.
 Installation
 ============
 
-Feedparser can be installed using distutils or setuptools by running::
+feedparser can be installed by running pip:
 
-    $ python setup.py install
+..  code-block:: shell
+
+    $ pip install feedparser
 
 Note: sgmllib3k is a Python 3 dependency. It will be installed automatically.
 
@@ -23,23 +25,29 @@ The feedparser documentation is available on the web at:
 
     https://pythonhosted.org/feedparser/
 
-It is also included in its source format, ReST, in the docs/ directory. To
-build the documentation you'll need the Sphinx package, which is available at:
+It is also included in its source format, ReST, in the ``docs/`` directory.
+To build the documentation you'll need the Sphinx package, which is available at:
 
-    http://sphinx.pocoo.org/
+    https://www.sphinx-doc.org/
 
-You can then build HTML pages using a command similar to::
+You can then build HTML pages using a command similar to:
+
+..  code-block:: shell
 
     $ sphinx-build -b html docs/ fpdocs
 
-This will produce HTML documentation in the fpdocs/ directory.
+This will produce HTML documentation in the ``fpdocs/`` directory.
 
 
 Testing
 =======
 
-Feedparser has an extensive test suite, powered by tox. To run it, type this::
+Feedparser has an extensive test suite, powered by tox. To run it, type this:
 
+..  code-block:: shell
+
+    $ python -m venv venv
+    $ source venv/bin/activate  # or "venv\bin\activate.bat" on Windows
     $ tox
 
 This will spawn an HTTP server that will listen on port 8097. The tests will
