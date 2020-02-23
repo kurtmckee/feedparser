@@ -4,4 +4,6 @@ dist/
 env/
 feedparser.egg-info/
 .idea/
-fpdocs
+fpdocs/
+venv/
+
