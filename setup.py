@@ -27,11 +27,16 @@
 
 from setuptools import setup
 
+with open('README.rst', 'r') as f:
+    long_description = f.read()
+
 setup(
     name='feedparser',
     version='6.0.0b2',
     license='BSD-2-Clause',
     description='Universal feed parser, handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
     author='Kurt McKee',
     author_email='contactme@kurtmckee.org',
     url='https://github.com/kurtmckee/feedparser',
