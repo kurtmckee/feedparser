@@ -4,8 +4,8 @@ import sys
 # project information
 project = u'feedparser'
 copyright = u'2010-2020 Kurt McKee, 2004-2008 Mark Pilgrim'
-version = u'6.0.0b1'
-release = u'6.0.0b1'
+version = u'6.0.0b2'
+release = u'6.0.0b2'
 language = u'en'
 
 # documentation options
