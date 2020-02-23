@@ -6,4 +6,5 @@ feedparser.egg-info/
 .idea/
 fpdocs/
 venv/
-
+build/
+*.egg-info/
