@@ -37,7 +37,7 @@ from .. import util
 
 class Namespace(object):
     supported_namespaces = {
-        'http://podlove.org/simple-chapters': 'psc',
+        "http://podlove.org/simple-chapters": "psc",
     }
 
     def __init__(self):
@@ -47,24 +47,24 @@ class Namespace(object):
 
     def _start_psc_chapters(self, attrs_d):
         context = self._get_context()
-        if 'psc_chapters' not in context:
+        if "psc_chapters" not in context:
             self.psc_chapters_flag = True
-            attrs_d['chapters'] = []
-            context['psc_chapters'] = util.FeedParserDict(attrs_d)
+            attrs_d["chapters"] = []
+            context["psc_chapters"] = util.FeedParserDict(attrs_d)
 
     def _end_psc_chapters(self):
         self.psc_chapters_flag = False
 
     def _start_psc_chapter(self, attrs_d):
         if self.psc_chapters_flag:
-            start = self._get_attribute(attrs_d, 'start')
-            attrs_d['start_parsed'] = _parse_psc_chapter_start(start)
+            start = self._get_attribute(attrs_d, "start")
+            attrs_d["start_parsed"] = _parse_psc_chapter_start(start)
 
-            context = self._get_context()['psc_chapters']
-            context['chapters'].append(util.FeedParserDict(attrs_d))
+            context = self._get_context()["psc_chapters"]
+            context["chapters"].append(util.FeedParserDict(attrs_d))
 
 
-format_ = re.compile(r'^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$')
+format_ = re.compile(r"^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$")
 
 
 def _parse_psc_chapter_start(start):
@@ -74,4 +74,4 @@ def _parse_psc_chapter_start(start):
 
     _, h, m, s, _, ms = m.groups()
     h, m, s, ms = (int(h or 0), int(m), int(s), int(ms or 0))
-    return datetime.timedelta(0, h*60*60 + m*60 + s, ms*1000)
+    return datetime.timedelta(0, h * 60 * 60 + m * 60 + s, ms * 1000)

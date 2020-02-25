@@ -30,18 +30,18 @@ from __future__ import absolute_import
 import re
 
 __all__ = [
-    '_SGML_AVAILABLE',
-    'sgmllib',
-    'charref',
-    'tagfind',
-    'attrfind',
-    'entityref',
-    'incomplete',
-    'interesting',
-    'shorttag',
-    'shorttagopen',
-    'starttagopen',
-    'endbracket',
+    "_SGML_AVAILABLE",
+    "sgmllib",
+    "charref",
+    "tagfind",
+    "attrfind",
+    "entityref",
+    "incomplete",
+    "interesting",
+    "shorttag",
+    "shorttagopen",
+    "starttagopen",
+    "endbracket",
 ]
 
 # sgmllib is not available by default in Python 3; if the end user doesn't have
@@ -78,6 +78,7 @@ except ImportError:
             def reset(self):
                 pass
 
+
 else:
     _SGML_AVAILABLE = 1
 
@@ -87,8 +88,8 @@ else:
     # names, and the compiled code objects of several sgmllib.SGMLParser
     # methods are copied into _BaseHTMLProcessor so that they execute in
     # feedparser's scope instead of sgmllib's scope.
-    charref = re.compile(r'&#(\d+|[xX][0-9a-fA-F]+);')
-    tagfind = re.compile(r'[a-zA-Z][-_.:a-zA-Z0-9]*')
+    charref = re.compile(r"&#(\d+|[xX][0-9a-fA-F]+);")
+    tagfind = re.compile(r"[a-zA-Z][-_.:a-zA-Z0-9]*")
     attrfind = re.compile(
         r"""\s*([a-zA-Z_][-:.a-zA-Z_0-9]*)[$]?(\s*=\s*"""
         r"""('[^']*'|"[^"]*"|[][\-a-zA-Z0-9./,:;+*%?!&$()_#=~'"@]*))?"""
@@ -102,18 +103,17 @@ else:
     shorttagopen = sgmllib.shorttagopen
     starttagopen = sgmllib.starttagopen
 
-
     class _EndBracketRegEx:
         def __init__(self):
             # Overriding the built-in sgmllib.endbracket regex allows the
             # parser to find angle brackets embedded in element attributes.
             self.endbracket = re.compile(
-                r'('
+                r"("
                 r"""[^'"<>]"""
                 r"""|"[^"]*"(?=>|/|\s|\w+=)"""
                 r"""|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])"""
                 r"""|.*?(?=[<>]"""
-                r')'
+                r")"
             )
 
         def search(self, target, index=0):
@@ -124,13 +124,11 @@ else:
                 return EndBracketMatch(match)
             return None
 
-
     class EndBracketMatch:
         def __init__(self, match):
             self.match = match
 
         def start(self, n):
             return self.match.end(n)
-
 
     endbracket = _EndBracketRegEx()

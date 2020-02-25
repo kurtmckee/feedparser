@@ -33,22 +33,22 @@ import warnings
 
 class FeedParserDict(dict):
     keymap = {
-        'channel': 'feed',
-        'items': 'entries',
-        'guid': 'id',
-        'date': 'updated',
-        'date_parsed': 'updated_parsed',
-        'description': ['summary', 'subtitle'],
-        'description_detail': ['summary_detail', 'subtitle_detail'],
-        'url': ['href'],
-        'modified': 'updated',
-        'modified_parsed': 'updated_parsed',
-        'issued': 'published',
-        'issued_parsed': 'published_parsed',
-        'copyright': 'rights',
-        'copyright_detail': 'rights_detail',
-        'tagline': 'subtitle',
-        'tagline_detail': 'subtitle_detail',
+        "channel": "feed",
+        "items": "entries",
+        "guid": "id",
+        "date": "updated",
+        "date_parsed": "updated_parsed",
+        "description": ["summary", "subtitle"],
+        "description_detail": ["summary_detail", "subtitle_detail"],
+        "url": ["href"],
+        "modified": "updated",
+        "modified_parsed": "updated_parsed",
+        "issued": "published",
+        "issued_parsed": "published_parsed",
+        "copyright": "rights",
+        "copyright_detail": "rights_detail",
+        "tagline": "subtitle",
+        "tagline_detail": "subtitle_detail",
     }
 
     def __getitem__(self, key):
@@ -56,29 +56,30 @@ class FeedParserDict(dict):
         :return: A :class:`FeedParserDict`.
         """
 
-        if key == 'category':
+        if key == "category":
             try:
-                return dict.__getitem__(self, 'tags')[0]['term']
+                return dict.__getitem__(self, "tags")[0]["term"]
             except IndexError:
                 raise KeyError("object doesn't have key 'category'")
-        elif key == 'enclosures':
-            norel = lambda link: FeedParserDict([(name, value) for (name, value) in link.items() if name != 'rel'])
+        elif key == "enclosures":
+            norel = lambda link: FeedParserDict(
+                [(name, value) for (name, value) in link.items() if name != "rel"]
+            )
             return [
                 norel(link)
-                for link in dict.__getitem__(self, 'links')
-                if link['rel'] == 'enclosure'
+                for link in dict.__getitem__(self, "links")
+                if link["rel"] == "enclosure"
             ]
-        elif key == 'license':
-            for link in dict.__getitem__(self, 'links'):
-                if link['rel'] == 'license' and 'href' in link:
-                    return link['href']
-        elif key == 'updated':
+        elif key == "license":
+            for link in dict.__getitem__(self, "links"):
+                if link["rel"] == "license" and "href" in link:
+                    return link["href"]
+        elif key == "updated":
             # Temporarily help developers out by keeping the old
             # broken behavior that was reported in issue 310.
             # This fix was proposed in issue 328.
-            if (
-                    not dict.__contains__(self, 'updated')
-                    and dict.__contains__(self, 'published')
+            if not dict.__contains__(self, "updated") and dict.__contains__(
+                self, "published"
             ):
                 warnings.warn(
                     "To avoid breaking existing software while "
@@ -88,12 +89,11 @@ class FeedParserDict(dict):
                     "of feedparser.",
                     DeprecationWarning,
                 )
-                return dict.__getitem__(self, 'published')
-            return dict.__getitem__(self, 'updated')
-        elif key == 'updated_parsed':
-            if (
-                    not dict.__contains__(self, 'updated_parsed')
-                    and dict.__contains__(self, 'published_parsed')
+                return dict.__getitem__(self, "published")
+            return dict.__getitem__(self, "updated")
+        elif key == "updated_parsed":
+            if not dict.__contains__(self, "updated_parsed") and dict.__contains__(
+                self, "published_parsed"
             ):
                 warnings.warn(
                     "To avoid breaking existing software while "
@@ -103,8 +103,8 @@ class FeedParserDict(dict):
                     "removed in a future version of feedparser.",
                     DeprecationWarning,
                 )
-                return dict.__getitem__(self, 'published_parsed')
-            return dict.__getitem__(self, 'updated_parsed')
+                return dict.__getitem__(self, "published_parsed")
+            return dict.__getitem__(self, "updated_parsed")
         else:
             realkey = self.keymap.get(key, key)
             if isinstance(realkey, list):
@@ -116,7 +116,7 @@ class FeedParserDict(dict):
         return dict.__getitem__(self, key)
 
     def __contains__(self, key):
-        if key in ('updated', 'updated_parsed'):
+        if key in ("updated", "updated_parsed"):
             # Temporarily help developers out by keeping the old
             # broken behavior that was reported in issue 310.
             # This fix was proposed in issue 328.

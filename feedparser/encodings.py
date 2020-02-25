@@ -42,13 +42,15 @@ except ImportError:
     chardet = None
     lazy_chardet_encoding = None
 else:
+
     def lazy_chardet_encoding(data):
-        chardet_encoding = chardet.detect(data)['encoding']
+        chardet_encoding = chardet.detect(data)["encoding"]
         if not chardet_encoding:
-            chardet_encoding = ''
+            chardet_encoding = ""
         if isinstance(chardet_encoding, bytes_):
-            chardet_encoding = chardet_encoding.encode('ascii', 'ignore')
+            chardet_encoding = chardet_encoding.encode("ascii", "ignore")
         return chardet_encoding
+
 
 from .exceptions import (
     CharacterEncodingOverride,
@@ -56,22 +58,22 @@ from .exceptions import (
     NonXMLContentType,
 )
 
-bytes_ = type(b'')
-unicode_ = type('')
+bytes_ = type(b"")
+unicode_ = type("")
 
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
-EBCDIC_MARKER = b'\x4C\x6F\xA7\x94'
-UTF16BE_MARKER = b'\x00\x3C\x00\x3F'
-UTF16LE_MARKER = b'\x3C\x00\x3F\x00'
-UTF32BE_MARKER = b'\x00\x00\x00\x3C'
-UTF32LE_MARKER = b'\x3C\x00\x00\x00'
+EBCDIC_MARKER = b"\x4C\x6F\xA7\x94"
+UTF16BE_MARKER = b"\x00\x3C\x00\x3F"
+UTF16LE_MARKER = b"\x3C\x00\x3F\x00"
+UTF32BE_MARKER = b"\x00\x00\x00\x3C"
+UTF32LE_MARKER = b"\x3C\x00\x00\x00"
 
-ZERO_BYTES = '\x00\x00'
+ZERO_BYTES = "\x00\x00"
 
 # Match the opening XML declaration.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_DECLARATION = re.compile(r'^<\?xml[^>]*?>')
+RE_XML_DECLARATION = re.compile(r"^<\?xml[^>]*?>")
 
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>
@@ -125,8 +127,8 @@ def convert_to_utf8(http_headers, data, result):
     # you should definitely install it if you can.
     # http://cjkpython.i18n.org/
 
-    bom_encoding = ''
-    xml_encoding = ''
+    bom_encoding = ""
+    xml_encoding = ""
 
     # Look at the first few bytes of the document to guess what
     # its encoding may be. We only need to decode enough of the
@@ -136,36 +138,36 @@ def convert_to_utf8(http_headers, data, result):
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
     # Check for BOMs first.
     if data[:4] == codecs.BOM_UTF32_BE:
-        bom_encoding = 'utf-32be'
+        bom_encoding = "utf-32be"
         data = data[4:]
     elif data[:4] == codecs.BOM_UTF32_LE:
-        bom_encoding = 'utf-32le'
+        bom_encoding = "utf-32le"
         data = data[4:]
     elif data[:2] == codecs.BOM_UTF16_BE and data[2:4] != ZERO_BYTES:
-        bom_encoding = 'utf-16be'
+        bom_encoding = "utf-16be"
         data = data[2:]
     elif data[:2] == codecs.BOM_UTF16_LE and data[2:4] != ZERO_BYTES:
-        bom_encoding = 'utf-16le'
+        bom_encoding = "utf-16le"
         data = data[2:]
     elif data[:3] == codecs.BOM_UTF8:
-        bom_encoding = 'utf-8'
+        bom_encoding = "utf-8"
         data = data[3:]
     # Check for the characters '<?xm' in several encodings.
     elif data[:4] == EBCDIC_MARKER:
-        bom_encoding = 'cp037'
+        bom_encoding = "cp037"
     elif data[:4] == UTF16BE_MARKER:
-        bom_encoding = 'utf-16be'
+        bom_encoding = "utf-16be"
     elif data[:4] == UTF16LE_MARKER:
-        bom_encoding = 'utf-16le'
+        bom_encoding = "utf-16le"
     elif data[:4] == UTF32BE_MARKER:
-        bom_encoding = 'utf-32be'
+        bom_encoding = "utf-32be"
     elif data[:4] == UTF32LE_MARKER:
-        bom_encoding = 'utf-32le'
+        bom_encoding = "utf-32le"
 
     tempdata = data
     try:
         if bom_encoding:
-            tempdata = data.decode(bom_encoding).encode('utf-8')
+            tempdata = data.decode(bom_encoding).encode("utf-8")
     except (UnicodeDecodeError, LookupError):
         # feedparser recognizes UTF-32 encodings that aren't
         # available in Python 2.4 and 2.5, so it's possible to
@@ -175,14 +177,27 @@ def convert_to_utf8(http_headers, data, result):
         xml_encoding_match = RE_XML_PI_ENCODING.match(tempdata)
 
     if xml_encoding_match:
-        xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
+        xml_encoding = xml_encoding_match.groups()[0].decode("utf-8").lower()
         # Normalize the xml_encoding if necessary.
-        if bom_encoding and (xml_encoding in (
-            'u16', 'utf-16', 'utf16', 'utf_16',
-            'u32', 'utf-32', 'utf32', 'utf_32',
-            'iso-10646-ucs-2', 'iso-10646-ucs-4',
-            'csucs4', 'csunicode', 'ucs-2', 'ucs-4'
-        )):
+        if bom_encoding and (
+            xml_encoding
+            in (
+                "u16",
+                "utf-16",
+                "utf16",
+                "utf_16",
+                "u32",
+                "utf-32",
+                "utf32",
+                "utf_32",
+                "iso-10646-ucs-2",
+                "iso-10646-ucs-4",
+                "csucs4",
+                "csunicode",
+                "ucs-2",
+                "ucs-4",
+            )
+        ):
             xml_encoding = bom_encoding
 
     # Find the HTTP Content-Type and, hopefully, a character
@@ -190,46 +205,42 @@ def convert_to_utf8(http_headers, data, result):
     # to choose the "correct" encoding among the BOM encoding,
     # XML declaration encoding, and HTTP encoding, following the
     # heuristic defined in RFC 3023.
-    http_content_type = http_headers.get('content-type') or ''
+    http_content_type = http_headers.get("content-type") or ""
     http_content_type, params = cgi.parse_header(http_content_type)
-    http_encoding = params.get('charset', '').replace("'", "")
+    http_encoding = params.get("charset", "").replace("'", "")
     if isinstance(http_encoding, bytes_):
-        http_encoding = http_encoding.decode('utf-8', 'ignore')
+        http_encoding = http_encoding.decode("utf-8", "ignore")
 
     acceptable_content_type = 0
-    application_content_types = ('application/xml', 'application/xml-dtd',
-                                 'application/xml-external-parsed-entity')
-    text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
-    if (
-            http_content_type in application_content_types
-            or (
-                    http_content_type.startswith('application/')
-                    and http_content_type.endswith('+xml')
-            )
+    application_content_types = (
+        "application/xml",
+        "application/xml-dtd",
+        "application/xml-external-parsed-entity",
+    )
+    text_content_types = ("text/xml", "text/xml-external-parsed-entity")
+    if http_content_type in application_content_types or (
+        http_content_type.startswith("application/")
+        and http_content_type.endswith("+xml")
     ):
         acceptable_content_type = 1
-        rfc3023_encoding = http_encoding or xml_encoding or 'utf-8'
-    elif (
-            http_content_type in text_content_types
-            or (
-                    http_content_type.startswith('text/')
-                    and http_content_type.endswith('+xml')
-            )
+        rfc3023_encoding = http_encoding or xml_encoding or "utf-8"
+    elif http_content_type in text_content_types or (
+        http_content_type.startswith("text/") and http_content_type.endswith("+xml")
     ):
         acceptable_content_type = 1
-        rfc3023_encoding = http_encoding or 'us-ascii'
-    elif http_content_type.startswith('text/'):
-        rfc3023_encoding = http_encoding or 'us-ascii'
-    elif http_headers and 'content-type' not in http_headers:
-        rfc3023_encoding = xml_encoding or 'iso-8859-1'
+        rfc3023_encoding = http_encoding or "us-ascii"
+    elif http_content_type.startswith("text/"):
+        rfc3023_encoding = http_encoding or "us-ascii"
+    elif http_headers and "content-type" not in http_headers:
+        rfc3023_encoding = xml_encoding or "iso-8859-1"
     else:
-        rfc3023_encoding = xml_encoding or 'utf-8'
+        rfc3023_encoding = xml_encoding or "utf-8"
     # gb18030 is a superset of gb2312, so always replace gb2312
     # with gb18030 for greater compatibility.
-    if rfc3023_encoding.lower() == 'gb2312':
-        rfc3023_encoding = 'gb18030'
-    if xml_encoding.lower() == 'gb2312':
-        xml_encoding = 'gb18030'
+    if rfc3023_encoding.lower() == "gb2312":
+        rfc3023_encoding = "gb18030"
+    if xml_encoding.lower() == "gb2312":
+        xml_encoding = "gb18030"
 
     # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
@@ -239,18 +250,25 @@ def convert_to_utf8(http_headers, data, result):
     error = None
 
     if http_headers and (not acceptable_content_type):
-        if 'content-type' in http_headers:
-            msg = '%s is not an XML media type' % http_headers['content-type']
+        if "content-type" in http_headers:
+            msg = "%s is not an XML media type" % http_headers["content-type"]
         else:
-            msg = 'no Content-type specified'
+            msg = "no Content-type specified"
         error = NonXMLContentType(msg)
 
     # determine character encoding
     known_encoding = 0
     tried_encodings = []
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
-    for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
-                              lazy_chardet_encoding, 'utf-8', 'windows-1252', 'iso-8859-2'):
+    for proposed_encoding in (
+        rfc3023_encoding,
+        xml_encoding,
+        bom_encoding,
+        lazy_chardet_encoding,
+        "utf-8",
+        "windows-1252",
+        "iso-8859-2",
+    ):
         if callable(proposed_encoding):
             proposed_encoding = proposed_encoding(data)
         if not proposed_encoding:
@@ -265,28 +283,30 @@ def convert_to_utf8(http_headers, data, result):
         else:
             known_encoding = 1
             # Update the encoding in the opening XML processing instruction.
-            new_declaration = '''<?xml version='1.0' encoding='utf-8'?>'''
+            new_declaration = """<?xml version='1.0' encoding='utf-8'?>"""
             if RE_XML_DECLARATION.search(data):
                 data = RE_XML_DECLARATION.sub(new_declaration, data)
             else:
-                data = new_declaration + '\n' + data
-            data = data.encode('utf-8')
+                data = new_declaration + "\n" + data
+            data = data.encode("utf-8")
             break
     # if still no luck, give up
     if not known_encoding:
         error = CharacterEncodingUnknown(
-            'document encoding unknown, I tried ' +
-            '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' %
-            (rfc3023_encoding, xml_encoding))
-        rfc3023_encoding = ''
+            "document encoding unknown, I tried "
+            + "%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked"
+            % (rfc3023_encoding, xml_encoding)
+        )
+        rfc3023_encoding = ""
     elif proposed_encoding != rfc3023_encoding:
         error = CharacterEncodingOverride(
-            'document declared as %s, but parsed as %s' %
-            (rfc3023_encoding, proposed_encoding))
+            "document declared as %s, but parsed as %s"
+            % (rfc3023_encoding, proposed_encoding)
+        )
         rfc3023_encoding = proposed_encoding
 
-    result['encoding'] = rfc3023_encoding
+    result["encoding"] = rfc3023_encoding
     if error:
-        result['bozo'] = True
-        result['bozo_exception'] = error
+        result["bozo"] = True
+        result["bozo_exception"] = error
     return data
