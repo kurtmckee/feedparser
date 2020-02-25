@@ -31,6 +31,7 @@ from __future__ import unicode_literals
 from .api import parse
 from .datetimes import registerDateHandler
 from .exceptions import *
+from .util import FeedParserDict
 
 __author__ = 'Kurt McKee <contactme@kurtmckee.org>'
 __license__ = 'BSD 2-clause'
