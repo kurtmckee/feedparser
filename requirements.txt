@@ -1,4 +1,5 @@
 # for development and tests purposes
+black==19.10b0 ; python_version >= "3.6"
 coveralls==1.11.*
 pre-commit==1.21.* ; python_version < "3.6"
 pre-commit==2.1.* ; python_version >= "3.6"
