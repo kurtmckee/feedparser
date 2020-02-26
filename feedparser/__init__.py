@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+#! python3  # noqa E265
+
 # Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
@@ -28,10 +31,16 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from .api import parse
-from .datetimes import registerDateHandler
-from .exceptions import *
-from .util import FeedParserDict
+from .api import parse  # noqa: F401
+from .datetimes import registerDateHandler  # noqa: F401
+from .exceptions import (  # noqa: F401
+    ThingsNobodyCaresAboutButMe,
+    CharacterEncodingOverride,
+    CharacterEncodingUnknown,
+    NonXMLContentType,
+    UndeclaredNamespace,
+)
+from .util import FeedParserDict  # noqa: F401
 
 __author__ = "Kurt McKee <contactme@kurtmckee.org>"
 __license__ = "BSD 2-clause"
