@@ -1,4 +1,5 @@
-# for development purposes
+# for development and tests purposes
+coveralls==1.11.*
 pre-commit==2.1.*
 sgmllib3k==1.0.* ; python_version >= "3"
 sphinx==2.4.*
