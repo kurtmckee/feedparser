@@ -1,8 +1,17 @@
 # for development and tests purposes
+
+# Project requirements
+sgmllib3k==1.0.* ; python_version >= "3"
+
+# Development tools
 black==19.10b0 ; python_version >= "3.6"
 coveralls==1.11.*
+flake8==3.7.*
 pre-commit==1.21.* ; python_version < "3.6"
 pre-commit==2.1.* ; python_version >= "3.6"
-sgmllib3k==1.0.* ; python_version >= "3"
+
+# Documentation
 sphinx==2.4.*
+
+# Tests
 tox==3.14.*
