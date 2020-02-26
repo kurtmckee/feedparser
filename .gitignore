@@ -113,3 +113,6 @@ venv.bak/
 ## Custom
 #############
 fpdocs/
+
+# linters
+dev_flake8_report.txt
