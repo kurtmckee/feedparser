@@ -116,3 +116,4 @@ fpdocs/
 
 # linters
 dev_flake8_report.txt
+.vscode/settings.json
