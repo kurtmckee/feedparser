@@ -25,7 +25,3 @@ script:
   - flake8 .
   # the run tests
   - travis_wait 30 tox
-
-# send code coverage
-after_success:
-  - coveralls
