@@ -1,6 +1,5 @@
 language: python
-
-sudo: false
+cache: pip
 
 matrix:
   fast_finish: true
@@ -12,12 +11,21 @@ matrix:
     - python: "3.7"
       env: TOXENV=py37
       dist: xenial
-      sudo: true
     - python: "3.8"
       env: TOXENV=py38
       dist: xenial
-      sudo: true
 
+# requirements
+install:
+  - python -m pip install -U -r requirements.txt
+  - python -m pip install .
 
-install: python -m pip install -U -r requirements.txt
-script: travis_wait 30 tox
+script:
+  #  first lint the code
+  - flake8 .
+  # the run tests
+  - travis_wait 30 tox
+
+# send code coverage
+after_success:
+  - coveralls
