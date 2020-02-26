@@ -1,0 +1,19 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+exclude: "venv|tests/"
+fail_fast: true
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v2.5.0
+  hooks:
+  - id: trailing-whitespace
+  - id: check-yaml
+  - id: detect-private-key
+- repo: https://github.com/python/black
+  rev: 19.10b0
+  hooks:
+  - id: black
+    exclude_types: [directory,]
+    language_version: python3.7
+    require_serial: true
+    types: [file, python]
