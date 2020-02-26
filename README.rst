@@ -5,6 +5,8 @@ feedparser - Parse Atom and RSS feeds in Python.
 
 feedparser is open source. See the LICENSE file for more information.
 
+![PyPI](https://img.shields.io/pypi/v/feedparser.svg?style=flat-square) ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/feedparser?style=flat-square)
+
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
@@ -37,6 +39,21 @@ You can then build HTML pages using a command similar to:
     $ sphinx-build -b html docs/ fpdocs
 
 This will produce HTML documentation in the ``fpdocs/`` directory.
+
+Development
+===========
+
+Install developement dependencies:
+
+..  code-block:: shell
+
+    $ python -m pip install -U -r requirements.txt
+
+Install pre-commit hooks:
+
+..  code-block:: shell
+
+    $ pre-commit install
 
 
 Testing
