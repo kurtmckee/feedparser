@@ -1,6 +1,7 @@
 # for development and tests purposes
 coveralls==1.11.*
-pre-commit==2.1.*
+pre-commit==1.21.* ; python_version < "3.6"
+pre-commit==2.1.* ; python_version >= "3.6"
 sgmllib3k==1.0.* ; python_version >= "3"
 sphinx==2.4.*
 tox==3.14.*
