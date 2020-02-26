@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+#! python3  # noqa E265
+
 # Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
@@ -72,12 +75,12 @@ _iso8601_re = [
     for tmpl in _iso8601_tmpl
 ]
 try:
-    del tmpl
+    del tmpl  # noqa F821
 except NameError:
     pass
 _iso8601_matches = [re.compile(regex).match for regex in _iso8601_re]
 try:
-    del regex
+    del regex  # noqa F821
 except NameError:
     pass
 
