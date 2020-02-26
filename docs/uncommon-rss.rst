@@ -82,7 +82,7 @@ No one is quite sure what a cloud is.
     >>> d.feed.cloud
     {'domain': u'rpc.example.com',
     'port': u'80',
-    'path': u'/RPC2', 
+    'path': u'/RPC2',
     'registerprocedure': u'pingMe',
     'protocol': u'soap'}
 
