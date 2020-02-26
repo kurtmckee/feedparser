@@ -19,5 +19,5 @@ matrix:
       sudo: true
 
 
-install: pip install -U tox coveralls
+install: python -m pip install -U -r requirements.txt
 script: travis_wait 30 tox
