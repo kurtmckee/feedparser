@@ -73,7 +73,10 @@ from .urls import convert_to_idn
 
 # Python 3.1 deprecated decodestring in favor of decodebytes.
 # This can be removed after Python 2.7 support is dropped.
-_base64decode = getattr(base64, 'decodebytes', base64.decodestring)
+try:
+    _base64decode = base64.decodebytes
+except AttributeError:
+    _base64decode = base64.decodestring
 
 try:
     basestring
