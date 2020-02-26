@@ -1,0 +1,4 @@
+# for development purposes
+pre-commit==2.1.*
+sgmllib3k==1.0.* ; python_version >= "3"
+tox==3.14.*
