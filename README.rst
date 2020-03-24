@@ -1,7 +1,10 @@
 ##############################################################################################
 #   This is a modified version of feedparser to accept <ht_news_item> tags as new entries.   #
 # I am using it for the news comparison website that I am building with a couple of friends. #
+#          I did not write this library. Please see the copyright information below.         # 
 ##############################################################################################
+
+
 feedparser - Parse Atom and RSS feeds in Python.
 
 | Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
