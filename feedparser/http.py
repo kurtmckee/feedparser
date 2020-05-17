@@ -71,12 +71,7 @@ import base64
 from .datetimes import _parse_date
 from .urls import convert_to_idn
 
-# Python 3.1 deprecated decodestring in favor of decodebytes.
-# This can be removed after Python 2.7 support is dropped.
-try:
-    _base64decode = base64.decodebytes
-except AttributeError:
-    _base64decode = base64.decodestring
+_base64decode = base64.decodebytes
 
 try:
     basestring
