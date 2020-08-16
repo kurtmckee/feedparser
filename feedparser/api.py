@@ -243,8 +243,11 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     if not data:
         return result
 
+    # lowercase all of the HTTP headers for comparisons per RFC 2616
+    response_headers = response_headers or {}
+    response_headers = {k.lower(): v for k, v in response_headers.items()}
     # overwrite existing headers using response_headers
-    result['headers'].update(response_headers or {})
+    result['headers'].update(response_headers)
 
     data = convert_to_utf8(result['headers'], data, result)
     use_strict_parser = result['encoding'] and True or False
