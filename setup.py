@@ -25,14 +25,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
+import pathlib
+import setuptools
+import sys
+
+sys.path.append(str(pathlib.Path(__file__).parent))
+import feedparser
 
 with open('README.rst', 'r') as f:
     long_description = f.read()
 
-setup(
+setuptools.setup(
     name='feedparser',
-    version='6.0.0b2',
+    version=feedparser.__version__,
     license='BSD-2-Clause',
     description='Universal feed parser, handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
     long_description=long_description,

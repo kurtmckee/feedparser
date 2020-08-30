@@ -1,11 +1,15 @@
 import os
+import pathlib
 import sys
+
+sys.path.append(str(pathlib.Path(__file__).parent.parent))
+import feedparser
 
 # project information
 project = u'feedparser'
 copyright = u'2010-2020 Kurt McKee, 2004-2008 Mark Pilgrim'
-version = u'6.0.0b2'
-release = u'6.0.0b2'
+version = feedparser.__version__
+release = feedparser.__version__
 language = u'en'
 
 # documentation options
