@@ -1,5 +1,5 @@
 # Support for the GeoRSS format
-# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -28,6 +28,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from __future__ import generator_stop
 
 from ..util import FeedParserDict
 

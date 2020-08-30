@@ -1,4 +1,4 @@
-# Copyright 2010-2019 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -27,10 +27,16 @@
 
 from setuptools import setup
 
+with open('README.rst', 'r') as f:
+    long_description = f.read()
+
 setup(
     name='feedparser',
-    version='6.0.0b1',
+    version='6.0.0b2',
+    license='BSD-2-Clause',
     description='Universal feed parser, handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
+    long_description=long_description,
+    long_description_content_type='text/x-rst',
     author='Kurt McKee',
     author_email='contactme@kurtmckee.org',
     url='https://github.com/kurtmckee/feedparser',
@@ -44,13 +50,13 @@ setup(
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Developers',
-        'License :: OSI Approved',
+        'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Markup :: XML',
     ],

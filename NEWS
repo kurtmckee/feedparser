@@ -1,6 +1,6 @@
 coming in the next release:
-    * Support Python 3.5, 3.6, and 3.7
-    * Drop support for Python 2.4 through 2.6, and Python 3.0 through 3.4 (#169)
+    * Support Python 3.5, 3.6, 3.7 and 3.8
+    * Drop support for Python 2.4 through 2.7, and Python 3.0 through 3.4 (#169)
     * Convert feedparser from a monolithic file to a package
     * ``feedparser.parse(sanitize_html=bool)`` argument replaces the ``feedparser.SANITIZE_HTML`` global
     * ``feedparser.parse(resolve_relative_uris=bool)`` replaces the ``feedparser.RESOLVE_RELATIVE_URIS`` global
