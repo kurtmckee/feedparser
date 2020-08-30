@@ -58,6 +58,7 @@ import feedparser.api
 import feedparser.datetimes
 import feedparser.http
 import feedparser.mixin
+import feedparser.sanitizer
 import feedparser.urls
 import feedparser.util
 from feedparser.datetimes.asctime import _parse_date_asctime
@@ -801,6 +802,22 @@ class TestParseFlags(unittest.TestCase):
         self.assertEqual(u'<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
 
 
+class TestSanitizer(unittest.TestCase):
+    def test_style_attr_is_enabled(self):
+        html = """<p style="margin: 15em;">example</p>"""
+        result = feedparser.sanitizer._sanitize_html(html, None, 'text/html')
+        self.assertEqual(result, html)
+
+    def test_style_attr_can_be_disabled(self):
+        html = """<p style="margin: 15em;">example</p>"""
+        expected = """<p>example</p>"""
+        original_attrs = feedparser.sanitizer._HTMLSanitizer.acceptable_attributes
+        feedparser.sanitizer._HTMLSanitizer.acceptable_attributes = set()
+        result = feedparser.sanitizer._sanitize_html(html, None, 'text/html')
+        feedparser.sanitizer._HTMLSanitizer.acceptable_attributes = original_attrs
+        self.assertEqual(result, expected)
+
+
 # ---------- parse test files and create test methods ----------
 
 def convert_to_utf8(data):
@@ -945,6 +962,7 @@ def runtests():
     testsuite.addTest(testloader.loadTestsFromTestCase(TestLxmlBug))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestParseFlags))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestBuildRequest))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestSanitizer))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure
