@@ -26,18 +26,24 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import pathlib
+import re
 import setuptools
 import sys
 
 sys.path.append(str(pathlib.Path(__file__).parent))
-import feedparser
 
 with open('README.rst', 'r') as f:
     long_description = f.read()
 
+with open('feedparser/__init__.py', 'r') as f:
+    content = f.read()
+    match = re.search(r"""__version__ = ['"](?P<version>.+?['"])""", content)
+    version = match.group('version')
+
+
 setuptools.setup(
     name='feedparser',
-    version=feedparser.__version__,
+    version=version,
     license='BSD-2-Clause',
     description='Universal feed parser, handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
     long_description=long_description,
