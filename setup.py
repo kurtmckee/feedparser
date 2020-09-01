@@ -54,9 +54,7 @@ setuptools.setup(
     download_url='https://pypi.python.org/pypi/feedparser',
     platforms=['POSIX', 'Windows'],
     packages=['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
-    install_requires=[
-        'sgmllib3k;python_version>="3.0"',
-    ],
+    install_requires=['sgmllib3k'],
     keywords=['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -64,10 +62,10 @@ setuptools.setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Markup :: XML',
     ],
