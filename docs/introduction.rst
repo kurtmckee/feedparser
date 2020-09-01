@@ -11,8 +11,8 @@ and :abbr:`CDF (Channel Definition Format)` feeds.  It also parses several
 popular extension modules, including Dublin Core and Apple's :program:`iTunes`
 extensions.
 
-To use :program:`Universal Feed Parser`, you will need :program:`Python` 2.4 or
-later (Python 3 is supported).  :program:`Universal Feed Parser` is not meant
+To use :program:`Universal Feed Parser`, you will need :program:`Python` 3.6 or
+later. :program:`Universal Feed Parser` is not meant
 to run standalone; it is a module for you to use as part of a larger
 :program:`Python` program.
 

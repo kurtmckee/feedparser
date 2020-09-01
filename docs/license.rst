@@ -3,7 +3,7 @@
 Documentation license
 =====================
 
-Copyright 2004-2008 Mark Pilgrim. All rights reserved.
+Copyright 2010-2020 Kurt McKee, 2004-2008 Mark Pilgrim. All rights reserved.
 
 Redistribution and use in source (Sphinx ReST) and "compiled" forms (HTML, PDF,
 PostScript, RTF and so forth) with or without modification, are permitted

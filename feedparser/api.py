@@ -1,5 +1,5 @@
 # The public API for feedparser
-# Copyright 2010-2015 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -26,13 +26,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import xml.sax
 
 try:
     from io import BytesIO as _StringIO
 except ImportError:
+    # Python 2.7
     try:
         from cStringIO import StringIO as _StringIO
     except ImportError:
@@ -58,7 +60,7 @@ from .parsers.loose import _LooseFeedParser
 from .parsers.strict import _StrictFeedParser
 from .sanitizer import replace_doctype
 from .sgml import *
-from .urls import _convert_to_idn, _makeSafeAbsoluteURI
+from .urls import convert_to_idn, make_safe_absolute_uri
 from .util import FeedParserDict
 
 bytes_ = type(b'')
@@ -95,6 +97,7 @@ SUPPORTED_VERSIONS = {
     'atom': 'Atom (unknown version)',
     'cdf': 'CDF',
 }
+
 
 def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result):
     """URL, filename, or string --> stream
@@ -158,15 +161,22 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
         return url_file_stream_or_string.encode('utf-8')
     return url_file_stream_or_string
 
-LooseFeedParser = type(str('LooseFeedParser'), (
-    _LooseFeedParser, _FeedParserMixin, _BaseHTMLProcessor, object
-), {})
-StrictFeedParser = type(str('StrictFeedParser'), (
-    _StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object
-), {})
+
+LooseFeedParser = type(
+    str('LooseFeedParser'),  # `str()` call required for Python 2.7
+    (_LooseFeedParser, _FeedParserMixin, _BaseHTMLProcessor, object),
+    {},
+)
+
+StrictFeedParser = type(
+    str('StrictFeedParser'),  # `str()` call required for Python 2.7
+    (_StrictFeedParser, _FeedParserMixin, xml.sax.handler.ContentHandler, object),
+    {},
+)
+
 
 def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, response_headers=None, resolve_relative_uris=None, sanitize_html=None):
-    '''Parse a feed from a URL, file, stream, or string.
+    """Parse a feed from a URL, file, stream, or string.
 
     :param url_file_stream_or_string:
         File-like object, URL, file path, or string. Both byte and text strings
@@ -210,7 +220,8 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         :data:`feedparser.SANITIZE_HTML`, which is ``True``.
 
     :return: A :class:`FeedParserDict`.
-    '''
+    """
+
     if not agent or sanitize_html is None or resolve_relative_uris is None:
         import feedparser
     if not agent:
@@ -221,10 +232,10 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
         resolve_relative_uris = feedparser.RESOLVE_RELATIVE_URIS
 
     result = FeedParserDict(
-        bozo = False,
-        entries = [],
-        feed = FeedParserDict(),
-        headers = {},
+        bozo=False,
+        entries=[],
+        feed=FeedParserDict(),
+        headers={},
     )
 
     data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
@@ -243,7 +254,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
     contentloc = result['headers'].get('content-location', '')
     href = result.get('href', '')
-    baseuri = _makeSafeAbsoluteURI(href, contentloc) or _makeSafeAbsoluteURI(contentloc) or href
+    baseuri = make_safe_absolute_uri(href, contentloc) or make_safe_absolute_uri(contentloc) or href
 
     baselang = result['headers'].get('content-language', None)
     if isinstance(baselang, bytes_) and baselang is not None:
@@ -281,5 +292,5 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['feed'] = feedparser.feeddata
     result['entries'] = feedparser.entries
     result['version'] = result['version'] or feedparser.version
-    result['namespaces'] = feedparser.namespacesInUse
+    result['namespaces'] = feedparser.namespaces_in_use
     return result
