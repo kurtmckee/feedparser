@@ -16,6 +16,7 @@ coming in the next release:
     * Fix tox build failures (#213)
     * Use ``base64.decodebytes()`` directly to support Python 3.9 (#201)
     * Fix Python 3.8 ``urllib.parse.splittype()`` deprecation warning (#211)
+    * Support parsing colons in RFC822 timezones (#144)
 
 5.2.1 - July 23, 2015
     * Fix #22 (pip package keeps upgrading all the time)
