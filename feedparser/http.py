@@ -71,8 +71,6 @@ import base64
 from .datetimes import _parse_date
 from .urls import convert_to_idn
 
-_base64decode = base64.decodebytes
-
 try:
     basestring
 except NameError:
@@ -119,7 +117,7 @@ class _FeedURLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPR
         host = urllib.parse.urlparse(req.get_full_url())[1]
         if 'Authorization' not in req.headers or 'WWW-Authenticate' not in headers:
             return self.http_error_default(req, fp, code, msg, headers)
-        auth = _base64decode(req.headers['Authorization'].split(' ')[1])
+        auth = base64.decodebytes(req.headers['Authorization'].split(' ')[1].encode('utf8'))
         user, passw = auth.split(':')
         realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
         self.add_password(realm, host, user, passw)
