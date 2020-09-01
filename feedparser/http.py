@@ -34,39 +34,10 @@ import re
 import struct
 import zlib
 
-try:
-    import urllib.parse
-    import urllib.request
-except ImportError:
-    # Mock urllib sufficiently to work on Python 2.7
-    from urllib import splithost, splittype, splituser
-    from urllib2 import build_opener, HTTPDigestAuthHandler, HTTPRedirectHandler, HTTPDefaultErrorHandler, Request
-    from urlparse import urlparse
-
-    class urllib(object):
-        class parse(object):
-            splithost = staticmethod(splithost)
-            splittype = staticmethod(splittype)
-            splituser = staticmethod(splituser)
-            urlparse = staticmethod(urlparse)
-
-        class request(object):
-            build_opener = staticmethod(build_opener)
-            HTTPDigestAuthHandler = HTTPDigestAuthHandler
-            HTTPRedirectHandler = HTTPRedirectHandler
-            HTTPDefaultErrorHandler = HTTPDefaultErrorHandler
-            Request = Request
-
-try:
-    from io import BytesIO as _StringIO
-except ImportError:
-    # Python 2.7
-    try:
-        from cStringIO import StringIO as _StringIO
-    except ImportError:
-        from StringIO import StringIO as _StringIO
-
 import base64
+from io import BytesIO as _StringIO
+import urllib.parse
+import urllib.request
 
 from .datetimes import _parse_date
 from .urls import convert_to_idn
@@ -177,13 +148,14 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
     # Test for inline user:password credentials for HTTP basic auth
     auth = None
     if not url.startswith('ftp:'):
-        urltype, rest = urllib.parse.splittype(url)
-        realhost, rest = urllib.parse.splithost(rest)
-        if realhost:
-            user_passwd, realhost = urllib.parse.splituser(realhost)
-            if user_passwd:
-                url = '%s://%s%s' % (urltype, realhost, rest)
-                auth = base64.standard_b64encode(user_passwd).strip()
+        url_pieces = urllib.parse.urlparse(url)
+        if url_pieces.username:
+            new_pieces = list(url_pieces)
+            new_pieces[1] = url_pieces.hostname
+            if url_pieces.port:
+                new_pieces[1] = f'{url_pieces.hostname}:{url_pieces.port}'
+            url = urllib.parse.urlunparse(new_pieces)
+            auth = base64.standard_b64encode(f'{url_pieces.username}:{url_pieces.password}').strip()
 
     # iri support
     if not isinstance(url, bytes_):
