@@ -48,9 +48,7 @@ from .util import FeedParserDict
 from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
 
 
-# Python 2.7 only offers "decodestring()".
-# This name substitution can be removed when Python 2.7 support is dropped.
-_base64decode = getattr(base64, 'decodebytes', base64.decodestring)
+_base64decode = base64.decodebytes
 
 
 bytes_ = type(b'')
