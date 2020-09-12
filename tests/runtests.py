@@ -58,6 +58,7 @@ import feedparser.api
 import feedparser.datetimes
 import feedparser.http
 import feedparser.mixin
+import feedparser.sanitizer
 import feedparser.urls
 import feedparser.util
 from feedparser.datetimes.asctime import _parse_date_asctime
@@ -633,6 +634,7 @@ date_tests = {
         ('Thu,  5 Apr 2012 10:00:00 GMT', (2012, 4, 5, 10, 0, 0, 3, 96, 0)),  # 1-digit day
         ('Wed, 19 Aug 2009 18:28:00 Etc/GMT', (2009, 8, 19, 18, 28, 0, 2, 231, 0)),  # etc/gmt timezone
         ('Wed, 19 Feb 2012 22:40:00 GMT-01:01', (2012, 2, 19, 23, 41, 0, 6, 50, 0)),  # gmt+hh:mm timezone
+        ('Wed, 19 Feb 2012 22:40:00 -01:01', (2012, 2, 19, 23, 41, 0, 6, 50, 0)),  # +hh:mm timezone
         ('Mon, 13 Feb, 2012 06:28:00 UTC', (2012, 2, 13, 6, 28, 0, 0, 44, 0)),  # extraneous comma
         ('Thu, 01 Jan 2004 00:00 GMT', (2004, 1, 1, 0, 0, 0, 3, 1, 0)),  # no seconds
         ('Thu, 01 Jan 2004', (2004, 1, 1, 0, 0, 0, 3, 1, 0)),  # no time
@@ -801,6 +803,22 @@ class TestParseFlags(unittest.TestCase):
         self.assertEqual(u'<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
 
 
+class TestSanitizer(unittest.TestCase):
+    def test_style_attr_is_enabled(self):
+        html = """<p style="margin: 15em;">example</p>"""
+        result = feedparser.sanitizer._sanitize_html(html, None, 'text/html')
+        self.assertEqual(result, html)
+
+    def test_style_attr_can_be_disabled(self):
+        html = """<p style="margin: 15em;">example</p>"""
+        expected = """<p>example</p>"""
+        original_attrs = feedparser.sanitizer._HTMLSanitizer.acceptable_attributes
+        feedparser.sanitizer._HTMLSanitizer.acceptable_attributes = set()
+        result = feedparser.sanitizer._sanitize_html(html, None, 'text/html')
+        feedparser.sanitizer._HTMLSanitizer.acceptable_attributes = original_attrs
+        self.assertEqual(result, expected)
+
+
 # ---------- parse test files and create test methods ----------
 
 def convert_to_utf8(data):
@@ -945,6 +963,7 @@ def runtests():
     testsuite.addTest(testloader.loadTestsFromTestCase(TestLxmlBug))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestParseFlags))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestBuildRequest))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestSanitizer))
     testresults = unittest.TextTestRunner(verbosity=1).run(testsuite)
 
     # Return 0 if successful, 1 if there was a failure

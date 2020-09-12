@@ -1,16 +1,18 @@
 import os
 import pathlib
+import re
 import sys
 
-sys.path.append(str(pathlib.Path(__file__).parent.parent))
-import feedparser
+
+content = (pathlib.Path(__file__).parent.parent / 'feedparser/__init__.py').read_text()
+match = re.search(r"""__version__ = ['"](?P<version>.+?['"])""", content)
+version = match.group('version')
+release = version
 
 # project information
-project = u'feedparser'
-copyright = u'2010-2020 Kurt McKee, 2004-2008 Mark Pilgrim'
-version = feedparser.__version__
-release = feedparser.__version__
-language = u'en'
+project = 'feedparser'
+copyright = '2010-2020 Kurt McKee, 2004-2008 Mark Pilgrim'
+language = 'en'
 
 # documentation options
 master_doc = 'index'

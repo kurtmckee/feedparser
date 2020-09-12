@@ -48,11 +48,6 @@ from .util import FeedParserDict
 from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
 
 
-# Python 2.7 only offers "decodestring()".
-# This name substitution can be removed when Python 2.7 support is dropped.
-_base64decode = getattr(base64, 'decodebytes', base64.decodestring)
-
-
 bytes_ = type(b'')
 try:
     # Python 2
@@ -528,15 +523,11 @@ class _FeedParserMixin(
         # decode base64 content
         if base64 and self.contentparams.get('base64', 0):
             try:
-                output = _base64decode(output)
+                output = base64.decodebytes(output.encode('utf8')).decode('utf8')
             except binascii.Error:
                 pass
             except binascii.Incomplete:
                 pass
-            except TypeError:
-                # In Python 3, base64 takes and outputs bytes, not str
-                # This may not be the most correct way to accomplish this
-                output = _base64decode(output.encode('utf-8')).decode('utf-8')
 
         # resolve relative URIs
         if (element in self.can_be_relative_uri) and output:

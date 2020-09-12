@@ -25,19 +25,29 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import os
 import pathlib
+import re
 import setuptools
-import sys
 
-sys.path.append(str(pathlib.Path(__file__).parent))
-import feedparser
 
-with open('README.rst', 'r') as f:
-    long_description = f.read()
+root = pathlib.Path(__file__).parent
+
+long_description = (root / 'README.rst').read_text()
+
+name = 'feedparser'
+if os.getenv('NAME_SUFFIX'):
+    name = f"{name}_{os.getenv('NAME_SUFFIX')}"
+
+content = (root / 'feedparser/__init__.py').read_text()
+match = re.search(r"""__version__ = ['"](?P<version>.+?)['"]""", content)
+version = match.group('version')
+if os.getenv('VERSION_SUFFIX'):
+    version = f"{version}rc{os.getenv('VERSION_SUFFIX')}"
 
 setuptools.setup(
-    name='feedparser',
-    version=feedparser.__version__,
+    name=name,
+    version=version,
     license='BSD-2-Clause',
     description='Universal feed parser, handles RSS 0.9x, RSS 1.0, RSS 2.0, CDF, Atom 0.3, and Atom 1.0 feeds',
     long_description=long_description,
@@ -48,9 +58,7 @@ setuptools.setup(
     download_url='https://pypi.python.org/pypi/feedparser',
     platforms=['POSIX', 'Windows'],
     packages=['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
-    install_requires=[
-        'sgmllib3k;python_version>="3.0"',
-    ],
+    install_requires=['sgmllib3k'],
     keywords=['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -58,10 +66,10 @@ setuptools.setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Topic :: Text Processing :: Markup :: XML',
     ],

@@ -260,6 +260,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         'src',
         'start',
         'step',
+        'style',
         'summary',
         'suppress',
         'tabindex',
@@ -798,16 +799,16 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
         clean_attrs = []
         for key, value in self.normalize_attrs(attrs):
-            if key in acceptable_attributes:
+            if key == 'style' and 'style' in acceptable_attributes:
+                clean_value = self.sanitize_style(value)
+                if clean_value:
+                    clean_attrs.append((key, clean_value))
+            elif key in acceptable_attributes:
                 key = keymap.get(key, key)
                 # make sure the uri uses an acceptable uri scheme
                 if key == 'href':
                     value = make_safe_absolute_uri(value)
                 clean_attrs.append((key, value))
-            elif key == 'style':
-                clean_value = self.sanitize_style(value)
-                if clean_value:
-                    clean_attrs.append((key, clean_value))
         super(_HTMLSanitizer, self).unknown_starttag(tag, clean_attrs)
 
     def unknown_endtag(self, tag):

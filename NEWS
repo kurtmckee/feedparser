@@ -1,6 +1,8 @@
 coming in the next release:
-    * Support Python 3.5, 3.6, 3.7 and 3.8
-    * Drop support for Python 2.4 through 2.7, and Python 3.0 through 3.4 (#169)
+
+6.0.0 - 12 September 2020
+    * Support Python 3.6, 3.7, 3.8 and 3.9
+    * Drop support for Python 2.4 through 2.7, and Python 3.0 through 3.5 (#169)
     * Convert feedparser from a monolithic file to a package
     * ``feedparser.parse(sanitize_html=bool)`` argument replaces the ``feedparser.SANITIZE_HTML`` global
     * ``feedparser.parse(resolve_relative_uris=bool)`` replaces the ``feedparser.RESOLVE_RELATIVE_URIS`` global
@@ -13,6 +15,12 @@ coming in the next release:
     * Document that datetimes are returned in UTC (#51)
     * Remove cjkpython references in the documentation (#57)
     * Resolve ResourceWarnings thrown during unit tests (#170)
+    * Fix tox build failures (#213)
+    * Use ``base64.decodebytes()`` directly to support Python 3.9 (#201)
+    * Fix Python 3.8 ``urllib.parse.splittype()`` deprecation warning (#211)
+    * Support parsing colons in RFC822 timezones (#144)
+    * Add `chardet` as an optional tox environment dependency
+    * Fix the Big5 unit test that fails when chardet is installed (#184)
 
 5.2.1 - July 23, 2015
     * Fix #22 (pip package keeps upgrading all the time)
