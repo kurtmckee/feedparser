@@ -1,0 +1,5 @@
+doit
+sphinx
+tox
+twine
+wheel

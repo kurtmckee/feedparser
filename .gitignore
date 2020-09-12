@@ -8,3 +8,5 @@ fpdocs/
 venv/
 build/
 *.egg-info/
+.doit.*
+*.html
