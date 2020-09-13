@@ -25,29 +25,19 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
+import base64
 import datetime
 import gzip
+import io
 import re
 import struct
-import zlib
-
-import base64
-from io import BytesIO as _StringIO
 import urllib.parse
 import urllib.request
+import zlib
 
 from .datetimes import _parse_date
 from .urls import convert_to_idn
 
-try:
-    basestring
-except NameError:
-    basestring = str
-
-bytes_ = type(b'')
 
 # HTTP "Accept" header to send to servers when downloading feeds.  If you don't
 # want to send an Accept header, set this to None.
@@ -102,7 +92,7 @@ def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, 
     request.add_header('User-Agent', agent)
     if etag:
         request.add_header('If-None-Match', etag)
-    if isinstance(modified, basestring):
+    if isinstance(modified, str):
         modified = _parse_date(modified)
     elif isinstance(modified, datetime.datetime):
         modified = modified.utctimetuple()
@@ -158,7 +148,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
             auth = base64.standard_b64encode(f'{url_pieces.username}:{url_pieces.password}').strip()
 
     # iri support
-    if not isinstance(url, bytes_):
+    if not isinstance(url, bytes):
         url = convert_to_idn(url)
 
     # try to open with urllib2 (to use optional headers)
@@ -175,7 +165,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
     # if feed is gzip-compressed, decompress it
     if data and 'gzip' in result['headers'].get('content-encoding', ''):
         try:
-            data = gzip.GzipFile(fileobj=_StringIO(data)).read()
+            data = gzip.GzipFile(fileobj=io.BytesIO(data)).read()
         except (EOFError, IOError, struct.error) as e:
             # IOError can occur if the gzip header is bad.
             # struct.error can occur if the data is damaged.
@@ -200,7 +190,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
     # save HTTP headers
     if 'etag' in result['headers']:
         etag = result['headers'].get('etag', '')
-        if isinstance(etag, bytes_):
+        if isinstance(etag, bytes):
             etag = etag.decode('utf-8', 'ignore')
         if etag:
             result['etag'] = etag
@@ -209,7 +199,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
         if modified:
             result['modified'] = modified
             result['modified_parsed'] = _parse_date(modified)
-    if isinstance(f.url, bytes_):
+    if isinstance(f.url, bytes):
         result['href'] = f.url.decode('utf-8', 'ignore')
     else:
         result['href'] = f.url

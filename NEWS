@@ -1,4 +1,5 @@
 coming in the next release:
+    * Remove all Python 2 compatibility code (#228)
 
 6.0.0 - 12 September 2020
     * Support Python 3.6, 3.7, 3.8 and 3.9

@@ -25,13 +25,9 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import re
 
 from .html import _BaseHTMLProcessor
-from .sgml import _SGML_AVAILABLE
 from .urls import make_safe_absolute_uri
 
 
@@ -882,8 +878,6 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
 
 def _sanitize_html(html_source, encoding, _type):
-    if not _SGML_AVAILABLE:
-        return html_source
     p = _HTMLSanitizer(encoding, _type)
     html_source = html_source.replace('<![CDATA[', '&lt;![CDATA[')
     p.feed(html_source)

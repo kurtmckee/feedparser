@@ -26,9 +26,6 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import cgi
 import codecs
 import re
@@ -43,12 +40,7 @@ except ImportError:
     lazy_chardet_encoding = None
 else:
     def lazy_chardet_encoding(data):
-        chardet_encoding = chardet.detect(data)['encoding']
-        if not chardet_encoding:
-            chardet_encoding = ''
-        if isinstance(chardet_encoding, bytes_):
-            chardet_encoding = chardet_encoding.encode('ascii', 'ignore')
-        return chardet_encoding
+        return chardet.detect(data)['encoding'] or ''
 
 from .exceptions import (
     CharacterEncodingOverride,
@@ -56,8 +48,6 @@ from .exceptions import (
     NonXMLContentType,
 )
 
-bytes_ = type(b'')
-unicode_ = type('')
 
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
@@ -193,7 +183,7 @@ def convert_to_utf8(http_headers, data, result):
     http_content_type = http_headers.get('content-type') or ''
     http_content_type, params = cgi.parse_header(http_content_type)
     http_encoding = params.get('charset', '').replace("'", "")
-    if isinstance(http_encoding, bytes_):
+    if isinstance(http_encoding, bytes):
         http_encoding = http_encoding.decode('utf-8', 'ignore')
 
     acceptable_content_type = 0
