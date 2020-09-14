@@ -44,7 +44,6 @@ import warnings
 import xml.sax
 import zlib
 
-# sys.path.insert(0, "..")
 import feedparser
 import feedparser.api
 import feedparser.datetimes
