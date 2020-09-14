@@ -20,7 +20,7 @@ jobs:
       - run: black --check . || true
       - run: codespell --ignore-words-list="dur,te" --quiet-level=2  #  --skip=""
       - run: flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
-      - run: isort --profile black --recursive . || true
+      - run: isort --profile black . || true
       - run: pip install -r requirements.txt || true
       - run: pip install -r requirements-dev.txt
       - run: PYVER=${{ matrix.python-version }} TOXENV=py${PYVER:0:1}${PYVER:2:1} tox
