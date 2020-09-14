@@ -44,22 +44,22 @@ import warnings
 import xml.sax
 import zlib
 
-import feedparser
-import feedparser.api
-import feedparser.datetimes
-import feedparser.http
-import feedparser.mixin
-import feedparser.sanitizer
-import feedparser.urls
-import feedparser.util
-from feedparser.datetimes.asctime import _parse_date_asctime
-from feedparser.datetimes.greek import _parse_date_greek
-from feedparser.datetimes.hungarian import _parse_date_hungarian
-from feedparser.datetimes.iso8601 import _parse_date_iso8601
-from feedparser.datetimes.korean import _parse_date_onblog, _parse_date_nate
-from feedparser.datetimes.perforce import _parse_date_perforce
-from feedparser.datetimes.rfc822 import _parse_date_rfc822
-from feedparser.datetimes.w3dtf import _parse_date_w3dtf
+import ..feedparser
+import ..feedparser.api
+import ..feedparser.datetimes
+import ..feedparser.http
+import ..feedparser.mixin
+import ..feedparser.sanitizer
+import ..feedparser.urls
+import ..feedparser.util
+from ..feedparser.datetimes.asctime import _parse_date_asctime
+from ..feedparser.datetimes.greek import _parse_date_greek
+from ..feedparser.datetimes.hungarian import _parse_date_hungarian
+from ..feedparser.datetimes.iso8601 import _parse_date_iso8601
+from ..feedparser.datetimes.korean import _parse_date_onblog, _parse_date_nate
+from ..feedparser.datetimes.perforce import _parse_date_perforce
+from ..feedparser.datetimes.rfc822 import _parse_date_rfc822
+from ..feedparser.datetimes.w3dtf import _parse_date_w3dtf
 
 # ---------- custom HTTP server (used to serve test feeds) ----------
 
