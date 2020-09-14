@@ -46,13 +46,13 @@ import zlib
 
 sys.path.insert(0, "..")
 import feedparser
-import feedparser.api
-import feedparser.datetimes
-import feedparser.http
-import feedparser.mixin
-import feedparser.sanitizer
-import feedparser.urls
-import feedparser.util
+# import feedparser.api
+# import feedparser.datetimes
+# import feedparser.http
+# import feedparser.mixin
+# import feedparser.sanitizer
+# import feedparser.urls
+# import feedparser.util
 from feedparser.datetimes.asctime import _parse_date_asctime
 from feedparser.datetimes.greek import _parse_date_greek
 from feedparser.datetimes.hungarian import _parse_date_hungarian
