@@ -132,7 +132,7 @@ coming in the next release:
     * Issue 285 (crash on empty xmlns attribute)
     * Issue 286 ('apos' character entity not handled properly)
     * Issue 289 (add an option to disable microformat parsing)
-    * Issue 290 (Blogger's invalid img tags are unparseable)
+    * Issue 290 (Blogger's invalid img tags are unparsable)
     * Issue 292 (atom id element not explicitly supported)
     * Issue 294 ('categories' key exists but raises KeyError)
     * Issue 297 (unresolvable external doctype causes crash)
