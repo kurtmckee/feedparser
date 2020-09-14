@@ -69,12 +69,12 @@ _iso8601_re = [
     + r'(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?'
     for tmpl in _iso8601_tmpl]
 try:
-    del tmpl
+    del tmpl  # noqa: F821
 except NameError:
     pass
 _iso8601_matches = [re.compile(regex).match for regex in _iso8601_re]
 try:
-    del regex
+    del regex  # noqa: F821
 except NameError:
     pass
 
