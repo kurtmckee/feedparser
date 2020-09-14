@@ -44,23 +44,23 @@ import warnings
 import xml.sax
 import zlib
 
-sys.path.insert(0, "..")
+# sys.path.insert(0, "..")
 import feedparser
-# import feedparser.api
-# import feedparser.datetimes
-# import feedparser.http
-# import feedparser.mixin
-# import feedparser.sanitizer
-# import feedparser.urls
-# import feedparser.util
-# from feedparser.datetimes.asctime import _parse_date_asctime
-# from feedparser.datetimes.greek import _parse_date_greek
-# from feedparser.datetimes.hungarian import _parse_date_hungarian
-# from feedparser.datetimes.iso8601 import _parse_date_iso8601
-# from feedparser.datetimes.korean import _parse_date_onblog, _parse_date_nate
-# from feedparser.datetimes.perforce import _parse_date_perforce
-# from feedparser.datetimes.rfc822 import _parse_date_rfc822
-# from feedparser.datetimes.w3dtf import _parse_date_w3dtf
+import feedparser.api
+import feedparser.datetimes
+import feedparser.http
+import feedparser.mixin
+import feedparser.sanitizer
+import feedparser.urls
+import feedparser.util
+from feedparser.datetimes.asctime import _parse_date_asctime
+from feedparser.datetimes.greek import _parse_date_greek
+from feedparser.datetimes.hungarian import _parse_date_hungarian
+from feedparser.datetimes.iso8601 import _parse_date_iso8601
+from feedparser.datetimes.korean import _parse_date_onblog, _parse_date_nate
+from feedparser.datetimes.perforce import _parse_date_perforce
+from feedparser.datetimes.rfc822 import _parse_date_rfc822
+from feedparser.datetimes.w3dtf import _parse_date_w3dtf
 
 # ---------- custom HTTP server (used to serve test feeds) ----------
 
@@ -578,22 +578,22 @@ class TestDateParsers(unittest.TestCase):
         # On some systems this date string will trigger an OverflowError.
         # On Jython and x64 systems, however, it's interpreted just fine.
         try:
-            date = feedparser.datetimes.rfc822._parse_date_rfc822('Sun, 31 Dec 9999 23:59:59 -9999')
+            date = _parse_date_rfc822('Sun, 31 Dec 9999 23:59:59 -9999')
         except OverflowError:
             date = None
         self.assertTrue(date in (None, (10000, 1, 5, 4, 38, 59, 2, 5, 0)))
 
 
 date_tests = {
-    feedparser.datetimes.greek._parse_date_greek: (
+    _parse_date_greek: (
         ('', None),  # empty string
         ('\u039a\u03c5\u03c1, 11 \u0399\u03bf\u03cd\u03bb 2004 12:00:00 EST', (2004, 7, 11, 17, 0, 0, 6, 193, 0)),
     ),
-    feedparser.datetimes.hungarian._parse_date_hungarian: (
+    _parse_date_hungarian: (
         ('', None),  # empty string
         ('2004-j\u00falius-13T9:15-05:00', (2004, 7, 13, 14, 15, 0, 1, 195, 0)),
     ),
-    feedparser.datetimes.iso8601._parse_date_iso8601: (
+    _parse_date_iso8601: (
         ('', None),  # empty string
         ('-0312', (2003, 12, 1, 0, 0, 0, 0, 335, 0)),  # 2-digit year/month only variant
         ('031231', (2003, 12, 31, 0, 0, 0, 2, 365, 0)),  # 2-digit year/month/day only, no hyphens
@@ -604,19 +604,19 @@ date_tests = {
         # Special case for Google's extra zero in the month
         ('2003-012-31T10:14:55+00:00', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),
     ),
-    feedparser.datetimes.korean._parse_date_nate: (
+    _parse_date_nate: (
         ('', None),  # empty string
         ('2004-05-25 \uc624\ud6c4 11:23:17', (2004, 5, 25, 14, 23, 17, 1, 146, 0)),
     ),
-    feedparser.datetimes.korean._parse_date_onblog: (
+    _parse_date_onblog: (
         ('', None),  # empty string
         ('2004\ub144 05\uc6d4 28\uc77c  01:31:15', (2004, 5, 27, 16, 31, 15, 3, 148, 0)),
     ),
-    feedparser.datetimes.perforce._parse_date_perforce: (
+    _parse_date_perforce: (
         ('', None),  # empty string
         ('Fri, 2006/09/15 08:19:53 EDT', (2006, 9, 15, 12, 19, 53, 4, 258, 0)),
     ),
-    feedparser.datetimes.rfc822._parse_date_rfc822: (
+    _parse_date_rfc822: (
         ('', None),  # empty string
         ('Thu, 30 Apr 2015 08:57:00 MET', (2015, 4, 30, 7, 57, 0, 3, 120, 0)),
         ('Thu, 30 Apr 2015 08:57:00 MEST', (2015, 4, 30, 6, 57, 0, 3, 120, 0)),
@@ -646,11 +646,11 @@ date_tests = {
         ('Sun, 16 Dec 2012 11:47:32 +00:zz', None),  # invalid timezone minute
         ('Sun, 99 Jun 2009 12:00:00 GMT', None),  # out-of-range day
     ),
-    feedparser.datetimes.asctime._parse_date_asctime: (
+    _parse_date_asctime: (
         ('Sun Jan  4 16:29:06 2004', (2004, 1, 4, 16, 29, 6, 6, 4, 0)),
         ('Sun Jul 15 01:16:00 +0000 2012', (2012, 7, 15, 1, 16, 0, 6, 197, 0)),
     ),
-    feedparser.datetimes.w3dtf._parse_date_w3dtf: (
+    _parse_date_w3dtf: (
         ('', None),  # empty string
         ('2003-12-31T10:14:55Z', (2003, 12, 31, 10, 14, 55, 2, 365, 0)),  # UTC
         ('2003-12-31T10:14:55-08:00', (2003, 12, 31, 18, 14, 55, 2, 365, 0)),  # San Francisco timezone
