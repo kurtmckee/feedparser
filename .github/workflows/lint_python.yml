@@ -23,7 +23,7 @@ jobs:
       - run: isort --profile black --recursive . || true
       - run: pip install -r requirements.txt || true
       - run: pip install -r requirements-dev.txt || true
-      - run: TOXENV=py${{{ matrix.python-version }}:0:1}${{{ matrix.python-version }}:2:1} tox
+      - run: PYVER=${{ matrix.python-version }} TOXENV=py${PYVER:0:1}${PYVER:2:1} tox || true
       - run: pytest . || true
       - run: pytest tests/runtests.py || true
       - run: python -Wd tests/runtests.py
