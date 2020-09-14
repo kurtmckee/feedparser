@@ -24,3 +24,5 @@ jobs:
       - run: pip install -r requirements.txt || true
       - run: pip install -r requirements-dev.txt || true
       - run: pytest . || true
+      - run: pytest tests/runtests.py || true
+      - run: python -Wd tests/runtests.py
