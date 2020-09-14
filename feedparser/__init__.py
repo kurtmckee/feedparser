@@ -25,10 +25,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE."""
 
-# from .api import parse
-# from .datetimes import registerDateHandler
-# from .exceptions import *
-# from .util import FeedParserDict
+from .api import parse
+from .datetimes import registerDateHandler
+from .exceptions import *
+from .util import FeedParserDict
 
 __author__ = 'Kurt McKee <contactme@kurtmckee.org>'
 __license__ = 'BSD 2-clause'
