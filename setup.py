@@ -59,6 +59,7 @@ setuptools.setup(
     platforms=['POSIX', 'Windows'],
     packages=['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
     install_requires=['sgmllib3k'],
+    python_requires='>=3.6', 
     keywords=['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
