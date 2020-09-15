@@ -23,15 +23,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 __author__ = "Kurt McKee <contactme@kurtmckee.org>"
 __license__ = "BSD 2-clause"
 
 import codecs
 import datetime
 import glob
+import http.server
 import io
 import os
 import posixpath
@@ -45,13 +43,6 @@ import unittest
 import warnings
 import xml.sax
 import zlib
-
-# Account for stdlib differences between Python 2 and Python 3.
-try:
-    from BaseHTTPServer import HTTPServer
-    from SimpleHTTPServer import SimpleHTTPRequestHandler
-except ImportError:
-    from http.server import HTTPServer, SimpleHTTPRequestHandler
 
 import feedparser
 import feedparser.api
@@ -76,7 +67,7 @@ _PORT = 8097  # not really configurable, must match hardcoded port in tests
 _HOST = '127.0.0.1'  # also not really configurable
 
 
-class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
+class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
     headers_re = re.compile(br"^Header:\s+([^:]+):(.+)$", re.MULTILINE)
 
     def send_head(self):
@@ -93,7 +84,7 @@ class FeedParserTestRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(304)
             self.send_header('Content-type', 'text/xml')
             self.end_headers()
-            return feedparser.api._StringIO(b'')
+            return io.BytesIO(b'')
         path = self.translate_path(self.path)
         # the compression tests' filenames determine the header sent
         if self.path.startswith('/tests/compression'):
@@ -142,7 +133,7 @@ class FeedParserTestServer(threading.Thread):
         self.httpd = None
 
     def run(self):
-        self.httpd = HTTPServer((_HOST, _PORT), FeedParserTestRequestHandler)
+        self.httpd = http.server.HTTPServer((_HOST, _PORT), FeedParserTestRequestHandler)
         self.ready.set()
         while self.requests:
             self.httpd.handle_request()
@@ -382,7 +373,7 @@ class TestOpenResource(unittest.TestCase):
     """Ensure that `_open_resource()` interprets its arguments as URIs, file-like objects, or in-memory feeds as expected"""
 
     def test_fileobj(self):
-        r = feedparser.api._open_resource(feedparser.api._StringIO(b''), '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {})
         self.assertEqual(r, b'')
 
     def test_feed(self):
@@ -755,7 +746,7 @@ class TestLxmlBug(unittest.TestCase):
             doc = b"<feed>&illformed_charref</feed>"
             # Importing lxml.etree currently causes libxml2 to
             # throw SAXException instead of SAXParseException.
-            feedparser.parse(feedparser.api._StringIO(doc))
+            feedparser.parse(io.BytesIO(doc))
         self.assertTrue(True)
 
 

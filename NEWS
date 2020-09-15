@@ -1,5 +1,9 @@
 coming in the next release:
 
+6.0.1 - 15 September 2020
+    * Remove all Python 2 compatibility code (#228)
+    * Add *python_requires* to ``setup.py`` (#231)
+
 6.0.0 - 12 September 2020
     * Support Python 3.6, 3.7, 3.8 and 3.9
     * Drop support for Python 2.4 through 2.7, and Python 3.0 through 3.5 (#169)
