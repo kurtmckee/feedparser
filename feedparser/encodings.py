@@ -190,7 +190,7 @@ def convert_to_utf8(http_headers, data, result):
     application_content_types = ('application/xml', 'application/xml-dtd',
                                  'application/xml-external-parsed-entity')
     text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
-    json_content_types = ('application/json',)
+    json_content_types = ('application/feed+json', 'application/json')
     json = False
     if (
             http_content_type in application_content_types

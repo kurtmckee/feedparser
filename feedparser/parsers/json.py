@@ -33,7 +33,10 @@ from ..util import FeedParserDict
 
 
 class _JsonFeedParser(object):
-    V1 = 'https://jsonfeed.org/version/1'
+    VERSIONS = {
+        'https://jsonfeed.org/version/1': 'json1',
+        'https://jsonfeed.org/version/1.1': 'json11',
+    }
     FEED_FIELDS = (
         ('title', 'title'),
         ('icon', 'image'),
@@ -61,9 +64,9 @@ class _JsonFeedParser(object):
         data = json.loads(data)
 
         v = data.get('version', '')
-        if v == self.V1:
-            self.version = 'json1'
-        else:
+        try:
+            self.version = self.VERSIONS[v]
+        except KeyError:
             raise ValueError("Unrecognized JSONFeed version '%s'" % v)
 
         for src, dst in self.FEED_FIELDS:
