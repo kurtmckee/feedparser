@@ -1,3 +1,4 @@
+loger an amizing project
 feedparser - Parse Atom and RSS feeds in Python.
 
 | Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
