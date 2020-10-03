@@ -145,7 +145,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
             if url_pieces.port:
                 new_pieces[1] = f'{url_pieces.hostname}:{url_pieces.port}'
             url = urllib.parse.urlunparse(new_pieces)
-            auth = base64.standard_b64encode(f'{url_pieces.username}:{url_pieces.password}').strip()
+            auth = base64.standard_b64encode(f'{url_pieces.username}:{url_pieces.password}'.encode()).decode()
 
     # iri support
     if not isinstance(url, bytes):
