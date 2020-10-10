@@ -351,6 +351,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         'dashed',
         'dotted',
         'fuchsia',
+        'gold',
+        'goldenrod',
         'gray',
         'green',
         'italic',
