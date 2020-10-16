@@ -6,7 +6,7 @@ feedparser - Parse Atom and RSS feeds in Python.
 feedparser is open source. See the LICENSE file for more information.
 
 
-Installation
+Installation Process
 ============
 
 feedparser can be installed by running pip:
