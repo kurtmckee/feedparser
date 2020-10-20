@@ -4,6 +4,7 @@ Revision history
 .. toctree::
    :maxdepth: 2
 
+   changes-latest
    changes-42
    changes-41
    changes-402
