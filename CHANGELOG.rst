@@ -170,7 +170,32 @@ coming in the next release:
     * Support Python 3
     * Bug fixes, bug fixes, bug fixes
 
+4.2 - March 12, 2008
+- Support for parsing microformats, including rel=enclosure, rel=tag, XFN, and hCard.
+
+- Updated the whitelist of acceptable HTML elements and attributes based on the latest draft of the HTML (HyperText Markup Language) 5 specification.
+
+- Support for CSS sanitization.  (Previous versions of Universal Feed Parser simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.
+
+- Support for SVG sanitation.
+
+- Support for MathML sanitation. Many thanks to Jacques Distler for patiently debugging this feature.
+
+- IRI (International Resource Identifier) support for every element that can contain a URI (Uniform Resource Identifier).
+
+- Ability to disable relative URI resolution.
+
+- Command-line arguments and alternate serializers, for manipulating Universal Feed Parser from shell scripts or other non-Python sources.
+
+- More robust parsing of author email addresses, misencoded win-1252 content, rel=self links, and better detection of HTML content in elements with ambiguous content types.
+
 4.1 - MAP - removed socket timeout; added support for chardet library
+
+4.0.2 - December 24, 2005
+- cleared ``_debug`` flag.
+
+4.0.1 - December 24, 2005
+- bug fixes for Python 2.1 compatibility.
 
 4.0 - MAP - support for relative URIs in xml:base attribute; fixed
   encoding issue with mxTidy (phopkins); preliminary support for RFC 3229;
