@@ -1,10 +1,16 @@
 coming in the next release:
 
-6.0.1 - 15 September 2020
+6.0.2 - 25 October 2020
+    *   Stop building Python wheels with ``universal=1`` set. (#251)
+
+        This was causing pip to find and install the feedparser 6.x wheels
+        on Python 2 even though Python 2 is no longer supported.
+
+6.0.1 - 15 September 2020 [YANKED]
     * Remove all Python 2 compatibility code (#228)
     * Add *python_requires* to ``setup.py`` (#231)
 
-6.0.0 - 12 September 2020
+6.0.0 - 12 September 2020 [YANKED]
     * Support Python 3.6, 3.7, 3.8 and 3.9
     * Drop support for Python 2.4 through 2.7, and Python 3.0 through 3.5 (#169)
     * Convert feedparser from a monolithic file to a package
