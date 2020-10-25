@@ -9,7 +9,7 @@ import os
 import pathlib
 import random
 import subprocess
-import platform
+import webbrowser
 
 import colorama
 import docutils.core
@@ -70,15 +70,6 @@ def remove_dist_files():
         file.unlink()
 
 
-def open_browser(url):
-    """Open *url* in the default browser on Windows or Linux."""
-
-    if platform.system() == 'Windows':
-        subprocess.check_output(['start', url], shell=True)
-    elif platform.system() == 'Linux':
-        subprocess.check_output(['xdg-open', url], shell=True)
-
-
 def task_test_release():
     """Upload to test.pypi.org."""
 
@@ -95,7 +86,7 @@ def task_test_release():
             remove_dist_files,
             doit.action.CmdAction('python setup.py sdist bdist_wheel', env=env),
             f'twine upload --repository testpypi dist/*{env["NAME_SUFFIX"]}*',
-            (open_browser, [f'https://test.pypi.org/project/{PROJECT}_{env["NAME_SUFFIX"]}']),
+            (webbrowser.open, [f'https://test.pypi.org/project/{PROJECT}_{env["NAME_SUFFIX"]}']),
         ],
         'verbosity': 2,
     }
@@ -121,7 +112,7 @@ def task_release():
             remove_dist_files,
             'python setup.py sdist bdist_wheel',
             'twine upload dist/*',
-            (open_browser, [f'https://pypi.org/project/{PROJECT}']),
+            (webbrowser.open, [f'https://pypi.org/project/{PROJECT}']),
         ],
         'verbosity': 2,
     }
