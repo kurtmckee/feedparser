@@ -21,7 +21,7 @@ Documentation
 
 The feedparser documentation is available on the web at:
 
-    https://pythonhosted.org/feedparser/
+    https://feedparser.readthedocs.io/en/latest/
 
 It is also included in its source format, ReST, in the ``docs/`` directory.
 To build the documentation you'll need the Sphinx package, which is available at:

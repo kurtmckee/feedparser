@@ -7,6 +7,7 @@ coming in the next release:
         on Python 2 even though Python 2 is no longer supported.
 
     *   Fix a bug that put a trailing quote in the documentation version. (#232)
+    *   Update the documentation URL to point to ReadTheDocs.
 
 6.0.1 - 15 September 2020 [YANKED]
     * Remove all Python 2 compatibility code (#228)
