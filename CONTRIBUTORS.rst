@@ -12,6 +12,7 @@ previously contributed to feedparser and are not credited below, please open a
 bug report!
 
 * `John Beimler <http://john.beimler.org/>`_
+* `Beat Bolli <https://drbeat.li/>`_
 * `François Boulogne <http://www.sciunto.org/>`_
 * `Jason Diamond <http://injektilo.org/>`_
 * `Fazal Majid <https://majid.info/blog/>`_
