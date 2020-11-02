@@ -39,6 +39,7 @@ from . import mixin
 from .mixin import _FeedParserMixin
 from .parsers.loose import _LooseFeedParser
 from .parsers.strict import _StrictFeedParser
+from .parsers.json import _JsonFeedParser
 from .sanitizer import replace_doctype
 from .sgml import *
 from .urls import convert_to_idn, make_safe_absolute_uri
@@ -69,6 +70,7 @@ SUPPORTED_VERSIONS = {
     'atom10': 'Atom 1.0',
     'atom': 'Atom (unknown version)',
     'cdf': 'CDF',
+    'json1': 'JSON feed 1',
 }
 
 
@@ -220,9 +222,11 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
     result['headers'].update(response_headers or {})
 
     data = convert_to_utf8(result['headers'], data, result)
+    use_json_parser = result['content-type'] == 'application/json'
     use_strict_parser = result['encoding'] and True or False
 
-    result['version'], data, entities = replace_doctype(data)
+    if not use_json_parser:
+        result['version'], data, entities = replace_doctype(data)
 
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
     contentloc = result['headers'].get('content-location', '')
@@ -235,7 +239,15 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
 
     if not _XML_AVAILABLE:
         use_strict_parser = 0
-    if use_strict_parser:
+    if use_json_parser:
+        result['version'] = None
+        feedparser = _JsonFeedParser(baseuri, baselang, 'utf-8')
+        try:
+            feedparser.feed(data)
+        except Exception as e:
+            result['bozo'] = 1
+            result['bozo_exception'] = e
+    elif use_strict_parser:
         # initialize the SAX parser
         feedparser = StrictFeedParser(baseuri, baselang, 'utf-8')
         feedparser.resolve_relative_uris = resolve_relative_uris
@@ -257,7 +269,7 @@ def parse(url_file_stream_or_string, etag=None, modified=None, agent=None, refer
             result['bozo'] = 1
             result['bozo_exception'] = feedparser.exc or e
             use_strict_parser = 0
-    if not use_strict_parser:
+    if not use_json_parser and not use_strict_parser:
         feedparser = LooseFeedParser(baseuri, baselang, 'utf-8', entities)
         feedparser.resolve_relative_uris = resolve_relative_uris
         feedparser.sanitize_html = sanitize_html

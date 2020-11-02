@@ -190,6 +190,8 @@ def convert_to_utf8(http_headers, data, result):
     application_content_types = ('application/xml', 'application/xml-dtd',
                                  'application/xml-external-parsed-entity')
     text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
+    json_content_types = ('application/feed+json', 'application/json')
+    json = False
     if (
             http_content_type in application_content_types
             or (
@@ -208,6 +210,17 @@ def convert_to_utf8(http_headers, data, result):
     ):
         acceptable_content_type = 1
         rfc3023_encoding = http_encoding or 'us-ascii'
+    elif (
+            http_content_type in json_content_types
+            or (
+                    not http_content_type
+                    and data and data.lstrip()[0] == '{'
+            )
+    ):
+        http_content_type = json_content_types[0]
+        acceptable_content_type = 1
+        json = True
+        rfc3023_encoding = http_encoding or 'utf-8'  # RFC 7159, 8.1.
     elif http_content_type.startswith('text/'):
         rfc3023_encoding = http_encoding or 'us-ascii'
     elif http_headers and 'content-type' not in http_headers:
@@ -230,7 +243,7 @@ def convert_to_utf8(http_headers, data, result):
 
     if http_headers and (not acceptable_content_type):
         if 'content-type' in http_headers:
-            msg = '%s is not an XML media type' % http_headers['content-type']
+            msg = '%s is not an accepted media type' % http_headers['content-type']
         else:
             msg = 'no Content-type specified'
         error = NonXMLContentType(msg)
@@ -254,12 +267,13 @@ def convert_to_utf8(http_headers, data, result):
             pass
         else:
             known_encoding = 1
-            # Update the encoding in the opening XML processing instruction.
-            new_declaration = '''<?xml version='1.0' encoding='utf-8'?>'''
-            if RE_XML_DECLARATION.search(data):
-                data = RE_XML_DECLARATION.sub(new_declaration, data)
-            else:
-                data = new_declaration + '\n' + data
+            if not json:
+                # Update the encoding in the opening XML processing instruction.
+                new_declaration = '''<?xml version='1.0' encoding='utf-8'?>'''
+                if RE_XML_DECLARATION.search(data):
+                    data = RE_XML_DECLARATION.sub(new_declaration, data)
+                else:
+                    data = new_declaration + '\n' + data
             data = data.encode('utf-8')
             break
     # if still no luck, give up
@@ -275,6 +289,7 @@ def convert_to_utf8(http_headers, data, result):
             (rfc3023_encoding, proposed_encoding))
         rfc3023_encoding = proposed_encoding
 
+    result['content-type'] = http_content_type  # for selecting the parser
     result['encoding'] = rfc3023_encoding
     if error:
         result['bozo'] = True
