@@ -1,5 +1,6 @@
 coming in the next release:
-    * Add JSONFeed support (#103)
+    *   Add JSONFeed support (#103)
+    *   Switch to Poetry for packaging and publishing
 
 6.0.2 - 25 October 2020
     *   Stop building Python wheels with ``universal=1`` set. (#251)

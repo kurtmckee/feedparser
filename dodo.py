@@ -84,9 +84,10 @@ def task_test_release():
     return {
         'actions': [
             remove_dist_files,
-            doit.action.CmdAction('python setup.py sdist bdist_wheel', env=env),
-            f'twine upload --repository testpypi dist/*{env["NAME_SUFFIX"]}*',
-            (webbrowser.open, [f'https://test.pypi.org/project/{PROJECT}_{env["NAME_SUFFIX"]}']),
+            'poetry version prerelease',
+            'poetry build',
+            'poetry publish --repository testpypi',
+            (webbrowser.open, [f'https://test.pypi.org/project/{PROJECT}']),
         ],
         'verbosity': 2,
     }
@@ -110,8 +111,8 @@ def task_release():
         'actions': [
             validate_in_git_master_branch,
             remove_dist_files,
-            'python setup.py sdist bdist_wheel',
-            'twine upload dist/*',
+            'poetry build',
+            'poetry publish',
             (webbrowser.open, [f'https://pypi.org/project/{PROJECT}']),
         ],
         'verbosity': 2,

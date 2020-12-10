@@ -10,3 +10,4 @@ build/
 *.egg-info/
 .doit.*
 *.html
+poetry.lock

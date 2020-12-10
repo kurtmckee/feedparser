@@ -1,4 +1,0 @@
-recursive-include tests *.py *.xml *.gz *.z
-recursive-include docs *.rst *.py *.css
-include LICENSE
-include NEWS

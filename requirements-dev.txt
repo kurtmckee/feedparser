@@ -1,5 +1,4 @@
 doit
+poetry
 sphinx
 tox
-twine
-wheel
