@@ -27,3 +27,20 @@ tox = "^3.20.1"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+[tool.tox]
+legacy_tox_ini = """
+
+[tox]
+envlist = py{36, 37, 38, 39}-{chardet, }
+skip_missing_interpreters = True
+isolated_build = True
+
+[testenv]
+deps =
+    chardet: chardet
+
+commands = {envpython} -Wd tests/runtests.py
+
+"""
