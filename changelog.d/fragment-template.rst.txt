@@ -1,0 +1,28 @@
+..
+
+    Please select the correct category for the change you are making.
+
+    1.  Remove all lines before and after the chosen category
+        including these instructions and the divider lines that
+        use tildes ("~").
+
+    2.  Remove the four spaces in front of the remaining text.
+
+    3.  Describe your change using active verbs and full sentences.
+        For example, write "Support a new feature" instead of
+        "Supports a new feature" or "A new feature is supported".
+
+    4.  If your change is associated with an issue on GitHub,
+        list the issue number(s) in parentheses, separated by
+        commas. For example:
+
+            Support a new feature. (#10, #20)
+
+{% for category in config.categories %}
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    {{ category }}
+    {{ config.rst_header_chars[1] * (category|length) }}
+
+    *   Describe your "{{ category }}" change here. EDIT ME!
+{% endfor -%}

@@ -20,6 +20,8 @@ classifiers = [
 [tool.poetry.dependencies]
 python = ">=3.6, <=3.9"
 sgmllib3k = "^1.0.0"
+scriv = {git = "https://github.com/nedbat/scriv", rev = "44b3d57"}
+
 
 [tool.poetry.dev-dependencies]
 tox = "^3.20.1"
@@ -44,3 +46,14 @@ deps =
 commands = {envpython} -Wd tests/runtests.py
 
 """
+
+
+[tool.scriv]
+version = "literal: feedparser/__init__.py: __version__"
+categories = ["Added", "Fixed", "Removed", "Changed", "Deprecated", "Security"]
+entry_title_template = "{{ version }} - {{ date.strftime('%Y-%m-%d') }}"
+format = "rst"
+fragment_directory = "changelog.d"
+insert_marker = "scriv-insert-here"
+main_branches = ["develop", "master"]
+new_fragment_template = "file: fragment-template.rst.txt"
