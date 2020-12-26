@@ -21,470 +21,613 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
-6.0.2 - 25 October 2020
-    *   Stop building Python wheels with ``universal=1`` set. (#251)
-
-        This was causing pip to find and install the feedparser 6.x wheels
-        on Python 2 even though Python 2 is no longer supported.
-
-    *   Fix a bug that put a trailing quote in the documentation version. (#232)
-    *   Update the documentation URL to point to ReadTheDocs.
-
-6.0.1 - 15 September 2020 [YANKED]
-    * Remove all Python 2 compatibility code (#228)
-    * Add *python_requires* to ``setup.py`` (#231)
-
-6.0.0 - 12 September 2020 [YANKED]
-    * Support Python 3.6, 3.7, 3.8 and 3.9
-    * Drop support for Python 2.4 through 2.7, and Python 3.0 through 3.5 (#169)
-    * Convert feedparser from a monolithic file to a package
-    * ``feedparser.parse(sanitize_html=bool)`` argument replaces the ``feedparser.SANITIZE_HTML`` global
-    * ``feedparser.parse(resolve_relative_uris=bool)`` replaces the ``feedparser.RESOLVE_RELATIVE_URIS`` global
-    * Unify the codebase so that 2to3 conversion is no longer required
-    * Remove references to iconv_codecs
-    * Update the Creative Commons namespace URI's
-    * Update the default User-Agent name and URL
-    * Support Middle European (Summer) Time timezones (#20)
-    * Pass ``data`` to ``lazy_chardet_encoding()`` (#50)
-    * Document that datetimes are returned in UTC (#51)
-    * Remove cjkpython references in the documentation (#57)
-    * Resolve ResourceWarnings thrown during unit tests (#170)
-    * Fix tox build failures (#213)
-    * Use ``base64.decodebytes()`` directly to support Python 3.9 (#201)
-    * Fix Python 3.8 ``urllib.parse.splittype()`` deprecation warning (#211)
-    * Support parsing colons in RFC822 timezones (#144)
-    * Add `chardet` as an optional tox environment dependency
-    * Fix the Big5 unit test that fails when chardet is installed (#184)
-
-5.2.1 - July 23, 2015
-    * Fix #22 (pip package keeps upgrading all the time)
-
-5.2.0 - April 16, 2015
-    * Support PyPy
-    * Remove the HTTP Status 9001 test that caused unit test tracebacks
-    * Remove the completely-untested HTML tidy code
-    * Remove BeautifulSoup as a dependency
-    * Remove the XFN microformat parsing code
-    * Remove the rel_enclosure microformat parsing code
-    * Remove the rel_hcard microformat parsing code
-    * Remove the rel_tag microformat parsing code
-    * Replace the regex-based RFC 822 date parser with a procedural one
-    * Replace the Python-licensed W3DTF date parser
-    * Support HTML5 audio/source/video element relative URL's
-    * Remove the unparsed itunes_keywords key from the result dictionary
-    * Fix issue 321 just a little more (yet another code path was missed)
-    * Issue 62 (support georss and gml namespaces)
-    * Issue 296 (GUID's are always treated like relative URI's)
-    * Issue 334 (media:restriction element content is not returned)
-    * Issue 335 (sub-elements of media:group are not parsed and returned)
-    * Issue 342 (support multiple dc:creator elements)
-    * Issue 357 (loose parser breaks ampersands in link element URL's)
-    * Issue 374 (support the Podlove Simple Chapters namespace)
-    * Issue 380 (support media:rating element)
-    * Issue 384 (fix chardet support in Python 3)
-    * Issue 389 (elements in unknown uppercase namespaces are ignored)
-    * Issue 392 (tags element subverts 'tags' key in result dictionary)
-    * Issue 396 (Podlove Simple Chapters version 1.0 causes a KeyError)
-    * Issue 399 (docs call `request_headers` parameter `extra_headers`)
-    * Issue 401 (support additional dcterms and media namespaces elements)
-    * Issue 404 (support asctime datetime strings with timezone information)
-    * Issue 407 (decode forward slashes encoded as character entities)
-    * Issue 421 (delay chardet invocation as long as possible)
-    * Issue 422 (add return types docstrings)
-    * Issue 433 (update the list of allowed MathML elements and attributes)
-
-5.1.3 - December 9, 2012
-    * Consolidated and simplified the character encoding detection code
-    * Issue 346 (the gb2312 encoding isn't always upgraded to gb18030)
-    * Issue 350 (HTTP Last-Modified example is incorrect in documentation)
-    * Issue 352 (importing lxml.etree changes what exceptions libxml2 throws)
-    * Issue 356 (add support for the HTML5 attributes `poster` and `preload`)
-    * Issue 364 (enclosure-sniffing microformat code can throw ValueError)
-    * Issue 373 (support RFC822-ish dates with swapped days and months)
-    * Issue 376 (uppercase 'X' in hex character references cause ValueError)
-    * Issue 382 (don't strip inline user:password credentials from FTP URL's)
-
-5.1.2 - May 3, 2012
-    * Minor changes to the documentation
-    * Strip potentially dangerous ENTITY declarations in encoded feeds
-    * feedparser will now try to continue parsing despite compression errors
-    * Fix issue 321 a little more (the initial fix missed a code path)
-    * Issue 337 (`_parse_date_rfc822()` returns None on single-digit days)
-    * Issue 343 (add magnet links to the ACCEPTABLE_URI_SCHEMES)
-    * Issue 344 (handle deflated data with no headers nor checksums)
-    * Issue 347 (support `itunes:image` elements with a `url` attribute)
-
-5.1.1 - March 20, 2011
-    * Fix mistakes, typos, and bugs in the unit test code
-    * Fix crash in Python 2.4 and 2.5 if the feed has a UTF_32 byte order mark
-    * Replace the RFC822 date parser for more extensibility
-    * Issue 304 (handle RFC822 dates with timezones like GMT+00:00)
-    * Issue 309 (itunes:keywords should be split by commas, not whitespace)
-    * Issue 310 (pubDate should map to `published`, not `updated`)
-    * Issue 313 (include the compression test files in MANIFEST.in)
-    * Issue 314 (far-flung RFC822 dates don't throw OverflowError on x64)
-    * Issue 315 (HTTP server for unit tests runs on 0.0.0.0)
-    * Issue 321 (malformed URIs can cause ValueError to be thrown)
-    * Issue 322 (HTTP redirect to HTTP 304 causes SAXParseException)
-    * Issue 323 (installing chardet causes 11 unit test failures)
-    * Issue 325 (map `description_detail` to `summary_detail`)
-    * Issue 326 (Unicode filename causes UnicodeEncodeError if locale is ASCII)
-    * Issue 327 (handle RFC822 dates with extraneous commas)
-    * Issue 328 (temporarily map `updated` to `published` due to issue 310)
-    * Issue 329 (escape backslashes in Windows path in docs/introduction.rst)
-    * Issue 331 (don't escape backslashes that are in raw strings in the docs)
-
-5.1 - December 2, 2011
-    * Extensive, extensive unit test refactoring
-    * Convert the Docbook documentation to ReST
-    * Include the documentation in the source distribution
-    * Consolidate the disparate README files into one
-    * Support Jython somewhat (almost all unit tests pass)
-    * Support Python 3.2
-    * Fix Python 3 issues exposed by improved unit tests
-    * Fix international domain name issues exposed by improved unit tests
-    * Issue 148 (loose parser doesn't always return unicode strings)
-    * Issue 204 (FeedParserDict behavior should not be controlled by `assert`)
-    * Issue 247 (mssql date parser uses hardcoded tokyo timezone)
-    * Issue 249 (KeyboardInterrupt and SystemExit exceptions being caught)
-    * Issue 250 (`updated` can be a 9-tuple or a string, depending on context)
-    * Issue 252 (running setup.py in Python 3 fails due to missing sgmllib)
-    * Issue 253 (document that text/plain content isn't sanitized)
-    * Issue 260 (Python 3 doesn't decompress gzip'ed or deflate'd content)
-    * Issue 261 (popping from empty tag list)
-    * Issue 262 (docs are missing from distribution files)
-    * Issue 264 (vcard parser crashes on non-ascii characters)
-    * Issue 265 (http header comparisons are case sensitive)
-    * Issue 271 (monkey-patching sgmllib breaks other libraries)
-    * Issue 272 (can't pass bytes or str to `parse()` in Python 3)
-    * Issue 275 (`_parse_date()` doesn't catch OverflowError)
-    * Issue 276 (mutable types used as default values in `parse()`)
-    * Issue 277 (`python3 setup.py install` fails)
-    * Issue 281 (`_parse_date()` doesn't catch ValueError)
-    * Issue 282 (`_parse_date()` crashes when passed `None`)
-    * Issue 285 (crash on empty xmlns attribute)
-    * Issue 286 ('apos' character entity not handled properly)
-    * Issue 289 (add an option to disable microformat parsing)
-    * Issue 290 (Blogger's invalid img tags are unparseable)
-    * Issue 292 (atom id element not explicitly supported)
-    * Issue 294 ('categories' key exists but raises KeyError)
-    * Issue 297 (unresolvable external doctype causes crash)
-    * Issue 298 (nested nodes clobber actual values)
-    * Issue 300 (performance improvements)
-    * Issue 303 (unicode characters cause crash during relative uri resolution)
-    * Remove "Hot RSS" support since the format doesn't actually exist
-    * Remove the old feedparser.org website files from the source
-    * Remove the feedparser command line interface
-    * Remove the Zope interoperability hack
-    * Remove extraneous whitespace
-
-5.0.1 - February 20, 2011
-    * Fix issue 91 (invalid text in XML declaration causes sanitizer to crash)
-    * Fix issue 254 (sanitization can be bypassed by malformed XML comments)
-    * Fix issue 255 (sanitizer doesn't strip unsafe URI schemes)
-
-5.0 - January 25, 2011
-    * Improved MathML support
-    * Support microformats (rel-tag, rel-enclosure, xfn, hcard)
-    * Support IRIs
-    * Allow safe CSS through sanitization
-    * Allow safe HTML5 through sanitization
-    * Support SVG
-    * Support inline XML entity declarations
-    * Support unescaped quotes and angle brackets in attributes
-    * Support additional date formats
-    * Added the `request_headers` argument to parse()
-    * Added the `response_headers` argument to parse()
-    * Support multiple entry, feed, and source authors
-    * Officially make Python 2.4 the earliest supported version
-    * Support Python 3
-    * Bug fixes, bug fixes, bug fixes
-
-4.2 - March 12, 2008
-- Support for parsing microformats, including rel=enclosure, rel=tag, XFN, and hCard.
-
-- Updated the whitelist of acceptable HTML elements and attributes based on the latest draft of the HTML (HyperText Markup Language) 5 specification.
-
-- Support for CSS sanitization.  (Previous versions of Universal Feed Parser simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.
-
-- Support for SVG sanitation.
-
-- Support for MathML sanitation. Many thanks to Jacques Distler for patiently debugging this feature.
-
-- IRI (International Resource Identifier) support for every element that can contain a URI (Uniform Resource Identifier).
-
-- Ability to disable relative URI resolution.
-
-- Command-line arguments and alternate serializers, for manipulating Universal Feed Parser from shell scripts or other non-Python sources.
-
-- More robust parsing of author email addresses, misencoded win-1252 content, rel=self links, and better detection of HTML content in elements with ambiguous content types.
-
-4.1 - January 11, 2006 - MAP - removed socket timeout; added support for chardet library
-
-4.0.2 - December 24, 2005
-- cleared ``_debug`` flag.
-
-4.0.1 - December 24, 2005
-- bug fixes for Python 2.1 compatibility.
-
-4.0 - December 23, 2005 - MAP - support for relative URIs in xml:base attribute; fixed
-  encoding issue with mxTidy (phopkins); preliminary support for RFC 3229;
-  support for Atom 1.0; support for iTunes extensions; new 'tags' for
-  categories/keywords/etc. as array of dict
-  {'term': term, 'scheme': scheme, 'label': label} to match Atom 1.0
-  terminology; parse RFC 822-style dates with no time; lots of other
-  bug fixes
-
-3.3 - 7/15/2004 - MAP - optimize EBCDIC to ASCII conversion; fix obscure
-  problem tracking xml:base and xml:lang if element declares it, child
-  doesn't, first grandchild redeclares it, and second grandchild doesn't;
-  refactored date parsing; defined public registerDateHandler so callers
-  can add support for additional date formats at runtime; added support
-  for OnBlog, Nate, MSSQL, Greek, and Hungarian dates (ytrewq1); added
-  zopeCompatibilityHack() which turns FeedParserDict into a regular
-  dictionary, required for Zope compatibility, and also makes command-
-  line debugging easier because pprint module formats real dictionaries
-  better than dictionary-like objects; added NonXMLContentType exception,
-  which is stored in bozo_exception when a feed is served with a non-XML
-  media type such as 'text/plain'; respect Content-Language as default
-  language if not xml:lang is present; cloud dict is now FeedParserDict;
-  generator dict is now FeedParserDict; better tracking of xml:lang,
-  including support for xml:lang='' to unset the current language;
-  recognize RSS 1.0 feeds even when RSS 1.0 namespace is not the default
-  namespace; don't overwrite final status on redirects (scenarios:
-  redirecting to a URL that returns 304, redirecting to a URL that
-  redirects to another URL with a different type of redirect); add
-  support for HTTP 303 redirects
-
-3.2 - 7/3/2004 - MAP - use cjkcodecs and iconv_codec if available; always
-  convert feed to UTF-8 before passing to XML parser; completely revamped
-  logic for determining character encoding and attempting XML parsing
-  (much faster); increased default timeout to 20 seconds; test for presence
-  of Location header on redirects; added tests for many alternate character
-  encodings; support various EBCDIC encodings; support UTF-16BE and
-  UTF16-LE with or without a BOM; support UTF-8 with a BOM; support
-  UTF-32BE and UTF-32LE with or without a BOM; fixed crashing bug if no
-  XML parsers are available; added support for 'Content-encoding: deflate';
-  send blank 'Accept-encoding: ' header if neither gzip nor zlib modules
-  are available
-
-3.1 - 6/28/2004 - MAP - added and passed tests for converting HTML entities
-  to Unicode equivalents in illformed feeds (aaronsw); added and
-  passed tests for converting character entities to Unicode equivalents
-  in illformed feeds (aaronsw); test for valid parsers when setting
-  XML_AVAILABLE; make version and encoding available when server returns
-  a 304; add handlers parameter to pass arbitrary urllib2 handlers (like
-  digest auth or proxy support); add code to parse username/password
-  out of url and send as basic authentication; expose downloading-related
-  exceptions in bozo_exception (aaronsw); added __contains__ method to
-  FeedParserDict (aaronsw); added publisher_detail (aaronsw)
-
-3.0.1 - 6/22/2004 - MAP - default to us-ascii for all text/* content types;
-  recover from malformed content-type header parameter with no equals sign
-  ('text/xml; charset:iso-8859-1')
-
-3.0 - 6/21/2004 - MAP - don't try iso-8859-1 (can't distinguish between
-  iso-8859-1 and windows-1252 anyway, and most incorrectly marked feeds are
-  windows-1252); fixed regression that could cause the same encoding to be
-  tried twice (even if it failed the first time)
-
-3.0fc3 - 6/18/2004 - MAP - fixed bug in _changeEncodingDeclaration that
-  failed to parse utf-16 encoded feeds; made source into a FeedParserDict;
-  duplicate admin:generatorAgent/@rdf:resource in generator_detail.url;
-  added support for image; refactored parse() fallback logic to try other
-  encodings if SAX parsing fails (previously it would only try other encodings
-  if re-encoding failed); remove unichr madness in normalize_attrs now that
-  we're properly tracking encoding in and out of BaseHTMLProcessor; set
-  feed.language from root-level xml:lang; set entry.id from rdf:about;
-  send Accept header
-
-3.0fc2 - 5/10/2004 - MAP - added and passed Sam's amp tests; added and passed
-  my blink tag tests
-
-3.0fc1 - 4/23/2004 - MAP - made results.entries[0].links[0] and
-  results.entries[0].enclosures[0] into FeedParserDict; fixed typo that could
-  cause the same encoding to be tried twice (even if it failed the first time);
-  fixed DOCTYPE stripping when DOCTYPE contained entity declarations;
-  better textinput and image tracking in illformed RSS 1.0 feeds
-
-3.0b23 - 4/21/2004 - MAP - fixed UnicodeDecodeError for feeds that contain
-  high-bit characters in attributes in embedded HTML in description (thanks
-  Thijs van de Vossen); moved guid, date, and date_parsed to mapped keys in
-  FeedParserDict; tweaked FeedParserDict.has_key to return True if asking
-  about a mapped key
-
-3.0b22 - 4/19/2004 - MAP - changed 'channel' to 'feed', 'item' to 'entries' in
-  results dict; changed results dict to allow getting values with results.key
-  as well as results[key]; work around embedded illformed HTML with half
-  a DOCTYPE; work around malformed Content-Type header; if character encoding
-  is wrong, try several common ones before falling back to regexes (if this
-  works, bozo_exception is set to CharacterEncodingOverride); fixed character
-  encoding issues in BaseHTMLProcessor by tracking encoding and converting
-  from Unicode to raw strings before feeding data to sgmllib.SGMLParser;
-  convert each value in results to Unicode (if possible), even if using
-  regex-based parsing
-
-3.0b21 - 4/14/2004 - MAP - added Hot RSS support
-
-3.0b20 - 4/7/2004 - MAP - added CDF support
-
-3.0b19 - 3/15/2004 - MAP - fixed bug exploding author information when author
-  name was in parentheses; removed ultra-problematic mxTidy support; patch to
-  workaround crash in PyXML/expat when encountering invalid entities
-  (MarkMoraes); support for textinput/textInput
-
-3.0b18 - 2/17/2004 - MAP - always map description to summary_detail (Andrei);
-  use libxml2 (if available)
-
-3.0b17 - 2/13/2004 - MAP - determine character encoding as per RFC 3023
-
-3.0b16 - 2/12/2004 - MAP - fixed support for RSS 0.90 (broken in b15)
-
-3.0b15 - 2/11/2004 - MAP - fixed bug resolving relative links in wfw:commentRSS;
-  fixed bug capturing author and contributor URL; fixed bug resolving relative
-  links in author and contributor URL; fixed bug resolving relative links in
-  generator URL; added support for recognizing RSS 1.0; passed Simon Fell's
-  namespace tests, and included them permanently in the test suite with his
-  permission; fixed namespace handling under Python 2.1
-
-3.0b14 - 2/8/2004 - MAP - fixed CDATA handling in non-wellformed feeds under
-  Python 2.1
-
-3.0b13 - 2/8/2004 - MAP - better handling of empty HTML tags (br, hr, img,
-  etc.) in embedded markup, in either HTML or XHTML form (<br>, <br/>, <br />)
-
-3.0b12 - 2/6/2004 - MAP - fiddled with decodeEntities (still not right);
-  added support to Atom 0.2 subtitle; added support for Atom content model
-  in copyright; better sanitizing of dangerous HTML elements with end tags
-  (script, frameset)
-
-3.0b11 - 2/2/2004 - MAP - added 'rights' to list of elements that can contain
-  dangerous markup; fiddled with decodeEntities (not right); liberalized
-  date parsing even further
-
-3.0b10 - 1/31/2004 - MAP - incorporated ISO-8601 date parsing routines from
-  xml.util.iso8601
-
-3.0b9 - 1/29/2004 - MAP - fixed check for presence of dict function; added
-  support for summary
-
-3.0b8 - 1/28/2004 - MAP - added support for contributor
-
-3.0b7 - 1/28/2004 - MAP - support Atom-style author element in author_detail
-  (dictionary of 'name', 'url', 'email'); map author to author_detail if author
-  contains name + email address
-
-3.0b6 - 1/27/2004 - MAP - added feed type and version detection, result['version']
-  will be one of SUPPORTED_VERSIONS.keys() or empty string if unrecognized;
-  added support for creativeCommons:license and cc:license; added support for
-  full Atom content model in title, tagline, info, copyright, summary; fixed bug
-  with gzip encoding (not always telling server we support it when we do)
-
-3.0b5 - 1/26/2004 - MAP - fixed bug parsing multiple links at feed level
-
-3.0b4 - 1/26/2004 - MAP - fixed xml:lang inheritance; fixed multiple bugs tracking
-  xml:base URI, one for documents that don't define one explicitly and one for
-  documents that define an outer and an inner xml:base that goes out of scope
-  before the end of the document
-
-3.0b3 - 1/23/2004 - MAP - parse entire feed with real XML parser (if available);
-  added several new supported namespaces; fixed bug tracking naked markup in
-  description; added support for enclosure; added support for source; re-added
-  support for cloud which got dropped somehow; added support for expirationDate
-
-2.7.6 - 1/16/2004 - MAP - fixed bug with StringIO importing
-
-2.7.5 - 1/15/2004 - MAP - added workaround for malformed DOCTYPE (seen on many
-  blogspot.com sites); added _debug variable
-
-2.7.4 - 1/14/2004 - MAP - added workaround for improperly formed <br/> tags in
-  encoded HTML (skadz); fixed unicode handling in normalize_attrs (ChrisL);
-  fixed relative URI processing for guid (skadz); added ICBM support; added
-  base64 support
-
-2.7.1 - 1/9/2004 - MAP - fixed bug handling &quot; and &apos;.  fixed memory
-  leak not closing url opener (JohnD); added dc:publisher support (MarekK);
-  added admin:errorReportsTo support (MarekK); Python 2.1 dict support (MarekK)
-
-2.7 - 1/5/2004 - MAP - really added support for trackback and pingback
-  namespaces, as opposed to 2.6 when I said I did but didn't really;
-  sanitize HTML markup within some elements; added mxTidy support (if
-  installed) to tidy HTML markup within some elements; fixed indentation
-  bug in _parse_date (FazalM); use socket.setdefaulttimeout if available
-  (FazalM); universal date parsing and normalization (FazalM): 'created', modified',
-  'issued' are parsed into 9-tuple date format and stored in 'created_parsed',
-  'modified_parsed', and 'issued_parsed'; 'date' is duplicated in 'modified'
-  and vice-versa; 'date_parsed' is duplicated in 'modified_parsed' and vice-versa
-
-2.6 - 1/1/2004 - MAP - dc:author support (MarekK); fixed bug tracking
-  nested divs within content (JohnD); fixed missing sys import (JohanS);
-  fixed regular expression to capture XML character encoding (Andrei);
-  added support for Atom 0.3-style links; fixed bug with textInput tracking;
-  added support for cloud (MartijnP); added support for multiple
-  category/dc:subject (MartijnP); normalize content model: 'description' gets
-  description (which can come from description, summary, or full content if no
-  description), 'content' gets dict of base/language/type/value (which can come
-  from content:encoded, xhtml:body, content, or fullitem);
-  fixed bug matching arbitrary Userland namespaces; added xml:base and xml:lang
-  tracking; fixed bug tracking unknown tags; fixed bug tracking content when
-  <content> element is not in default namespace (like Pocketsoap feed);
-  resolve relative URLs in link, guid, docs, url, comments, wfw:comment,
-  wfw:commentRSS; resolve relative URLs within embedded HTML markup in
-  description, xhtml:body, content, content:encoded, title, subtitle,
-  summary, info, tagline, and copyright; added support for pingback and
-  trackback namespaces
-
-2.5.3 - 8/6/2003 - TvdV - patch to track whether we're inside an image or
-  textInput, and also to return the character encoding (if specified)
-
-2.5.2 - 7/28/2003 - MAP - entity-decode inline xml properly; added support for
-  inline <xhtml:body> and <xhtml:div> as used in some RSS 2.0 feeds
-
-2.5.1 - 7/26/2003 - RMK - clear opener.addheaders so we only send our custom
-  User-Agent (otherwise urllib2 sends two, which confuses some servers)
-
-2.5 - 7/25/2003 - MAP - changed to Python license (all contributors agree);
-  removed unnecessary urllib code -- urllib2 should always be available anyway;
-  return actual url, status, and full HTTP headers (as result['url'],
-  result['status'], and result['headers']) if parsing a remote feed over HTTP --
-  this should pass all the HTTP tests at <http://diveintomark.org/tests/client/http/>;
-  added the latest namespace-of-the-week for RSS 2.0
-
-2.4 - 7/9/2003 - MAP - added preliminary Pie/Atom/Echo support based on Sam Ruby's
-  snapshot of July 1 <http://www.intertwingly.net/blog/1506.html>; changed
-  project name
-
-2.3.1 - 6/12/2003 - MAP - if item has both link and guid, return both as-is.
-
-2.3 - 6/11/2003 - MAP - added USER_AGENT for default (if caller doesn't specify);
-  also, make sure we send the User-Agent even if urllib2 isn't available.
-  Match any variation of backend.userland.com/rss namespace.
-
-2.2 - 1/27/2003 - MAP - added attribute support, admin:generatorAgent.
-  start_admingeneratoragent is an example of how to handle elements with
-  only attributes, no content.
-
-2.1 - 11/14/2002 - MAP - added gzip support
-
-2.0.2 - 10/21/2002 - JB - added the inchannel to the if statement, otherwise its
-  useless.  Fixes the problem JD was addressing by adding it.
-
-2.0.1 - 10/21/2002 - MAP - changed parse() so that if we don't get anything
-  because of etag/modified, return the old etag/modified to the caller to
-  indicate why nothing is being returned
-
-2.0 - 10/19/2002
-  JD - use inchannel to watch out for image and textinput elements which can
-  also contain title, link, and description elements
-  JD - check for isPermaLink='false' attribute on guid elements
-  JD - replaced openAnything with open_resource supporting ETag and
-  If-Modified-Since request headers
-  JD - parse now accepts etag, modified, agent, and referrer optional
-  arguments
-  JD - modified parse to return a dictionary instead of a tuple so that any
-  etag or modified information can be returned and cached by the caller
-
-1.1 - 9/29/2002 - MAP - fixed infinite loop on incomplete CDATA sections
-
-1.0 - 9/27/2002 - MAP - fixed namespace processing on prefixed RSS 2.0 elements,
-  added Simon Fell's test suite
+6.0.2 - 2020-10-25
+==================
+
+*   Stop building Python wheels with ``universal=1`` set. (#251)
+
+    This was causing pip to find and install the feedparser 6.x wheels
+    on Python 2 even though Python 2 is no longer supported.
+
+*   Fix a bug that put a trailing quote in the documentation version. (#232)
+*   Update the documentation URL to point to ReadTheDocs.
+
+6.0.1 - 2020-09-15 [YANKED]
+===========================
+
+*   Remove all Python 2 compatibility code (#228)
+*   Add *python_requires* to ``setup.py`` (#231)
+
+6.0.0 - 2020-09-12 [YANKED]
+===========================
+
+*   Support Python 3.6, 3.7, 3.8 and 3.9
+*   Drop support for Python 2.4 through 2.7, and Python 3.0 through 3.5 (#169)
+*   Convert feedparser from a monolithic file to a package
+*   ``feedparser.parse(sanitize_html=bool)`` argument replaces the ``feedparser.SANITIZE_HTML`` global
+*   ``feedparser.parse(resolve_relative_uris=bool)`` replaces the ``feedparser.RESOLVE_RELATIVE_URIS`` global
+*   Unify the codebase so that 2to3 conversion is no longer required
+*   Remove references to iconv_codecs
+*   Update the Creative Commons namespace URI's
+*   Update the default User-Agent name and URL
+*   Support Middle European (Summer) Time timezones (#20)
+*   Pass ``data`` to ``lazy_chardet_encoding()`` (#50)
+*   Document that datetimes are returned in UTC (#51)
+*   Remove cjkpython references in the documentation (#57)
+*   Resolve ResourceWarnings thrown during unit tests (#170)
+*   Fix tox build failures (#213)
+*   Use ``base64.decodebytes()`` directly to support Python 3.9 (#201)
+*   Fix Python 3.8 ``urllib.parse.splittype()`` deprecation warning (#211)
+*   Support parsing colons in RFC822 timezones (#144)
+*   Add `chardet` as an optional tox environment dependency
+*   Fix the Big5 unit test that fails when chardet is installed (#184)
+
+5.2.1 - 2015-07-23
+==================
+
+*   Fix #22 (pip package keeps upgrading all the time)
+
+5.2.0 - 2015-04-16
+==================
+
+*   Support PyPy
+*   Remove the HTTP Status 9001 test that caused unit test tracebacks
+*   Remove the completely-untested HTML tidy code
+*   Remove BeautifulSoup as a dependency
+*   Remove the XFN microformat parsing code
+*   Remove the rel_enclosure microformat parsing code
+*   Remove the rel_hcard microformat parsing code
+*   Remove the rel_tag microformat parsing code
+*   Replace the regex-based RFC 822 date parser with a procedural one
+*   Replace the Python-licensed W3DTF date parser
+*   Support HTML5 audio/source/video element relative URL's
+*   Remove the unparsed itunes_keywords key from the result dictionary
+*   Fix issue 321 just a little more (yet another code path was missed)
+*   Issue 62 (support georss and gml namespaces)
+*   Issue 296 (GUID's are always treated like relative URI's)
+*   Issue 334 (media:restriction element content is not returned)
+*   Issue 335 (sub-elements of media:group are not parsed and returned)
+*   Issue 342 (support multiple dc:creator elements)
+*   Issue 357 (loose parser breaks ampersands in link element URL's)
+*   Issue 374 (support the Podlove Simple Chapters namespace)
+*   Issue 380 (support media:rating element)
+*   Issue 384 (fix chardet support in Python 3)
+*   Issue 389 (elements in unknown uppercase namespaces are ignored)
+*   Issue 392 (tags element subverts 'tags' key in result dictionary)
+*   Issue 396 (Podlove Simple Chapters version 1.0 causes a KeyError)
+*   Issue 399 (docs call `request_headers` parameter `extra_headers`)
+*   Issue 401 (support additional dcterms and media namespaces elements)
+*   Issue 404 (support asctime datetime strings with timezone information)
+*   Issue 407 (decode forward slashes encoded as character entities)
+*   Issue 421 (delay chardet invocation as long as possible)
+*   Issue 422 (add return types docstrings)
+*   Issue 433 (update the list of allowed MathML elements and attributes)
+
+5.1.3 - 2012-12-09
+==================
+
+*   Consolidated and simplified the character encoding detection code
+*   Issue 346 (the gb2312 encoding isn't always upgraded to gb18030)
+*   Issue 350 (HTTP Last-Modified example is incorrect in documentation)
+*   Issue 352 (importing lxml.etree changes what exceptions libxml2 throws)
+*   Issue 356 (add support for the HTML5 attributes `poster` and `preload`)
+*   Issue 364 (enclosure-sniffing microformat code can throw ValueError)
+*   Issue 373 (support RFC822-ish dates with swapped days and months)
+*   Issue 376 (uppercase 'X' in hex character references cause ValueError)
+*   Issue 382 (don't strip inline user:password credentials from FTP URL's)
+
+5.1.2 - 2012-05-03
+==================
+
+*   Minor changes to the documentation
+*   Strip potentially dangerous ENTITY declarations in encoded feeds
+*   feedparser will now try to continue parsing despite compression errors
+*   Fix issue 321 a little more (the initial fix missed a code path)
+*   Issue 337 (`_parse_date_rfc822()` returns None on single-digit days)
+*   Issue 343 (add magnet links to the ACCEPTABLE_URI_SCHEMES)
+*   Issue 344 (handle deflated data with no headers nor checksums)
+*   Issue 347 (support `itunes:image` elements with a `url` attribute)
+
+5.1.1 - 2011-03-20
+==================
+
+*   Fix mistakes, typos, and bugs in the unit test code
+*   Fix crash in Python 2.4 and 2.5 if the feed has a UTF_32 byte order mark
+*   Replace the RFC822 date parser for more extensibility
+*   Issue 304 (handle RFC822 dates with timezones like GMT+00:00)
+*   Issue 309 (itunes:keywords should be split by commas, not whitespace)
+*   Issue 310 (pubDate should map to `published`, not `updated`)
+*   Issue 313 (include the compression test files in MANIFEST.in)
+*   Issue 314 (far-flung RFC822 dates don't throw OverflowError on x64)
+*   Issue 315 (HTTP server for unit tests runs on 0.0.0.0)
+*   Issue 321 (malformed URIs can cause ValueError to be thrown)
+*   Issue 322 (HTTP redirect to HTTP 304 causes SAXParseException)
+*   Issue 323 (installing chardet causes 11 unit test failures)
+*   Issue 325 (map `description_detail` to `summary_detail`)
+*   Issue 326 (Unicode filename causes UnicodeEncodeError if locale is ASCII)
+*   Issue 327 (handle RFC822 dates with extraneous commas)
+*   Issue 328 (temporarily map `updated` to `published` due to issue 310)
+*   Issue 329 (escape backslashes in Windows path in docs/introduction.rst)
+*   Issue 331 (don't escape backslashes that are in raw strings in the docs)
+
+5.1 - 2011-12-02
+================
+
+*   Extensive, extensive unit test refactoring
+*   Convert the Docbook documentation to ReST
+*   Include the documentation in the source distribution
+*   Consolidate the disparate README files into one
+*   Support Jython somewhat (almost all unit tests pass)
+*   Support Python 3.2
+*   Fix Python 3 issues exposed by improved unit tests
+*   Fix international domain name issues exposed by improved unit tests
+*   Issue 148 (loose parser doesn't always return unicode strings)
+*   Issue 204 (FeedParserDict behavior should not be controlled by `assert`)
+*   Issue 247 (mssql date parser uses hardcoded tokyo timezone)
+*   Issue 249 (KeyboardInterrupt and SystemExit exceptions being caught)
+*   Issue 250 (`updated` can be a 9-tuple or a string, depending on context)
+*   Issue 252 (running setup.py in Python 3 fails due to missing sgmllib)
+*   Issue 253 (document that text/plain content isn't sanitized)
+*   Issue 260 (Python 3 doesn't decompress gzip'ed or deflate'd content)
+*   Issue 261 (popping from empty tag list)
+*   Issue 262 (docs are missing from distribution files)
+*   Issue 264 (vcard parser crashes on non-ascii characters)
+*   Issue 265 (http header comparisons are case sensitive)
+*   Issue 271 (monkey-patching sgmllib breaks other libraries)
+*   Issue 272 (can't pass bytes or str to `parse()` in Python 3)
+*   Issue 275 (`_parse_date()` doesn't catch OverflowError)
+*   Issue 276 (mutable types used as default values in `parse()`)
+*   Issue 277 (`python3 setup.py install` fails)
+*   Issue 281 (`_parse_date()` doesn't catch ValueError)
+*   Issue 282 (`_parse_date()` crashes when passed `None`)
+*   Issue 285 (crash on empty xmlns attribute)
+*   Issue 286 ('apos' character entity not handled properly)
+*   Issue 289 (add an option to disable microformat parsing)
+*   Issue 290 (Blogger's invalid img tags are unparseable)
+*   Issue 292 (atom id element not explicitly supported)
+*   Issue 294 ('categories' key exists but raises KeyError)
+*   Issue 297 (unresolvable external doctype causes crash)
+*   Issue 298 (nested nodes clobber actual values)
+*   Issue 300 (performance improvements)
+*   Issue 303 (unicode characters cause crash during relative uri resolution)
+*   Remove "Hot RSS" support since the format doesn't actually exist
+*   Remove the old feedparser.org website files from the source
+*   Remove the feedparser command line interface
+*   Remove the Zope interoperability hack
+*   Remove extraneous whitespace
+
+5.0.1 - 2011-02-20
+==================
+
+*   Fix issue 91 (invalid text in XML declaration causes sanitizer to crash)
+*   Fix issue 254 (sanitization can be bypassed by malformed XML comments)
+*   Fix issue 255 (sanitizer doesn't strip unsafe URI schemes)
+
+5.0 - 2011-01-25
+================
+
+*   Improved MathML support
+*   Support microformats (rel-tag, rel-enclosure, xfn, hcard)
+*   Support IRIs
+*   Allow safe CSS through sanitization
+*   Allow safe HTML5 through sanitization
+*   Support SVG
+*   Support inline XML entity declarations
+*   Support unescaped quotes and angle brackets in attributes
+*   Support additional date formats
+*   Added the `request_headers` argument to parse()
+*   Added the `response_headers` argument to parse()
+*   Support multiple entry, feed, and source authors
+*   Officially make Python 2.4 the earliest supported version
+*   Support Python 3
+*   Bug fixes, bug fixes, bug fixes
+
+4.2 - 2008-03-12
+================
+
+*   Support for parsing microformats, including rel=enclosure, rel=tag, XFN, and hCard.
+*   Updated the whitelist of acceptable HTML elements and attributes based on the latest draft of the HTML (HyperText Markup Language) 5 specification.
+*   Support for CSS sanitization.  (Previous versions of Universal Feed Parser simply stripped all inline styles.)  Many thanks to Sam Ruby for implementing this, despite my insistence that it was impossible.
+*   Support for SVG sanitation.
+*   Support for MathML sanitation. Many thanks to Jacques Distler for patiently debugging this feature.
+*   IRI (International Resource Identifier) support for every element that can contain a URI (Uniform Resource Identifier).
+*   Ability to disable relative URI resolution.
+*   Command-line arguments and alternate serializers, for manipulating Universal Feed Parser from shell scripts or other non-Python sources.
+*   More robust parsing of author email addresses, misencoded win-1252 content, rel=self links, and better detection of HTML content in elements with ambiguous content types.
+
+4.1 - 2006-01-11
+================
+
+*   Removed socket timeout
+*   Added support for chardet library
+
+4.0.2 - 2005-12-24
+==================
+
+*   Cleared ``_debug`` flag.
+
+4.0.1 - 2005-12-24
+==================
+
+*   Bug fixes for Python 2.1 compatibility.
+
+4.0 - 2005-12-23
+================
+
+*   Support for relative URIs in xml:base attribute
+*   Fixed encoding issue with mxTidy (phopkins)
+*   Preliminary support for RFC 3229
+*   Support for Atom 1.0
+*   Support for iTunes extensions
+*   New 'tags' for categories/keywords/etc. as array of dict {'term': term, 'scheme': scheme, 'label': label} to match Atom 1.0 terminology
+*   Parse RFC 822-style dates with no time
+*   Lots of other bug fixes
+
+3.3 - 2004-07-15
+================
+
+*   Optimize EBCDIC to ASCII conversion
+*   Fix obscure problem tracking xml:base and xml:lang if element declares it, child doesn't, first grandchild redeclares it, and second grandchild doesn't
+*   Refactored date parsing
+*   Defined public registerDateHandler so callers can add support for additional date formats at runtime
+*   Added support for OnBlog, Nate, MSSQL, Greek, and Hungarian dates (ytrewq1)
+*   Added zopeCompatibilityHack() which turns FeedParserDict into a regular dictionary, required for Zope compatibility, and also makes command line debugging easier because pprint module formats real dictionaries better than dictionary-like objects
+*   Added NonXMLContentType exception, which is stored in bozo_exception when a feed is served with a non-XML media type such as 'text/plain'
+*   Respect Content-Language as default language if not xml:lang is present
+*   Cloud dict is now FeedParserDict
+*   Generator dict is now FeedParserDict
+*   Better tracking of xml:lang, including support for xml:lang='' to unset the current language
+*   Recognize RSS 1.0 feeds even when RSS 1.0 namespace is not the default namespace
+*   Don't overwrite final status on redirects (scenarios: redirecting to a URL that returns 304, redirecting to a URL that redirects to another URL with a different type of redirect)
+*   Add support for HTTP 303 redirects
+
+3.2 - 2004-07-03
+================
+
+*   Use cjkcodecs and iconv_codec if available
+*   Always convert feed to UTF-8 before passing to XML parser
+*   Completely revamped logic for determining character encoding and attempting XML parsing (much faster)
+*   Increased default timeout to 20 seconds
+*   Test for presence of Location header on redirects
+*   Added tests for many alternate character encodings
+*   Support various EBCDIC encodings
+*   Support UTF-16BE and UTF16-LE with or without a BOM
+*   Support UTF-8 with a BOM
+*   Support UTF-32BE and UTF-32LE with or without a BOM
+*   Fixed crashing bug if no XML parsers are available
+*   Added support for 'Content-encoding: deflate'
+*   Send blank 'Accept-encoding: ' header if neither gzip nor zlib modules are available
+
+3.1 - 2004-06-28
+================
+
+*   Added and passed tests for converting HTML entities to Unicode equivalents in illformed feeds (aaronsw)
+*   Added and passed tests for converting character entities to Unicode equivalents in illformed feeds (aaronsw)
+*   Test for valid parsers when setting XML_AVAILABLE
+*   Make version and encoding available when server returns a 304
+*   Add handlers parameter to pass arbitrary urllib2 handlers (like digest auth or proxy support)
+*   Add code to parse username/password out of url and send as basic authentication
+*   Expose downloading-related exceptions in bozo_exception (aaronsw)
+*   Added __contains__ method to FeedParserDict (aaronsw)
+*   Added publisher_detail (aaronsw)
+
+3.0.1 - 2004-06-22
+==================
+
+*   Default to us-ascii for all text/* content types
+*   Recover from malformed content-type header parameter with no equals sign ('text/xml; charset:iso-8859-1')
+
+3.0 - 2004-06-21
+================
+
+*   Don't try iso-8859-1 (can't distinguish between iso-8859-1 and windows-1252 anyway, and most incorrectly marked feeds are windows-1252)
+*   Fixed regression that could cause the same encoding to be tried twice (even if it failed the first time)
+
+3.0fc3 - 2004-06-18
+===================
+
+*   Fixed bug in _changeEncodingDeclaration that failed to parse utf-16 encoded feeds
+*   Made source into a FeedParserDict
+*   Duplicate admin:generatorAgent/@rdf:resource in generator_detail.url
+*   Added support for image
+*   Refactored parse() fallback logic to try other encodings if SAX parsing fails (previously it would only try other encodings if re-encoding failed)
+*   Remove unichr madness in normalize_attrs now that we're properly tracking encoding in and out of BaseHTMLProcessor
+*   Set feed.language from root-level xml:lang
+*   Set entry.id from rdf:about
+*   Send Accept header
+
+3.0fc2 - 2004-05-10
+===================
+
+*   Added and passed Sam's amp tests
+*   Added and passed my blink tag tests
+
+3.0fc1 - 2004-04-23
+===================
+
+*   Made results.entries[0].links[0] and results.entries[0].enclosures[0] into FeedParserDict
+*   Fixed typo that could cause the same encoding to be tried twice (even if it failed the first time)
+*   Fixed DOCTYPE stripping when DOCTYPE contained entity declarations
+*   Better textinput and image tracking in illformed RSS 1.0 feeds
+
+3.0b23 - 2004-04-21
+===================
+
+*   Fixed UnicodeDecodeError for feeds that contain high-bit characters in attributes in embedded HTML in description (thanks Thijs van de Vossen)
+*   Moved guid, date, and date_parsed to mapped keys in FeedParserDict
+*   Tweaked FeedParserDict.has_key to return True if asking about a mapped key
+
+3.0b22 - 2004-04-19
+===================
+
+*   Changed 'channel' to 'feed', 'item' to 'entries' in results dict
+*   Changed results dict to allow getting values with results.key as well as results[key]
+*   Work around embedded illformed HTML with half a DOCTYPE
+*   Work around malformed Content-Type header
+*   If character encoding is wrong, try several common ones before falling back to regexes (if this works, bozo_exception is set to CharacterEncodingOverride)
+*   Fixed character encoding issues in BaseHTMLProcessor by tracking encoding and converting from Unicode to raw strings before feeding data to sgmllib.SGMLParser
+*   Convert each value in results to Unicode (if possible), even if using regex-based parsing
+
+3.0b21 - 2004-04-14
+===================
+
+*   Added Hot RSS support
+
+3.0b20 - 2004-04-07
+===================
+
+*   Added CDF support
+
+3.0b19 - 2004-03-15
+===================
+
+*   Fixed bug exploding author information when author name was in parentheses
+*   Removed ultra-problematic mxTidy support
+*   Patch to workaround crash in PyXML/expat when encountering invalid entities (MarkMoraes)
+*   Support for textinput/textInput
+
+3.0b18 - 2004-02-17
+===================
+
+*   Always map description to summary_detail (Andrei)
+*   Use libxml2 (if available)
+
+3.0b17 - 2004-02-13
+===================
+
+*   Determine character encoding as per RFC 3023
+
+3.0b16 - 2004-02-12
+===================
+
+*   Fixed support for RSS 0.90 (broken in b15)
+
+3.0b15 - 2004-02-11
+===================
+
+*   Fixed bug resolving relative links in wfw:commentRSS
+*   Fixed bug capturing author and contributor URL
+*   Fixed bug resolving relative links in author and contributor URL
+*   Fixed bug resolving relative links in generator URL
+*   Added support for recognizing RSS 1.0
+*   Passed Simon Fell's namespace tests, and included them permanently in the test suite with his permission
+*   Fixed namespace handling under Python 2.1
+
+3.0b14 - 2004-02-08
+===================
+
+*   Fixed CDATA handling in non-wellformed feeds under Python 2.1
+
+3.0b13 - 2004-02-08
+===================
+
+*   Better handling of empty HTML tags (br, hr, img, etc.) in embedded markup, in either HTML or XHTML form (<br>, <br/>, <br />)
+
+3.0b12 - 2004-02-06
+===================
+
+*   Fiddled with decodeEntities (still not right)
+*   Added support to Atom 0.2 subtitle
+*   Added support for Atom content model in copyright
+*   Better sanitizing of dangerous HTML elements with end tags (script, frameset)
+
+3.0b11 - 2004-02-02
+===================
+
+*   Added 'rights' to list of elements that can contain dangerous markup
+*   Fiddled with decodeEntities (not right)
+*   Liberalized date parsing even further
+
+3.0b10 - 2004-01-31
+===================
+
+*   Incorporated ISO-8601 date parsing routines from xml.util.iso8601
+
+3.0b9 - 2004-01-29
+==================
+
+*   Fixed check for presence of dict function
+*   Added support for summary
+
+3.0b8 - 2004-01-28
+==================
+
+*   Added support for contributor
+
+3.0b7 - 2004-01-28
+==================
+
+*   Support Atom-style author element in author_detail (dictionary of 'name', 'url', 'email')
+*   Map author to author_detail if author contains name + email address
+
+3.0b6 - 2004-01-27
+==================
+
+*   Added feed type and version detection, result['version'] will be one of SUPPORTED_VERSIONS.keys() or empty string if unrecognized
+*   Added support for creativeCommons:license and cc:license
+*   Added support for full Atom content model in title, tagline, info, copyright, summary
+*   Fixed bug with gzip encoding (not always telling server we support it when we do)
+
+3.0b5 - 2004-01-26
+==================
+
+*   Fixed bug parsing multiple links at feed level
+
+3.0b4 - 2004-01-26
+==================
+
+*   Fixed xml:lang inheritance
+*   Fixed multiple bugs tracking xml:base URI, one for documents that don't define one explicitly and one for documents that define an outer and an inner xml:base that goes out of scope before the end of the document
+
+3.0b3 - 2004-01-23
+==================
+
+*   Parse entire feed with real XML parser (if available)
+*   Added several new supported namespaces
+*   Fixed bug tracking naked markup in description
+*   Added support for enclosure
+*   Added support for source
+*   Re-added support for cloud which got dropped somehow
+*   Added support for expirationDate
+
+2.7.6 - 2004-01-16
+==================
+
+*   Fixed bug with StringIO importing
+
+2.7.5 - 2004-01-15
+==================
+
+*   Added workaround for malformed DOCTYPE (seen on many blogspot.com sites)
+*   Added _debug variable
+
+2.7.4 - 2004-01-14
+==================
+
+*   Added workaround for improperly formed <br/> tags in encoded HTML (skadz)
+*   Fixed unicode handling in normalize_attrs (ChrisL)
+*   Fixed relative URI processing for guid (skadz)
+*   Added ICBM support
+*   Added base64 support
+
+2.7.1 - 2004-01-09
+==================
+
+*   fixed bug handling &quot; and &apos;
+*   Fixed memory leak not closing url opener (JohnD)
+*   Added dc:publisher support (MarekK)
+*   Added admin:errorReportsTo support (MarekK)
+*   Python 2.1 dict support (MarekK)
+
+2.7 - 2004-01-05
+================
+
+*   Really added support for trackback and pingback namespaces, as opposed to 2.6 when I said I did but didn't really
+*   Sanitize HTML markup within some elements
+*   Added mxTidy support (if installed) to tidy HTML markup within some elements
+*   Fixed indentation bug in _parse_date (FazalM)
+*   Use socket.setdefaulttimeout if available (FazalM)
+*   Universal date parsing and normalization (FazalM): 'created', modified', 'issued' are parsed into 9-tuple date format and stored in 'created_parsed', 'modified_parsed', and 'issued_parsed'
+*   'date' is duplicated in 'modified' and vice-versa
+*   'date_parsed' is duplicated in 'modified_parsed' and vice-versa
+
+2.6 - 2004-01-01
+================
+
+*   dc:author support (MarekK)
+*   Fixed bug tracking nested divs within content (JohnD)
+*   Fixed missing sys import (JohanS)
+*   Fixed regular expression to capture XML character encoding (Andrei)
+*   Added support for Atom 0.3-style links
+*   Fixed bug with textInput tracking
+*   Added support for cloud (MartijnP)
+*   Added support for multiple category/dc:subject (MartijnP)
+*   Normalize content model: 'description' gets description (which can come from description, summary, or full content if no description), 'content' gets dict of base/language/type/value (which can come from content:encoded, xhtml:body, content, or fullitem)
+*   Fixed bug matching arbitrary Userland namespaces
+*   Added xml:base and xml:lang tracking
+*   Fixed bug tracking unknown tags
+*   Fixed bug tracking content when <content> element is not in default namespace (like Pocketsoap feed)
+*   Resolve relative URLs in link, guid, docs, url, comments, wfw:comment, wfw:commentRSS
+*   Resolve relative URLs within embedded HTML markup in description, xhtml:body, content, content:encoded, title, subtitle, summary, info, tagline, and copyright
+*   Added support for pingback and trackback namespaces
+
+2.5.3 - 2003-08-06
+==================
+
+*   Patch to track whether we're inside an image or textInput, and also to return the character encoding (if specified) (TvdV)
+
+2.5.2 - 2003-07-28
+==================
+
+*   Entity-decode inline xml properly
+*   Added support for inline <xhtml:body> and <xhtml:div> as used in some RSS 2.0 feeds
+
+2.5.1 - 2003-07-26
+==================
+
+*   Clear opener.addheaders so we only send our custom User-Agent (otherwise urllib2 sends two, which confuses some servers) (RMK)
+
+2.5 - 2003-07-25
+================
+
+*   Changed to Python license (all contributors agree)
+*   Removed unnecessary urllib code -- urllib2 should always be available anyway
+*   Return actual url, status, and full HTTP headers (as result['url'], result['status'], and result['headers']) if parsing a remote feed over HTTP this should pass all the HTTP tests at <http://diveintomark.org/tests/client/http/>
+*   Added the latest namespace-of-the-week for RSS 2.0
+
+2.4 - 2003-07-09
+================
+
+*   Added preliminary Pie/Atom/Echo support based on Sam Ruby's snapshot of July 1 <http://www.intertwingly.net/blog/1506.html>
+*   Changed project name
+
+2.3.1 - 2003-06-12
+==================
+
+*   If item has both link and guid, return both as-is.
+
+2.3 - 2003-06-11
+================
+
+*   Added USER_AGENT for default (if caller doesn't specify)
+*   Also, make sure we send the User-Agent even if urllib2 isn't available. Match any variation of backend.userland.com/rss namespace.
+
+2.2 - 2003-01-27
+================
+
+*   Added attribute support, admin:generatorAgent. start_admingeneratoragent is an example of how to handle elements with only attributes, no content.
+
+2.1 - 2002-11-14
+================
+
+*   Added gzip support
+
+2.0.2 - 2002-10-21
+==================
+
+*   Added the inchannel to the if statement, otherwise its useless.  Fixes the problem JD was addressing by adding it. (JB)
+
+2.0.1 - 2002-10-21
+==================
+
+*   Changed parse() so that if we don't get anything because of etag/modified, return the old etag/modified to the caller to indicate why nothing is being returned
+
+2.0 - 2002-10-19
+================
+
+*   Use inchannel to watch out for image and textinput elements which can also contain title, link, and description elements (JD)
+*   Check for isPermaLink='false' attribute on guid elements (JD)
+*   Replaced openAnything with open_resource supporting ETag and If-Modified-Since request headers (JD)
+*   Parse now accepts etag, modified, agent, and referrer optional arguments (JD)
+*   Modified parse to return a dictionary instead of a tuple so that any etag or modified information can be returned and cached by the caller (JD)
+
+1.1 - 2002-09-29
+================
+
+*   Fixed infinite loop on incomplete CDATA sections
+
+1.0 - 2002-09-27
+================
+
+*   Fixed namespace processing on prefixed RSS 2.0 elements
+*   Added Simon Fell's test suite
