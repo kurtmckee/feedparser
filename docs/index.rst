@@ -19,6 +19,6 @@ implied warranties.  See :ref:`the documentation license <license>` for more det
    advanced
    http
    annotated-examples
-   history
+   changelog
    reference
    license

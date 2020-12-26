@@ -1,0 +1,4 @@
+Changed
+-------
+
+*   Migrate to scriv to manage the changelog.
