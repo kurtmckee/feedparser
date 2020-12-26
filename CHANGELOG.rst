@@ -219,7 +219,7 @@ Please see the fragment files in the `changelog.d directory`_.
 
 - More robust parsing of author email addresses, misencoded win-1252 content, rel=self links, and better detection of HTML content in elements with ambiguous content types.
 
-4.1 - MAP - removed socket timeout; added support for chardet library
+4.1 - January 11, 2006 - MAP - removed socket timeout; added support for chardet library
 
 4.0.2 - December 24, 2005
 - cleared ``_debug`` flag.
@@ -227,7 +227,7 @@ Please see the fragment files in the `changelog.d directory`_.
 4.0.1 - December 24, 2005
 - bug fixes for Python 2.1 compatibility.
 
-4.0 - MAP - support for relative URIs in xml:base attribute; fixed
+4.0 - December 23, 2005 - MAP - support for relative URIs in xml:base attribute; fixed
   encoding issue with mxTidy (phopkins); preliminary support for RFC 3229;
   support for Atom 1.0; support for iTunes extensions; new 'tags' for
   categories/keywords/etc. as array of dict
