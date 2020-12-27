@@ -30,7 +30,7 @@ Noticing temporary redirects
     >>> d.href
     'http://feedparser.org/docs/examples/atom10.xml'
     >>> d.feed.title
-    u'Sample Feed'
+    'Sample Feed'
 
 When a feed has permanently moved to a new location, the web server will return
 a ``301`` status code.  Again, :program:`Universal Feed Parser` makes this
@@ -57,7 +57,7 @@ Noticing permanent redirects
     >>> d.href
     'http://feedparser.org/docs/examples/atom10.xml'
     >>> d.feed.title
-    u'Sample Feed'
+    'Sample Feed'
 
 
 When a feed has been permanently deleted, the web server will return a ``410``

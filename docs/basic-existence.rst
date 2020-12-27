@@ -20,7 +20,7 @@ Testing if elements are present
     >>> 'ttl' in d.feed
     False
     >>> d.feed.get('title', 'No title')
-    u'Sample feed'
+    'Sample feed'
     >>> d.feed.get('ttl', 60)
     60
 

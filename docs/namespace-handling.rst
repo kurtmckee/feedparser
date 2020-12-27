@@ -24,11 +24,11 @@ Accessing namespaced elements
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/prism.rdf')
     >>> d.feed.prism_issn
-    u'0028-0836'
+    '0028-0836'
     >>> d.namespaces
-    {'': u'http://purl.org/rss/1.0/',
-    'prism': u'http://prismstandard.org/namespaces/1.2/basic/',
-    'rdf': u'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}
+    {'': 'http://purl.org/rss/1.0/',
+    'prism': 'http://prismstandard.org/namespaces/1.2/basic/',
+    'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}
 
 
 The prefix used to construct the variable name is not guaranteed to be the same
@@ -57,7 +57,7 @@ Accessing namespaced elements with non-standard prefixes
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/nonstandard_prefix.rdf')
     >>> d.feed.prism_issn
-    u'0028-0836'
+    '0028-0836'
     >>> d.feed.foo_issn
     Traceback (most recent call last):
     File "<stdin>", line 1, in ?
@@ -65,9 +65,9 @@ Accessing namespaced elements with non-standard prefixes
     raise AttributeError, "object has no attribute '%s'" % key
     AttributeError: object has no attribute 'foo_issn'
     >>> d.namespaces
-    {'': u'http://purl.org/rss/1.0/',
-    'prism': u'http://prismstandard.org/namespaces/1.2/basic/',
-    'rdf': u'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}
+    {'': 'http://purl.org/rss/1.0/',
+    'prism': 'http://prismstandard.org/namespaces/1.2/basic/',
+    'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'}
 
 
 This is the complete list of namespaces that :program:`Universal Feed Parser`

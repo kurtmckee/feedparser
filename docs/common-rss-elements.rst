@@ -44,13 +44,13 @@ Accessing Common Channel Elements
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
     >>> d.feed.title
-    u'Sample Feed'
+    'Sample Feed'
     >>> d.feed.link
-    u'http://example.org/'
+    'http://example.org/'
     >>> d.feed.description
-    u'For documentation <em>only</em>'
+    'For documentation <em>only</em>'
     >>> d.feed.published
-    u'Sat, 07 Sep 2002 00:00:01 GMT'
+    'Sat, 07 Sep 2002 00:00:01 GMT'
     >>> d.feed.published_parsed
     (2002, 9, 7, 0, 0, 1, 5, 250, 0)
 
@@ -65,17 +65,17 @@ Accessing Common Item Elements
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
     >>> d.entries[0].title
-    u'First item title'
+    'First item title'
     >>> d.entries[0].link
-    u'http://example.org/item/1'
+    'http://example.org/item/1'
     >>> d.entries[0].description
-    u'Watch out for <span>nasty tricks</span>'
+    'Watch out for <span>nasty tricks</span>'
     >>> d.entries[0].published
-    u'Thu, 05 Sep 2002 00:00:01 GMT'
+    'Thu, 05 Sep 2002 00:00:01 GMT'
     >>> d.entries[0].published_parsed
     (2002, 9, 5, 0, 0, 1, 3, 248, 0)
     >>> d.entries[0].id
-    u'http://example.org/guid/1'
+    'http://example.org/guid/1'
 
 
 .. tip:: You can also access data from :abbr:`RSS (Rich Site Summary)` feeds using Atom terminology.  See :ref:`advanced.normalization` for details.

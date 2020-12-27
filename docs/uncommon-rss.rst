@@ -16,11 +16,11 @@ Accessing feed image
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
     >>> d.feed.image
-    {'title': u'Example banner',
-    'href': u'http://example.org/banner.png',
+    {'title': 'Example banner',
+    'href': 'http://example.org/banner.png',
     'width': 80,
     'height': 15,
-    'link': u'http://example.org/'}
+    'link': 'http://example.org/'}
 
 Feeds and entries can be assigned to multiple categories, and in some versions
 of :abbr:`RSS (Rich Site Summary)`, categories can be associated with a
@@ -37,8 +37,8 @@ Accessing multiple categories
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
     >>> d.feed.categories
-    [(u'Syndic8', u'1024'),
-    (u'dmoz', 'Top/Society/People/Personal_Homepages/P/')]
+    [('Syndic8', '1024'),
+    ('dmoz', 'Top/Society/People/Personal_Homepages/P/')]
 
 Each item in an :abbr:`RSS (Rich Site Summary)` feed can have an "enclosure", a
 delightful misnomer that is simply a link to an external file (usually a music
@@ -65,9 +65,9 @@ Accessing enclosures
     >>> len(e.enclosures)
     1
     >>> e.enclosures[0]
-    {'type': u'audio/mpeg',
-    'length': u'1069871',
-    'href': u'http://example.org/audio/demo.mp3'}
+    {'type': 'audio/mpeg',
+    'length': '1069871',
+    'href': 'http://example.org/audio/demo.mp3'}
 
 
 Accessing feed cloud
@@ -80,11 +80,11 @@ No one is quite sure what a cloud is.
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
     >>> d.feed.cloud
-    {'domain': u'rpc.example.com',
-    'port': u'80',
-    'path': u'/RPC2', 
-    'registerprocedure': u'pingMe',
-    'protocol': u'soap'}
+    {'domain': 'rpc.example.com',
+    'port': '80',
+    'path': '/RPC2',
+    'registerprocedure': 'pingMe',
+    'protocol': 'soap'}
 
 .. note::
 
