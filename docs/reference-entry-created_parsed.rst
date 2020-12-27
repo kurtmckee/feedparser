@@ -1,6 +1,6 @@
 .. _reference.entry.created_parsed:
 
-:py:attr:`entries[i].created_parsed`
+``entries[i].created_parsed``
 ====================================
 
 The date this entry was first created (drafted), as a standard

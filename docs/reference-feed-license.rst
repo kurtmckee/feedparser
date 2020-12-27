@@ -1,6 +1,6 @@
 .. _reference.feed.license:
 
-:py:attr:`feed.license`
+``feed.license``
 =======================
 
 A :abbr:`URL (Uniform Resource Locator)` of the license under which this feed

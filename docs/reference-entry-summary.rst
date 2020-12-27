@@ -1,6 +1,6 @@
 .. _reference.entry.summary:
 
-:py:attr:`entries[i].summary`
+``entries[i].summary``
 =============================
 
 A summary of the entry.

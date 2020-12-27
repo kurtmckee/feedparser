@@ -1,6 +1,6 @@
 .. _reference.feed.info:
 
-:py:attr:`feed.info`
+``feed.info``
 ====================
 
 Free-form human-readable description of the feed format itself.  Intended for

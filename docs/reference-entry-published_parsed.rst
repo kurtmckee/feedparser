@@ -1,6 +1,6 @@
 .. _reference.entry.published_parsed:
 
-:py:attr:`entries[i].published_parsed`
+``entries[i].published_parsed``
 ======================================
 
 The date this entry was first published, as a standard :program:`Python`

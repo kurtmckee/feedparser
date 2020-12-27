@@ -1,6 +1,6 @@
 .. _reference.feed.published:
 
-:py:attr:`feed.published`
+``feed.published``
 =========================
 
 The date the feed was published, as a string in the same format as it was

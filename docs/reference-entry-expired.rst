@@ -1,6 +1,6 @@
 .. _reference.entry.expired:
 
-:py:attr:`entries[i].expired`
+``entries[i].expired``
 =============================
 
 The date this entry is set to expire, as a string in the same format as it was

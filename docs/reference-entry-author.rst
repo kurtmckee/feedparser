@@ -1,6 +1,6 @@
 .. _reference.entry.author:
 
-:py:attr:`entries[i].author`
+``entries[i].author``
 ============================
 
 The author of this entry.

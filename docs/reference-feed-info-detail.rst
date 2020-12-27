@@ -1,6 +1,6 @@
 .. _reference.feed.info_detail:
 
-:py:attr:`feed.info_detail`
+``feed.info_detail``
 ===========================
 
 A dictionary with details about the feed info.
@@ -18,7 +18,7 @@ A dictionary with details about the feed info.
 
 .. _reference.feed.info_detail.value:
 
-:py:attr:`feed.info_detail.value`
+``feed.info_detail.value``
 ---------------------------------
 
 Same as :ref:`reference.feed.info`.
@@ -35,12 +35,12 @@ they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 .. _reference.feed.info_detail.type:
 
-:py:attr:`feed.info_detail.type`
+``feed.info_detail.type``
 --------------------------------
 
 The content type of the feed info.
 
-Most likely values for :py:attr:`~feed.info_detail.type`:
+Most likely values for ``~feed.info_detail.type``:
 
 * :mimetype:`text/plain`
 * :mimetype:`text/html`
@@ -59,31 +59,31 @@ specify that certain values default to :mimetype:`text/plain`, and
 :program:`Universal Feed Parser` should respect this, but it doesn't yet.
 
 
-:py:attr:`feed.info_detail.language`
+``feed.info_detail.language``
 ------------------------------------
 
 The language of the feed info.
 
-:py:attr:`~feed.info_detail.language` is supposed to be a language code, as
+``~feed.info_detail.language`` is supposed to be a language code, as
 specified by `:abbr:`RFC (Request For Comments)` 3066
 <http://www.ietf.org/rfc/rfc3066.txt>`_, but publishers have been known to
 publish random values like "English" or "German".  :program:`Universal Feed
 Parser` does not do any parsing or normalization of language codes.
 
-:py:attr:`~feed.info_detail.language` may come from the element's xml:lang
+``~feed.info_detail.language`` may come from the element's xml:lang
 attribute, or it may inherit from a parent element's xml:lang, or the
 Content-Language :abbr:`HTTP (Hypertext Transfer Protocol)` header.  If the
-feed does not specify a language, :py:attr:`~feed.info_detail.language` will be
+feed does not specify a language, ``~feed.info_detail.language`` will be
 ``None``, the :program:`Python` null value.
 
 
-:py:attr:`feed.info_detail.base`
+``feed.info_detail.base``
 --------------------------------
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 the feed copyright.
 
-:py:attr:`~feed.info_detail.base` is only useful in rare situations and can
+``~feed.info_detail.base`` is only useful in rare situations and can
 usually be ignored.  It is the original base :abbr:`URI (Uniform Resource
 Identifier)` for this value, as specified by the element's xml:base attribute,
 or a parent element's xml:base, or the appropriate :abbr:`HTTP (Hypertext

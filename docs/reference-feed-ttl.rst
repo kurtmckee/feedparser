@@ -1,6 +1,6 @@
 .. _reference.feed.ttl:
 
-:py:attr:`feed.ttl`
+``feed.ttl``
 ===================
 
 According to the :abbr:`RSS (Rich Site Summary)` specification, "None"

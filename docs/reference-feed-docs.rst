@@ -1,6 +1,6 @@
 .. _reference.feed.docs:
 
-:py:attr:`feed.docs`
+``feed.docs``
 ====================
 
 A :abbr:`URL (Uniform Resource Locator)` pointing to the specification which

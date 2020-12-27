@@ -1,6 +1,6 @@
 .. _reference.entry.link:
 
-:py:attr:`entries[i].link`
+``entries[i].link``
 ==========================
 
 The primary link of this entry.  Most feeds use this as the permanent link to
@@ -13,9 +13,9 @@ Some :abbr:`RSS (Rich Site Summary)` feeds use guid when they mean link.  guid
 can also be used as an opaque identifier that has nothing to do with links.  If
 an :abbr:`RSS (Rich Site Summary)` feed uses guid as the entry link and no link
 is present, :program:`Universal Feed Parser` detects this and makes the guid
-available in :py:attr:`entries[i].link`.
+available in ``entries[i].link``.
 
-In other words, you can always use :py:attr:`entries[i].link` to get the entry
+In other words, you can always use ``entries[i].link`` to get the entry
 link, regardless of how the feed is actually structured.
 
 

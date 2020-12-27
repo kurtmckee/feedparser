@@ -1,6 +1,6 @@
 .. _reference.feed.rights_detail:
 
-:py:attr:`feed.rights_detail`
+``feed.rights_detail``
 =============================
 
 A dictionary with details on the feed copyright.
@@ -8,7 +8,7 @@ A dictionary with details on the feed copyright.
 
 .. _reference.feed.rights_detail.value:
 
-:py:attr:`feed.rights_detail.value`
+``feed.rights_detail.value``
 -----------------------------------
 
 Same as :ref:`reference.feed.rights`.
@@ -25,12 +25,12 @@ they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 .. _reference.feed.rights_detail.type:
 
-:py:attr:`feed.rights_detail.type`
+``feed.rights_detail.type``
 ----------------------------------
 
 The content type of the feed copyright.
 
-Most likely values for :py:attr:`~feed.rights_detail.type`:
+Most likely values for ``~feed.rights_detail.type``:
 
 * :mimetype:`text/plain`
 * :mimetype:`text/html`
@@ -50,31 +50,31 @@ specify that certain values default to :mimetype:`text/plain`, and
 
 
 
-:py:attr:`feed.rights_detail.language`
+``feed.rights_detail.language``
 --------------------------------------
 
 The language of the feed copyright.
 
-:py:attr:`~feed.rights_detail.language` is supposed to be a language code, as
+``~feed.rights_detail.language`` is supposed to be a language code, as
 specified by `:abbr:`RFC (Request For Comments)` 3066
 <http://www.ietf.org/rfc/rfc3066.txt>`_, but publishers have been known to
 publish random values like "English" or "German".  :program:`Universal Feed
 Parser` does not do any parsing or normalization of language codes.
 
-:py:attr:`~feed.rights_detail.language` may come from the element's xml:lang
+``~feed.rights_detail.language`` may come from the element's xml:lang
 attribute, or it may inherit from a parent element's xml:lang, or the
 Content-Language :abbr:`HTTP (Hypertext Transfer Protocol)` header.  If the
-feed does not specify a language, :py:attr:`~feed.rights_detail.language` will
+feed does not specify a language, ``~feed.rights_detail.language`` will
 be ``None``, the :program:`Python` null value.
 
 
-:py:attr:`feed.rights_detail.base`
+``feed.rights_detail.base``
 ----------------------------------
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 the feed copyright.
 
-:py:attr:`~feed.rights_detail.base` is only useful in rare situations and can
+``~feed.rights_detail.base`` is only useful in rare situations and can
 usually be ignored.  It is the original base :abbr:`URI (Uniform Resource
 Identifier)` for this value, as specified by the element's xml:base attribute,
 or a parent element's xml:base, or the appropriate :abbr:`HTTP (Hypertext

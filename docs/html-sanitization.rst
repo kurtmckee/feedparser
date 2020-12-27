@@ -26,7 +26,7 @@ These elements are sanitized by default:
     If the content is declared to be (or is determined to be)
     :mimetype:`text/plain`, it will not be sanitized. This is to avoid data loss.
     It is recommended that you check the content type in e.g.
-    :py:attr:`entries[i].summary_detail.type`. If it is :mimetype:`text/plain` then
+    ``entries[i].summary_detail.type``. If it is :mimetype:`text/plain` then
     it has not been sanitized (and you should perform HTML escaping before
     rendering the content).
 
@@ -813,7 +813,7 @@ Disabling HTML Sanitization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Though not recommended, it is possible to disable :program:`Universal Feed Parser`\'s
-HTML sanitization by passing ``sanitize_html=False`` to :func:`feedparser.parse()`.
+HTML sanitization by passing ``sanitize_html=False`` to ``feedparser.parse()``.
 When passing this flag you are responsible for manually sanitizing HTML from the feed.
 
 .. seealso::

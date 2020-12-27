@@ -1,6 +1,6 @@
 .. _reference.entry.expired_parsed:
 
-:py:attr:`entries[i].expired_parsed`
+``entries[i].expired_parsed``
 ====================================
 
 The date this entry is set to expire, as a standard :program:`Python` 9-tuple.

@@ -1,6 +1,6 @@
 .. _reference.feed.id:
 
-:py:attr:`feed.id`
+``feed.id``
 ==================
 
 A globally unique identifier for this feed.

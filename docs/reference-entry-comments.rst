@@ -1,6 +1,6 @@
 .. _reference.entry.comments:
 
-:py:attr:`entries[i].comments`
+``entries[i].comments``
 ==============================
 
 A :abbr:`URL (Uniform Resource Locator)` of the :abbr:`HTML (HyperText Markup Language)`

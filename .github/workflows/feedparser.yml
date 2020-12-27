@@ -3,7 +3,7 @@ name: "feedparser"
 on: [push, pull_request]
 
 jobs:
-  tox:
+  code:
     name: "Python ${{ matrix.python-version }} on ${{ matrix.os}}"
 
     runs-on: "${{ matrix.os }}"
@@ -74,3 +74,39 @@ jobs:
         run: |
           .\venv\scripts\activate.ps1
           tox -e py,py-chardet
+
+  docs:
+    name: "Build documentation"
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+
+      - name: Cache virtual environment
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: venv
+          key: "venv-${{ hashFiles('pyproject.toml') }}"
+
+
+      - name: Create virtual environment
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+          poetry update
+
+      - name: Test building the documentation
+        run: |
+          source venv/bin/activate
+          tox -e docs

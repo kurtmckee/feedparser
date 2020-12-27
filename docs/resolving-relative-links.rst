@@ -246,7 +246,7 @@ Disabling Relative :abbr:`URI (Uniform Resource Identifier)`\s Resolution
 
 Though not recommended, it is possible to disable :program:`Universal Feed Parser`\'s relative
 :abbr:`URI (Uniform Resource Identifier)` resolution by passing ``resolve_relative_uris=False``
-to :func:`feedparser.parse()`. This disables resolution within HTML content,
+to ``feedparser.parse()``. This disables resolution within HTML content,
 but not in other contexts such as :ref:`reference.entry.link`.
 
 

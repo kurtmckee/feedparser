@@ -1,6 +1,6 @@
 .. _reference.entry.updated:
 
-:py:attr:`entries[i].updated`
+``entries[i].updated``
 =============================
 
 The date this entry was last updated, as a string in the same format as it was
@@ -13,8 +13,8 @@ This element is :ref:`parsed as a date <advanced.date>` and stored in
 .. note::
 
     As of version 5.1.1, if this key doesn't exist but
-    :py:attr:`entries[i].published` does, the value of
-    :py:attr:`entries[i].published` will be returned.
+    ``entries[i].published`` does, the value of
+    ``entries[i].published`` will be returned.
 
     In the past the RSS pubDate element was stored in `updated`, but this incorrect
     behavior was reported in issue 310. However, developers may have come to rely

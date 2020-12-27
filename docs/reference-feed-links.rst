@@ -1,6 +1,6 @@
 .. _reference.feed.links:
 
-:py:attr:`feed.links`
+``feed.links``
 =====================
 
 A list of dictionaries with details on the links associated with the feed.
@@ -11,7 +11,7 @@ may also have a title.
 
 .. _reference.feed.links.rel:
 
-:py:attr:`feed.links[i].rel`
+``feed.links[i].rel``
 ----------------------------
 
 The relationship of this feed link.
@@ -28,7 +28,7 @@ registering others.  Here are the five standard rel values:
 
 .. _reference.feed.links.type:
 
-:py:attr:`feed.links[i].type`
+``feed.links[i].type``
 -----------------------------
 
 The content type of the page that this feed link points to.
@@ -36,7 +36,7 @@ The content type of the page that this feed link points to.
 
 .. _reference.feed.links.href:
 
-:py:attr:`feed.links[i].href`
+``feed.links[i].href``
 -----------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of the page that this feed link
@@ -46,7 +46,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`feed.links[i].title`
+``feed.links[i].title``
 ------------------------------
 
 The title of this feed link.

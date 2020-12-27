@@ -1,12 +1,12 @@
 .. _reference.entry.publisher_detail:
 
-:py:attr:`entries[i].publisher_detail`
+``entries[i].publisher_detail``
 ======================================
 
 A dictionary with details about the entry publisher.
 
 
-:py:attr:`entries[i].publisher_detail.name`
+``entries[i].publisher_detail.name``
 -------------------------------------------
 
 The name of this entry's publisher.
@@ -14,7 +14,7 @@ The name of this entry's publisher.
 
 .. _reference.entry.publisher_detail.href:
 
-:py:attr:`entries[i].publisher_detail.href`
+``entries[i].publisher_detail.href``
 -------------------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of this entry's publisher.  This can
@@ -24,7 +24,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].publisher_detail.email`
+``entries[i].publisher_detail.email``
 --------------------------------------------
 
 The email address of this entry's publisher.

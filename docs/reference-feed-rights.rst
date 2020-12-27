@@ -1,6 +1,6 @@
 .. _reference.feed.rights:
 
-:py:attr:`feed.rights`
+``feed.rights``
 ======================
 
 A human-readable copyright statement for the feed.

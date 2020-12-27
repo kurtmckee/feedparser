@@ -1,4 +1,4 @@
-:py:attr:`feed.cloud`
+``feed.cloud``
 =====================
 
 No one really knows what a cloud is.  It is vaguely documented in `:abbr:`SOAP
@@ -8,7 +8,7 @@ No one really knows what a cloud is.  It is vaguely documented in `:abbr:`SOAP
 
 .. _reference.feed.cloud.domain:
 
-:py:attr:`feed.cloud.domain`
+``feed.cloud.domain``
 ----------------------------
 
 The domain of the cloud.  Should be just the domain name, not including the
@@ -19,7 +19,7 @@ secure clouds over :abbr:`HTTPS`, nor can clouds operate over other protocols.
 
 .. _reference.feed.cloud.port:
 
-:py:attr:`feed.cloud.port`
+``feed.cloud.port``
 --------------------------
 
 The port of the cloud.  Should be an integer, but :program:`Universal Feed
@@ -28,7 +28,7 @@ Parser` currently returns it as a string.
 
 .. _reference.feed.cloud.path:
 
-:py:attr:`feed.cloud.path`
+``feed.cloud.path``
 --------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` path of the cloud.
@@ -36,7 +36,7 @@ The :abbr:`URL (Uniform Resource Locator)` path of the cloud.
 
 .. _reference.feed.cloud.registerProcedure:
 
-:py:attr:`feed.cloud.registerProcedure`
+``feed.cloud.registerProcedure``
 ---------------------------------------
 
 The name of the procedure to call on the cloud.
@@ -44,7 +44,7 @@ The name of the procedure to call on the cloud.
 
 .. _reference.feed.cloud.protocol:
 
-:py:attr:`feed.cloud.protocol`
+``feed.cloud.protocol``
 ------------------------------
 
 The protocol of the cloud.  Documentation differs on what the acceptable values

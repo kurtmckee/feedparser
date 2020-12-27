@@ -36,7 +36,7 @@ build-backend = "poetry.core.masonry.api"
 legacy_tox_ini = """
 
 [tox]
-envlist = py{py3, 36, 37, 38, 39}-{chardet, }
+envlist = py{py3, 36, 37, 38, 39}-{chardet, }, docs
 skip_missing_interpreters = True
 isolated_build = True
 
@@ -46,6 +46,9 @@ deps =
 
 commands = {envpython} -Wd tests/runtests.py
 
+[testenv:docs]
+allowlist_externals = sphinx-build
+commands = sphinx-build -EWnq --keep-going -b html docs/ fpdocs/
 """
 
 

@@ -1,4 +1,4 @@
-:py:attr:`entries`
+``entries``
 ==================
 
 A list of dictionaries.  Each dictionary contains data from a different entry.

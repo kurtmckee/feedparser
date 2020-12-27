@@ -1,6 +1,6 @@
 .. _reference.entry.created:
 
-:py:attr:`entries[i].created`
+``entries[i].created``
 =============================
 
 The date this entry was first created (drafted), as a string in the same format

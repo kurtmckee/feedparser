@@ -1,6 +1,6 @@
 .. _reference.entry.title_detail:
 
-:py:attr:`entries[i].title_detail`
+``entries[i].title_detail``
 ==================================
 
 A dictionary with details about the entry title.
@@ -8,7 +8,7 @@ A dictionary with details about the entry title.
 
 .. _reference.entry.title_detail.value:
 
-:py:attr:`entries[i].title_detail.value`
+``entries[i].title_detail.value``
 ----------------------------------------
 
 Same as :ref:`reference.entry.title`.
@@ -23,12 +23,12 @@ value may contain relative :abbr:`URI (Uniform Resource Identifier)`\s.  If so,
 they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].title_detail.type`
+``entries[i].title_detail.type``
 ---------------------------------------
 
 The content type of the entry title.
 
-Most likely values for :py:attr:`~entries[i].title_detail.type`:
+Most likely values for ``~entries[i].title_detail.type``:
 
 * :mimetype:`text/plain`
 * :mimetype:`text/html`
@@ -47,32 +47,32 @@ specify that certain values default to :mimetype:`text/plain`, and
 :program:`Universal Feed Parser` should respect this, but it doesn't yet.
 
 
-:py:attr:`entries[i].title_detail.language`
+``entries[i].title_detail.language``
 -------------------------------------------
 
 The language of the entry title.
 
-:py:attr:`~entries[i].title_detail.language` is supposed to be a language code,
+``~entries[i].title_detail.language`` is supposed to be a language code,
 as specified by `RFC 3066`_, but publishers have been known to
 publish random values like "English" or "German".  :program:`Universal Feed
 Parser` does not do any parsing or normalization of language codes.
 
 .. _RFC 3066: http://www.ietf.org/rfc/rfc3066.txt
 
-:py:attr:`~entries[i].title_detail.language` may come from the element's
+``~entries[i].title_detail.language`` may come from the element's
 xml:lang attribute, or it may inherit from a parent element's xml:lang, or the
 Content-Language :abbr:`HTTP (Hypertext Transfer Protocol)` header.  If the
-feed does not specify a language, :py:attr:`~entries[i].title_detail.language`
+feed does not specify a language, ``~entries[i].title_detail.language``
 will be ``None``, the :program:`Python` null value.
 
 
-:py:attr:`entries[i].title_detail.base`
+``entries[i].title_detail.base``
 ---------------------------------------
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 the entry title.
 
-:py:attr:`~entries[i].title_detail.base` is only useful in rare situations and
+``~entries[i].title_detail.base`` is only useful in rare situations and
 can usually be ignored.  It is the original base :abbr:`URI (Uniform Resource
 Identifier)` for this value, as specified by the element's xml:base attribute,
 or a parent element's xml:base, or the appropriate :abbr:`HTTP (Hypertext

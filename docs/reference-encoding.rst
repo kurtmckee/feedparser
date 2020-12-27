@@ -1,7 +1,7 @@
 .. _reference.encoding:
 
-:py:attr:`encoding`
-===================
+``encoding``
+============
 
 The character encoding that was used to parse the feed.
 

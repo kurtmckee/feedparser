@@ -1,6 +1,6 @@
 .. _reference.feed.tags:
 
-:py:attr:`feed.tags`
+``feed.tags``
 ====================
 
 A list of dictionaries that contain details of the categories for the feed.
@@ -17,19 +17,19 @@ A list of dictionaries that contain details of the categories for the feed.
 
 .. _reference.feed.tags.term:
 
-:py:attr:`feed.tags[i].term`
+``feed.tags[i].term``
 ----------------------------
 
 The category term (keyword).
 
 
-:py:attr:`feed.tags[i].scheme`
+``feed.tags[i].scheme``
 ------------------------------
 
 The category scheme (domain).
 
 
-:py:attr:`feed.tags[i].label`
+``feed.tags[i].label``
 -----------------------------
 
 A human-readable label for the category.
