@@ -1,4 +1,0 @@
-doit
-poetry
-sphinx
-tox
