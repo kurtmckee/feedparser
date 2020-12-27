@@ -25,6 +25,7 @@ sgmllib3k = "^1.0.0"
 [tool.poetry.dev-dependencies]
 tox = "^3.20.1"
 scriv = {git = "https://github.com/nedbat/scriv", rev = "44b3d57"}
+Sphinx = "^3.4.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
