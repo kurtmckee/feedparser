@@ -43,18 +43,7 @@ jobs:
 
       - name: Create virtual environment
         if: |
-          startsWith(runner.os, 'Linux')
-          && steps.cache.outputs.cache-hit != 'true'
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip
-          python -m pip install poetry
-          poetry update
-
-      - name: Create virtual environment
-        if: |
-          startsWith(runner.os, 'macOS')
+          (startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS'))
           && steps.cache.outputs.cache-hit != 'true'
         run: |
           python -m venv venv
@@ -75,13 +64,7 @@ jobs:
           poetry update
 
       - name: Run tox
-        if: startsWith(runner.os, 'Linux')
-        run: |
-          source venv/bin/activate
-          tox -e py,py-chardet
-
-      - name: Run tox
-        if: startsWith(runner.os, 'macOS')
+        if: (startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS'))
         run: |
           source venv/bin/activate
           tox -e py,py-chardet
