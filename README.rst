@@ -46,7 +46,9 @@ Feedparser has an extensive test suite, powered by tox. To run it, type this:
 
     $ python -m venv venv
     $ source venv/bin/activate  # or "venv\bin\activate.ps1" on Windows
-    (venv) $ pip install -r requirements-dev.txt
+    (venv) $ python -m pip install --upgrade pip
+    (venv) $ python -m pip install poetry
+    (venv) $ poetry update
     (venv) $ tox
 
 This will spawn an HTTP server that will listen on port 8097. The tests will
