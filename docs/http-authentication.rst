@@ -19,7 +19,7 @@ In this example, the username is test and the password is basic.
     >>> import feedparser
     >>> d = feedparser.parse('http://test:basic@feedparser.org/docs/examples/basic_auth.xml')
     >>> d.feed.title
-    u'Sample Feed'
+    'Sample Feed'
 
 The same technique works for digest authentication.  (Technically,
 :program:`Universal Feed Parser` will attempt basic authentication first, but
@@ -41,7 +41,7 @@ In this example, the username is test and the password is digest.
     >>> import feedparser
     >>> d = feedparser.parse('http://test:digest@feedparser.org/docs/examples/digest_auth.xml')
     >>> d.feed.title
-    u'Sample Feed'
+    'Sample Feed'
 
 
 

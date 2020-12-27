@@ -1,6 +1,6 @@
 .. _reference.entry.published:
 
-:py:attr:`entries[i].published`
+``entries[i].published``
 ===============================
 
 The date this entry was first published, as a string in the same format as it

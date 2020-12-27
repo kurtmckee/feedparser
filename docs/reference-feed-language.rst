@@ -1,6 +1,6 @@
 .. _reference.feed.language:
 
-:py:attr:`feed.language`
+``feed.language``
 ========================
 
 The primary language of the feed.

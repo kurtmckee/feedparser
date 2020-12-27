@@ -1,6 +1,6 @@
 .. _reference.entry.title:
 
-:py:attr:`entries[i].title`
+``entries[i].title``
 ===========================
 
 The title of the entry.

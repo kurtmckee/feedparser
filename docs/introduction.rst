@@ -32,7 +32,7 @@ Parsing a feed from a remote :abbr:`URL (Uniform Resource Locator)`
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
     >>> d['feed']['title']
-    u'Sample Feed'
+    'Sample Feed'
 
 
 The following example assumes you are on Windows, and that you have saved a feed at :file:`c:\\incoming\\atom10.xml`.
@@ -50,7 +50,7 @@ Parsing a feed from a local file
     >>> import feedparser
     >>> d = feedparser.parse(r'c:\incoming\atom10.xml')
     >>> d['feed']['title']
-    u'Sample Feed'
+    'Sample Feed'
 
 
 :program:`Universal Feed Parser` can also parse a feed in memory.
@@ -68,7 +68,7 @@ Parsing a feed from a string
     </rss>"""
     >>> d = feedparser.parse(rawdata)
     >>> d['feed']['title']
-    u'Sample Feed'
+    'Sample Feed'
 
 
 Values are returned as :program:`Python` Unicode strings (except when they're

@@ -1,6 +1,6 @@
 .. _reference.feed.publisher:
 
-:py:attr:`feed.publisher`
+``feed.publisher``
 =========================
 
 The publisher of the feed.

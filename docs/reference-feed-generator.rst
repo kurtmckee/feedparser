@@ -1,6 +1,6 @@
 .. _reference.feed.generator:
 
-:py:attr:`feed.generator`
+``feed.generator``
 =========================
 
 A human-readable name of the application used to generate the feed.

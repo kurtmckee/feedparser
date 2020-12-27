@@ -1,6 +1,6 @@
 .. _reference.feed.author:
 
-:py:attr:`feed.author`
+``feed.author``
 ======================
 
 The author of this feed.

@@ -1,4 +1,4 @@
-:py:attr:`feed.image`
+``feed.image``
 =====================
 
 A dictionary with details about the feed image.  A feed image can be a logo,
@@ -7,7 +7,7 @@ banner, or a picture of the author.
 
 .. _reference.feed.image.title:
 
-:py:attr:`feed.image.title`
+``feed.image.title``
 ---------------------------
 
 The alternate text of the feed image, which would go in the alt attribute if
@@ -17,7 +17,7 @@ element.
 
 .. _reference.feed.image.href:
 
-:py:attr:`feed.image.href`
+``feed.image.href``
 --------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of the feed image itself, which
@@ -30,7 +30,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.feed.image.link:
 
-:py:attr:`feed.image.link`
+``feed.image.link``
 --------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` which the feed image would point to.
@@ -44,7 +44,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.feed.image.width:
 
-:py:attr:`feed.image.width`
+``feed.image.width``
 ---------------------------
 
 The width of the feed image, which would go in the width attribute if you
@@ -54,7 +54,7 @@ element.
 
 .. _reference.feed.image.height:
 
-:py:attr:`feed.image.height`
+``feed.image.height``
 ----------------------------
 
 The height of the feed image, which would go in the height attribute if you
@@ -62,7 +62,7 @@ rendered the feed image as an :abbr:`HTML (HyperText Markup Language)` img
 element.
 
 
-:py:attr:`feed.image.description`
+``feed.image.description``
 ---------------------------------
 
 A short description of the feed image, which would go in the title attribute if

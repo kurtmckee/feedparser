@@ -1,6 +1,6 @@
 .. _reference.entry.summary_detail:
 
-:py:attr:`entries[i].summary_detail`
+``entries[i].summary_detail``
 ====================================
 
 A dictionary with details about the entry summary.
@@ -23,7 +23,7 @@ A dictionary with details about the entry summary.
 
 .. _reference.entry.summary_detail.value:
 
-:py:attr:`entries[i].summary_detail.value`
+``entries[i].summary_detail.value``
 ------------------------------------------
 
 Same as :ref:`reference.entry.summary`.
@@ -40,12 +40,12 @@ they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 .. _reference.entry.summary_detail.type:
 
-:py:attr:`entries[i].summary_detail.type`
+``entries[i].summary_detail.type``
 -----------------------------------------
 
 The content type of the entry summary.
 
-Most likely values for :py:attr:`~entries[i].summary_detail.type`:
+Most likely values for ``~entries[i].summary_detail.type``:
 
 * :mimetype:`text/plain`
 * :mimetype:`text/html`
@@ -64,33 +64,33 @@ specify that certain values default to :mimetype:`text/plain`, and
 :program:`Universal Feed Parser` should respect this, but it doesn't yet.
 
 
-:py:attr:`entries[i].summary_detail.language`
+``entries[i].summary_detail.language``
 ---------------------------------------------
 
 The language of the entry summary.
 
-:py:attr:`~entries[i].summary_detail.language` is supposed to be a language
+``~entries[i].summary_detail.language`` is supposed to be a language
 code, as specified by `RFC 3066`_, but publishers have been known to
 publish random values like "English" or "German".  :program:`Universal Feed
 Parser` does not do any parsing or normalization of language codes.
 
 .. _RFC 3066: http://www.ietf.org/rfc/rfc3066.txt
 
-:py:attr:`~entries[i].summary_detail.language` may come from the element's
+``~entries[i].summary_detail.language`` may come from the element's
 xml:lang attribute, or it may inherit from a parent element's xml:lang, or the
 Content-Language :abbr:`HTTP (Hypertext Transfer Protocol)` header.  If the
 feed does not specify a language,
-:py:attr:`~entries[i].summary_detail.language` will be ``None``, the
+``~entries[i].summary_detail.language`` will be ``None``, the
 :program:`Python` null value.
 
 
-:py:attr:`entries[i].summary_detail.base`
+``entries[i].summary_detail.base``
 -----------------------------------------
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 the entry summary.
 
-:py:attr:`~entries[i].summary_detail.base` is only useful in rare situations
+``~entries[i].summary_detail.base`` is only useful in rare situations
 and can usually be ignored.  It is the original base :abbr:`URI (Uniform
 Resource Identifier)` for this value, as specified by the element's xml:base
 attribute, or a parent element's xml:base, or the appropriate :abbr:`HTTP

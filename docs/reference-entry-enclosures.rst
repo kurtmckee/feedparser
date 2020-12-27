@@ -1,6 +1,6 @@
 .. _reference.entry.enclosures:
 
-:py:attr:`entries[i].enclosures`
+``entries[i].enclosures``
 ================================
 
 A list of links to external files associated with this entry.
@@ -22,7 +22,7 @@ as a list.
 
 .. _reference.entry.enclosures.href:
 
-:py:attr:`entries[i].enclosures[j].href`
+``entries[i].enclosures[j].href``
 ----------------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of the linked file.
@@ -33,7 +33,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.entry.enclosures.length:
 
-:py:attr:`entries[i].enclosures[j].length`
+``entries[i].enclosures[j].length``
 ------------------------------------------
 
 The length of the linked file.
@@ -41,7 +41,7 @@ The length of the linked file.
 
 .. _reference.entry.enclosures.type:
 
-:py:attr:`entries[i].enclosures[j].type`
+``entries[i].enclosures[j].type``
 ----------------------------------------
 
 The content type of the linked file.

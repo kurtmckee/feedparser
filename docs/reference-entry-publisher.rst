@@ -1,6 +1,6 @@
 .. _reference.entry.publisher:
 
-:py:attr:`entries[i].publisher`
+``entries[i].publisher``
 ===============================
 
 The publisher of the entry.

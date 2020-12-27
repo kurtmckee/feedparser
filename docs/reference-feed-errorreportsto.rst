@@ -1,6 +1,6 @@
 .. _reference.feed.errorreportsto:
 
-:py:attr:`feed.errorreportsto`
+``feed.errorreportsto``
 ==============================
 
 An email address for reporting errors in the feed itself.

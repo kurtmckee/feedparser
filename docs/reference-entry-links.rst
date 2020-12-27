@@ -1,6 +1,6 @@
 .. _reference.entry.links:
 
-:py:attr:`entries[i].links`
+``entries[i].links``
 ===========================
 
 A list of dictionaries with details on the links associated with the feed.
@@ -11,7 +11,7 @@ may also have a title.
 
 .. _reference.entry.links.rel:
 
-:py:attr:`entries[i].links[j].rel`
+``entries[i].links[j].rel``
 ----------------------------------
 
 The relationship of this entry link.
@@ -28,7 +28,7 @@ registering others.  Here are the five standard rel values:
 
 .. _reference.entry.links.type:
 
-:py:attr:`entries[i].links[j].type`
+``entries[i].links[j].type``
 -----------------------------------
 
 The content type of the page that this entry link points to.
@@ -36,7 +36,7 @@ The content type of the page that this entry link points to.
 
 .. _reference.entry.links.href:
 
-:py:attr:`entries[i].links[j].href`
+``entries[i].links[j].href``
 -----------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of the page that this entry link
@@ -48,7 +48,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.entry.links.title:
 
-:py:attr:`entries[i].links[j].title`
+``entries[i].links[j].title``
 ------------------------------------
 
 The title of this entry link.

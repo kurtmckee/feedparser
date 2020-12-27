@@ -1,6 +1,6 @@
 .. _reference.entry.license:
 
-:py:attr:`entries[i].license`
+``entries[i].license``
 =============================
 
 A :abbr:`URL (Uniform Resource Locator)` of the license under which this entry

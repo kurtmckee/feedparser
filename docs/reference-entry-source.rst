@@ -1,6 +1,6 @@
 .. _reference.entry.source:
 
-:py:attr:`entries[i].source`
+``entries[i].source``
 ============================
 
 A dictionary with details about the source of the entry.
@@ -11,19 +11,19 @@ A dictionary with details about the source of the entry.
 * /atom10:feed/atom10:entry/atom10:source
 
 
-:py:attr:`entries[i].source.author`
+``entries[i].source.author``
 -----------------------------------
 
 The author of the source of this entry.
 
 
-:py:attr:`entries[i].source.author_detail`
+``entries[i].source.author_detail``
 ------------------------------------------
 
 A dictionary containing details about the author of the source of this entry.
 
 
-:py:attr:`entries[i].source.author_detail.name`
+``entries[i].source.author_detail.name``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The name of the author of the source of this entry.
@@ -31,7 +31,7 @@ The name of the author of the source of this entry.
 
 .. _reference.entry.source.author_detail.href:
 
-:py:attr:`entries[i].source.author_detail.href`
+``entries[i].source.author_detail.href``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :abbr:`URL (Uniform Resource Locator)` of the author of the source of this
@@ -42,20 +42,20 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].source.author_detail.email`
+``entries[i].source.author_detail.email``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The email address of the author of the source of this entry.
 
 
 
-:py:attr:`entries[i].source.contributors`
+``entries[i].source.contributors``
 -----------------------------------------
 
 A list of contributors to the source of this entry.
 
 
-:py:attr:`entries[i].source.contributors[j].name`
+``entries[i].source.contributors[j].name``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The name of a contributor to the source of this entry.
@@ -63,7 +63,7 @@ The name of a contributor to the source of this entry.
 
 .. _reference.entry.source.contributors.href:
 
-:py:attr:`entries[i].source.contributors[j].href`
+``entries[i].source.contributors[j].href``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :abbr:`URL (Uniform Resource Locator)` of a contributor to the source of
@@ -74,14 +74,14 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].source.contributors[j].email`
+``entries[i].source.contributors[j].email``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The email address of a contributor to the source of this entry.
 
 
 
-:py:attr:`entries[i].source.icon`
+``entries[i].source.icon``
 ---------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of an icon representing the source
@@ -92,27 +92,27 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 
 
-:py:attr:`entries[i].source.id`
+``entries[i].source.id``
 -------------------------------
 
 A globally unique identifier for the source of this entry.
 
 
 
-:py:attr:`entries[i].source.link`
+``entries[i].source.link``
 ---------------------------------
 
 The primary permanent link of the source of this entry
 
 
 
-:py:attr:`entries[i].source.links`
+``entries[i].source.links``
 ----------------------------------
 
 A list of all links defined by the source of this entry.
 
 
-:py:attr:`entries[i].source.links[j].rel`
+``entries[i].source.links[j].rel``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The relationship of a link defined by the source of this entry.
@@ -127,7 +127,7 @@ registering others.  Here are the five standard rel values:
 * ``enclosure``
 
 
-:py:attr:`entries[i].source.links[j].type`
+``entries[i].source.links[j].type``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The content type of the page pointed to by a link defined by the source of this
@@ -136,7 +136,7 @@ entry.
 
 .. _reference.entry.source.links.href:
 
-:py:attr:`entries[i].source.links[j].href`
+``entries[i].source.links[j].href``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The :abbr:`URL (Uniform Resource Locator)` of the page pointed to by a link
@@ -146,14 +146,14 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].source.links[j].title`
+``entries[i].source.links[j].title``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The title of a link defined by the source of this entry.
 
 
 
-:py:attr:`entries[i].source.logo`
+``entries[i].source.logo``
 ---------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of a logo representing the source of
@@ -166,21 +166,21 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.entry.source.rights:
 
-:py:attr:`entries[i].source.rights`
+``entries[i].source.rights``
 -----------------------------------
 
 A human-readable copyright statement for the source of this entry.
 
 
 
-:py:attr:`entries[i].source.rights_detail`
+``entries[i].source.rights_detail``
 ------------------------------------------
 
 A dictionary containing details about the copyright statement for the source of
 this entry.
 
 
-:py:attr:`entries[i].source.rights_detail.value`
+``entries[i].source.rights_detail.value``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Same as :ref:`reference.entry.source.rights`.
@@ -196,12 +196,12 @@ within this value may contain relative
 :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].source.rights_detail.type`
+``entries[i].source.rights_detail.type``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The content type of the copyright statement for the source of this entry.
 
-Most likely values for :py:attr:`~entries[i].source.rights_detail.type`:
+Most likely values for ``~entries[i].source.rights_detail.type``:
 
 * :mimetype:`text/plain`
 * :mimetype:`text/html`
@@ -220,12 +220,12 @@ specify that certain values default to :mimetype:`text/plain`, and
 :program:`Universal Feed Parser` should respect this, but it doesn't yet.
 
 
-:py:attr:`entries[i].source.rights_detail.language`
+``entries[i].source.rights_detail.language``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The language of the copyright statement for the source of this entry.
 
-:py:attr:`~entries[i].source.rights_detail.language` is supposed to be a
+``~entries[i].source.rights_detail.language`` is supposed to be a
 language code, as specified by `RFC 3066`_, but publishers have been known to
 publish random values like "English" or "German".
 :program:`Universal Feed Parser` does not do any parsing or normalization of
@@ -233,21 +233,21 @@ language codes.
 
 .. _RFC 3066: http://www.ietf.org/rfc/rfc3066.txt
 
-:py:attr:`~entries[i].source.rights_detail.language` may come from the
+``~entries[i].source.rights_detail.language`` may come from the
 element's xml:lang attribute, or it may inherit from a parent element's
 xml:lang, or the Content-Language :abbr:`HTTP (Hypertext Transfer Protocol)`
 header.  If the feed does not specify a language,
-:py:attr:`~entries[i].source.rights_detail.language` will be ``None``, the
+``~entries[i].source.rights_detail.language`` will be ``None``, the
 :program:`Python` null value.
 
 
-:py:attr:`entries[i].source.rights_detail.base`
+``entries[i].source.rights_detail.base``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 the copyright statement for the source of this entry.
 
-:py:attr:`entries[i].source.rights_detail.base` is only useful in rare
+``entries[i].source.rights_detail.base`` is only useful in rare
 situations and can usually be ignored.  It is the original base
 :abbr:`URI (Uniform Resource Identifier)` for this value, as specified by the
 element's xml:base attribute, or a parent element's xml:base, or the
@@ -262,7 +262,7 @@ resolve relative links.*
 
 .. _reference.entry.source.subtitle:
 
-:py:attr:`entries[i].source.subtitle`
+``entries[i].source.subtitle``
 -------------------------------------
 
 A subtitle, tagline, slogan, or other short description of the source of this
@@ -280,14 +280,14 @@ within this value may contain relative
 
 
 
-:py:attr:`entries[i].source.subtitle_detail`
+``entries[i].source.subtitle_detail``
 --------------------------------------------
 
 A dictionary containing details about the subtitle for the source of this
 entry.
 
 
-:py:attr:`entries[i].source.subtitle_detail.value`
+``entries[i].source.subtitle_detail.value``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Same as :ref:`reference.entry.source.subtitle`.
@@ -303,12 +303,12 @@ within this value may contain relative
 they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].source.subtitle_detail.type`
+``entries[i].source.subtitle_detail.type``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The content type of the subtitle of the source of this entry.
 
-Most likely values for :py:attr:`~entries[i].source.subtitle_detail.type`:
+Most likely values for ``~entries[i].source.subtitle_detail.type``:
 
 * :mimetype:`text/plain``
 * :mimetype:`text/html``
@@ -327,32 +327,32 @@ specify that certain values default to :mimetype:`text/plain``, and
 :program:`Universal Feed Parser` should respect this, but it doesn't yet.
 
 
-:py:attr:`entries[i].source.subtitle_detail.language`
+``entries[i].source.subtitle_detail.language``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The language of the subtitle of the source of this entry.
 
-:py:attr:`~entries[i].source.subtitle_detail.language` is supposed to be a
+``~entries[i].source.subtitle_detail.language`` is supposed to be a
 language code, as specified by `RFC 3066`_, but publishers have been known to
 publish random values like "English" or "German".
 :program:`Universal Feed Parser` does not do any parsing or normalization of
 language codes.
 
-:py:attr:`~entries[i].source.subtitle_detail.language` may come from the
+``~entries[i].source.subtitle_detail.language`` may come from the
 element's xml:lang attribute, or it may inherit from a parent element's
 xml:lang, or the Content-Language :abbr:`HTTP (Hypertext Transfer Protocol)`
 header.  If the feed does not specify a language,
-:py:attr:`~entries[i].source.subtitle_detail.language` will be ``None``, the
+``~entries[i].source.subtitle_detail.language`` will be ``None``, the
 :program:`Python` null value.
 
 
-:py:attr:`entries[i].source.subtitle_detail.base`
+``entries[i].source.subtitle_detail.base``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 the subtitle of the source of this entry.
 
-:py:attr:`entries[i].source.subtitle_detail.base` is only useful in rare
+``entries[i].source.subtitle_detail.base`` is only useful in rare
 situations and can usually be ignored.  It is the original base
 :abbr:`URI (Uniform Resource Identifier)` for this value, as specified by the
 element's xml:base attribute, or a parent element's xml:base, or the
@@ -367,7 +367,7 @@ resolve relative links.*
 
 .. _reference.entry.source.title:
 
-:py:attr:`entries[i].source.title`
+``entries[i].source.title``
 ----------------------------------
 
 The title of the source of this entry.
@@ -383,13 +383,13 @@ they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 
 
-:py:attr:`entries[i].source.title_detail`
+``entries[i].source.title_detail``
 -----------------------------------------
 
 A dictionary containing details about the title for the source of this entry.
 
 
-:py:attr:`entries[i].source.title_detail.value`
+``entries[i].source.title_detail.value``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Same as :ref:`reference.entry.source.title`.
@@ -404,12 +404,12 @@ value may contain relative :abbr:`URI (Uniform Resource Identifier)`\s.  If so,
 they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`entries[i].source.title_detail.type`
+``entries[i].source.title_detail.type``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The content type of the title of the source of this entry.
 
-Most likely values for :py:attr:`entries[i].source.title_detail.type`:
+Most likely values for ``entries[i].source.title_detail.type``:
 
 * :mimetype:`text/plain`
 * :mimetype:`text/html`
@@ -428,31 +428,31 @@ specify that certain values default to :mimetype:`text/plain`, and
 :program:`Universal Feed Parser` should respect this, but it doesn't yet.
 
 
-:py:attr:`entries[i].source.title_detail.language`
+``entries[i].source.title_detail.language``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The language of the title of the source of this entry.
 
-:py:attr:`~entries[i].source.title_detail.language` is supposed to be a
+``~entries[i].source.title_detail.language`` is supposed to be a
 language code, as specified by `RFC 3066`_, but publishers have been known to
 publish random values like "English" or "German".
 :program:`Universal Feed Parser` does not do any parsing or normalization of language codes.
 
-:py:attr:`~entries[i].source.title_detail.language` may come from the element's
+``~entries[i].source.title_detail.language`` may come from the element's
 xml:lang attribute, or it may inherit from a parent element's xml:lang, or the
 Content-Language :abbr:`HTTP (Hypertext Transfer Protocol)` header.  If the
 feed does not specify a language,
-:py:attr:`~entries[i].source.title_detail.language` will be ``None``, the
+``~entries[i].source.title_detail.language`` will be ``None``, the
 :program:`Python` null value.
 
 
-:py:attr:`entries[i].source.title_detail.base`
+``entries[i].source.title_detail.base``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 the title of the source of this entry.
 
-:py:attr:`entries[i].source.title_detail.base` is only useful in rare
+``entries[i].source.title_detail.base`` is only useful in rare
 situations and can usually be ignored.  It is the original base
 :abbr:`URI (Uniform Resource Identifier)` for this value, as specified by the element's
 xml:base attribute, or a parent element's xml:base, or the appropriate
@@ -463,7 +463,7 @@ resolved relative links in all values where it makes sense to do so.  *Clients
 should never need to manually resolve relative links.*
 
 
-:py:attr:`entries[i].source.updated`
+``entries[i].source.updated``
 ------------------------------------
 
 The date the source of this entry was last updated, as a string in the same
@@ -476,7 +476,7 @@ This element is :ref:`parsed as a date <advanced.date>` and stored in
 
 .. _reference.entry.source.updated_parsed:
 
-:py:attr:`entries[i].source.updated_parsed`
+``entries[i].source.updated_parsed``
 -------------------------------------------
 
 The date this entry was last updated, as a standard :program:`Python` 9-tuple.

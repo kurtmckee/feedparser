@@ -1,4 +1,4 @@
-:py:attr:`feed.icon`
+``feed.icon``
 ====================
 
 A URL to a small icon representing the feed.

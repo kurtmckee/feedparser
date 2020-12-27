@@ -1,6 +1,6 @@
 .. _reference.feed.subtitle:
 
-:py:attr:`feed.subtitle`
+``feed.subtitle``
 ========================
 
 A subtitle, tagline, slogan, or other short description of the feed.

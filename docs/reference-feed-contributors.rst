@@ -1,10 +1,10 @@
-:py:attr:`feed.contributors`
+``feed.contributors``
 ============================
 
 A list of contributors (secondary authors) to this feed.
 
 
-:py:attr:`feed.contributors[i].name`
+``feed.contributors[i].name``
 ------------------------------------
 
 The name of this contributor.
@@ -12,7 +12,7 @@ The name of this contributor.
 
 .. _reference.feed.contributors.href:
 
-:py:attr:`feed.contributors[i].href`
+``feed.contributors[i].href``
 ------------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of this contributor.  This can be
@@ -22,7 +22,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 :ref:`resolved according to a set of rules <advanced.base>`.
 
 
-:py:attr:`feed.contributors[i].email`
+``feed.contributors[i].email``
 -------------------------------------
 
 The email address of this contributor.

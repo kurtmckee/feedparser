@@ -19,13 +19,13 @@ Accessing contributors
     >>> len(e.contributors)
     2
     >>> e.contributors[0]
-    {'name': u'Joe',
-    'href': u'http://example.org/joe/',
-    'email': u'joe@example.org'}
+    {'name': 'Joe',
+    'href': 'http://example.org/joe/',
+    'email': 'joe@example.org'}
     >>> e.contributors[1]
-    {'name': u'Sam',
-    'href': u'http://example.org/sam/',
-    'email': u'sam@example.org'}
+    {'name': 'Sam',
+    'href': 'http://example.org/sam/',
+    'email': 'sam@example.org'}
 
 Besides an alternate link, each Atom feed or entry can have an arbitrary number
 of other links.  Each link is distinguished by its type attribute, which is a
@@ -43,22 +43,22 @@ Accessing multiple links
     >>> len(e.links)
     4
     >>> e.links[0]
-    {'rel': u'alternate',
-    'type': u'text/html',
-    'href': u'http://example.org/entry/3'}
+    {'rel': 'alternate',
+    'type': 'text/html',
+    'href': 'http://example.org/entry/3'}
     >>> e.links[1]
-    {'rel': u'related',
-    'type': u'text/html',
-    'href': u'http://search.example.com/'}
+    {'rel': 'related',
+    'type': 'text/html',
+    'href': 'http://search.example.com/'}
     >>> e.links[2]
-    {'rel': u'via',
-    'type': u'text/html',
-    'href': u'http://toby.example.com/examples/atom10'}
+    {'rel': 'via',
+    'type': 'text/html',
+    'href': 'http://toby.example.com/examples/atom10'}
     >>> e.links[3]
-    {'rel': u'enclosure',
-    'type': u'video/mpeg4',
-    'href': u'http://www.example.com/movie.mp4',
-    'length': u'42301'}
+    {'rel': 'enclosure',
+    'type': 'video/mpeg4',
+    'href': 'http://www.example.com/movie.mp4',
+    'length': '42301'}
 
 
 .. note::

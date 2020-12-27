@@ -1,6 +1,6 @@
 .. _reference.feed.link:
 
-:py:attr:`feed.link`
+``feed.link``
 ====================
 
 The :abbr:`URL (Uniform Resource Locator)` of the :abbr:`HTML (HyperText Markup

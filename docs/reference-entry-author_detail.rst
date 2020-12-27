@@ -1,6 +1,6 @@
 .. _reference.entry.author_detail:
 
-:py:attr:`entries[i].author_detail`
+``entries[i].author_detail``
 ===================================
 
 A dictionary with details about the author of this entry.
@@ -12,7 +12,7 @@ A dictionary with details about the author of this entry.
 
 .. _reference.entry.author_detail.name:
 
-:py:attr:`entries[i].author_detail.name`
+``entries[i].author_detail.name``
 ----------------------------------------
 
 The name of this entry's author.
@@ -20,7 +20,7 @@ The name of this entry's author.
 
 .. _reference.entry.author_detail.href:
 
-:py:attr:`entries[i].author_detail.href`
+``entries[i].author_detail.href``
 ----------------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of this entry's author.  This can be
@@ -32,7 +32,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.entry.author_detail.email:
 
-:py:attr:`entries[i].author_detail.email`
+``entries[i].author_detail.email``
 -----------------------------------------
 
 The email address of this entry's author.

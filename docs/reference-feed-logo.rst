@@ -1,4 +1,4 @@
-:py:attr:`feed.logo`
+``feed.logo``
 ====================
 
 A URL to a graphic representing a logo for the feed.

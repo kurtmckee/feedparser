@@ -1,6 +1,6 @@
 .. _reference.entry.content:
 
-:py:attr:`entries[i].content`
+``entries[i].content``
 =============================
 
 A list of dictionaries with details about the full content of the entry.
@@ -11,7 +11,7 @@ many of them as possible, based on the type and the client's abilities.
 
 .. _reference.entry.content.value:
 
-:py:attr:`entries[i].content[j].value`
+``entries[i].content[j].value``
 --------------------------------------
 
 The value of this piece of content.
@@ -28,7 +28,7 @@ If so, they are :ref:`resolved according to a set of rules <advanced.base>`.
 
 .. _reference.entry.content.type:
 
-:py:attr:`entries[i].content[j].type`
+``entries[i].content[j].type``
 -------------------------------------
 
 The content type of this piece of content.
@@ -54,33 +54,33 @@ specify that certain values default to :mimetype:`text/plain`, and
 
 .. _reference.entry.content.language:
 
-:py:attr:`entries[i].content[j].language`
+``entries[i].content[j].language``
 -----------------------------------------
 
 The language of this piece of content.
 
-:py:attr:`~entries[i].content[j].language` is supposed to be a language code,
+``~entries[i].content[j].language`` is supposed to be a language code,
 as specified by :rfc:`3066`, but publishers have been known to publish random
 values like "English" or "German".  :program:`Universal Feed Parser` does not
 do any parsing or normalization of language codes.
 
-:py:attr:`~entries[i].content[j].language` may come from the element's xml:lang
+``~entries[i].content[j].language`` may come from the element's xml:lang
 attribute, or it may inherit from a parent element's xml:lang, or the
 :mailheader:`Content-Language` :abbr:`HTTP (Hypertext Transfer Protocol)`
 header.  If the feed does not specify a language,
-:py:attr:`~entries[i].content[j].language` will be ``None``, the
+``~entries[i].content[j].language`` will be ``None``, the
 :program:`Python` null value.
 
 
 .. _reference.entry.content.base:
 
-:py:attr:`entries[i].content[j].base`
+``entries[i].content[j].base``
 -------------------------------------
 
 The original base :abbr:`URI (Uniform Resource Identifier)` for links within
 this piece of content.
 
-:py:attr:`~entries[i].content[j].base` is only useful in rare situations and
+``~entries[i].content[j].base`` is only useful in rare situations and
 can usually be ignored.  It is the original base
 :abbr:`URI (Uniform Resource Identifier)` for this value, as specified by the
 element's xml:base attribute, or a parent element's xml:base, or the

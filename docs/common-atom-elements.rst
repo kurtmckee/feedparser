@@ -69,17 +69,17 @@ Accessing Common Feed Elements
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
     >>> d.feed.title
-    u'Sample feed'
+    'Sample feed'
     >>> d.feed.link
-    u'http://example.org/'
+    'http://example.org/'
     >>> d.feed.subtitle
-    u'For documentation <em>only</em>'
+    'For documentation <em>only</em>'
     >>> d.feed.updated
-    u'2005-11-09T11:56:34Z'
+    '2005-11-09T11:56:34Z'
     >>> d.feed.updated_parsed
     (2005, 11, 9, 11, 56, 34, 2, 313, 0)
     >>> d.feed.id
-    u'tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml'
+    'tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml'
 
 Entries are available in ``d.entries``, which is a list. You access entries in
 the order in which they appear in the original feed, so the first entry is
@@ -93,26 +93,26 @@ Accessing Common Entry Elements
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
     >>> d.entries[0].title
-    u'First entry title'
+    'First entry title'
     >>> d.entries[0].link
-    u'http://example.org/entry/3
+    'http://example.org/entry/3
     >>> d.entries[0].id
-    u'tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml:3'
+    'tag:feedparser.org,2005-11-09:/docs/examples/atom10.xml:3'
     >>> d.entries[0].published
-    u'2005-11-09T00:23:47Z'
+    '2005-11-09T00:23:47Z'
     >>> d.entries[0].published_parsed
     (2005, 11, 9, 0, 23, 47, 2, 313, 0)
     >>> d.entries[0].updated
-    u'2005-11-09T11:56:34Z'
+    '2005-11-09T11:56:34Z'
     >>> d.entries[0].updated_parsed
     (2005, 11, 9, 11, 56, 34, 2, 313, 0)
     >>> d.entries[0].summary
-    u'Watch out for nasty tricks'
+    'Watch out for nasty tricks'
     >>> d.entries[0].content
-    [{'type': u'application/xhtml+xml',
-    'base': u'http://example.org/entry/3',
-    'language': u'en-US',
-    'value': u'<div>Watch out for <span>nasty tricks</span></div>'}]
+    [{'type': 'application/xhtml+xml',
+    'base': 'http://example.org/entry/3',
+    'language': 'en-US',
+    'value': '<div>Watch out for <span>nasty tricks</span></div>'}]
 
 .. note::
 

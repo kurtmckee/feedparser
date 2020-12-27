@@ -1,6 +1,6 @@
 .. _reference.entry.id:
 
-:py:attr:`entries[i].id`
+``entries[i].id``
 ========================
 
 A globally unique identifier for this entry.

@@ -1,4 +1,4 @@
-:py:attr:`feed`
+``feed``
 ===============
 
 A dictionary of data about the feed.

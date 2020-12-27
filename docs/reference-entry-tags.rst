@@ -1,6 +1,6 @@
 .. _reference.entry.tags:
 
-:py:attr:`entries[i].tags`
+``entries[i].tags``
 ==========================
 
 A list of dictionaries that contain details of the categories for the entry.
@@ -17,19 +17,19 @@ A list of dictionaries that contain details of the categories for the entry.
 
 .. _reference.entry.tags.term:
 
-:py:attr:`entries[i].tags[j].term`
+``entries[i].tags[j].term``
 ----------------------------------
 
 The category term (keyword).
 
 
-:py:attr:`entries[i].tags[j].scheme`
+``entries[i].tags[j].scheme``
 ------------------------------------
 
 The category scheme (domain).
 
 
-:py:attr:`entries[i].tags[j].label`
+``entries[i].tags[j].label``
 -----------------------------------
 
 A human-readable label for the category.

@@ -1,6 +1,6 @@
 .. _reference.feed.author_detail:
 
-:py:attr:`feed.author_detail`
+``feed.author_detail``
 =============================
 
 A dictionary with details about the feed author.
@@ -8,7 +8,7 @@ A dictionary with details about the feed author.
 
 .. _reference.feed.author_detail.name:
 
-:py:attr:`feed.author_detail.name`
+``feed.author_detail.name``
 ----------------------------------
 
 The name of the feed author.
@@ -16,7 +16,7 @@ The name of the feed author.
 
 .. _reference.feed.author_detail.href:
 
-:py:attr:`feed.author_detail.href`
+``feed.author_detail.href``
 ----------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of the feed author.  This can be the
@@ -28,7 +28,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.feed.author_detail.email:
 
-:py:attr:`feed.author_detail.email`
+``feed.author_detail.email``
 -----------------------------------
 
 The email address of the feed author.

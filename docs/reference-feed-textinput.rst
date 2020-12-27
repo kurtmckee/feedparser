@@ -1,4 +1,4 @@
-:py:attr:`feed.textinput`
+``feed.textinput``
 =========================
 
 A text input form.  No one actually uses this.  Why are you?
@@ -6,7 +6,7 @@ A text input form.  No one actually uses this.  Why are you?
 
 .. _reference.feed.textinput.title:
 
-:py:attr:`feed.textinput.title`
+``feed.textinput.title``
 -------------------------------
 
 The title of the text input form, which would go in the value attribute of the
@@ -15,7 +15,7 @@ form's submit button.
 
 .. _reference.feed.textinput.link:
 
-:py:attr:`feed.textinput.link`
+``feed.textinput.link``
 ------------------------------
 
 The link of the script which processes the text input form, which would go in
@@ -27,7 +27,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.feed.textinput.name:
 
-:py:attr:`feed.textinput.name`
+``feed.textinput.name``
 ------------------------------
 
 The name of the text input box in the form, which would go in the name
@@ -36,7 +36,7 @@ attribute of the form's input box.
 
 .. _reference.feed.textinput.description:
 
-:py:attr:`feed.textinput.description`
+``feed.textinput.description``
 -------------------------------------
 
 A short description of the text input form, which would go in the label element

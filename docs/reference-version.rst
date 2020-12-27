@@ -1,11 +1,11 @@
 .. _reference.version:
 
-:py:attr:`version`
+``version``
 ==================
 
 The format and version of the feed.
 
-Here is the complete list of known feed types and versions that may be returned in :py:attr:`version`:
+Here is the complete list of known feed types and versions that may be returned in ``version``:
 
 ============  ====================================================================================
 ``atom``      Atom (unknown or unrecognized version)
@@ -25,7 +25,7 @@ Here is the complete list of known feed types and versions that may be returned 
 ``rss20``     `RSS 2.0 <http://blogs.law.harvard.edu/tech/rss>`_
 ============  ====================================================================================
 
-If the feed type is completely unknown, :py:attr:`version` will be an empty string.
+If the feed type is completely unknown, ``version`` will be an empty string.
 
 .. tip::
 

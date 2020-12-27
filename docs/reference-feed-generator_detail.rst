@@ -1,13 +1,13 @@
 .. _reference.feed.generator_detail:
 
-:py:attr:`feed.generator_detail`
+``feed.generator_detail``
 ================================
 
 A dictionary with details about the feed generator.
 
 
 
-:py:attr:`feed.generator_detail.name`
+``feed.generator_detail.name``
 -------------------------------------
 
 Same as :ref:`reference.feed.generator`.
@@ -15,7 +15,7 @@ Same as :ref:`reference.feed.generator`.
 
 .. _reference.feed.generator_detail.href:
 
-:py:attr:`feed.generator_detail.href`
+``feed.generator_detail.href``
 -------------------------------------
 
 The :abbr:`URL (Uniform Resource Locator)` of the application used to generate
@@ -27,7 +27,7 @@ If this is a relative :abbr:`URI (Uniform Resource Identifier)`, it is
 
 .. _reference.feed.generator_detail.version:
 
-:py:attr:`feed.generator_detail.version`
+``feed.generator_detail.version``
 ----------------------------------------
 
 The version number of the application used to generate the feed.  There is no

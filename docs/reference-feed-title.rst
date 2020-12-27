@@ -1,6 +1,6 @@
 .. _reference.feed.title:
 
-:py:attr:`feed.title`
+``feed.title``
 =====================
 
 The title of the feed.
