@@ -6,9 +6,14 @@ exposes the :abbr:`HTTP (Hypertext Transfer Protocol)` status code.  You need
 to understand the different codes, including permanent and temporary redirects,
 and feeds that have been marked "gone".
 
+
+Noticing temporary redirects
+----------------------------
+
 When a feed has temporarily moved to a new location, the web server will return
 a ``302`` status code.  :program:`Universal Feed Parser` makes this available
 in ``d.status``.
+
 
 There is nothing special you need to do with temporary redirects; by the time
 you learn about it, :program:`Universal Feed Parser` has already followed the
@@ -17,9 +22,6 @@ and parsed it.  Since the redirect is temporary, you should continue requesting
 the original :abbr:`URL (Uniform Resource Locator)` the next time you want to
 parse the feed.
 
-
-Noticing temporary redirects
-----------------------------
 
 ::
 
@@ -31,6 +33,10 @@ Noticing temporary redirects
     'http://feedparser.org/docs/examples/atom10.xml'
     >>> d.feed.title
     u'Sample Feed'
+
+
+Noticing permanent redirects
+----------------------------
 
 When a feed has permanently moved to a new location, the web server will return
 a ``301`` status code.  Again, :program:`Universal Feed Parser` makes this
@@ -45,9 +51,6 @@ of a feed that has been permanently redirected is very rude, and may get you
 banned from the server.
 
 
-Noticing permanent redirects
-----------------------------
-
 ::
 
     >>> import feedparser
@@ -60,6 +63,9 @@ Noticing permanent redirects
     u'Sample Feed'
 
 
+Noticing feeds marked "gone"
+----------------------------
+
 When a feed has been permanently deleted, the web server will return a ``410``
 status code.  If you ever receive a ``410``, you should stop polling the feed
 and inform the end user that the feed is gone for good.
@@ -69,14 +75,9 @@ Repeatedly requesting a feed that has been marked as "gone" is very rude, and
 may get you banned from the server.
 
 
-Noticing feeds marked "gone"
-----------------------------
-
 ::
 
-    
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/gone.xml')
     >>> d.status
     410
-
