@@ -48,7 +48,7 @@ class FeedParserDict(dict):
         'tagline_detail': 'subtitle_detail',
     }
 
-    def __getitem__(self, key):
+    def __getitem__(self, key, _stacklevel=2):
         """
         :return: A :class:`FeedParserDict`.
         """
@@ -84,7 +84,7 @@ class FeedParserDict(dict):
                     "exist. This fallback will be removed in a future version "
                     "of feedparser.",
                     DeprecationWarning,
-                    stacklevel=2,
+                    stacklevel=_stacklevel,
                 )
                 return dict.__getitem__(self, 'published')
             return dict.__getitem__(self, 'updated')
@@ -100,7 +100,7 @@ class FeedParserDict(dict):
                     "`updated_parsed` doesn't exist. This fallback will be "
                     "removed in a future version of feedparser.",
                     DeprecationWarning,
-                    stacklevel=2,
+                    stacklevel=_stacklevel,
                 )
                 return dict.__getitem__(self, 'published_parsed')
             return dict.__getitem__(self, 'updated_parsed')
@@ -121,7 +121,7 @@ class FeedParserDict(dict):
             # This fix was proposed in issue 328.
             return dict.__contains__(self, key)
         try:
-            self.__getitem__(key)
+            self.__getitem__(key, _stacklevel=3)
         except KeyError:
             return False
         else:
@@ -135,7 +135,7 @@ class FeedParserDict(dict):
         """
 
         try:
-            return self.__getitem__(key)
+            return self.__getitem__(key, _stacklevel=3)
         except KeyError:
             return default
 
@@ -155,7 +155,7 @@ class FeedParserDict(dict):
         # __getattribute__() is called first; this will be called
         # only if an attribute was not already found
         try:
-            return self.__getitem__(key)
+            return self.__getitem__(key, _stacklevel=3)
         except KeyError:
             raise AttributeError("object has no attribute '%s'" % key)
 
