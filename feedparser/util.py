@@ -84,6 +84,7 @@ class FeedParserDict(dict):
                     "exist. This fallback will be removed in a future version "
                     "of feedparser.",
                     DeprecationWarning,
+                    stacklevel=2,
                 )
                 return dict.__getitem__(self, 'published')
             return dict.__getitem__(self, 'updated')
@@ -99,6 +100,7 @@ class FeedParserDict(dict):
                     "`updated_parsed` doesn't exist. This fallback will be "
                     "removed in a future version of feedparser.",
                     DeprecationWarning,
+                    stacklevel=2,
                 )
                 return dict.__getitem__(self, 'published_parsed')
             return dict.__getitem__(self, 'updated_parsed')
