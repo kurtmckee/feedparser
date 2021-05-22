@@ -78,7 +78,7 @@ class _FeedURLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPR
         host = urllib.parse.urlparse(req.get_full_url())[1]
         if 'Authorization' not in req.headers or 'WWW-Authenticate' not in headers:
             return self.http_error_default(req, fp, code, msg, headers)
-        auth = base64.decodebytes(req.headers['Authorization'].split(' ')[1].encode('utf8'))
+        auth = base64.decodebytes(req.headers['Authorization'].split(' ')[1].encode()).decode()
         user, passw = auth.split(':')
         realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
         self.add_password(realm, host, user, passw)
