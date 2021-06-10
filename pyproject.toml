@@ -36,7 +36,7 @@ build-backend = "poetry.core.masonry.api"
 legacy_tox_ini = """
 
 [tox]
-envlist = py{py3, 36, 37, 38, 39}-{chardet, }, docs
+envlist = py{39, py3, 38, 37, 36}-{chardet, }, docs
 skip_missing_interpreters = True
 isolated_build = True
 
