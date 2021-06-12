@@ -1,0 +1,4 @@
+Fixed
+-----
+
+*   Fix a crash that occurs with Python 3.10.0b2.

@@ -337,7 +337,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
 
         try:
             return sgmllib.SGMLParser.parse_declaration(self, i)
-        except sgmllib.SGMLParseError:
+        except (AssertionError, sgmllib.SGMLParseError):
             # Escape the doctype declaration and continue parsing.
             self.handle_data('&lt;')
             return i+1
