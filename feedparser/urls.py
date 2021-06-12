@@ -28,7 +28,7 @@
 import re
 import urllib.parse
 
-from .html import _BaseHTMLProcessor
+from .html import BaseHTMLProcessor
 
 # If you want feedparser to allow all URL schemes, set this to ()
 # List culled from Python's urlparse documentation at:
@@ -103,7 +103,7 @@ def make_safe_absolute_uri(base, rel=None):
     return uri
 
 
-class RelativeURIResolver(_BaseHTMLProcessor):
+class RelativeURIResolver(BaseHTMLProcessor):
     relative_uris = {
         ('a', 'href'),
         ('applet', 'codebase'),
@@ -137,7 +137,7 @@ class RelativeURIResolver(_BaseHTMLProcessor):
     }
 
     def __init__(self, baseuri, encoding, _type):
-        _BaseHTMLProcessor.__init__(self, encoding, _type)
+        BaseHTMLProcessor.__init__(self, encoding, _type)
         self.baseuri = baseuri
 
     def resolve_uri(self, uri):

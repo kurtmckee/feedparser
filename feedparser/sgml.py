@@ -82,7 +82,7 @@ class _EndBracketRegEx:
         match = self.endbracket.match(target, index)
         if match is not None:
             # Returning a new object in the calling thread's context
-            # resolves a thread-safety.
+            # resolves a thread-safety issue.
             return EndBracketMatch(match)
         return None
 

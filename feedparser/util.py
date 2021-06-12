@@ -59,9 +59,8 @@ class FeedParserDict(dict):
             except IndexError:
                 raise KeyError("object doesn't have key 'category'")
         elif key == 'enclosures':
-            norel = lambda link: FeedParserDict([(name, value) for (name, value) in link.items() if name != 'rel'])
             return [
-                norel(link)
+                FeedParserDict([(name, value) for (name, value) in link.items() if name != 'rel'])
                 for link in dict.__getitem__(self, 'links')
                 if link['rel'] == 'enclosure'
             ]
@@ -142,12 +141,6 @@ class FeedParserDict(dict):
         if isinstance(key, list):
             key = key[0]
         return dict.__setitem__(self, key, value)
-
-    def setdefault(self, k, default):
-        if k not in self:
-            self[k] = default
-            return default
-        return self[k]
 
     def __getattr__(self, key):
         # __getattribute__() is called first; this will be called

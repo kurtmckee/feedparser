@@ -156,10 +156,7 @@ def convert_to_utf8(http_headers, data, result):
     try:
         if bom_encoding:
             tempdata = data.decode(bom_encoding).encode('utf-8')
-    except (UnicodeDecodeError, LookupError):
-        # feedparser recognizes UTF-32 encodings that aren't
-        # available in Python 2.4 and 2.5, so it's possible to
-        # encounter a LookupError during decoding.
+    except UnicodeDecodeError:
         xml_encoding_match = None
     else:
         xml_encoding_match = RE_XML_PI_ENCODING.match(tempdata)

@@ -27,11 +27,11 @@
 
 import re
 
-from .html import _BaseHTMLProcessor
+from .html import BaseHTMLProcessor
 from .urls import make_safe_absolute_uri
 
 
-class _HTMLSanitizer(_BaseHTMLProcessor):
+class HTMLSanitizer(BaseHTMLProcessor):
     acceptable_elements = {
         'a',
         'abbr',
@@ -732,14 +732,14 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
     }
 
     def __init__(self, encoding=None, _type='application/xhtml+xml'):
-        super(_HTMLSanitizer, self).__init__(encoding, _type)
+        super().__init__(encoding, _type)
 
         self.unacceptablestack = 0
         self.mathmlOK = 0
         self.svgOK = 0
 
     def reset(self):
-        super(_HTMLSanitizer, self).reset()
+        super().reset()
         self.unacceptablestack = 0
         self.mathmlOK = 0
         self.svgOK = 0
@@ -805,7 +805,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                 if key == 'href':
                     value = make_safe_absolute_uri(value)
                 clean_attrs.append((key, value))
-        super(_HTMLSanitizer, self).unknown_starttag(tag, clean_attrs)
+        super().unknown_starttag(tag, clean_attrs)
 
     def unknown_endtag(self, tag):
         if tag not in self.acceptable_elements:
@@ -820,7 +820,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
                     self.svgOK -= 1
             else:
                 return
-        super(_HTMLSanitizer, self).unknown_endtag(tag)
+        super().unknown_endtag(tag)
 
     def handle_pi(self, text):
         pass
@@ -830,7 +830,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
 
     def handle_data(self, text):
         if not self.unacceptablestack:
-            super(_HTMLSanitizer, self).handle_data(text)
+            super().handle_data(text)
 
     def sanitize_style(self, style):
         # disallow urls
@@ -865,7 +865,7 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         return ' '.join(clean)
 
     def parse_comment(self, i, report=1):
-        ret = super(_HTMLSanitizer, self).parse_comment(i, report)
+        ret = super().parse_comment(i, report)
         if ret >= 0:
             return ret
         # if ret == -1, this may be a malicious attempt to circumvent
@@ -877,8 +877,8 @@ class _HTMLSanitizer(_BaseHTMLProcessor):
         return len(self.rawdata)
 
 
-def _sanitize_html(html_source, encoding, _type):
-    p = _HTMLSanitizer(encoding, _type)
+def sanitize_html(html_source, encoding, _type):
+    p = HTMLSanitizer(encoding, _type)
     html_source = html_source.replace('<![CDATA[', '&lt;![CDATA[')
     p.feed(html_source)
     data = p.output()
