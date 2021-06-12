@@ -61,7 +61,7 @@ _cp1252 = {
 }
 
 
-class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
+class BaseHTMLProcessor(sgmllib.SGMLParser):
     special = re.compile("""[<>'"]""")
     bare_ampersand = re.compile(r"&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
     elements_no_end_tag = {
@@ -91,11 +91,11 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
             self.encoding = encoding
         self._type = _type
         self.pieces = []
-        super(_BaseHTMLProcessor, self).__init__()
+        super().__init__()
 
     def reset(self):
         self.pieces = []
-        super(_BaseHTMLProcessor, self).reset()
+        super().reset()
 
     def _shorttag_replace(self, match):
         """
@@ -118,23 +118,13 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
         raise NotImplementedError
 
     # Replace goahead with SGMLParser's goahead() code object.
-    try:
-        goahead.__code__ = sgmllib.SGMLParser.goahead.__code__
-    except AttributeError:
-        # Python 2
-        # noinspection PyUnresolvedReferences
-        goahead.func_code = sgmllib.SGMLParser.goahead.func_code
+    goahead.__code__ = sgmllib.SGMLParser.goahead.__code__
 
     def __parse_starttag(self, i):
         raise NotImplementedError
 
     # Replace __parse_starttag with SGMLParser's parse_starttag() code object.
-    try:
-        __parse_starttag.__code__ = sgmllib.SGMLParser.parse_starttag.__code__
-    except AttributeError:
-        # Python 2
-        # noinspection PyUnresolvedReferences
-        __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
+    __parse_starttag.__code__ = sgmllib.SGMLParser.parse_starttag.__code__
 
     def parse_starttag(self, i):
         j = self.__parse_starttag(i)
@@ -153,8 +143,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
         data = re.sub(r'<([^<>\s]+?)\s*/>', self._shorttag_replace, data)
         data = data.replace('&#39;', "'")
         data = data.replace('&#34;', '"')
-        super(_BaseHTMLProcessor, self).feed(data)
-        super(_BaseHTMLProcessor, self).close()
+        super().feed(data)
+        super().close()
 
     @staticmethod
     def normalize_attrs(attrs):
@@ -315,8 +305,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
             # self.updatepos(declstartpos, i)
             return None, -1
 
-    @staticmethod
-    def convert_charref(name):
+    def convert_charref(self, name):
         """
         :type name: str
         :rtype: str
@@ -324,8 +313,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
 
         return '&#%s;' % name
 
-    @staticmethod
-    def convert_entityref(name):
+    def convert_entityref(self, name):
         """
         :type name: str
         :rtype: str

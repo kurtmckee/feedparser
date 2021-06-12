@@ -28,11 +28,11 @@
 import json
 
 from ..datetimes import _parse_date
-from ..sanitizer import _sanitize_html
+from ..sanitizer import sanitize_html
 from ..util import FeedParserDict
 
 
-class _JsonFeedParser(object):
+class JSONParser:
     VERSIONS = {
         'https://jsonfeed.org/version/1': 'json1',
         'https://jsonfeed.org/version/1.1': 'json11',
@@ -54,11 +54,12 @@ class _JsonFeedParser(object):
     def __init__(self, baseuri=None, baselang=None, encoding=None):
         self.baseuri = baseuri or ''
         self.lang = baselang or None
-        self.encoding = encoding or 'utf-8' # character encoding
+        self.encoding = encoding or 'utf-8'  # character encoding
 
         self.version = None
         self.feeddata = FeedParserDict()
         self.namespacesInUse = []
+        self.entries = []
 
     def feed(self, data):
         data = json.loads(data)
@@ -90,8 +91,7 @@ class _JsonFeedParser(object):
             c['type'] = 'text'
         elif 'content_html' in e:
             entry['content'] = c = FeedParserDict()
-            c['value'] = _sanitize_html(e['content_html'],
-                self.encoding, 'application/json')
+            c['value'] = sanitize_html(e['content_html'], self.encoding, 'application/json')
             c['type'] = 'html'
 
         if 'date_published' in e:
@@ -112,7 +112,8 @@ class _JsonFeedParser(object):
 
         return entry
 
-    def parse_author(self, parent, dest):
+    @staticmethod
+    def parse_author(parent, dest):
         dest['author_detail'] = detail = FeedParserDict()
         if 'name' in parent:
             dest['author'] = detail['name'] = parent['name']
@@ -122,7 +123,8 @@ class _JsonFeedParser(object):
             else:
                 detail['href'] = parent['url']
 
-    def parse_attachment(self, attachment):
+    @staticmethod
+    def parse_attachment(attachment):
         enc = FeedParserDict()
         enc['href'] = attachment['url']
         enc['type'] = attachment['mime_type']

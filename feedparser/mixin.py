@@ -34,12 +34,12 @@ import xml.sax.saxutils
 
 from .html import _cp1252
 from .namespaces import _base, cc, dc, georss, itunes, mediarss, psc
-from .sanitizer import _sanitize_html, _HTMLSanitizer
+from .sanitizer import sanitize_html, HTMLSanitizer
 from .util import FeedParserDict
 from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
 
 
-class _FeedParserMixin(
+class XMLParserMixin(
         _base.Namespace,
         cc.Namespace,
         dc.Namespace,
@@ -204,7 +204,7 @@ class _FeedParserMixin(
         #         },
         #     }
         self.property_depth_map = {}
-        super(_FeedParserMixin, self).__init__()
+        super(XMLParserMixin, self).__init__()
 
     def _normalize_attributes(self, kv):
         raise NotImplementedError
@@ -546,7 +546,7 @@ class _FeedParserMixin(
         # sanitize embedded markup
         if is_htmlish and self.sanitize_html:
             if element in self.can_contain_dangerous_markup:
-                output = _sanitize_html(output, self.encoding, self.contentparams.get('type', 'text/html'))
+                output = sanitize_html(output, self.encoding, self.contentparams.get('type', 'text/html'))
 
         if self.encoding and isinstance(output, bytes):
             output = output.decode(self.encoding, 'ignore')
@@ -648,7 +648,7 @@ class _FeedParserMixin(
             return False
 
         # all tags must be in a restricted subset of valid HTML tags
-        if any((t for t in re.findall(r'</?(\w+)', s) if t.lower() not in _HTMLSanitizer.acceptable_elements)):
+        if any((t for t in re.findall(r'</?(\w+)', s) if t.lower() not in HTMLSanitizer.acceptable_elements)):
             return False
 
         # all entities must have been defined as valid HTML entities
@@ -744,7 +744,7 @@ class _FeedParserMixin(
             author, email = context.get(key), None
             if not author:
                 return
-            emailmatch = re.search(r'''(([a-zA-Z0-9\_\-\.\+]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9\-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?))(\?subject=\S+)?''', author)
+            emailmatch = re.search(r"(([a-zA-Z0-9_.+-]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?))(\?subject=\S+)?", author)
             if emailmatch:
                 email = emailmatch.group(0)
                 # probably a better way to do the following, but it passes

@@ -700,7 +700,7 @@ for func, items in date_tests.items():
 
 def make_html_guess_test(text, expect, doc):
     def fn(self):
-        value = bool(feedparser.mixin._FeedParserMixin.looks_like_html(text))
+        value = bool(feedparser.mixin.XMLParserMixin.looks_like_html(text))
         self.assertEqual(value, expect)
 
     fn.__doc__ = doc
@@ -801,16 +801,16 @@ class TestParseFlags(unittest.TestCase):
 class TestSanitizer(unittest.TestCase):
     def test_style_attr_is_enabled(self):
         html = """<p style="margin: 15em;">example</p>"""
-        result = feedparser.sanitizer._sanitize_html(html, None, 'text/html')
+        result = feedparser.sanitizer.sanitize_html(html, None, 'text/html')
         self.assertEqual(result, html)
 
     def test_style_attr_can_be_disabled(self):
         html = """<p style="margin: 15em;">example</p>"""
         expected = """<p>example</p>"""
-        original_attrs = feedparser.sanitizer._HTMLSanitizer.acceptable_attributes
-        feedparser.sanitizer._HTMLSanitizer.acceptable_attributes = set()
-        result = feedparser.sanitizer._sanitize_html(html, None, 'text/html')
-        feedparser.sanitizer._HTMLSanitizer.acceptable_attributes = original_attrs
+        original_attrs = feedparser.sanitizer.HTMLSanitizer.acceptable_attributes
+        feedparser.sanitizer.HTMLSanitizer.acceptable_attributes = set()
+        result = feedparser.sanitizer.sanitize_html(html, None, 'text/html')
+        feedparser.sanitizer.HTMLSanitizer.acceptable_attributes = original_attrs
         self.assertEqual(result, expected)
 
 

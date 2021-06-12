@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-class _LooseFeedParser(object):
+class LooseXMLParser:
     contentparams = None
 
     def __init__(self, baseuri=None, baselang=None, encoding=None, entities=None):
@@ -34,7 +34,7 @@ class _LooseFeedParser(object):
         self.lang = baselang or None
         self.encoding = encoding or 'utf-8'  # character encoding
         self.entities = entities or {}
-        super(_LooseFeedParser, self).__init__()
+        super().__init__()
 
     @staticmethod
     def _normalize_attributes(kv):
