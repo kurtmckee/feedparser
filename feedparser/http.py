@@ -151,6 +151,17 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
     if not isinstance(url, bytes):
         url = convert_to_idn(url)
 
+    # Prevent UnicodeEncodeErrors caused by Unicode characters in the path.
+    bits = []
+    for c in url:
+        try:
+            c.encode('ascii')
+        except UnicodeEncodeError:
+            bits.append(urllib.parse.quote(c))
+        else:
+            bits.append(c)
+    url = ''.join(bits)
+
     # try to open with urllib2 (to use optional headers)
     request = _build_urllib2_request(url, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)
     opener = urllib.request.build_opener(*tuple(handlers + [_FeedURLHandler()]))
