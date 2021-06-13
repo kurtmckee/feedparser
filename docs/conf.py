@@ -11,7 +11,7 @@ release = version
 
 # project information
 project = 'feedparser'
-copyright = '2010-2020 Kurt McKee, 2004-2008 Mark Pilgrim'
+copyright = '2010-2021 Kurt McKee, 2004-2008 Mark Pilgrim'
 language = 'en'
 
 # documentation options

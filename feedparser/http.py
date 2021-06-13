@@ -1,4 +1,4 @@
-# Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2021 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -203,7 +203,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
         result['href'] = f.url.decode('utf-8', 'ignore')
     else:
         result['href'] = f.url
-    result['status'] = getattr(f, 'status', 200)
+    result['status'] = getattr(f, 'status', None) or 200
 
     # Stop processing if the server sent HTTP 304 Not Modified.
     if getattr(f, 'code', 0) == 304:

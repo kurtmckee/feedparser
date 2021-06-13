@@ -1,5 +1,5 @@
 # This file is part of feedparser.
-# Copyright 2020 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2020-2021 Kurt McKee <contactme@kurtmckee.org>
 # Released under the BSD 2-clause license.
 
 # The tasks defined in this file automates the entire
