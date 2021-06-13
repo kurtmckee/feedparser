@@ -1,5 +1,8 @@
 coming in the next release:
 
+6.0.3 - 12 June 2021
+    *   Fix an issue with the HTTP request status on Python >= 3.9.
+
 6.0.2 - 25 October 2020
     *   Stop building Python wheels with ``universal=1`` set. (#251)
 
