@@ -52,7 +52,7 @@ This will become clear with an example.
 Accessing namespaced elements with non-standard prefixes
 --------------------------------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/nonstandard_prefix.rdf')
@@ -60,9 +60,18 @@ Accessing namespaced elements with non-standard prefixes
     '0028-0836'
     >>> d.feed.foo_issn
     Traceback (most recent call last):
-    File "<stdin>", line 1, in ?
-    File "feedparser.py", line 158, in __getattr__
-    raise AttributeError, "object has no attribute '%s'" % key
+      File "feedparser\util.py", line 149, in __getattr__
+        return self.__getitem__(key)
+      File "feedparser\util.py", line 112, in __getitem__
+        return dict.__getitem__(self, key)
+    KeyError: 'foo_issn'
+
+    During handling of the above exception, another exception occurred:
+
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "feedparser\util.py", line 151, in __getattr__
+        raise AttributeError("object has no attribute '%s'" % key)
     AttributeError: object has no attribute 'foo_issn'
     >>> d.namespaces
     {'': 'http://purl.org/rss/1.0/',
