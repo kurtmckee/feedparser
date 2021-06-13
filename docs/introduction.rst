@@ -17,8 +17,7 @@ later. :program:`Universal Feed Parser` is not meant
 to run standalone; it is a module for you to use as part of a larger
 :program:`Python` program.
 
-:program:`Universal Feed Parser` is easy to use; the module is self-contained
-in a single file, :file:`feedparser.py`, and it has one primary public
+:program:`Universal Feed Parser` is easy to use; it has one primary public
 function, ``parse``.  ``parse`` takes a number of arguments, but only one is
 required, and it can be a :abbr:`URL (Uniform Resource Locator)`, a local
 filename, or a raw string containing feed data in any format.
