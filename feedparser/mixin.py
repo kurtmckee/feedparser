@@ -506,9 +506,7 @@ class XMLParserMixin(
         if base64 and self.contentparams.get('base64', 0):
             try:
                 output = base64.decodebytes(output.encode('utf8')).decode('utf8')
-            except binascii.Error:
-                pass
-            except binascii.Incomplete:
+            except (binascii.Error, binascii.Incomplete, UnicodeDecodeError):
                 pass
 
         # resolve relative URIs
