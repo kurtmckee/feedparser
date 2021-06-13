@@ -40,6 +40,7 @@ import sys
 import threading
 import time
 import unittest
+import urllib.error
 import warnings
 import xml.sax
 import zlib
@@ -403,6 +404,12 @@ class TestOpenResource(unittest.TestCase):
         s = br'<feed><item><title>t\u00e9xt</title></item></feed>'
         r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
         self.assertEqual(s, r)
+
+    def test_http_client_ascii_unicode_encode_error(self):
+        """Confirm that a Unicode character doesn't cause a UnicodeEncodeError crash."""
+        url = 'https://0.0.0.0/ô'
+        with self.assertRaises(urllib.error.URLError):
+            feedparser.api._open_resource(url, '', '', '', '', [], {}, {})
 
 
 def make_safe_uri_test(rel, expect, doc):
