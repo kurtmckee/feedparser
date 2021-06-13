@@ -1,5 +1,9 @@
 coming in the next release:
 
+6.0.4 - 13 June 2021
+    *   Prevent a UnicodeDecodeError crash that may occur when
+        the title element's type attribute exists but is empty. (#277)
+
 6.0.3 - 12 June 2021
     *   Fix an issue with the HTTP request status on Python >= 3.9.
 
