@@ -21,6 +21,11 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.3 - 2021-06-12
+==================
+
+*   Fix an issue with the HTTP request status on Python >= 3.9.
+
 6.0.2 - 2020-10-25
 ==================
 
