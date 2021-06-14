@@ -21,6 +21,12 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.5 - 2021-06-14
+==================
+
+*   Prevent a TypeError crash that may occur when including a
+    username and password in the feed URL. (#276)
+
 6.0.4 - 2021-06-13
 ==================
 
@@ -28,7 +34,6 @@ Please see the fragment files in the `changelog.d directory`_.
     the title element's type attribute exists but is empty. (#277)
 *   Prevent a UnicodeEncodeError crash that may occur if
     the URL contains Unicode characters in the path. (#273)
-
 
 6.0.3 - 2021-06-12
 ==================

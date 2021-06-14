@@ -415,6 +415,12 @@ class TestOpenResource(unittest.TestCase):
         with self.assertRaises(urllib.error.URLError):
             feedparser.api._open_resource(url, '', '', '', '', [], {}, {})
 
+    def test_http_client_basic_auth_type_error(self):
+        """Confirm an in-URL username/password doesn't cause a TypeError."""
+        url = 'https://username@password@0.0.0.0/feed'
+        with self.assertRaises(urllib.error.URLError):
+            feedparser.api._open_resource(url, '', '', '', '', [], {}, {})
+
 
 def make_safe_uri_test(rel, expect, doc):
     def fn(self):

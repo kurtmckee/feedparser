@@ -78,7 +78,7 @@ class URLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPRedire
         host = urllib.parse.urlparse(req.get_full_url())[1]
         if 'Authorization' not in req.headers or 'WWW-Authenticate' not in headers:
             return self.http_error_default(req, fp, code, msg, headers)
-        auth = base64.decodebytes(req.headers['Authorization'].split(' ')[1].encode('utf8'))
+        auth = base64.decodebytes(req.headers['Authorization'].split(' ')[1].encode()).decode()
         user, passw = auth.split(':')
         realm = re.findall('realm="([^"]*)"', headers['WWW-Authenticate'])[0]
         self.add_password(realm, host, user, passw)
@@ -145,7 +145,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
             if url_pieces.port:
                 new_pieces[1] = f'{url_pieces.hostname}:{url_pieces.port}'
             url = urllib.parse.urlunparse(new_pieces)
-            auth = base64.standard_b64encode(f'{url_pieces.username}:{url_pieces.password}').strip()
+            auth = base64.standard_b64encode(f'{url_pieces.username}:{url_pieces.password}'.encode()).decode()
 
     # iri support
     if not isinstance(url, bytes):
