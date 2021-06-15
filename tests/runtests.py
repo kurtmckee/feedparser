@@ -522,6 +522,12 @@ class TestHTTPStatus(unittest.TestCase):
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.entries[0].title, 'target')
 
+    def test_302_no_location(self):
+        """Confirm no AttributeErrors when an HTTP 3xx response has no Location header."""
+
+        f = feedparser.parse('http://localhost:8097/tests/http/http_status_302-no-location.xml')
+        self.assertEqual(f.status, 302)
+
     def test_303(self):
         f = feedparser.parse('http://localhost:8097/tests/http/http_status_303.xml')
         self.assertEqual(f.status, 303)
@@ -900,7 +906,7 @@ def runtests():
     # there are several compression test cases that must be accounted for
     # as well as a number of http status tests that redirect to a target
     # and a few `_open_resource`-related tests
-    httpcount = 6 + 16 + 2
+    httpcount = 7 + 16 + 2
     httpcount += len([f for f in allfiles if 'http' in f])
     httpcount += len([f for f in wellformedfiles if 'http' in f])
     httpcount += len([f for f in illformedfiles if 'http' in f])

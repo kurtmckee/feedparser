@@ -53,6 +53,8 @@ class _FeedURLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPR
 
     def http_error_301(self, req, fp, code, msg, hdrs):
         result = urllib.request.HTTPRedirectHandler.http_error_301(self, req, fp, code, msg, hdrs)
+        if not result:
+            return fp
         result.status = code
         result.newurl = result.geturl()
         return result
