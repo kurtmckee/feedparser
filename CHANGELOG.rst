@@ -21,6 +21,12 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.6 - 2021-06-15
+==================
+
+*   Prevent an AttributeError that occurs when a server returns HTTP 3xx
+    but doesn't include a Location header as well. (#267)
+
 6.0.5 - 2021-06-14
 ==================
 
