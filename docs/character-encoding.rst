@@ -87,7 +87,7 @@ to reparse the feed with the following character encodings:
 
 #. the encoding sniffed from the first four bytes of the document (as per `Section F <http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info>`_)
 
-#. the encoding auto-detected by the `Universal Encoding Detector <http://chardet.feedparser.org/>`_, if installed
+#. the encoding auto-detected by the `chardet <https://github.com/chardet/chardet>`_, if installed
 
 #. utf-8
 

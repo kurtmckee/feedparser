@@ -21,6 +21,13 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.8 - 2021-06-22
+==================
+
+*   Fix the name and link to the chardet module in the documentation. (#280)
+
+    No code changed in this hotfix, only documentation.
+
 6.0.7 - 2021-06-21
 ==================
 
