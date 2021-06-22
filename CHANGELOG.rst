@@ -21,6 +21,11 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.7 - 2021-06-21
+==================
+
+*   Catch ``urllib.error.URLError`` to prevent crashes. (#239)
+
 6.0.6 - 2021-06-15
 ==================
 

@@ -30,6 +30,7 @@ import datetime
 import io
 import time
 from typing import Dict, List, Union
+import urllib.error
 import urllib.parse
 import xml.sax
 
@@ -225,7 +226,14 @@ def parse(
         headers={},
     )
 
-    data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
+    try:
+        data = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
+    except urllib.error.URLError as error:
+        result.update({
+            'bozo': True,
+            'bozo_exception': error,
+        })
+        return result
 
     if not data:
         return result
