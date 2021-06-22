@@ -1,5 +1,10 @@
 coming in the next release:
 
+6.0.8 - 22 June 2021
+    *   Fix the name and link to the chardet module in the documentation. (#280)
+
+        No code changed in this hotfix, only documentation.
+
 6.0.7 - 21 June 2021
     *   Catch ``urllib.error.URLError`` to prevent crashes. (#239)
 
