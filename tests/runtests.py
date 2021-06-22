@@ -41,6 +41,7 @@ import threading
 import time
 import unittest
 import urllib.error
+import urllib.request
 import warnings
 import xml.sax
 import zlib
@@ -416,6 +417,26 @@ class TestOpenResource(unittest.TestCase):
         url = 'https://username@password@0.0.0.0/feed'
         with self.assertRaises(urllib.error.URLError):
             feedparser.api._open_resource(url, '', '', '', '', [], {}, {})
+
+    def test_http_client_urllib_error(self):
+        """Confirm urllib.error.URLError is caught correctly.
+
+        urllib.request.AbstractHTTPHandler.do_open() may explicitly raise
+        urllib.error.URLError in e.g. Python 3.9.
+        """
+
+        original_do_open = urllib.request.AbstractHTTPHandler.do_open
+        exception = urllib.error.URLError('bogus')
+
+        def do_open(*args, **kwargs):
+            raise exception
+
+        urllib.request.AbstractHTTPHandler.do_open = do_open
+        result = feedparser.parse('https://bogus.example')
+        assert result['bozo'] is True
+        assert result['bozo_exception'] is exception
+
+        urllib.request.AbstractHTTPHandler.do_open = original_do_open
 
 
 def make_safe_uri_test(rel, expect, doc):
