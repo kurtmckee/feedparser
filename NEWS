@@ -1,5 +1,8 @@
 coming in the next release:
 
+6.0.7 - 21 June 2021
+    *   Catch ``urllib.error.URLError`` to prevent crashes. (#239)
+
 6.0.6 - 15 June 2021
     *   Prevent an AttributeError that occurs when a server returns HTTP 3xx
         but doesn't include a Location header as well. (#267)
