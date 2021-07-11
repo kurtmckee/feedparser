@@ -27,7 +27,8 @@
 
 import re
 
-import sgmllib
+# FIXME: replace with something else, as sgmllib3k is not maintained. See https://github.com/kurtmckee/feedparser/issues/279
+import sgmllib # type: ignore[import]
 
 __all__ = [
     'sgmllib',

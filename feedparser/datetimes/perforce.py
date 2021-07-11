@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import email._parseaddr
+import email.utils
 import re
 import time
 
@@ -41,6 +41,6 @@ def _parse_date_perforce(date_string):
     dow, year, month, day, hour, minute, second, tz = m.groups()
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     new_date_string = "%s, %s %s %s %s:%s:%s %s" % (dow, day, months[int(month) - 1], year, hour, minute, second, tz)
-    tm = email._parseaddr.parsedate_tz(new_date_string)
+    tm = email.utils.parsedate_tz(new_date_string)
     if tm:
-        return time.gmtime(email._parseaddr.mktime_tz(tm))
+        return time.gmtime(email.utils.mktime_tz(tm))

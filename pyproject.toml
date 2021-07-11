@@ -16,6 +16,7 @@ classifiers = [
         "Intended Audience :: Developers",
         "Topic :: Text Processing :: Markup",
 ]
+include = ["feedparser/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -26,6 +27,7 @@ sgmllib3k = "^1.0.0"
 tox = "^3.20.1"
 Sphinx = "^3.4.1"
 scriv = "^0.10.0"
+mypy = "^0.910"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -36,7 +38,7 @@ build-backend = "poetry.core.masonry.api"
 legacy_tox_ini = """
 
 [tox]
-envlist = py{39, py3, 38, 37, 36}-{chardet, }, docs
+envlist = py{39, py3, 38, 37, 36}-{chardet, }, docs, mypy
 skip_missing_interpreters = True
 isolated_build = True
 
@@ -49,6 +51,12 @@ commands = {envpython} -Wd tests/runtests.py
 [testenv:docs]
 allowlist_externals = sphinx-build
 commands = sphinx-build -EWnq --keep-going -b html docs/ fpdocs/
+
+[testenv:mypy]
+commands = mypy feedparser
+deps =
+    mypy
+    types-chardet
 """
 
 
@@ -61,3 +69,6 @@ fragment_directory = "changelog.d"
 insert_marker = "scriv-insert-here"
 main_branches = ["develop", "master"]
 new_fragment_template = "file: fragment-template.rst.txt"
+
+[tool.mypy]
+show_error_codes = true

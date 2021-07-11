@@ -138,17 +138,11 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     return url_file_stream_or_string
 
 
-LooseFeedParser = type(
-    'LooseFeedParser',
-    (LooseXMLParser, XMLParserMixin, BaseHTMLProcessor),
-    {},
-)
+class LooseFeedParser(LooseXMLParser, XMLParserMixin, BaseHTMLProcessor):
+    pass
 
-StrictFeedParser = type(
-    'StrictFeedParser',
-    (StrictXMLParser, XMLParserMixin, xml.sax.handler.ContentHandler),
-    {},
-)
+class StrictFeedParser(StrictXMLParser, XMLParserMixin, xml.sax.handler.ContentHandler):
+    pass
 
 
 def parse(
@@ -214,10 +208,10 @@ def parse(
         agent = feedparser.USER_AGENT
     if sanitize_html is None:
         import feedparser
-        sanitize_html = feedparser.SANITIZE_HTML
+        sanitize_html = bool(feedparser.SANITIZE_HTML)
     if resolve_relative_uris is None:
         import feedparser
-        resolve_relative_uris = feedparser.RESOLVE_RELATIVE_URIS
+        resolve_relative_uris = bool(feedparser.RESOLVE_RELATIVE_URIS)
 
     result = FeedParserDict(
         bozo=False,
@@ -258,7 +252,8 @@ def parse(
         baselang = baselang.decode('utf-8', 'ignore')
 
     if not _XML_AVAILABLE:
-        use_strict_parser = 0
+        use_strict_parser = False
+    feed_parser: Union[JSONParser, StrictFeedParser, LooseFeedParser]
     if use_json_parser:
         result['version'] = None
         feed_parser = JSONParser(baseuri, baselang, 'utf-8')
@@ -288,7 +283,7 @@ def parse(
         except xml.sax.SAXException as e:
             result['bozo'] = 1
             result['bozo_exception'] = feed_parser.exc or e
-            use_strict_parser = 0
+            use_strict_parser = False
 
     # The loose XML parser will be tried if the JSON parser was not used,
     # and if the strict XML parser was not used (or if if it failed).
@@ -301,5 +296,8 @@ def parse(
     result['feed'] = feed_parser.feeddata
     result['entries'] = feed_parser.entries
     result['version'] = result['version'] or feed_parser.version
-    result['namespaces'] = feed_parser.namespaces_in_use
+    if isinstance(feed_parser, JSONParser):
+        result['namespaces'] = {}
+    else:    
+        result['namespaces'] = feed_parser.namespaces_in_use
     return result
