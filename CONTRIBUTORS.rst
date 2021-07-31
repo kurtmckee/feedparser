@@ -15,6 +15,7 @@ bug report!
 * `Beat Bolli <https://drbeat.li/>`_
 * `François Boulogne <http://www.sciunto.org/>`_
 * `Jason Diamond <http://injektilo.org/>`_
+* `Jakub Kuczys <https://github.com/jack1142>`_
 * `Fazal Majid <https://majid.info/blog/>`_
 * `Kevin Marks <http://epeus.blogspot.com/>`_
 * `Tom Most <https://github.com/twm/>`_
