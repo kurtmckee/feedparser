@@ -25,7 +25,7 @@ sgmllib3k = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 tox = "^3.20.1"
-Sphinx = "^3.4.1"
+Sphinx = {version = "^3.4.1", markers="implementation_name!='pypy'" } # because it installs typed_ast and that has pypy issues https://github.com/python/typed_ast/issues/111
 scriv = "^0.10.0"
 mypy = "^0.910"
 
