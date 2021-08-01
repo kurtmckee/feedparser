@@ -25,9 +25,12 @@ sgmllib3k = "^1.0.0"
 
 [tool.poetry.dev-dependencies]
 tox = "^3.20.1"
-Sphinx = {version = "^3.4.1", markers="implementation_name!='pypy'" } # because it installs typed_ast and that has pypy issues https://github.com/python/typed_ast/issues/111
+Sphinx = "^3.4.1"
 scriv = "^0.10.0"
-mypy = "^0.910"
+
+# mypy depends on typed_ast, which doesn't work with PyPy3.
+# https://github.com/python/typed_ast/issues/111
+mypy = {version = "^0.910", markers = "implementation_name != 'pypy'"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -63,17 +63,23 @@ jobs:
           python -m pip install poetry
           poetry update
 
-      - name: Run tox
-        if: (startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS'))
+      - name: Run tox (*nix)
+        if: ${{ startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS') }}
         run: |
           source venv/bin/activate
-          tox -e py,py-chardet,mypy
+          tox -e py,py-chardet
 
-      - name: Run tox
-        if: startsWith(runner.os, 'Windows')
+      - name: Run tox (Windows)
+        if: ${{ startsWith(runner.os, 'Windows') }}
         run: |
           .\venv\scripts\activate.ps1
-          tox -e py,py-chardet,mypy
+          tox -e py,py-chardet
+
+      - name: Run tox (mypy)
+        if: ${{ startsWith(runner.os, 'Linux') && matrix.python-version == '3.9' }}
+        run: |
+          source venv/bin/activate
+          tox -e mypy
 
   docs:
     name: "Build documentation"
