@@ -32,11 +32,10 @@ import re
 
 try:
     try:
-        import cchardet as chardet
+        import cchardet as chardet # type: ignore[import]
     except ImportError:
-        import chardet
+        import chardet # type: ignore[no-redef]
 except ImportError:
-    chardet = None
     lazy_chardet_encoding = None
 else:
     def lazy_chardet_encoding(data):

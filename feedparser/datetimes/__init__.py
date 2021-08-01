@@ -25,6 +25,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from time import struct_time
+from typing import Callable, List, Optional
 from .asctime import _parse_date_asctime
 from .greek import _parse_date_greek
 from .hungarian import _parse_date_hungarian
@@ -34,7 +36,7 @@ from .perforce import _parse_date_perforce
 from .rfc822 import _parse_date_rfc822
 from .w3dtf import _parse_date_w3dtf
 
-_date_handlers = []
+_date_handlers: List[Callable[[str], Optional[struct_time]]] = []
 
 
 def registerDateHandler(func):

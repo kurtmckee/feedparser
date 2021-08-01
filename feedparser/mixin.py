@@ -30,6 +30,7 @@ import binascii
 import copy
 import html.entities
 import re
+from typing import Dict
 import xml.sax.saxutils
 
 from .html import _cp1252
@@ -118,7 +119,7 @@ class XMLParserMixin(
         'http://www.w3.org/XML/1998/namespace':                  'xml',
         'http://podlove.org/simple-chapters':                    'psc',
     }
-    _matchnamespaces = {}
+    _matchnamespaces: Dict[str, str] = {}
 
     can_be_relative_uri = {
         'comments',
@@ -170,6 +171,8 @@ class XMLParserMixin(
         self.entries = []  # list of entry-level data
         self.version = ''  # feed type/version, see SUPPORTED_VERSIONS
         self.namespaces_in_use = {}  # dictionary of namespaces defined by the feed
+        self.resolve_relative_uris = False
+        self.sanitize_html = False
 
         # the following are used internally to track state;
         # this is really out of control and should be refactored

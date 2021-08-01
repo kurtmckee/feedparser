@@ -21,6 +21,7 @@ bug report!
 * `Tom Most <https://github.com/twm/>`_
 * `Nik Nyby <http://nikolas.us.to/>`_
 * `Ade Oshineye <http://blog.oshineye.com/>`_
+* `Tom Parker-Shemilt <https://tevps.net>`_
 * `Martin Pool <http://sourcefrog.net/>`_
 * `Sam Ruby <http://intertwingly.net/>`_
 * `Bernd Schlapsi <https://github.com/brot>`_

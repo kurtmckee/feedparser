@@ -68,15 +68,7 @@ _iso8601_re = [
     + r'(\.(?P<fracsecond>\d+))?'
     + r'(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?'
     for tmpl in _iso8601_tmpl]
-try:
-    del tmpl
-except NameError:
-    pass
 _iso8601_matches = [re.compile(regex).match for regex in _iso8601_re]
-try:
-    del regex
-except NameError:
-    pass
 
 
 def _parse_date_iso8601(date_string):

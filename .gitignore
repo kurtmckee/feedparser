@@ -11,3 +11,4 @@ build/
 .doit.*
 *.html
 poetry.lock
+.vscode/
