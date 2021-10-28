@@ -379,7 +379,7 @@ class TestOpenResource(unittest.TestCase):
     """Ensure that `_open_resource()` interprets its arguments as URIs, file-like objects, or in-memory feeds as expected"""
 
     def test_fileobj(self):
-        r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {}, None)
         self.assertEqual(r, b'')
 
     def test_feed(self):
@@ -392,35 +392,35 @@ class TestOpenResource(unittest.TestCase):
 
     def test_bytes(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}, None)
         self.assertEqual(s, r)
 
     def test_string(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}, None)
         self.assertEqual(s, r)
 
     def test_unicode_1(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}, None)
         self.assertEqual(s, r)
 
     def test_unicode_2(self):
         s = br'<feed><item><title>t\u00e9xt</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}, None)
         self.assertEqual(s, r)
 
     def test_http_client_ascii_unicode_encode_error(self):
         """Confirm that a Unicode character doesn't cause a UnicodeEncodeError crash."""
         url = 'https://0.0.0.0/ô'
         with self.assertRaises(urllib.error.URLError):
-            feedparser.api._open_resource(url, '', '', '', '', [], {}, {})
+            feedparser.api._open_resource(url, '', '', '', '', [], {}, {}, None)
 
     def test_http_client_basic_auth_type_error(self):
         """Confirm an in-URL username/password doesn't cause a TypeError."""
         url = 'https://username@password@0.0.0.0/feed'
         with self.assertRaises(urllib.error.URLError):
-            feedparser.api._open_resource(url, '', '', '', '', [], {}, {})
+            feedparser.api._open_resource(url, '', '', '', '', [], {}, {}, None)
 
     def test_http_client_urllib_error(self):
         """Confirm urllib.error.URLError is caught correctly.

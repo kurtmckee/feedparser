@@ -121,7 +121,7 @@ def _build_urllib2_request(url, agent, accept_header, etag, modified, referrer, 
     return request
 
 
-def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, result=None):
+def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None, request_headers=None, result=None, context=None):
     if handlers is None:
         handlers = []
     elif not isinstance(handlers, list):
@@ -166,7 +166,8 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
 
     # try to open with urllib2 (to use optional headers)
     request = _build_urllib2_request(url, agent, ACCEPT_HEADER, etag, modified, referrer, auth, request_headers)
-    opener = urllib.request.build_opener(*tuple(handlers + [URLHandler()]))
+    handlers = tuple(handlers) + (URLHandler(), urllib.request.HTTPSHandler(context=context))
+    opener = urllib.request.build_opener(*handlers)
     opener.addheaders = []  # RMK - must clear so we only send our custom User-Agent
     f = opener.open(request)
     data = f.read()
