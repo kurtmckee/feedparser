@@ -20,7 +20,6 @@ include = ["feedparser/py.typed"]
 
 [tool.poetry.dependencies]
 python = "^3.6"
-sgmllib3k = "^1.0.0"
 
 
 [tool.poetry.dev-dependencies]
