@@ -286,7 +286,7 @@ def parse(
             use_strict_parser = False
 
     # The loose XML parser will be tried if the JSON parser was not used,
-    # and if the strict XML parser was not used (or if if it failed).
+    # and if the strict XML parser was not used (or if it failed).
     if not use_json_parser and not use_strict_parser:
         feed_parser = LooseFeedParser(baseuri, baselang, 'utf-8', entities)
         feed_parser.resolve_relative_uris = resolve_relative_uris
