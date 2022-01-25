@@ -288,7 +288,7 @@ def _parse_file_inplace(
         result['version'] = None
         feed_parser = JSONParser(baseuri, baselang, 'utf-8')
         try:
-            feed_parser.feed(data)
+            feed_parser.feed(io.BytesIO(data))
         except Exception as e:
             result['bozo'] = 1
             result['bozo_exception'] = e
