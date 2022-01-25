@@ -35,7 +35,7 @@ import urllib.parse
 import xml.sax
 
 from .datetimes import registerDateHandler, _parse_date
-from .encodings import convert_to_utf8
+from .encodings import convert_file_to_utf8, MissingEncoding
 from .html import BaseHTMLProcessor
 from . import http
 from .mixin import XMLParserMixin
@@ -156,6 +156,7 @@ def parse(
         response_headers: Dict[str, str] = None,
         resolve_relative_uris: bool = None,
         sanitize_html: bool = None,
+        optimistic_encoding_detection: bool = None,
 ) -> FeedParserDict:
     """Parse a feed from a URL, file, stream, or string.
 
@@ -199,6 +200,11 @@ def parse(
         Should feedparser skip HTML sanitization? Only disable this if you know
         what you are doing!  Defaults to the value of
         :data:`feedparser.SANITIZE_HTML`, which is ``True``.
+    :param optimistic_encoding_detection:
+        Should feedparser use only a prefix of the feed to detect encodings
+        (uses less memory, but the wrong encoding may be detected in rare cases).
+        Defaults to the value of
+        :data:`feedparser.OPTIMISTIC_ENCODING_DETECTION`, which is ``True``.
 
     """
 
@@ -230,7 +236,9 @@ def parse(
     result['headers'].update(response_headers or {})
 
     # TODO (lemon24): remove this once _open_resource() returns an open file
-    file = io.BytesIO(data)
+    file = io.BytesIO(data) if isinstance(data, bytes) else io.StringIO(data)
+
+    # TODO (lemon24): handle io.UnsupportedOperation raised by seek() attempts
 
     try:
         _parse_file_inplace(
@@ -238,6 +246,7 @@ def parse(
             result,
             resolve_relative_uris=resolve_relative_uris,
             sanitize_html=sanitize_html,
+            optimistic_encoding_detection=optimistic_encoding_detection,
         )
     finally:
         if not hasattr(url_file_stream_or_string, 'read'):
@@ -253,10 +262,8 @@ def _parse_file_inplace(
     *,
     resolve_relative_uris: bool = None,
     sanitize_html: bool = None,
+    optimistic_encoding_detection: bool = None,
 ) -> None:
-
-    # TODO (lemon24): remove this once we start using convert_file_to_utf8()
-    data = file.read()
 
     # Avoid a cyclic import.
     import feedparser
@@ -264,13 +271,30 @@ def _parse_file_inplace(
         sanitize_html = bool(feedparser.SANITIZE_HTML)
     if resolve_relative_uris is None:
         resolve_relative_uris = bool(feedparser.RESOLVE_RELATIVE_URIS)
+    if optimistic_encoding_detection is None:
+        optimistic_encoding_detection = bool(feedparser.OPTIMISTIC_ENCODING_DETECTION)
 
-    data = convert_to_utf8(result['headers'], data, result)
+    stream_factory = convert_file_to_utf8(
+        result['headers'], file, result, optimistic_encoding_detection
+    )
+    # We're done with file, all access must happen through stream_factory.
+    del file
+
+    # Some notes about the stream_factory.get_{text,binary}_file() methods:
+    #
+    # Calling them a second time will raise io.UnsupportedOperation
+    # if the underlying file was not seekable.
+    #
+    # Calling close() on the returned file is ignored
+    # (that is, the underlying file is *not* closed),
+    # because the SAX parser closes the file when done;
+    # we don't want that, since we might try again with the loose parser.
+
     use_json_parser = result['content-type'] == 'application/json'
     use_strict_parser = result['encoding'] and True or False
 
     if not use_json_parser:
-        result['version'], data, entities = replace_doctype(data)
+        result['version'], stream_factory.prefix, entities = replace_doctype(stream_factory.prefix)
 
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
     contentloc = result['headers'].get('content-location', '')
@@ -283,15 +307,18 @@ def _parse_file_inplace(
 
     if not _XML_AVAILABLE:
         use_strict_parser = False
+
     feed_parser: Union[JSONParser, StrictFeedParser, LooseFeedParser]
+
     if use_json_parser:
         result['version'] = None
         feed_parser = JSONParser(baseuri, baselang, 'utf-8')
         try:
-            feed_parser.feed(io.BytesIO(data))
+            feed_parser.feed(stream_factory.get_file())
         except Exception as e:
             result['bozo'] = 1
             result['bozo_exception'] = e
+
     elif use_strict_parser:
         # Initialize the SAX parser.
         feed_parser = StrictFeedParser(baseuri, baselang, 'utf-8')
@@ -307,7 +334,14 @@ def _parse_file_inplace(
         saxparser.setContentHandler(feed_parser)
         saxparser.setErrorHandler(feed_parser)
         source = xml.sax.xmlreader.InputSource()
-        source.setByteStream(io.BytesIO(data))
+
+        # If an encoding was detected, decode the file on the fly;
+        # otherwise, pass it as-is and let the SAX parser deal with it.
+        try:
+            source.setCharacterStream(stream_factory.get_text_file())
+        except MissingEncoding:
+            source.setByteStream(stream_factory.get_binary_file())
+
         try:
             saxparser.parse(source)
         except xml.sax.SAXException as e:
@@ -321,7 +355,22 @@ def _parse_file_inplace(
         feed_parser = LooseFeedParser(baseuri, baselang, 'utf-8', entities)
         feed_parser.resolve_relative_uris = resolve_relative_uris
         feed_parser.sanitize_html = sanitize_html
-        feed_parser.feed(data.decode('utf-8', 'replace'))
+
+        # If an encoding was detected, use it; otherwise, assume utf-8 and do your best.
+        # Will raise io.UnsupportedOperation if the underlying file is not seekable.
+        data =  stream_factory.get_text_file('utf-8', 'replace').read()
+
+        # As of 6.0.8, LooseFeedParser.feed() can be called exactly once
+        # with the entire data (it does some re.sub() and str.replace() on it).
+        #
+        # SGMLParser (of which LooseFeedParser is a subclass)
+        # *can* be fed in a streaming fashion,
+        # by calling feed() repeatedly with chunks of text.
+        #
+        # When/if LooseFeedParser will support being fed chunks,
+        # replace the read() call above with read(size)/feed() calls in a loop.
+
+        feed_parser.feed(data)
 
     result['feed'] = feed_parser.feeddata
     result['entries'] = feed_parser.entries

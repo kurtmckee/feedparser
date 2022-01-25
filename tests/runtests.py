@@ -1046,6 +1046,37 @@ class TestParseFlags(unittest.TestCase):
                              resolve_relative_uris=False)
         self.assertEqual(u'<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
 
+    def test_optimistic_encoding_detection(self):
+        length = feedparser.encodings.CONVERT_FILE_PREFIX_LEN
+        digits = '0123456789abcdef😀'
+        description = digits * int(length / len(digits) * 1.5)
+
+        feed_xml = f"""
+            <rss version="2.0">
+            <channel>
+                <item>
+                    <guid isPermaLink="false">id</guid>
+                    <description>{description}</description>
+                </item>
+            </channel>
+            </rss>
+        """
+
+        kwargs_params = {
+            'default': dict(),
+            'on': dict(optimistic_encoding_detection=True),
+            'off': dict(optimistic_encoding_detection=False),
+        }
+        input_params = {
+            'binary_file': lambda: io.BytesIO(feed_xml.encode('utf-8')),
+            'text_file': lambda: io.StringIO(feed_xml),
+        }
+
+        for kwargs_name, kwargs in kwargs_params.items():
+            for input_name, make_input in input_params.items():
+                with self.subTest(f"{kwargs_name} {input_name}"):
+                    d = feedparser.parse(make_input(), **kwargs)
+                    self.assertEqual(d.entries[0].description, description)
 
 class TestSanitizer(unittest.TestCase):
     def test_style_attr_is_enabled(self):
