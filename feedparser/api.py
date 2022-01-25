@@ -29,7 +29,7 @@
 import datetime
 import io
 import time
-from typing import Dict, List, Union
+from typing import Dict, List, Union, IO
 import urllib.error
 import urllib.parse
 import xml.sax
@@ -206,12 +206,6 @@ def parse(
     if not agent:
         import feedparser
         agent = feedparser.USER_AGENT
-    if sanitize_html is None:
-        import feedparser
-        sanitize_html = bool(feedparser.SANITIZE_HTML)
-    if resolve_relative_uris is None:
-        import feedparser
-        resolve_relative_uris = bool(feedparser.RESOLVE_RELATIVE_URIS)
 
     result = FeedParserDict(
         bozo=False,
@@ -234,6 +228,42 @@ def parse(
 
     # overwrite existing headers using response_headers
     result['headers'].update(response_headers or {})
+
+    # TODO (lemon24): remove this once _open_resource() returns an open file
+    file = io.BytesIO(data)
+
+    try:
+        _parse_file_inplace(
+            file,
+            result,
+            resolve_relative_uris=resolve_relative_uris,
+            sanitize_html=sanitize_html,
+        )
+    finally:
+        if not hasattr(url_file_stream_or_string, 'read'):
+            # the file does not come from the user, close it
+            file.close()
+
+    return result
+
+
+def _parse_file_inplace(
+    file: IO[bytes],
+    result: dict,
+    *,
+    resolve_relative_uris: bool = None,
+    sanitize_html: bool = None,
+) -> None:
+
+    # TODO (lemon24): remove this once we start using convert_file_to_utf8()
+    data = file.read()
+
+    # Avoid a cyclic import.
+    import feedparser
+    if sanitize_html is None:
+        sanitize_html = bool(feedparser.SANITIZE_HTML)
+    if resolve_relative_uris is None:
+        resolve_relative_uris = bool(feedparser.RESOLVE_RELATIVE_URIS)
 
     data = convert_to_utf8(result['headers'], data, result)
     use_json_parser = result['content-type'] == 'application/json'
@@ -300,4 +330,3 @@ def parse(
         result['namespaces'] = {}
     else:    
         result['namespaces'] = feed_parser.namespaces_in_use
-    return result
