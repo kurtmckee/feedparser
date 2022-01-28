@@ -588,7 +588,7 @@ class TestOpenResource(unittest.TestCase):
     """Ensure that `_open_resource()` interprets its arguments as URIs, file-like objects, or in-memory feeds as expected"""
 
     def test_fileobj(self):
-        r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {}).read()
         self.assertEqual(r, b'')
 
     def test_feed(self):
@@ -601,22 +601,22 @@ class TestOpenResource(unittest.TestCase):
 
     def test_bytes(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_string(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_unicode_1(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_unicode_2(self):
         s = br'<feed><item><title>t\u00e9xt</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_http_client_ascii_unicode_encode_error(self):
@@ -1062,6 +1062,14 @@ class TestParseFlags(unittest.TestCase):
             </rss>
         """
 
+        class NonSeekableFileWrapper:
+            def __init__(self, file):
+                self.file = file
+            def read(self, *args, **kwargs):
+                return self.file.read(*args, **kwargs)
+            def close(self):
+                pass
+
         kwargs_params = {
             'default': dict(),
             'on': dict(optimistic_encoding_detection=True),
@@ -1069,7 +1077,13 @@ class TestParseFlags(unittest.TestCase):
         }
         input_params = {
             'binary_file': lambda: io.BytesIO(feed_xml.encode('utf-8')),
+            'nonseekable_binary_file':
+                lambda: NonSeekableFileWrapper(io.BytesIO(feed_xml.encode('utf-8'))),
+            'bytes': lambda: feed_xml.encode('utf-8'),
             'text_file': lambda: io.StringIO(feed_xml),
+            'nonseekable_text_file':
+                lambda: NonSeekableFileWrapper(io.StringIO(feed_xml)),
+            'string': lambda: feed_xml,
         }
 
         for kwargs_name, kwargs in kwargs_params.items():
