@@ -91,6 +91,8 @@ class Namespace(object):
         except ValueError:
             srs_dimension = 2
         context = self._get_context()
+        if 'where' not in context:
+            context['where'] = {}
         context['where']['srsName'] = srs_name
         context['where']['srsDimension'] = srs_dimension
 
