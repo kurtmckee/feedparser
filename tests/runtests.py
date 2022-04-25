@@ -331,6 +331,27 @@ class TestEncodingsHelpers(BaseTestCase):
         f = feedparser.encodings.PrefixFileWrapper(b'', io.BytesIO(b'abc'))
         self.assertEqual(f.read(1) , b'a')
 
+    def test_convert_file_to_utf8_decode_error_fallback(self):
+        from feedparser.encodings import convert_to_utf8, convert_file_to_utf8
+
+        input = (
+            "abcd😀".encode('utf-8') * feedparser.encodings.CONVERT_FILE_PREFIX_LEN
+            + "abcd😀".encode('utf-32')
+        )
+        headers = {}
+
+        expected_result = {}
+        expected_output = convert_to_utf8(headers, input, expected_result)
+        actual_result = {}
+        factory = convert_file_to_utf8(headers, io.BytesIO(input), actual_result)
+
+        self.assertEqual(factory.get_binary_file().read(), expected_output)
+        self.assertEqual(actual_result['encoding'], expected_result['encoding'])
+        self.assertEqual(
+            type(actual_result['bozo_exception']),
+            type(expected_result['bozo_exception'])
+        )
+
 
 def make_prefix_file_wrapper_test(make_file):
 

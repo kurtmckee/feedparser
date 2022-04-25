@@ -304,6 +304,8 @@ CONVERT_FILE_PREFIX_LEN = 2 ** 16
 # Note that no encoding detection is needed in this case.
 CONVERT_FILE_STR_PREFIX_LEN = 2 ** 13
 
+CONVERT_FILE_TEST_CHUNK_LEN = 2 ** 16
+
 
 def convert_file_to_utf8(http_headers, file, result, optimistic_encoding_detection=True):
     """Like convert_to_utf8(), but for a stream.
@@ -348,15 +350,35 @@ def convert_file_to_utf8(http_headers, file, result, optimistic_encoding_detecti
 
     if optimistic_encoding_detection:
         prefix = convert_file_prefix_to_utf8(http_headers, file, result)
-        return StreamFactory(prefix, file, result.get('encoding'))
+        factory = StreamFactory(prefix, file, result.get('encoding'))
 
-    else:
-        # this shouldn't increase memory usage if file is BytesIO,
-        # since BytesIO does copy-on-write; https://bugs.python.org/issue22003
-        data = convert_to_utf8(http_headers, file.read(), result)
+        # Before returning factory, ensure the entire file can be decoded;
+        # if it cannot, fall back to convert_to_utf8().
+        #
+        # Not doing this means feedparser.parse() may raise UnicodeDecodeError
+        # instead of setting bozo_exception to CharacterEncodingOverride,
+        # breaking the 6.x API.
 
-        # note that data *is* the prefix
-        return StreamFactory(data, io.BytesIO(b''), result.get('encoding'))
+        try:
+            text_file = factory.get_text_file()
+        except MissingEncoding:
+            return factory
+        try:
+            # read in chunks to limit memory usage
+            while text_file.read(CONVERT_FILE_TEST_CHUNK_LEN):
+                pass
+        except UnicodeDecodeError:
+            # fall back to convert_to_utf8()
+            file = factory.get_binary_file()
+        else:
+            return factory
+
+    # this shouldn't increase memory usage if file is BytesIO,
+    # since BytesIO does copy-on-write; https://bugs.python.org/issue22003
+    data = convert_to_utf8(http_headers, file.read(), result)
+
+    # note that data *is* the prefix
+    return StreamFactory(data, io.BytesIO(b''), result.get('encoding'))
 
 
 def convert_file_prefix_to_utf8(
