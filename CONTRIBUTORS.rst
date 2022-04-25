@@ -14,6 +14,7 @@ bug report!
 * `John Beimler <http://john.beimler.org/>`_
 * `Beat Bolli <https://drbeat.li/>`_
 * `François Boulogne <http://www.sciunto.org/>`_
+* `Adrian Damian <https://death.andgravity.com/>`_
 * `Jason Diamond <http://injektilo.org/>`_
 * `Jakub Kuczys <https://github.com/jack1142>`_
 * `Fazal Majid <https://majid.info/blog/>`_
