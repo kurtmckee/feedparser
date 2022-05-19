@@ -1,5 +1,8 @@
 coming in the next release:
 
+6.0.9 - 19 May 2022
+    *   Fix a crash that can occur with GeoRSS feeds that lack a ``<where>`` tag. (#305)
+
 6.0.8 - 22 June 2021
     *   Fix the name and link to the chardet module in the documentation. (#280)
 
