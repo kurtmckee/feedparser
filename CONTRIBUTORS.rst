@@ -24,3 +24,4 @@ bug report!
 * `Bernd Schlapsi <https://github.com/brot>`_
 * `Aaron Swartz <http://www.aaronsw.com/>`_
 * `Jakub Wilk <http://jwilk.net/>`_
+* `Nestor Rodriguez <https://github.com/n3s7or>`_
