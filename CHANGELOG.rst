@@ -21,6 +21,12 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.9 - 2022-05-19
+==================
+
+*   Fix a crash that can occur with GeoRSS feeds that lack a ``<where>`` tag. (#305)
+
+
 6.0.8 - 2021-06-22
 ==================
 
