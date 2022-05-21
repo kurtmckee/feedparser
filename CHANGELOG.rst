@@ -21,6 +21,11 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.10 - 2022-05-21
+===================
+
+*   Populate ``<summary>`` correctly if it comes after ``<content>``. (#260)
+
 6.0.9 - 2022-05-19
 ==================
 
