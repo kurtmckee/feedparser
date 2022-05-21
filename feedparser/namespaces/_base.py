@@ -259,6 +259,7 @@ class Namespace(object):
     def _end_item(self):
         self.pop('item')
         self.inentry = 0
+        self.hasContent = 0
     _end_entry = _end_item
 
     def _start_language(self, attrs_d):
@@ -388,7 +389,7 @@ class Namespace(object):
 
     def _start_description(self, attrs_d):
         context = self._get_context()
-        if 'summary' in context:
+        if 'summary' in context and not self.hasContent:
             self._summaryKey = 'content'
             self._start_content(attrs_d)
         else:
@@ -429,7 +430,7 @@ class Namespace(object):
 
     def _start_summary(self, attrs_d):
         context = self._get_context()
-        if 'summary' in context:
+        if 'summary' in context and not self.hasContent:
             self._summaryKey = 'content'
             self._start_content(attrs_d)
         else:
@@ -466,6 +467,7 @@ class Namespace(object):
         self.sourcedata.clear()
 
     def _start_content(self, attrs_d):
+        self.hasContent = 1
         self.push_content('content', attrs_d, 'text/plain', 1)
         src = attrs_d.get('src')
         if src:
@@ -477,6 +479,7 @@ class Namespace(object):
     _start_xhtml_body = _start_body
 
     def _start_content_encoded(self, attrs_d):
+        self.hasContent = 1
         self.push_content('content', attrs_d, 'text/html', 1)
     _start_fullitem = _start_content_encoded
 

@@ -1,0 +1,10 @@
+<!--
+Description: entry summary follows content with different value
+Expect:      not bozo and entries[0]['summary'] == 'Summary'
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+<entry>
+  <content>Example Atom</content>
+  <summary>Summary</summary>
+</entry>
+</feed>
