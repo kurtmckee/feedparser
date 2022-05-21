@@ -1,4 +1,4 @@
-# Copyright 2010-2021 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -193,6 +193,7 @@ class _FeedParserMixin(
         self.svgOK = 0
         self.title_depth = -1
         self.depth = 0
+        self.hasContent = 0
         if self.lang:
             self.feeddata['language'] = self.lang.replace('_', '-')
 

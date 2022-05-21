@@ -1,5 +1,8 @@
 coming in the next release:
 
+6.0.10 - 21 May 2022
+    *   Populate ``<summary>`` correctly if it comes after ``<content>``. (#260)
+
 6.0.9 - 19 May 2022
     *   Fix a crash that can occur with GeoRSS feeds that lack a ``<where>`` tag. (#305)
 
