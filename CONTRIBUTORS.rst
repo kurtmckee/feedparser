@@ -28,3 +28,4 @@ bug report!
 * `Aaron Swartz <http://www.aaronsw.com/>`_
 * `Jakub Wilk <http://jwilk.net/>`_
 * `Nestor Rodriguez <https://github.com/n3s7or>`_
+* `Niko Abeler <https://github.com/h4kor>`_

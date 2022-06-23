@@ -91,10 +91,12 @@ class Namespace(object):
 
     def _start_itunes_image(self, attrs_d):
         self.push('itunes_image', 0)
-        if attrs_d.get('href'):
-            self._get_context()['image'] = FeedParserDict({'href': attrs_d.get('href')})
-        elif attrs_d.get('url'):
-            self._get_context()['image'] = FeedParserDict({'href': attrs_d.get('url')})
+        href = attrs_d.get('href', attrs_d.get('url', None))
+        if href:
+            if "image" not in self._get_context():
+                self._get_context()['image'] = FeedParserDict({'href': href})
+            else:
+                self._get_context()['image']['href'] = href
     _start_itunes_link = _start_itunes_image
 
     def _end_itunes_block(self):
