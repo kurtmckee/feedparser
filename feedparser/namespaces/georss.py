@@ -1,5 +1,5 @@
 # Support for the GeoRSS format
-# Copyright 2010-2021 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -91,6 +91,8 @@ class Namespace(object):
         except ValueError:
             srs_dimension = 2
         context = self._get_context()
+        if 'where' not in context:
+            context['where'] = {}
         context['where']['srsName'] = srs_name
         context['where']['srsDimension'] = srs_dimension
 

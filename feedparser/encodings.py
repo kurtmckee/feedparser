@@ -1,5 +1,5 @@
 # Character encoding routines
-# Copyright 2010-2021 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -26,11 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-import cgi
 import codecs
 import io
 import re
-from typing import Any, IO
+import typing as t
 
 try:
     try:
@@ -67,6 +66,30 @@ RE_XML_DECLARATION = re.compile(r'^<\?xml[^>]*?>')
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>
 RE_XML_PI_ENCODING = re.compile(br'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
+
+
+def parse_content_type(line: str) -> t.Tuple[str, str]:
+    """Parse an HTTP Content-Type header.
+
+    The return value will be a tuple of strings:
+    the MIME type, and the value of the "charset" (if any).
+
+    This is a custom replacement for Python's cgi.parse_header().
+    The cgi module will be removed in Python 3.13.
+    """
+
+    chunks = line.split(";")
+    if not chunks:
+        return "", ""
+
+    mime_type = chunks[0].strip()
+    charset_value = ""
+    for chunk in chunks[1:]:
+        key, _, value = chunk.partition("=")
+        if key.strip().lower() == "charset":
+            charset_value = value.strip().strip("\"'")
+
+    return mime_type, charset_value
 
 
 def convert_to_utf8(http_headers, data, result):
@@ -179,10 +202,7 @@ def convert_to_utf8(http_headers, data, result):
     # XML declaration encoding, and HTTP encoding, following the
     # heuristic defined in RFC 3023.
     http_content_type = http_headers.get('content-type') or ''
-    http_content_type, params = cgi.parse_header(http_content_type)
-    http_encoding = params.get('charset', '').replace("'", "")
-    if isinstance(http_encoding, bytes):
-        http_encoding = http_encoding.decode('utf-8', 'ignore')
+    http_content_type, http_encoding = parse_content_type(http_content_type)
 
     acceptable_content_type = 0
     application_content_types = ('application/xml', 'application/xml-dtd',
@@ -382,7 +402,7 @@ def convert_file_to_utf8(http_headers, file, result, optimistic_encoding_detecti
 
 
 def convert_file_prefix_to_utf8(
-    http_headers, file: IO[bytes], result,
+    http_headers, file: t.IO[bytes], result,
     *,
     prefix_len: int = CONVERT_FILE_PREFIX_LEN,
     read_to_ascii_len: int = 2**8,
@@ -418,7 +438,7 @@ def convert_file_prefix_to_utf8(
 
         prefix += byte
 
-        fake_result: Any = {}
+        fake_result: t.Any = {}
         converted_prefix = convert_to_utf8(http_headers, prefix, fake_result)
 
         # an encoding was detected successfully, keep it
@@ -455,7 +475,7 @@ def convert_file_prefix_to_utf8(
     return converted_prefix
 
 
-def read_to_after_ascii_byte(file: IO[bytes], max_len: int) -> bytes:
+def read_to_after_ascii_byte(file: t.IO[bytes], max_len: int) -> bytes:
     offset = file.tell()
     buffer = b''
 
