@@ -46,3 +46,8 @@ RESOLVE_RELATIVE_URIS = 1
 # If you want feedparser to automatically sanitize all potentially unsafe
 # HTML content, set this to 1.
 SANITIZE_HTML = 1
+
+
+# If you want feedparser to use only a prefix of the feed to detect encodings
+# (uses less memory), set this to 1.
+OPTIMISTIC_ENCODING_DETECTION = 1

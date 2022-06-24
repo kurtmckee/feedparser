@@ -1,0 +1,10 @@
+Changed
+-------
+
+*   Use only a prefix of the feed to detect encodings,
+    instead of reading the whole feed in memory.
+    This reduces the memory usage of parse() by up to ~3x (66-73%),
+    but may result in the wrong encoding being detected in rare cases;
+    use ``feedparser.parse(optimistic_encoding_detection=False)``
+    to get the original behavior (read the whole feed in memory).
+    (#296, #302)

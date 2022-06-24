@@ -49,6 +49,7 @@ import zlib
 import feedparser
 import feedparser.api
 import feedparser.datetimes
+import feedparser.encodings
 import feedparser.http
 import feedparser.mixin
 import feedparser.sanitizer
@@ -295,6 +296,235 @@ class TestEncodings(BaseTestCase):
         self.assertEqual(result.encoding, 'gb18030')
 
 
+class TestEncodingsHelpers(BaseTestCase):
+
+    def test_reset_file_wrapper(self):
+        f = feedparser.encodings.ResetFileWrapper(io.BytesIO(b'abcdef'))
+        self.assertEqual(f.read(2) , b'ab')
+        f.reset()
+        self.assertEqual(f.read() , b'abcdef')
+
+        f = io.BytesIO(b'abcdef')
+        f.read(2)
+        f = feedparser.encodings.ResetFileWrapper(f)
+        self.assertEqual(f.read(2) , b'cd')
+        f.reset()
+        self.assertEqual(f.read() , b'cdef')
+
+        f = feedparser.encodings.ResetFileWrapper(_make_file_not_seekable(b'abcdef'))
+        self.assertEqual(f.read() , b'abcdef')
+        self.assertEqual(f.read() , b'')
+        with self.assertRaises(io.UnsupportedOperation):
+            f.reset()
+        self.assertEqual(f.read() , b'')
+
+        f = feedparser.encodings.ResetFileWrapper(_make_file_not_seekable(b'abcdef'))
+        self.assertEqual(f.read(3) , b'abc')
+        with self.assertRaises(io.UnsupportedOperation):
+            f.reset()
+        self.assertEqual(f.read() , b'def')
+
+    def test_prefix_file_wrapper_no_prefix(self):
+        f = feedparser.encodings.PrefixFileWrapper(b'', io.BytesIO(b'abc'))
+        self.assertEqual(f.read() , b'abc')
+
+        f = feedparser.encodings.PrefixFileWrapper(b'', io.BytesIO(b'abc'))
+        self.assertEqual(f.read(1) , b'a')
+
+    def test_convert_file_to_utf8_decode_error_fallback(self):
+        from feedparser.encodings import convert_to_utf8, convert_file_to_utf8
+
+        input = (
+            "abcd😀".encode('utf-8') * feedparser.encodings.CONVERT_FILE_PREFIX_LEN
+            + "abcd😀".encode('utf-32')
+        )
+        headers = {}
+
+        expected_result = {}
+        expected_output = convert_to_utf8(headers, input, expected_result)
+        actual_result = {}
+        factory = convert_file_to_utf8(headers, io.BytesIO(input), actual_result)
+
+        self.assertEqual(factory.get_binary_file().read(), expected_output)
+        self.assertEqual(actual_result['encoding'], expected_result['encoding'])
+        self.assertEqual(
+            type(actual_result['bozo_exception']),
+            type(expected_result['bozo_exception'])
+        )
+
+
+def make_prefix_file_wrapper_test(make_file):
+
+    def test(self):
+        f = feedparser.encodings.PrefixFileWrapper(b'abc', make_file(b'def'))
+        self.assertEqual(f.read() , b'abcdef')
+        self.assertEqual(f.read() , b'')
+
+        f = feedparser.encodings.PrefixFileWrapper(b'abc', make_file(b'def'))
+        self.assertEqual(f.read(2) , b'ab')
+        self.assertEqual(f.read(2) , b'cd')
+        self.assertEqual(f.read(2) , b'ef')
+        self.assertEqual(f.read(2) , b'')
+        self.assertEqual(f.read() , b'')
+
+        f = feedparser.encodings.PrefixFileWrapper(b'abc', make_file(b'def'))
+        self.assertEqual(f.read(3) , b'abc')
+        self.assertEqual(f.read(3) , b'def')
+        self.assertEqual(f.read(3) , b'')
+        self.assertEqual(f.read() , b'')
+
+        f = feedparser.encodings.PrefixFileWrapper(b'abc', make_file(b'def'))
+        self.assertEqual(f.read(0) , b'')
+        self.assertEqual(f.read() , b'abcdef')
+
+    return test
+
+
+def _make_file(data):
+    return io.BytesIO(data)
+
+def _make_file_in_the_middle(data):
+    prefix = b'zzzzz'
+    rv = io.BytesIO(prefix + data)
+    rv.seek(len(prefix))
+    return rv
+
+class _make_file_one_by_one(io.BytesIO):
+    def read(self, size=-1):
+        if size <= 0:
+            return super().read(size)
+        return super().read(1)
+
+class _make_file_not_seekable(io.BytesIO):
+    def tell(self):
+        raise io.UnsupportedOperation
+    def seek(self, *args):
+        raise io.UnsupportedOperation
+
+PREFIX_FILE_WRAPPER_FACTORIES = [
+    _make_file,
+    _make_file_in_the_middle,
+    _make_file_one_by_one,
+]
+
+for factory in PREFIX_FILE_WRAPPER_FACTORIES:
+    func = make_prefix_file_wrapper_test(factory)
+    setattr(
+        TestEncodingsHelpers,
+        f"test_prefix_file_wrapper_{factory.__name__.lstrip('_')}",
+        func
+    )
+del factory, func
+
+
+def make_convert_file_prefix_to_utf8_test(headers):
+    from feedparser.encodings import convert_to_utf8, convert_file_prefix_to_utf8
+
+    def test(self):
+
+        def call(data, **kwargs):
+            expected_result = {}
+            expected_output = convert_to_utf8(
+                headers, data.encode('utf-8'), expected_result
+            )
+            file = io.BytesIO(data.encode('utf-8'))
+
+            actual_result = {}
+            prefix = convert_file_prefix_to_utf8(
+                headers, file, actual_result, **kwargs
+            )
+            rest = file.read()
+
+            self.assertEqual(prefix + rest, expected_output)
+            self.assertEqual(
+                prefix.decode('utf-8') + rest.decode('utf-8'),
+                expected_output.decode('utf-8')
+            )
+
+            expected_result.pop('bozo_exception', None)
+            actual_result.pop('bozo_exception', None)
+            self.assertEqual(actual_result, expected_result)
+
+        # these should be parametrized, but it's too complicated to do
+
+        # each of the emojis is 4 bytes long when encoded as utf-8
+        data = '😀😛🤯😱'
+        call(data, prefix_len=3)
+        call(data, prefix_len=4)
+        call(data, prefix_len=5)
+        call(data, prefix_len=8)
+        call(data, prefix_len=40)
+        call(data * 8, prefix_len=2, read_to_ascii_len=4)
+        call(data * 8, prefix_len=4, read_to_ascii_len=4)
+
+        data = '😀a😛b🤯c😱'
+        call(data, prefix_len=3)
+        call(data, prefix_len=4)
+        call(data, prefix_len=5)
+        call(data * 8, prefix_len=2, read_to_ascii_len=4)
+        call(data * 8, prefix_len=4, read_to_ascii_len=4)
+
+    return test
+
+
+def make_convert_file_to_utf8_test(headers, length):
+    from feedparser.encodings import convert_file_to_utf8, convert_to_utf8
+
+    digits = b'0123456789abcdef'
+    input = convert_to_utf8({}, b'', {}) + digits * int(length / len(digits) + 2)
+
+    def test(self):
+        expected_result = {}
+        expected_output = convert_to_utf8(headers, input, expected_result)
+        expected_result.pop('bozo_exception', None)
+
+        actual_result = {}
+        factory = convert_file_to_utf8(headers, io.BytesIO(input), actual_result)
+
+        self.assertEqual(factory.get_text_file().read(), expected_output.decode('utf-8'))
+        self.assertEqual(factory.get_binary_file().read(), expected_output)
+
+        actual_result.pop('bozo_exception', None)
+        self.assertEqual(actual_result, expected_result)
+
+        actual_result = {}
+        factory = convert_file_to_utf8(
+            headers, io.StringIO(input.decode('utf-8')), actual_result
+        )
+
+        self.assertEqual(factory.get_text_file().read(), expected_output.decode('utf-8'))
+
+        actual_result.pop('bozo_exception', None)
+        self.assertEqual(actual_result, expected_result)
+
+    return test
+
+
+CONVERT_TO_UTF8_HEADERS = {
+    'simple': {},
+    'bad_content_type': {'content-type': 'not-a-valid-content-type'},
+}
+CONVERT_TO_UTF8_LENGTHS = [
+    feedparser.encodings.CONVERT_FILE_PREFIX_LEN,
+    feedparser.encodings.CONVERT_FILE_STR_PREFIX_LEN,
+]
+
+for name, headers in CONVERT_TO_UTF8_HEADERS.items():
+    setattr(
+        TestEncodingsHelpers,
+        f'test_convert_file_prefix_to_utf8_{name}',
+        make_convert_file_prefix_to_utf8_test(headers)
+    )
+    for length in CONVERT_TO_UTF8_LENGTHS:
+        setattr(
+            TestEncodingsHelpers,
+            f'test_convert_file_to_utf8_{name}',
+            make_convert_file_to_utf8_test(headers, length)
+        )
+
+del name, headers, length
+
+
 class TestFeedParserDict(unittest.TestCase):
     """Ensure that FeedParserDict returns values as expected and won't crash"""
 
@@ -379,7 +609,7 @@ class TestOpenResource(unittest.TestCase):
     """Ensure that `_open_resource()` interprets its arguments as URIs, file-like objects, or in-memory feeds as expected"""
 
     def test_fileobj(self):
-        r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {}).read()
         self.assertEqual(r, b'')
 
     def test_feed(self):
@@ -392,22 +622,22 @@ class TestOpenResource(unittest.TestCase):
 
     def test_bytes(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_string(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_unicode_1(self):
         s = b'<feed><item><title>text</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_unicode_2(self):
         s = br'<feed><item><title>t\u00e9xt</title></item></feed>'
-        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {})
+        r = feedparser.api._open_resource(s, '', '', '', '', [], {}, {}).read()
         self.assertEqual(s, r)
 
     def test_http_client_ascii_unicode_encode_error(self):
@@ -837,6 +1067,51 @@ class TestParseFlags(unittest.TestCase):
                              resolve_relative_uris=False)
         self.assertEqual(u'<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
 
+    def test_optimistic_encoding_detection(self):
+        length = feedparser.encodings.CONVERT_FILE_PREFIX_LEN
+        digits = '0123456789abcdef😀'
+        description = digits * int(length / len(digits) * 1.5)
+
+        feed_xml = f"""
+            <rss version="2.0">
+            <channel>
+                <item>
+                    <guid isPermaLink="false">id</guid>
+                    <description>{description}</description>
+                </item>
+            </channel>
+            </rss>
+        """
+
+        class NonSeekableFileWrapper:
+            def __init__(self, file):
+                self.file = file
+            def read(self, *args, **kwargs):
+                return self.file.read(*args, **kwargs)
+            def close(self):
+                pass
+
+        kwargs_params = {
+            'default': dict(),
+            'on': dict(optimistic_encoding_detection=True),
+            'off': dict(optimistic_encoding_detection=False),
+        }
+        input_params = {
+            'binary_file': lambda: io.BytesIO(feed_xml.encode('utf-8')),
+            'nonseekable_binary_file':
+                lambda: NonSeekableFileWrapper(io.BytesIO(feed_xml.encode('utf-8'))),
+            'bytes': lambda: feed_xml.encode('utf-8'),
+            'text_file': lambda: io.StringIO(feed_xml),
+            'nonseekable_text_file':
+                lambda: NonSeekableFileWrapper(io.StringIO(feed_xml)),
+            'string': lambda: feed_xml,
+        }
+
+        for kwargs_name, kwargs in kwargs_params.items():
+            for input_name, make_input in input_params.items():
+                with self.subTest(f"{kwargs_name} {input_name}"):
+                    d = feedparser.parse(make_input(), **kwargs)
+                    self.assertEqual(d.entries[0].description, description)
 
 class TestSanitizer(unittest.TestCase):
     def test_style_attr_is_enabled(self):
@@ -989,6 +1264,7 @@ def runtests():
     testsuite.addTest(testloader.loadTestsFromTestCase(TestStrictParser))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestLooseParser))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodingsHelpers))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTMLGuessing))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestHTTPStatus))

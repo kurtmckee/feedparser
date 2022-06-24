@@ -61,8 +61,8 @@ class JSONParser:
         self.namespacesInUse = []
         self.entries = []
 
-    def feed(self, data):
-        data = json.loads(data)
+    def feed(self, file):
+        data = json.load(file)
 
         v = data.get('version', '')
         try:

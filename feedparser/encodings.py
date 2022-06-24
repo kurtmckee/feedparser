@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import codecs
+import io
 import re
 import typing as t
 
@@ -312,3 +313,312 @@ def convert_to_utf8(http_headers, data, result):
         result['bozo'] = True
         result['bozo_exception'] = error
     return data
+
+
+# How much to read from a binary file in order to detect encoding.
+# In inital tests, 4k was enough for ~160 mostly-English feeds;
+# 64k seems like a safe margin.
+CONVERT_FILE_PREFIX_LEN = 2 ** 16
+
+# How much to read from a text file, and use as an utf-8 bytes prefix.
+# Note that no encoding detection is needed in this case.
+CONVERT_FILE_STR_PREFIX_LEN = 2 ** 13
+
+CONVERT_FILE_TEST_CHUNK_LEN = 2 ** 16
+
+
+def convert_file_to_utf8(http_headers, file, result, optimistic_encoding_detection=True):
+    """Like convert_to_utf8(), but for a stream.
+
+    Unlike convert_to_utf8(), do not read the the entire file in memory;
+    instead, return a text stream that decodes it on the fly.
+    This should consume significantly less memory,
+    because it avoids (repeatedly) converting the entire file contents
+    from bytes to str and back.
+
+    To detect the encoding, only a prefix of the file contents is used.
+    In rare cases, the wrong encoding may be detected for this prefix;
+    use optimistic_encoding_detection=False to use the entire file contents
+    (equivalent to a plain convert_to_utf8() call).
+
+    Args:
+        http_headers (dict): The response headers.
+        file (IO[bytes] or IO[str]): A read()-able (binary) stream.
+        result (dict): The result dictionary.
+        optimistic_encoding_detection (bool):
+            If true, use only a prefix of the file content to detect encoding.
+
+    Returns:
+        StreamFactory: a stream factory, with the detected encoding set, if any
+
+    """
+    # Currently, this wraps convert_to_utf8(), because the logic is simply
+    # too complicated to ensure it's re-implemented correctly for a stream.
+    # That said, it should be possible to change the implementation
+    # transparently (not sure it's worth it, though).
+
+    # If file is a text stream, we don't need to detect encoding;
+    # we still need a bytes prefix to run functions on for side effects:
+    # convert_to_utf8() to sniff / set result['content-type'], and
+    # replace_doctype() to extract safe_entities.
+
+    if isinstance(file.read(0), str):
+        prefix = file.read(CONVERT_FILE_STR_PREFIX_LEN).encode('utf-8')
+        prefix = convert_to_utf8(http_headers, prefix, result)
+        result['encoding'] = 'utf-8'
+        return StreamFactory(prefix, file, 'utf-8')
+
+    if optimistic_encoding_detection:
+        prefix = convert_file_prefix_to_utf8(http_headers, file, result)
+        factory = StreamFactory(prefix, file, result.get('encoding'))
+
+        # Before returning factory, ensure the entire file can be decoded;
+        # if it cannot, fall back to convert_to_utf8().
+        #
+        # Not doing this means feedparser.parse() may raise UnicodeDecodeError
+        # instead of setting bozo_exception to CharacterEncodingOverride,
+        # breaking the 6.x API.
+
+        try:
+            text_file = factory.get_text_file()
+        except MissingEncoding:
+            return factory
+        try:
+            # read in chunks to limit memory usage
+            while text_file.read(CONVERT_FILE_TEST_CHUNK_LEN):
+                pass
+        except UnicodeDecodeError:
+            # fall back to convert_to_utf8()
+            file = factory.get_binary_file()
+        else:
+            return factory
+
+    # this shouldn't increase memory usage if file is BytesIO,
+    # since BytesIO does copy-on-write; https://bugs.python.org/issue22003
+    data = convert_to_utf8(http_headers, file.read(), result)
+
+    # note that data *is* the prefix
+    return StreamFactory(data, io.BytesIO(b''), result.get('encoding'))
+
+
+def convert_file_prefix_to_utf8(
+    http_headers, file: t.IO[bytes], result,
+    *,
+    prefix_len: int = CONVERT_FILE_PREFIX_LEN,
+    read_to_ascii_len: int = 2**8,
+) -> bytes:
+    """Like convert_to_utf8(), but only use the prefix of a binary file.
+
+    Set result like convert_to_utf8() would.
+
+    Return the updated prefix, as bytes.
+
+    """
+    # This is complicated by convert_to_utf8() detecting the wrong encoding
+    # if we have only part of the bytes that make a code-point:
+    #
+    # '😀'.encode('utf-8')      -> utf-8
+    # '😀'.encode('utf-8')[:-1] -> windows-1252 + bozo
+
+    prefix = file.read(prefix_len - 1)
+
+    # reading up to after an ASCII byte increases
+    # the likelihood of being on a code point boundary
+    prefix += read_to_after_ascii_byte(file, read_to_ascii_len)
+
+    # call convert_to_utf8() up to 4 times,
+    # to make sure we eventually land on a code point boundary
+    candidates = []
+    for attempt in range(4):
+        byte = file.read(1)
+
+        # we're at the end of the file, and the loop already ran once
+        if not byte and attempt != 0:
+            break
+
+        prefix += byte
+
+        fake_result: t.Any = {}
+        converted_prefix = convert_to_utf8(http_headers, prefix, fake_result)
+
+        # an encoding was detected successfully, keep it
+        if not fake_result.get('bozo'):
+            break
+
+        candidates.append((file.tell(), converted_prefix, fake_result))
+
+    # no encoding was detected successfully, pick the "best" one
+    else:
+
+        def key(candidate):
+            *_, result = candidate
+
+            exc = result.get('bozo_exception')
+            exc_score = 0
+            if isinstance(exc, NonXMLContentType):
+                exc_score = 20
+            elif isinstance(exc, CharacterEncodingOverride):
+                exc_score = 10
+
+            return (
+                exc_score,
+                # prefer utf- encodings to anything else
+                result.get('encoding').startswith('utf-')
+            )
+
+        candidates.sort(key=key)
+        offset, converted_prefix, fake_result = candidates[-1]
+
+        file.seek(offset)
+
+    result.update(fake_result)
+    return converted_prefix
+
+
+def read_to_after_ascii_byte(file: t.IO[bytes], max_len: int) -> bytes:
+    offset = file.tell()
+    buffer = b''
+
+    for _ in range(max_len):
+        byte = file.read(1)
+
+        # end of file, nothing to do
+        if not byte:
+            break
+
+        buffer += byte
+
+        # we stop after a ASCII character
+        if byte < b'\x80':
+            break
+
+    # couldn't find an ASCII character, reset the file to the original offset
+    else:
+        file.seek(offset)
+        return b''
+
+    return buffer
+
+
+class MissingEncoding(io.UnsupportedOperation):
+    pass
+
+
+class StreamFactory:
+
+    """Decode on the fly a binary stream that *may* have a known encoding.
+
+    If the underlying stream is seekable, it is possible to call
+    the get_{text,binary}_file() methods more than once.
+
+    """
+
+    def __init__(self, prefix: bytes, file, encoding=None):
+        self.prefix = prefix
+        self.file = ResetFileWrapper(file)
+        self.encoding = encoding
+        self.should_reset = False
+
+    def get_text_file(self, fallback_encoding=None, errors='strict'):
+        encoding = self.encoding or fallback_encoding
+        if encoding is None:
+            raise MissingEncoding("cannot create text stream without encoding")
+
+        if isinstance(self.file.read(0), str):
+            file = PrefixFileWrapper(self.prefix.decode(encoding), self.file)
+        else:
+            file = PrefixFileWrapper(
+                self.prefix.decode('utf-8', errors),
+                codecs.getreader(encoding)(self.file, errors)
+            )
+
+        self.reset()
+        return file
+
+    def get_binary_file(self):
+        if isinstance(self.file.read(0), str):
+            raise io.UnsupportedOperation("underlying stream is text, not binary") from None
+
+        file = PrefixFileWrapper(self.prefix, self.file)
+
+        self.reset()
+        return file
+
+    def get_file(self):
+        try:
+            return self.get_text_file()
+        except MissingEncoding:
+            return self.get_binary_file()
+
+    def reset(self):
+        if self.should_reset:
+            self.file.reset()
+        self.should_reset = True
+
+
+class ResetFileWrapper:
+    """Given a seekable file, allow reading its content again
+    (from the current position) by calling reset().
+
+    """
+    def __init__(self, file):
+        self.file = file
+        try:
+            self.file_initial_offset = file.tell()
+        except OSError:
+            self.file_initial_offset = None
+
+    def read(self, size=-1):
+        return self.file.read(size)
+
+    def reset(self):
+        # raises io.UnsupportedOperation if the underlying stream is not seekable
+        self.file.seek(self.file_initial_offset)
+
+
+class PrefixFileWrapper:
+    """Stitch a (possibly modified) prefix and a file into a new file object.
+
+    >>> file = io.StringIO('abcdef')
+    >>> file.read(2)
+    'ab'
+    >>> wrapped = PrefixFileWrapper(file.read(2).upper(), file)
+    >>> wrapped.read()
+    'CDef'
+
+    """
+    def __init__(self, prefix, file):
+        self.prefix = prefix
+        self.file = file
+        self.offset = 0
+
+    def read(self, size=-1):
+        buffer = self.file.read(0)
+
+        if self.offset < len(self.prefix):
+            if size < 0:
+                chunk = self.prefix
+            else:
+                chunk = self.prefix[self.offset : self.offset+size]
+                size -= len(chunk)
+            buffer += chunk
+            self.offset += len(chunk)
+
+        while True:
+            chunk = self.file.read(size)
+            if not chunk:
+                break
+            buffer += chunk
+            self.offset += len(chunk)
+
+            if size <= 0:
+                break
+
+            size -= len(chunk)
+
+        return buffer
+
+    def close(self):
+        # do not touch the underlying stream
+        pass
+
