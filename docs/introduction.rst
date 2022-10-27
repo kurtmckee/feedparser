@@ -36,7 +36,6 @@ Parsing a feed from a remote :abbr:`URL (Uniform Resource Locator)`
 
 Parsing a feed from a local file
 --------------------------------
-::
 
 The following example assumes you are on Windows, and that you have saved a feed at :file:`c:\\incoming\\atom10.xml`.
 
@@ -45,6 +44,7 @@ The following example assumes you are on Windows, and that you have saved a feed
     :program:`Universal Feed Parser` works on any platform that can run
     :program:`Python`; use the path syntax appropriate for your platform.
 
+::
 
     >>> import feedparser
     >>> d = feedparser.parse(r'c:\incoming\atom10.xml')
