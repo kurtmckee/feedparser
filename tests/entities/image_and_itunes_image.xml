@@ -1,0 +1,14 @@
+<!--
+Description: itunes:image does not overwrite existing image title and link
+Expect:      feed['image']["title"] == 'Image Test' and feed['image']["links"][0]["href"] == 'https://example.com'
+-->
+<rss>
+    <channel>
+        <image>
+            <url>https://example.com/image.png</url>
+            <title>Image Test</title>
+            <link>https://example.com</link>
+        </image>
+        <itunes:image href="https://example.com/image.png"/>
+    </channel>
+</rss>
