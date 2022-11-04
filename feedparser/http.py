@@ -66,6 +66,7 @@ class URLHandler(urllib.request.HTTPDigestAuthHandler, urllib.request.HTTPRedire
     http_error_302 = http_error_301
     http_error_303 = http_error_301
     http_error_307 = http_error_301
+    http_error_308 = http_error_301
 
     def http_error_401(self, req, fp, code, msg, headers):
         # Check if
