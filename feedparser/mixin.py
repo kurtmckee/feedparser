@@ -604,6 +604,7 @@ class XMLParserMixin(
         elif self.infeed or self.insource:  # and (not self.intextinput) and (not self.inimage):
             context = self._get_context()
             if element == 'description':
+                context[element] = output
                 element = 'subtitle'
             context[element] = output
             if element == 'link':
