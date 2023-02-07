@@ -201,6 +201,9 @@ def convert_to_utf8(http_headers, data, result):
     # to choose the "correct" encoding among the BOM encoding,
     # XML declaration encoding, and HTTP encoding, following the
     # heuristic defined in RFC 3023.
+
+    # First ensure all headers are lower case
+    http_headers = {key.lower(): value for key, value in http_headers.items()}
     http_content_type = http_headers.get('content-type') or ''
     http_content_type, http_encoding = parse_content_type(http_content_type)
 
@@ -208,7 +211,7 @@ def convert_to_utf8(http_headers, data, result):
     application_content_types = ('application/xml', 'application/xml-dtd',
                                  'application/xml-external-parsed-entity')
     text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
-    json_content_types = ('application/feed+json', 'application/json')
+    json_content_types = ('application/json', 'application/feed+json')
     json = False
     if (
             http_content_type in application_content_types

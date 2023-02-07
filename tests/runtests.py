@@ -1263,6 +1263,7 @@ def runtests():
     testsuite.addTest(testloader.loadTestsFromTestCase(TestCase))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestStrictParser))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestLooseParser))
+    testsuite.addTest(testloader.loadTestsFromTestCase(TestJsonParser))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodings))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestEncodingsHelpers))
     testsuite.addTest(testloader.loadTestsFromTestCase(TestDateParsers))
