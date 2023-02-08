@@ -84,15 +84,19 @@ class JSONParser:
         for src, dst in self.ITEM_FIELDS:
             if src in e:
                 entry[dst] = e[src]
-
+        contents = []
         if 'content_text' in e:
-            entry['content'] = c = FeedParserDict()
-            c['value'] = e['content_text']
-            c['type'] = 'text'
-        elif 'content_html' in e:
-            entry['content'] = c = FeedParserDict()
-            c['value'] = sanitize_html(e['content_html'], self.encoding, 'application/json')
-            c['type'] = 'html'
+            text_content = FeedParserDict()
+            text_content['value'] = e['content_text']
+            text_content['type'] = 'text/plain'
+            contents.append(text_content)
+        if 'content_html' in e:
+            html_content = FeedParserDict()
+            html_content['value'] = sanitize_html(e['content_html'], self.encoding, 'application/json')
+            html_content['type'] = 'text/html'
+            contents.append(html_content)
+        if contents:
+            entry['content'] = contents
 
         if 'date_published' in e:
             entry['published'] = e['date_published']
