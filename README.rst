@@ -40,15 +40,14 @@ This will produce HTML documentation in the ``fpdocs/`` directory.
 Testing
 =======
 
-Feedparser has an extensive test suite, powered by tox. To run it, type this:
+Feedparser has an extensive test suite, powered by Tox. To run it, type this:
 
 ..  code-block:: shell
 
     $ python -m venv venv
     $ source venv/bin/activate  # or "venv\bin\activate.ps1" on Windows
     (venv) $ python -m pip install --upgrade pip
-    (venv) $ python -m pip install poetry
-    (venv) $ poetry update
+    (venv) $ python -m pip install tox
     (venv) $ tox
 
 This will spawn an HTTP server that will listen on port 8097. The tests will
