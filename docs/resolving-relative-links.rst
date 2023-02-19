@@ -271,4 +271,3 @@ How to disable relative :abbr:`URI (Uniform Resource Identifier)` resolution
     <p id="anchor1"><a href="#anchor2">skip to anchor 2</a></p>
     <p>Some content</p>
     <p id="anchor2">This is anchor 2</p>
-

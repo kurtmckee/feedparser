@@ -76,7 +76,7 @@ Downloading a feed protected by :abbr:`HTTP (Hypertext Transfer Protocol)` basic
 
 Digest authentication is handled in much the same way, by constructing an
 HTTPDigestAuthHandler and populating it with the necessary realm, host, user,
-and password information.  This is more secure than 
+and password information.  This is more secure than
 :ref:`stuffing the username and password in the URL <example.auth.inline.digest>`,
 since the password will be encrypted before being sent to the server.
 
@@ -98,7 +98,7 @@ The examples so far have assumed that you know in advance that the feed is
 password-protected.  But what if you don't know?
 
 If you try to download a password-protected feed without sending all the proper
-password information, the server will return an 
+password information, the server will return an
 :abbr:`HTTP (Hypertext Transfer Protocol)` status code ``401``.
 :program:`Universal Feed Parser` makes this status code available in
 ``d.status``.
@@ -132,4 +132,3 @@ Determining that a feed is password-protected
     nonce="+LV/uLLdAwA=5d77397291261b9ef256b034e19bcb94f5b7992a",
     algorithm=MD5,
     qop="auth"'
-

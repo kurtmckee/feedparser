@@ -401,5 +401,5 @@ def _parse_file_inplace(
     result['version'] = result['version'] or feed_parser.version
     if isinstance(feed_parser, JSONParser):
         result['namespaces'] = {}
-    else:    
+    else:
         result['namespaces'] = feed_parser.namespaces_in_use

@@ -620,4 +620,3 @@ class PrefixFileWrapper:
     def close(self):
         # do not touch the underlying stream
         pass
-

@@ -37,4 +37,3 @@ Accessing other :abbr:`HTTP (Hypertext Transfer Protocol)` response headers
     'content-length': '883',
     'connection': 'close',
     'content-type': 'application/xml'}
-

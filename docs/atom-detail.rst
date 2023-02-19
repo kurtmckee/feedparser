@@ -46,4 +46,3 @@ Detailed Information on Feed Elements
     'base': 'http://example.org/entry/3',
     'language': 'en-US'
     'value': '<div>Watch out for <span> nasty tricks</span></div>'}
-
