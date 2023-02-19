@@ -1,5 +1,5 @@
 # Exceptions used throughout feedparser
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -27,11 +27,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 __all__ = [
-    'FeedparserError',
-    'CharacterEncodingOverride',
-    'CharacterEncodingUnknown',
-    'NonXMLContentType',
-    'UndeclaredNamespace',
+    "FeedparserError",
+    "CharacterEncodingOverride",
+    "CharacterEncodingUnknown",
+    "NonXMLContentType",
+    "UndeclaredNamespace",
 ]
 
 

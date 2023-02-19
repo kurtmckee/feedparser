@@ -23,55 +23,38 @@ python = "^3.6"
 sgmllib3k = "^1.0.0"
 
 
-[tool.poetry.dev-dependencies]
-tox = "^3.20.1"
-Sphinx = "^3.4.1"
-scriv = "^0.10.0"
+[tool.poetry.group.dev.dependencies]
+scriv = {extras = ["toml"], version = "^1.2.1"}
 
-# mypy depends on typed_ast, which doesn't work with PyPy3.
-# https://github.com/python/typed_ast/issues/111
-mypy = {version = "^0.910", markers = "implementation_name != 'pypy'"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.tox]
-legacy_tox_ini = """
-
-[tox]
-envlist = py{310, 39, py3, 38, 37, 36}{-chardet, }, docs, mypy
-skip_missing_interpreters = True
-isolated_build = True
-
-[testenv]
-deps =
-    chardet: chardet
-
-commands = {envpython} -Wd tests/runtests.py
-
-[testenv:docs]
-allowlist_externals = sphinx-build
-commands = sphinx-build -EWnq --keep-going -b html docs/ fpdocs/
-
-[testenv:mypy]
-commands = mypy feedparser
-deps =
-    mypy
-    types-chardet
-"""
-
-
 [tool.scriv]
-version = "literal: feedparser/__init__.py: __version__"
-categories = ["Added", "Fixed", "Removed", "Changed", "Deprecated", "Security"]
+version = "literal: pyproject.toml: tool.poetry.version"
+categories = [
+    "Python support",
+    "Added",
+    "Fixed",
+    "Removed",
+    "Changed",
+    "Deprecated",
+    "Security",
+    "Stewardship",
+]
 entry_title_template = "{{ version }} - {{ date.strftime('%Y-%m-%d') }}"
 format = "rst"
 fragment_directory = "changelog.d"
 insert_marker = "scriv-insert-here"
 main_branches = ["develop", "master"]
 new_fragment_template = "file: fragment-template.rst.txt"
+
+
+[tool.isort]
+profile = "black"
+
 
 [tool.mypy]
 show_error_codes = true

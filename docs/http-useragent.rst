@@ -54,4 +54,3 @@ Customizing the referrer
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml',
     referrer='http://example.com/')
-

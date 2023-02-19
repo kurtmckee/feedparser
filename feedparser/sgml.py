@@ -1,4 +1,4 @@
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -27,20 +27,20 @@
 
 import re
 
-import sgmllib # type: ignore[import]
+import sgmllib  # type: ignore[import]
 
 __all__ = [
-    'sgmllib',
-    'charref',
-    'tagfind',
-    'attrfind',
-    'entityref',
-    'incomplete',
-    'interesting',
-    'shorttag',
-    'shorttagopen',
-    'starttagopen',
-    'endbracket',
+    "sgmllib",
+    "charref",
+    "tagfind",
+    "attrfind",
+    "entityref",
+    "incomplete",
+    "interesting",
+    "shorttag",
+    "shorttagopen",
+    "starttagopen",
+    "endbracket",
 ]
 
 # sgmllib defines a number of module-level regular expressions that are
@@ -49,8 +49,8 @@ __all__ = [
 # names, and the compiled code objects of several sgmllib.SGMLParser
 # methods are copied into _BaseHTMLProcessor so that they execute in
 # feedparser's scope instead of sgmllib's scope.
-charref = re.compile(r'&#(\d+|[xX][0-9a-fA-F]+);')
-tagfind = re.compile(r'[a-zA-Z][-_.:a-zA-Z0-9]*')
+charref = re.compile(r"&#(\d+|[xX][0-9a-fA-F]+);")
+tagfind = re.compile(r"[a-zA-Z][-_.:a-zA-Z0-9]*")
 attrfind = re.compile(
     r"""\s*([a-zA-Z_][-:.a-zA-Z_0-9]*)[$]?(\s*=\s*"""
     r"""('[^']*'|"[^"]*"|[][\-a-zA-Z0-9./,:;+*%?!&$()_#=~'"@]*))?"""
@@ -70,12 +70,12 @@ class _EndBracketRegEx:
         # Overriding the built-in sgmllib.endbracket regex allows the
         # parser to find angle brackets embedded in element attributes.
         self.endbracket = re.compile(
-            r'('
+            r"("
             r"""[^'"<>]"""
             r"""|"[^"]*"(?=>|/|\s|\w+=)"""
             r"""|'[^']*'(?=>|/|\s|\w+=))*(?=[<>])"""
             r"""|.*?(?=[<>]"""
-            r')'
+            r")"
         )
 
     def search(self, target, index=0):

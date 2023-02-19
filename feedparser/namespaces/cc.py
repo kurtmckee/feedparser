@@ -1,5 +1,5 @@
 # Support for the Creative Commons licensing extensions
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -29,41 +29,40 @@
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     supported_namespaces = {
         # RDF-based namespace
-        'http://creativecommons.org/ns#license': 'cc',
-
+        "http://creativecommons.org/ns#license": "cc",
         # Old RDF-based namespace
-        'http://web.resource.org/cc/': 'cc',
-
+        "http://web.resource.org/cc/": "cc",
         # RSS-based namespace
-        'http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html': 'creativecommons',
-
+        "http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html": "creativecommons",
         # Old RSS-based namespace
-        'http://backend.userland.com/creativeCommonsRssModule': 'creativecommons',
+        "http://backend.userland.com/creativeCommonsRssModule": "creativecommons",
     }
 
     def _start_cc_license(self, attrs_d):
         context = self._get_context()
-        value = self._get_attribute(attrs_d, 'rdf:resource')
+        value = self._get_attribute(attrs_d, "rdf:resource")
         attrs_d = FeedParserDict()
-        attrs_d['rel'] = 'license'
+        attrs_d["rel"] = "license"
         if value:
-            attrs_d['href'] = value
-        context.setdefault('links', []).append(attrs_d)
+            attrs_d["href"] = value
+        context.setdefault("links", []).append(attrs_d)
 
     def _start_creativecommons_license(self, attrs_d):
-        self.push('license', 1)
+        self.push("license", 1)
+
     _start_creativeCommons_license = _start_creativecommons_license
 
     def _end_creativecommons_license(self):
-        value = self.pop('license')
+        value = self.pop("license")
         context = self._get_context()
         attrs_d = FeedParserDict()
-        attrs_d['rel'] = 'license'
+        attrs_d["rel"] = "license"
         if value:
-            attrs_d['href'] = value
-        context.setdefault('links', []).append(attrs_d)
-        del context['license']
+            attrs_d["href"] = value
+        context.setdefault("links", []).append(attrs_d)
+        del context["license"]
+
     _end_creativeCommons_license = _end_creativecommons_license

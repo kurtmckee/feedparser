@@ -74,9 +74,8 @@ Noticing feeds marked "gone"
 
 ::
 
-    
+
     >>> import feedparser
     >>> d = feedparser.parse('http://feedparser.org/docs/examples/gone.xml')
     >>> d.status
     410
-

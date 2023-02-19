@@ -1,4 +1,4 @@
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -37,24 +37,62 @@ from .html import BaseHTMLProcessor
 #   https://secure.wikimedia.org/wikipedia/en/wiki/URI_scheme
 # Many more will likely need to be added!
 ACCEPTABLE_URI_SCHEMES = (
-    'file', 'ftp', 'gopher', 'h323', 'hdl', 'http', 'https', 'imap', 'magnet',
-    'mailto', 'mms', 'news', 'nntp', 'prospero', 'rsync', 'rtsp', 'rtspu',
-    'sftp', 'shttp', 'sip', 'sips', 'snews', 'svn', 'svn+ssh', 'telnet',
-    'wais',
+    "file",
+    "ftp",
+    "gopher",
+    "h323",
+    "hdl",
+    "http",
+    "https",
+    "imap",
+    "magnet",
+    "mailto",
+    "mms",
+    "news",
+    "nntp",
+    "prospero",
+    "rsync",
+    "rtsp",
+    "rtspu",
+    "sftp",
+    "shttp",
+    "sip",
+    "sips",
+    "snews",
+    "svn",
+    "svn+ssh",
+    "telnet",
+    "wais",
     # Additional common-but-unofficial schemes
-    'aim', 'callto', 'cvs', 'facetime', 'feed', 'git', 'gtalk', 'irc', 'ircs',
-    'irc6', 'itms', 'mms', 'msnim', 'skype', 'ssh', 'smb', 'svn', 'ymsg',
+    "aim",
+    "callto",
+    "cvs",
+    "facetime",
+    "feed",
+    "git",
+    "gtalk",
+    "irc",
+    "ircs",
+    "irc6",
+    "itms",
+    "mms",
+    "msnim",
+    "skype",
+    "ssh",
+    "smb",
+    "svn",
+    "ymsg",
 )
 
-_urifixer = re.compile('^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)')
+_urifixer = re.compile("^([A-Za-z][A-Za-z0-9+-.]*://)(/*)(.*?)")
 
 
 def _urljoin(base, uri):
-    uri = _urifixer.sub(r'\1\3', uri)
+    uri = _urifixer.sub(r"\1\3", uri)
     try:
         uri = urllib.parse.urljoin(base, uri)
     except ValueError:
-        uri = ''
+        uri = ""
     return uri
 
 
@@ -65,19 +103,19 @@ def convert_to_idn(url):
     # it'll be necessary to encode it in idn form
     parts = list(urllib.parse.urlsplit(url))
     try:
-        parts[1].encode('ascii')
+        parts[1].encode("ascii")
     except UnicodeEncodeError:
         # the url needs to be converted to idn notation
-        host = parts[1].rsplit(':', 1)
+        host = parts[1].rsplit(":", 1)
         newhost = []
-        port = ''
+        port = ""
         if len(host) == 2:
             port = host.pop()
-        for h in host[0].split('.'):
-            newhost.append(h.encode('idna').decode('utf-8'))
-        parts[1] = '.'.join(newhost)
+        for h in host[0].split("."):
+            newhost.append(h.encode("idna").decode("utf-8"))
+        parts[1] = ".".join(newhost)
         if port:
-            parts[1] += ':' + port
+            parts[1] += ":" + port
         return urllib.parse.urlunsplit(parts)
     else:
         return url
@@ -86,54 +124,54 @@ def convert_to_idn(url):
 def make_safe_absolute_uri(base, rel=None):
     # bail if ACCEPTABLE_URI_SCHEMES is empty
     if not ACCEPTABLE_URI_SCHEMES:
-        return _urljoin(base, rel or '')
+        return _urljoin(base, rel or "")
     if not base:
-        return rel or ''
+        return rel or ""
     if not rel:
         try:
             scheme = urllib.parse.urlparse(base)[0]
         except ValueError:
-            return ''
+            return ""
         if not scheme or scheme in ACCEPTABLE_URI_SCHEMES:
             return base
-        return ''
+        return ""
     uri = _urljoin(base, rel)
-    if uri.strip().split(':', 1)[0] not in ACCEPTABLE_URI_SCHEMES:
-        return ''
+    if uri.strip().split(":", 1)[0] not in ACCEPTABLE_URI_SCHEMES:
+        return ""
     return uri
 
 
 class RelativeURIResolver(BaseHTMLProcessor):
     relative_uris = {
-        ('a', 'href'),
-        ('applet', 'codebase'),
-        ('area', 'href'),
-        ('audio', 'src'),
-        ('blockquote', 'cite'),
-        ('body', 'background'),
-        ('del', 'cite'),
-        ('form', 'action'),
-        ('frame', 'longdesc'),
-        ('frame', 'src'),
-        ('iframe', 'longdesc'),
-        ('iframe', 'src'),
-        ('head', 'profile'),
-        ('img', 'longdesc'),
-        ('img', 'src'),
-        ('img', 'usemap'),
-        ('input', 'src'),
-        ('input', 'usemap'),
-        ('ins', 'cite'),
-        ('link', 'href'),
-        ('object', 'classid'),
-        ('object', 'codebase'),
-        ('object', 'data'),
-        ('object', 'usemap'),
-        ('q', 'cite'),
-        ('script', 'src'),
-        ('source', 'src'),
-        ('video', 'poster'),
-        ('video', 'src'),
+        ("a", "href"),
+        ("applet", "codebase"),
+        ("area", "href"),
+        ("audio", "src"),
+        ("blockquote", "cite"),
+        ("body", "background"),
+        ("del", "cite"),
+        ("form", "action"),
+        ("frame", "longdesc"),
+        ("frame", "src"),
+        ("iframe", "longdesc"),
+        ("iframe", "src"),
+        ("head", "profile"),
+        ("img", "longdesc"),
+        ("img", "src"),
+        ("img", "usemap"),
+        ("input", "src"),
+        ("input", "usemap"),
+        ("ins", "cite"),
+        ("link", "href"),
+        ("object", "classid"),
+        ("object", "codebase"),
+        ("object", "data"),
+        ("object", "usemap"),
+        ("q", "cite"),
+        ("script", "src"),
+        ("source", "src"),
+        ("video", "poster"),
+        ("video", "src"),
     }
 
     def __init__(self, baseuri, encoding, _type):
@@ -145,8 +183,14 @@ class RelativeURIResolver(BaseHTMLProcessor):
 
     def unknown_starttag(self, tag, attrs):
         attrs = self.normalize_attrs(attrs)
-        attrs = [(key, ((tag, key) in self.relative_uris) and self.resolve_uri(value) or value) for key, value in attrs]
-        super(RelativeURIResolver, self).unknown_starttag(tag, attrs)
+        attrs = [
+            (
+                key,
+                ((tag, key) in self.relative_uris) and self.resolve_uri(value) or value,
+            )
+            for key, value in attrs
+        ]
+        super().unknown_starttag(tag, attrs)
 
 
 def resolve_relative_uris(html_source, base_uri, encoding, type_):

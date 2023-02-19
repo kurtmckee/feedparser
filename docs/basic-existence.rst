@@ -23,4 +23,3 @@ Testing if elements are present
     'Sample feed'
     >>> d.feed.get('ttl', 60)
     60
-

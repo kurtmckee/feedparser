@@ -1,5 +1,5 @@
 # Character encoding routines
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -33,14 +33,16 @@ import typing as t
 
 try:
     try:
-        import cchardet as chardet # type: ignore[import]
+        import cchardet as chardet  # type: ignore[import]
     except ImportError:
-        import chardet # type: ignore[no-redef]
+        import chardet  # type: ignore[no-redef]
 except ImportError:
     lazy_chardet_encoding = None
 else:
+
     def lazy_chardet_encoding(data):
-        return chardet.detect(data)['encoding'] or ''
+        return chardet.detect(data)["encoding"] or ""
+
 
 from .exceptions import (
     CharacterEncodingOverride,
@@ -48,24 +50,23 @@ from .exceptions import (
     NonXMLContentType,
 )
 
-
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
-EBCDIC_MARKER = b'\x4C\x6F\xA7\x94'
-UTF16BE_MARKER = b'\x00\x3C\x00\x3F'
-UTF16LE_MARKER = b'\x3C\x00\x3F\x00'
-UTF32BE_MARKER = b'\x00\x00\x00\x3C'
-UTF32LE_MARKER = b'\x3C\x00\x00\x00'
+EBCDIC_MARKER = b"\x4C\x6F\xA7\x94"
+UTF16BE_MARKER = b"\x00\x3C\x00\x3F"
+UTF16LE_MARKER = b"\x3C\x00\x3F\x00"
+UTF32BE_MARKER = b"\x00\x00\x00\x3C"
+UTF32LE_MARKER = b"\x3C\x00\x00\x00"
 
-ZERO_BYTES = '\x00\x00'
+ZERO_BYTES = "\x00\x00"
 
 # Match the opening XML declaration.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_DECLARATION = re.compile(r'^<\?xml[^>]*?>')
+RE_XML_DECLARATION = re.compile(r"^<\?xml[^>]*?>")
 
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_PI_ENCODING = re.compile(br'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
+RE_XML_PI_ENCODING = re.compile(rb'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
 
 
 def parse_content_type(line: str) -> t.Tuple[str, str]:
@@ -139,8 +140,8 @@ def convert_to_utf8(http_headers, data, result):
     # you should definitely install it if you can.
     # http://cjkpython.i18n.org/
 
-    bom_encoding = ''
-    xml_encoding = ''
+    bom_encoding = ""
+    xml_encoding = ""
 
     # Look at the first few bytes of the document to guess what
     # its encoding may be. We only need to decode enough of the
@@ -150,50 +151,63 @@ def convert_to_utf8(http_headers, data, result):
     # http://www.w3.org/TR/REC-xml/#sec-guessing-no-ext-info
     # Check for BOMs first.
     if data[:4] == codecs.BOM_UTF32_BE:
-        bom_encoding = 'utf-32be'
+        bom_encoding = "utf-32be"
         data = data[4:]
     elif data[:4] == codecs.BOM_UTF32_LE:
-        bom_encoding = 'utf-32le'
+        bom_encoding = "utf-32le"
         data = data[4:]
     elif data[:2] == codecs.BOM_UTF16_BE and data[2:4] != ZERO_BYTES:
-        bom_encoding = 'utf-16be'
+        bom_encoding = "utf-16be"
         data = data[2:]
     elif data[:2] == codecs.BOM_UTF16_LE and data[2:4] != ZERO_BYTES:
-        bom_encoding = 'utf-16le'
+        bom_encoding = "utf-16le"
         data = data[2:]
     elif data[:3] == codecs.BOM_UTF8:
-        bom_encoding = 'utf-8'
+        bom_encoding = "utf-8"
         data = data[3:]
     # Check for the characters '<?xm' in several encodings.
     elif data[:4] == EBCDIC_MARKER:
-        bom_encoding = 'cp037'
+        bom_encoding = "cp037"
     elif data[:4] == UTF16BE_MARKER:
-        bom_encoding = 'utf-16be'
+        bom_encoding = "utf-16be"
     elif data[:4] == UTF16LE_MARKER:
-        bom_encoding = 'utf-16le'
+        bom_encoding = "utf-16le"
     elif data[:4] == UTF32BE_MARKER:
-        bom_encoding = 'utf-32be'
+        bom_encoding = "utf-32be"
     elif data[:4] == UTF32LE_MARKER:
-        bom_encoding = 'utf-32le'
+        bom_encoding = "utf-32le"
 
     tempdata = data
     try:
         if bom_encoding:
-            tempdata = data.decode(bom_encoding).encode('utf-8')
+            tempdata = data.decode(bom_encoding).encode("utf-8")
     except UnicodeDecodeError:
         xml_encoding_match = None
     else:
         xml_encoding_match = RE_XML_PI_ENCODING.match(tempdata)
 
     if xml_encoding_match:
-        xml_encoding = xml_encoding_match.groups()[0].decode('utf-8').lower()
+        xml_encoding = xml_encoding_match.groups()[0].decode("utf-8").lower()
         # Normalize the xml_encoding if necessary.
-        if bom_encoding and (xml_encoding in (
-            'u16', 'utf-16', 'utf16', 'utf_16',
-            'u32', 'utf-32', 'utf32', 'utf_32',
-            'iso-10646-ucs-2', 'iso-10646-ucs-4',
-            'csucs4', 'csunicode', 'ucs-2', 'ucs-4'
-        )):
+        if bom_encoding and (
+            xml_encoding
+            in (
+                "u16",
+                "utf-16",
+                "utf16",
+                "utf_16",
+                "u32",
+                "utf-32",
+                "utf32",
+                "utf_32",
+                "iso-10646-ucs-2",
+                "iso-10646-ucs-4",
+                "csucs4",
+                "csunicode",
+                "ucs-2",
+                "ucs-4",
+            )
+        ):
             xml_encoding = bom_encoding
 
     # Find the HTTP Content-Type and, hopefully, a character
@@ -201,56 +215,48 @@ def convert_to_utf8(http_headers, data, result):
     # to choose the "correct" encoding among the BOM encoding,
     # XML declaration encoding, and HTTP encoding, following the
     # heuristic defined in RFC 3023.
-    http_content_type = http_headers.get('content-type') or ''
+    http_content_type = http_headers.get("content-type") or ""
     http_content_type, http_encoding = parse_content_type(http_content_type)
 
     acceptable_content_type = 0
-    application_content_types = ('application/xml', 'application/xml-dtd',
-                                 'application/xml-external-parsed-entity')
-    text_content_types = ('text/xml', 'text/xml-external-parsed-entity')
-    json_content_types = ('application/feed+json', 'application/json')
+    application_content_types = (
+        "application/xml",
+        "application/xml-dtd",
+        "application/xml-external-parsed-entity",
+    )
+    text_content_types = ("text/xml", "text/xml-external-parsed-entity")
+    json_content_types = ("application/feed+json", "application/json")
     json = False
-    if (
-            http_content_type in application_content_types
-            or (
-                    http_content_type.startswith('application/')
-                    and http_content_type.endswith('+xml')
-            )
+    if http_content_type in application_content_types or (
+        http_content_type.startswith("application/")
+        and http_content_type.endswith("+xml")
     ):
         acceptable_content_type = 1
-        rfc3023_encoding = http_encoding or xml_encoding or 'utf-8'
-    elif (
-            http_content_type in text_content_types
-            or (
-                    http_content_type.startswith('text/')
-                    and http_content_type.endswith('+xml')
-            )
+        rfc3023_encoding = http_encoding or xml_encoding or "utf-8"
+    elif http_content_type in text_content_types or (
+        http_content_type.startswith("text/") and http_content_type.endswith("+xml")
     ):
         acceptable_content_type = 1
-        rfc3023_encoding = http_encoding or 'us-ascii'
-    elif (
-            http_content_type in json_content_types
-            or (
-                    not http_content_type
-                    and data and data.lstrip()[0] == '{'
-            )
+        rfc3023_encoding = http_encoding or "us-ascii"
+    elif http_content_type in json_content_types or (
+        not http_content_type and data and data.lstrip()[0] == "{"
     ):
         http_content_type = json_content_types[0]
         acceptable_content_type = 1
         json = True
-        rfc3023_encoding = http_encoding or 'utf-8'  # RFC 7159, 8.1.
-    elif http_content_type.startswith('text/'):
-        rfc3023_encoding = http_encoding or 'us-ascii'
-    elif http_headers and 'content-type' not in http_headers:
-        rfc3023_encoding = xml_encoding or 'iso-8859-1'
+        rfc3023_encoding = http_encoding or "utf-8"  # RFC 7159, 8.1.
+    elif http_content_type.startswith("text/"):
+        rfc3023_encoding = http_encoding or "us-ascii"
+    elif http_headers and "content-type" not in http_headers:
+        rfc3023_encoding = xml_encoding or "iso-8859-1"
     else:
-        rfc3023_encoding = xml_encoding or 'utf-8'
+        rfc3023_encoding = xml_encoding or "utf-8"
     # gb18030 is a superset of gb2312, so always replace gb2312
     # with gb18030 for greater compatibility.
-    if rfc3023_encoding.lower() == 'gb2312':
-        rfc3023_encoding = 'gb18030'
-    if xml_encoding.lower() == 'gb2312':
-        xml_encoding = 'gb18030'
+    if rfc3023_encoding.lower() == "gb2312":
+        rfc3023_encoding = "gb18030"
+    if xml_encoding.lower() == "gb2312":
+        xml_encoding = "gb18030"
 
     # there are four encodings to keep track of:
     # - http_encoding is the encoding declared in the Content-Type HTTP header
@@ -260,18 +266,25 @@ def convert_to_utf8(http_headers, data, result):
     error = None
 
     if http_headers and (not acceptable_content_type):
-        if 'content-type' in http_headers:
-            msg = '%s is not an accepted media type' % http_headers['content-type']
+        if "content-type" in http_headers:
+            msg = "%s is not an accepted media type" % http_headers["content-type"]
         else:
-            msg = 'no Content-type specified'
+            msg = "no Content-type specified"
         error = NonXMLContentType(msg)
 
     # determine character encoding
     known_encoding = 0
     tried_encodings = []
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
-    for proposed_encoding in (rfc3023_encoding, xml_encoding, bom_encoding,
-                              lazy_chardet_encoding, 'utf-8', 'windows-1252', 'iso-8859-2'):
+    for proposed_encoding in (
+        rfc3023_encoding,
+        xml_encoding,
+        bom_encoding,
+        lazy_chardet_encoding,
+        "utf-8",
+        "windows-1252",
+        "iso-8859-2",
+    ):
         if callable(proposed_encoding):
             proposed_encoding = proposed_encoding(data)
         if not proposed_encoding:
@@ -287,47 +300,51 @@ def convert_to_utf8(http_headers, data, result):
             known_encoding = 1
             if not json:
                 # Update the encoding in the opening XML processing instruction.
-                new_declaration = '''<?xml version='1.0' encoding='utf-8'?>'''
+                new_declaration = """<?xml version='1.0' encoding='utf-8'?>"""
                 if RE_XML_DECLARATION.search(data):
                     data = RE_XML_DECLARATION.sub(new_declaration, data)
                 else:
-                    data = new_declaration + '\n' + data
-            data = data.encode('utf-8')
+                    data = new_declaration + "\n" + data
+            data = data.encode("utf-8")
             break
     # if still no luck, give up
     if not known_encoding:
         error = CharacterEncodingUnknown(
-            'document encoding unknown, I tried ' +
-            '%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked' %
-            (rfc3023_encoding, xml_encoding))
-        rfc3023_encoding = ''
+            "document encoding unknown, I tried "
+            + "%s, %s, utf-8, windows-1252, and iso-8859-2 but nothing worked"
+            % (rfc3023_encoding, xml_encoding)
+        )
+        rfc3023_encoding = ""
     elif proposed_encoding != rfc3023_encoding:
         error = CharacterEncodingOverride(
-            'document declared as %s, but parsed as %s' %
-            (rfc3023_encoding, proposed_encoding))
+            "document declared as %s, but parsed as %s"
+            % (rfc3023_encoding, proposed_encoding)
+        )
         rfc3023_encoding = proposed_encoding
 
-    result['content-type'] = http_content_type  # for selecting the parser
-    result['encoding'] = rfc3023_encoding
+    result["content-type"] = http_content_type  # for selecting the parser
+    result["encoding"] = rfc3023_encoding
     if error:
-        result['bozo'] = True
-        result['bozo_exception'] = error
+        result["bozo"] = True
+        result["bozo_exception"] = error
     return data
 
 
 # How much to read from a binary file in order to detect encoding.
 # In inital tests, 4k was enough for ~160 mostly-English feeds;
 # 64k seems like a safe margin.
-CONVERT_FILE_PREFIX_LEN = 2 ** 16
+CONVERT_FILE_PREFIX_LEN = 2**16
 
 # How much to read from a text file, and use as an utf-8 bytes prefix.
 # Note that no encoding detection is needed in this case.
-CONVERT_FILE_STR_PREFIX_LEN = 2 ** 13
+CONVERT_FILE_STR_PREFIX_LEN = 2**13
 
-CONVERT_FILE_TEST_CHUNK_LEN = 2 ** 16
+CONVERT_FILE_TEST_CHUNK_LEN = 2**16
 
 
-def convert_file_to_utf8(http_headers, file, result, optimistic_encoding_detection=True):
+def convert_file_to_utf8(
+    http_headers, file, result, optimistic_encoding_detection=True
+):
     """Like convert_to_utf8(), but for a stream.
 
     Unlike convert_to_utf8(), do not read the the entire file in memory;
@@ -363,14 +380,14 @@ def convert_file_to_utf8(http_headers, file, result, optimistic_encoding_detecti
     # replace_doctype() to extract safe_entities.
 
     if isinstance(file.read(0), str):
-        prefix = file.read(CONVERT_FILE_STR_PREFIX_LEN).encode('utf-8')
+        prefix = file.read(CONVERT_FILE_STR_PREFIX_LEN).encode("utf-8")
         prefix = convert_to_utf8(http_headers, prefix, result)
-        result['encoding'] = 'utf-8'
-        return StreamFactory(prefix, file, 'utf-8')
+        result["encoding"] = "utf-8"
+        return StreamFactory(prefix, file, "utf-8")
 
     if optimistic_encoding_detection:
         prefix = convert_file_prefix_to_utf8(http_headers, file, result)
-        factory = StreamFactory(prefix, file, result.get('encoding'))
+        factory = StreamFactory(prefix, file, result.get("encoding"))
 
         # Before returning factory, ensure the entire file can be decoded;
         # if it cannot, fall back to convert_to_utf8().
@@ -398,11 +415,13 @@ def convert_file_to_utf8(http_headers, file, result, optimistic_encoding_detecti
     data = convert_to_utf8(http_headers, file.read(), result)
 
     # note that data *is* the prefix
-    return StreamFactory(data, io.BytesIO(b''), result.get('encoding'))
+    return StreamFactory(data, io.BytesIO(b""), result.get("encoding"))
 
 
 def convert_file_prefix_to_utf8(
-    http_headers, file: t.IO[bytes], result,
+    http_headers,
+    file: t.IO[bytes],
+    result,
     *,
     prefix_len: int = CONVERT_FILE_PREFIX_LEN,
     read_to_ascii_len: int = 2**8,
@@ -442,7 +461,7 @@ def convert_file_prefix_to_utf8(
         converted_prefix = convert_to_utf8(http_headers, prefix, fake_result)
 
         # an encoding was detected successfully, keep it
-        if not fake_result.get('bozo'):
+        if not fake_result.get("bozo"):
             break
 
         candidates.append((file.tell(), converted_prefix, fake_result))
@@ -453,7 +472,7 @@ def convert_file_prefix_to_utf8(
         def key(candidate):
             *_, result = candidate
 
-            exc = result.get('bozo_exception')
+            exc = result.get("bozo_exception")
             exc_score = 0
             if isinstance(exc, NonXMLContentType):
                 exc_score = 20
@@ -463,7 +482,7 @@ def convert_file_prefix_to_utf8(
             return (
                 exc_score,
                 # prefer utf- encodings to anything else
-                result.get('encoding').startswith('utf-')
+                result.get("encoding").startswith("utf-"),
             )
 
         candidates.sort(key=key)
@@ -477,7 +496,7 @@ def convert_file_prefix_to_utf8(
 
 def read_to_after_ascii_byte(file: t.IO[bytes], max_len: int) -> bytes:
     offset = file.tell()
-    buffer = b''
+    buffer = b""
 
     for _ in range(max_len):
         byte = file.read(1)
@@ -489,13 +508,13 @@ def read_to_after_ascii_byte(file: t.IO[bytes], max_len: int) -> bytes:
         buffer += byte
 
         # we stop after a ASCII character
-        if byte < b'\x80':
+        if byte < b"\x80":
             break
 
     # couldn't find an ASCII character, reset the file to the original offset
     else:
         file.seek(offset)
-        return b''
+        return b""
 
     return buffer
 
@@ -519,7 +538,7 @@ class StreamFactory:
         self.encoding = encoding
         self.should_reset = False
 
-    def get_text_file(self, fallback_encoding=None, errors='strict'):
+    def get_text_file(self, fallback_encoding=None, errors="strict"):
         encoding = self.encoding or fallback_encoding
         if encoding is None:
             raise MissingEncoding("cannot create text stream without encoding")
@@ -528,8 +547,8 @@ class StreamFactory:
             file = PrefixFileWrapper(self.prefix.decode(encoding), self.file)
         else:
             file = PrefixFileWrapper(
-                self.prefix.decode('utf-8', errors),
-                codecs.getreader(encoding)(self.file, errors)
+                self.prefix.decode("utf-8", errors),
+                codecs.getreader(encoding)(self.file, errors),
             )
 
         self.reset()
@@ -537,7 +556,9 @@ class StreamFactory:
 
     def get_binary_file(self):
         if isinstance(self.file.read(0), str):
-            raise io.UnsupportedOperation("underlying stream is text, not binary") from None
+            raise io.UnsupportedOperation(
+                "underlying stream is text, not binary"
+            ) from None
 
         file = PrefixFileWrapper(self.prefix, self.file)
 
@@ -561,6 +582,7 @@ class ResetFileWrapper:
     (from the current position) by calling reset().
 
     """
+
     def __init__(self, file):
         self.file = file
         try:
@@ -587,6 +609,7 @@ class PrefixFileWrapper:
     'CDef'
 
     """
+
     def __init__(self, prefix, file):
         self.prefix = prefix
         self.file = file
@@ -599,7 +622,7 @@ class PrefixFileWrapper:
             if size < 0:
                 chunk = self.prefix
             else:
-                chunk = self.prefix[self.offset : self.offset+size]
+                chunk = self.prefix[self.offset : self.offset + size]
                 size -= len(chunk)
             buffer += chunk
             self.offset += len(chunk)
@@ -621,4 +644,3 @@ class PrefixFileWrapper:
     def close(self):
         # do not touch the underlying stream
         pass
-

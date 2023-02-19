@@ -1,5 +1,5 @@
 # The public API for feedparser
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -29,23 +29,22 @@
 import datetime
 import io
 import time
-from typing import Dict, List, Union, IO
 import urllib.error
 import urllib.parse
 import xml.sax
+from typing import IO, Dict, List, Union
 
-from .datetimes import registerDateHandler, _parse_date
-from .encodings import convert_file_to_utf8, MissingEncoding
-from .html import BaseHTMLProcessor
 from . import http
+from .datetimes import _parse_date, registerDateHandler
+from .encodings import MissingEncoding, convert_file_to_utf8
+from .html import BaseHTMLProcessor
 from .mixin import XMLParserMixin
+from .parsers.json import JSONParser
 from .parsers.loose import LooseXMLParser
 from .parsers.strict import StrictXMLParser
-from .parsers.json import JSONParser
 from .sanitizer import replace_doctype
 from .urls import convert_to_idn, make_safe_absolute_uri
 from .util import FeedParserDict
-
 
 # List of preferred XML parsers, by SAX driver name.  These will be tried first,
 # but if they're not installed, Python will keep searching through its own list
@@ -55,27 +54,36 @@ PREFERRED_XML_PARSERS = ["drv_libxml2"]
 _XML_AVAILABLE = True
 
 SUPPORTED_VERSIONS = {
-    '': 'unknown',
-    'rss090': 'RSS 0.90',
-    'rss091n': 'RSS 0.91 (Netscape)',
-    'rss091u': 'RSS 0.91 (Userland)',
-    'rss092': 'RSS 0.92',
-    'rss093': 'RSS 0.93',
-    'rss094': 'RSS 0.94',
-    'rss20': 'RSS 2.0',
-    'rss10': 'RSS 1.0',
-    'rss': 'RSS (unknown version)',
-    'atom01': 'Atom 0.1',
-    'atom02': 'Atom 0.2',
-    'atom03': 'Atom 0.3',
-    'atom10': 'Atom 1.0',
-    'atom': 'Atom (unknown version)',
-    'cdf': 'CDF',
-    'json1': 'JSON feed 1',
+    "": "unknown",
+    "rss090": "RSS 0.90",
+    "rss091n": "RSS 0.91 (Netscape)",
+    "rss091u": "RSS 0.91 (Userland)",
+    "rss092": "RSS 0.92",
+    "rss093": "RSS 0.93",
+    "rss094": "RSS 0.94",
+    "rss20": "RSS 2.0",
+    "rss10": "RSS 1.0",
+    "rss": "RSS (unknown version)",
+    "atom01": "Atom 0.1",
+    "atom02": "Atom 0.2",
+    "atom03": "Atom 0.3",
+    "atom10": "Atom 1.0",
+    "atom": "Atom (unknown version)",
+    "cdf": "CDF",
+    "json1": "JSON feed 1",
 }
 
 
-def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result):
+def _open_resource(
+    url_file_stream_or_string,
+    etag,
+    modified,
+    agent,
+    referrer,
+    handlers,
+    request_headers,
+    result,
+):
     """URL, filename, or string --> stream
 
     This function lets you define parsers that take any input source
@@ -124,25 +132,38 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     # (If the underlying resource is not seekable,
     # the content is read and wrapped in a io.BytesIO/StringIO.)
 
-    if callable(getattr(url_file_stream_or_string, 'read', None)):
-        if callable(getattr(url_file_stream_or_string, 'seekable', None)):
+    if callable(getattr(url_file_stream_or_string, "read", None)):
+        if callable(getattr(url_file_stream_or_string, "seekable", None)):
             if url_file_stream_or_string.seekable():
                 return url_file_stream_or_string
         return _to_in_memory_file(url_file_stream_or_string.read())
 
-    looks_like_url = (
-        isinstance(url_file_stream_or_string, str)
-        and urllib.parse.urlparse(url_file_stream_or_string)[0]
-            in ('http', 'https', 'ftp', 'file', 'feed')
+    looks_like_url = isinstance(
+        url_file_stream_or_string, str
+    ) and urllib.parse.urlparse(url_file_stream_or_string)[0] in (
+        "http",
+        "https",
+        "ftp",
+        "file",
+        "feed",
     )
     if looks_like_url:
-        data = http.get(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
+        data = http.get(
+            url_file_stream_or_string,
+            etag,
+            modified,
+            agent,
+            referrer,
+            handlers,
+            request_headers,
+            result,
+        )
         return io.BytesIO(data)
 
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
-        return open(url_file_stream_or_string, 'rb')
-    except (IOError, UnicodeEncodeError, TypeError, ValueError):
+        return open(url_file_stream_or_string, "rb")
+    except (OSError, UnicodeEncodeError, TypeError, ValueError):
         # if url_file_stream_or_string is a str object that
         # cannot be converted to the encoding returned by
         # sys.getfilesystemencoding(), a UnicodeEncodeError
@@ -166,22 +187,23 @@ def _to_in_memory_file(data):
 class LooseFeedParser(LooseXMLParser, XMLParserMixin, BaseHTMLProcessor):
     pass
 
+
 class StrictFeedParser(StrictXMLParser, XMLParserMixin, xml.sax.handler.ContentHandler):
     pass
 
 
 def parse(
-        url_file_stream_or_string,
-        etag: str = None,
-        modified: Union[str, datetime.datetime, time.struct_time] = None,
-        agent: str = None,
-        referrer: str = None,
-        handlers: List = None,
-        request_headers: Dict[str, str] = None,
-        response_headers: Dict[str, str] = None,
-        resolve_relative_uris: bool = None,
-        sanitize_html: bool = None,
-        optimistic_encoding_detection: bool = None,
+    url_file_stream_or_string,
+    etag: str = None,
+    modified: Union[str, datetime.datetime, time.struct_time] = None,
+    agent: str = None,
+    referrer: str = None,
+    handlers: List = None,
+    request_headers: Dict[str, str] = None,
+    response_headers: Dict[str, str] = None,
+    resolve_relative_uris: bool = None,
+    sanitize_html: bool = None,
+    optimistic_encoding_detection: bool = None,
 ) -> FeedParserDict:
     """Parse a feed from a URL, file, stream, or string.
 
@@ -236,6 +258,7 @@ def parse(
     # Avoid a cyclic import.
     if not agent:
         import feedparser
+
         agent = feedparser.USER_AGENT
 
     result = FeedParserDict(
@@ -246,12 +269,23 @@ def parse(
     )
 
     try:
-        file = _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, handlers, request_headers, result)
+        file = _open_resource(
+            url_file_stream_or_string,
+            etag,
+            modified,
+            agent,
+            referrer,
+            handlers,
+            request_headers,
+            result,
+        )
     except urllib.error.URLError as error:
-        result.update({
-            'bozo': True,
-            'bozo_exception': error,
-        })
+        result.update(
+            {
+                "bozo": True,
+                "bozo_exception": error,
+            }
+        )
         return result
 
     # at this point, the file is guaranteed to be seekable;
@@ -263,7 +297,7 @@ def parse(
     file.seek(initial_file_offset)
 
     # overwrite existing headers using response_headers
-    result['headers'].update(response_headers or {})
+    result["headers"].update(response_headers or {})
 
     try:
         _parse_file_inplace(
@@ -274,7 +308,7 @@ def parse(
             optimistic_encoding_detection=optimistic_encoding_detection,
         )
     finally:
-        if not hasattr(url_file_stream_or_string, 'read'):
+        if not hasattr(url_file_stream_or_string, "read"):
             # the file does not come from the user, close it
             file.close()
 
@@ -289,9 +323,9 @@ def _parse_file_inplace(
     sanitize_html: bool = None,
     optimistic_encoding_detection: bool = None,
 ) -> None:
-
     # Avoid a cyclic import.
     import feedparser
+
     if sanitize_html is None:
         sanitize_html = bool(feedparser.SANITIZE_HTML)
     if resolve_relative_uris is None:
@@ -300,7 +334,7 @@ def _parse_file_inplace(
         optimistic_encoding_detection = bool(feedparser.OPTIMISTIC_ENCODING_DETECTION)
 
     stream_factory = convert_file_to_utf8(
-        result['headers'], file, result, optimistic_encoding_detection
+        result["headers"], file, result, optimistic_encoding_detection
     )
     # We're done with file, all access must happen through stream_factory.
     del file
@@ -315,20 +349,26 @@ def _parse_file_inplace(
     # because the SAX parser closes the file when done;
     # we don't want that, since we might try again with the loose parser.
 
-    use_json_parser = result['content-type'] == 'application/json'
-    use_strict_parser = result['encoding'] and True or False
+    use_json_parser = result["content-type"] == "application/json"
+    use_strict_parser = result["encoding"] and True or False
 
     if not use_json_parser:
-        result['version'], stream_factory.prefix, entities = replace_doctype(stream_factory.prefix)
+        result["version"], stream_factory.prefix, entities = replace_doctype(
+            stream_factory.prefix
+        )
 
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
-    contentloc = result['headers'].get('content-location', '')
-    href = result.get('href', '')
-    baseuri = make_safe_absolute_uri(href, contentloc) or make_safe_absolute_uri(contentloc) or href
+    contentloc = result["headers"].get("content-location", "")
+    href = result.get("href", "")
+    baseuri = (
+        make_safe_absolute_uri(href, contentloc)
+        or make_safe_absolute_uri(contentloc)
+        or href
+    )
 
-    baselang = result['headers'].get('content-language', None)
+    baselang = result["headers"].get("content-language", None)
     if isinstance(baselang, bytes) and baselang is not None:
-        baselang = baselang.decode('utf-8', 'ignore')
+        baselang = baselang.decode("utf-8", "ignore")
 
     if not _XML_AVAILABLE:
         use_strict_parser = False
@@ -336,17 +376,17 @@ def _parse_file_inplace(
     feed_parser: Union[JSONParser, StrictFeedParser, LooseFeedParser]
 
     if use_json_parser:
-        result['version'] = None
-        feed_parser = JSONParser(baseuri, baselang, 'utf-8')
+        result["version"] = None
+        feed_parser = JSONParser(baseuri, baselang, "utf-8")
         try:
             feed_parser.feed(stream_factory.get_file())
         except Exception as e:
-            result['bozo'] = 1
-            result['bozo_exception'] = e
+            result["bozo"] = 1
+            result["bozo_exception"] = e
 
     elif use_strict_parser:
         # Initialize the SAX parser.
-        feed_parser = StrictFeedParser(baseuri, baselang, 'utf-8')
+        feed_parser = StrictFeedParser(baseuri, baselang, "utf-8")
         feed_parser.resolve_relative_uris = resolve_relative_uris
         feed_parser.sanitize_html = sanitize_html
         saxparser = xml.sax.make_parser(PREFERRED_XML_PARSERS)
@@ -370,20 +410,20 @@ def _parse_file_inplace(
         try:
             saxparser.parse(source)
         except xml.sax.SAXException as e:
-            result['bozo'] = 1
-            result['bozo_exception'] = feed_parser.exc or e
+            result["bozo"] = 1
+            result["bozo_exception"] = feed_parser.exc or e
             use_strict_parser = False
 
     # The loose XML parser will be tried if the JSON parser was not used,
     # and if the strict XML parser was not used (or if it failed).
     if not use_json_parser and not use_strict_parser:
-        feed_parser = LooseFeedParser(baseuri, baselang, 'utf-8', entities)
+        feed_parser = LooseFeedParser(baseuri, baselang, "utf-8", entities)
         feed_parser.resolve_relative_uris = resolve_relative_uris
         feed_parser.sanitize_html = sanitize_html
 
         # If an encoding was detected, use it; otherwise, assume utf-8 and do your best.
         # Will raise io.UnsupportedOperation if the underlying file is not seekable.
-        data =  stream_factory.get_text_file('utf-8', 'replace').read()
+        data = stream_factory.get_text_file("utf-8", "replace").read()
 
         # As of 6.0.8, LooseFeedParser.feed() can be called exactly once
         # with the entire data (it does some re.sub() and str.replace() on it).
@@ -397,10 +437,10 @@ def _parse_file_inplace(
 
         feed_parser.feed(data)
 
-    result['feed'] = feed_parser.feeddata
-    result['entries'] = feed_parser.entries
-    result['version'] = result['version'] or feed_parser.version
+    result["feed"] = feed_parser.feeddata
+    result["entries"] = feed_parser.entries
+    result["version"] = result["version"] or feed_parser.version
     if isinstance(feed_parser, JSONParser):
-        result['namespaces'] = {}
-    else:    
-        result['namespaces'] = feed_parser.namespaces_in_use
+        result["namespaces"] = {}
+    else:
+        result["namespaces"] = feed_parser.namespaces_in_use

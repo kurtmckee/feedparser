@@ -1,5 +1,5 @@
 # Support for the administrative elements extension
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -29,25 +29,25 @@
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     # RDF Site Summary 1.0 Modules: Administrative
     # http://web.resource.org/rss/1.0/modules/admin/
 
     supported_namespaces = {
-        'http://webns.net/mvcb/': 'admin',
+        "http://webns.net/mvcb/": "admin",
     }
 
     def _start_admin_generatoragent(self, attrs_d):
-        self.push('generator', 1)
-        value = self._get_attribute(attrs_d, 'rdf:resource')
+        self.push("generator", 1)
+        value = self._get_attribute(attrs_d, "rdf:resource")
         if value:
             self.elementstack[-1][2].append(value)
-        self.pop('generator')
-        self._get_context()['generator_detail'] = FeedParserDict({'href': value})
+        self.pop("generator")
+        self._get_context()["generator_detail"] = FeedParserDict({"href": value})
 
     def _start_admin_errorreportsto(self, attrs_d):
-        self.push('errorreportsto', 1)
-        value = self._get_attribute(attrs_d, 'rdf:resource')
+        self.push("errorreportsto", 1)
+        value = self._get_attribute(attrs_d, "rdf:resource")
         if value:
             self.elementstack[-1][2].append(value)
-        self.pop('errorreportsto')
+        self.pop("errorreportsto")
