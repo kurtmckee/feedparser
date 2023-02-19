@@ -59,7 +59,7 @@ from feedparser.datetimes.asctime import _parse_date_asctime
 from feedparser.datetimes.greek import _parse_date_greek
 from feedparser.datetimes.hungarian import _parse_date_hungarian
 from feedparser.datetimes.iso8601 import _parse_date_iso8601
-from feedparser.datetimes.korean import _parse_date_onblog, _parse_date_nate
+from feedparser.datetimes.korean import _parse_date_nate, _parse_date_onblog
 from feedparser.datetimes.perforce import _parse_date_perforce
 from feedparser.datetimes.rfc822 import _parse_date_rfc822
 from feedparser.datetimes.w3dtf import _parse_date_w3dtf
@@ -332,7 +332,7 @@ class TestEncodingsHelpers(BaseTestCase):
         self.assertEqual(f.read(1) , b'a')
 
     def test_convert_file_to_utf8_decode_error_fallback(self):
-        from feedparser.encodings import convert_to_utf8, convert_file_to_utf8
+        from feedparser.encodings import convert_file_to_utf8, convert_to_utf8
 
         input = (
             "abcd😀".encode('utf-8') * feedparser.encodings.CONVERT_FILE_PREFIX_LEN
@@ -418,7 +418,7 @@ del factory, func
 
 
 def make_convert_file_prefix_to_utf8_test(headers):
-    from feedparser.encodings import convert_to_utf8, convert_file_prefix_to_utf8
+    from feedparser.encodings import convert_file_prefix_to_utf8, convert_to_utf8
 
     def test(self):
 

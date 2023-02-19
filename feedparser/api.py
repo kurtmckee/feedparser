@@ -29,23 +29,22 @@
 import datetime
 import io
 import time
-from typing import Dict, List, Union, IO
 import urllib.error
 import urllib.parse
 import xml.sax
+from typing import IO, Dict, List, Union
 
-from .datetimes import registerDateHandler, _parse_date
-from .encodings import convert_file_to_utf8, MissingEncoding
-from .html import BaseHTMLProcessor
 from . import http
+from .datetimes import _parse_date, registerDateHandler
+from .encodings import MissingEncoding, convert_file_to_utf8
+from .html import BaseHTMLProcessor
 from .mixin import XMLParserMixin
+from .parsers.json import JSONParser
 from .parsers.loose import LooseXMLParser
 from .parsers.strict import StrictXMLParser
-from .parsers.json import JSONParser
 from .sanitizer import replace_doctype
 from .urls import convert_to_idn, make_safe_absolute_uri
 from .util import FeedParserDict
-
 
 # List of preferred XML parsers, by SAX driver name.  These will be tried first,
 # but if they're not installed, Python will keep searching through its own list

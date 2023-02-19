@@ -27,7 +27,7 @@
 
 import re
 
-import sgmllib # type: ignore[import]
+import sgmllib  # type: ignore[import]
 
 __all__ = [
     'sgmllib',

@@ -33,9 +33,9 @@ import typing as t
 
 try:
     try:
-        import cchardet as chardet # type: ignore[import]
+        import cchardet as chardet  # type: ignore[import]
     except ImportError:
-        import chardet # type: ignore[no-redef]
+        import chardet  # type: ignore[no-redef]
 except ImportError:
     lazy_chardet_encoding = None
 else:
@@ -47,7 +47,6 @@ from .exceptions import (
     CharacterEncodingUnknown,
     NonXMLContentType,
 )
-
 
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.

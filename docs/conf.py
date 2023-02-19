@@ -3,7 +3,6 @@ import pathlib
 import re
 import sys
 
-
 content = (pathlib.Path(__file__).parent.parent / 'pyproject.toml').read_text()
 match = re.search(r'''version *= *"(?P<version>.+?)"''', content)
 version = match.group('version')

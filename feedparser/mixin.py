@@ -30,14 +30,14 @@ import binascii
 import copy
 import html.entities
 import re
-from typing import Dict
 import xml.sax.saxutils
+from typing import Dict
 
 from .html import _cp1252
 from .namespaces import _base, cc, dc, georss, itunes, mediarss, psc
-from .sanitizer import sanitize_html, HTMLSanitizer
-from .util import FeedParserDict
+from .sanitizer import HTMLSanitizer, sanitize_html
 from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
+from .util import FeedParserDict
 
 
 class XMLParserMixin(
