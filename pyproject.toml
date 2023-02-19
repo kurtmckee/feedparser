@@ -37,32 +37,6 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 
-[tool.tox]
-legacy_tox_ini = """
-
-[tox]
-envlist = py{310, 39, py3, 38, 37, 36}{-chardet, }, docs, mypy
-skip_missing_interpreters = True
-isolated_build = True
-
-[testenv]
-deps =
-    chardet: chardet
-
-commands = {envpython} -Wd tests/runtests.py
-
-[testenv:docs]
-allowlist_externals = sphinx-build
-commands = sphinx-build -EWnq --keep-going -b html docs/ fpdocs/
-
-[testenv:mypy]
-commands = mypy feedparser
-deps =
-    mypy
-    types-chardet
-"""
-
-
 [tool.scriv]
 version = "literal: feedparser/__init__.py: __version__"
 categories = ["Added", "Fixed", "Removed", "Changed", "Deprecated", "Security"]
