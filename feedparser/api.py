@@ -32,7 +32,7 @@ import time
 import urllib.error
 import urllib.parse
 import xml.sax
-from typing import IO, Dict, List, Union
+from typing import Optional, IO, Dict, List, Union
 
 from . import http
 from .datetimes import _parse_date, registerDateHandler
@@ -194,16 +194,16 @@ class StrictFeedParser(StrictXMLParser, XMLParserMixin, xml.sax.handler.ContentH
 
 def parse(
     url_file_stream_or_string,
-    etag: str = None,
-    modified: Union[str, datetime.datetime, time.struct_time] = None,
-    agent: str = None,
-    referrer: str = None,
-    handlers: List = None,
-    request_headers: Dict[str, str] = None,
-    response_headers: Dict[str, str] = None,
-    resolve_relative_uris: bool = None,
-    sanitize_html: bool = None,
-    optimistic_encoding_detection: bool = None,
+    etag: Optional[str] = None,
+    modified: Optional[Union[str, datetime.datetime, time.struct_time]] = None,
+    agent: Optional[str] = None,
+    referrer: Optional[str] = None,
+    handlers: Optional[List] = None,
+    request_headers: Optional[Dict[str, str]] = None,
+    response_headers: Optional[Dict[str, str]] = None,
+    resolve_relative_uris: Optional[bool] = None,
+    sanitize_html: Optional[bool] = None,
+    optimistic_encoding_detection: Optional[bool] = None,
 ) -> FeedParserDict:
     """Parse a feed from a URL, file, stream, or string.
 
@@ -319,9 +319,9 @@ def _parse_file_inplace(
     file: Union[IO[bytes], IO[str]],
     result: dict,
     *,
-    resolve_relative_uris: bool = None,
-    sanitize_html: bool = None,
-    optimistic_encoding_detection: bool = None,
+    resolve_relative_uris: Optional[bool] = None,
+    sanitize_html: Optional[bool] = None,
+    optimistic_encoding_detection: Optional[bool] = None,
 ) -> None:
     # Avoid a cyclic import.
     import feedparser
