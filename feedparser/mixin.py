@@ -208,7 +208,7 @@ class XMLParserMixin(
         #         },
         #     }
         self.property_depth_map = {}
-        super(XMLParserMixin, self).__init__()
+        super().__init__()
 
     def _normalize_attributes(self, kv):
         raise NotImplementedError
@@ -268,7 +268,7 @@ class XMLParserMixin(
                     attrs.append(('xmlns', namespace))
             if tag == 'svg':
                 self.svgOK += 1
-            return self.handle_data('<%s%s>' % (tag, self.strattrs(attrs)), escape=0)
+            return self.handle_data(f'<{tag}{self.strattrs(attrs)}>', escape=0)
 
         # match namespaces
         if tag.find(':') != -1:
@@ -459,7 +459,7 @@ class XMLParserMixin(
     @staticmethod
     def strattrs(attrs):
         return ''.join(
-            ' %s="%s"' % (t[0], xml.sax.saxutils.escape(t[1], {'"': '&quot;'}))
+            ' {}="{}"'.format(t[0], xml.sax.saxutils.escape(t[1], {'"': '&quot;'}))
             for t in attrs
         )
 
@@ -650,11 +650,11 @@ class XMLParserMixin(
             return False
 
         # all tags must be in a restricted subset of valid HTML tags
-        if any((t for t in re.findall(r'</?(\w+)', s) if t.lower() not in HTMLSanitizer.acceptable_elements)):
+        if any(t for t in re.findall(r'</?(\w+)', s) if t.lower() not in HTMLSanitizer.acceptable_elements):
             return False
 
         # all entities must have been defined as valid HTML entities
-        if any((e for e in re.findall(r'&(\w+);', s) if e not in html.entities.entitydefs)):
+        if any(e for e in re.findall(r'&(\w+);', s) if e not in html.entities.entitydefs):
             return False
 
         return True
@@ -737,7 +737,7 @@ class XMLParserMixin(
             name = detail.get('name')
             email = detail.get('email')
             if name and email:
-                context[key] = '%s (%s)' % (name, email)
+                context[key] = f'{name} ({email})'
             elif name:
                 context[key] = name
             elif email:

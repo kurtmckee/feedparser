@@ -178,7 +178,7 @@ def get(url, etag=None, modified=None, agent=None, referrer=None, handlers=None,
     if data and 'gzip' in result['headers'].get('content-encoding', ''):
         try:
             data = gzip.GzipFile(fileobj=io.BytesIO(data)).read()
-        except (EOFError, IOError, struct.error) as e:
+        except (EOFError, OSError, struct.error) as e:
             # IOError can occur if the gzip header is bad.
             # struct.error can occur if the data is damaged.
             result['bozo'] = True

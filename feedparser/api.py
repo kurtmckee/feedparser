@@ -141,7 +141,7 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
         return open(url_file_stream_or_string, 'rb')
-    except (IOError, UnicodeEncodeError, TypeError, ValueError):
+    except (OSError, UnicodeEncodeError, TypeError, ValueError):
         # if url_file_stream_or_string is a str object that
         # cannot be converted to the encoding returned by
         # sys.getfilesystemencoding(), a UnicodeEncodeError

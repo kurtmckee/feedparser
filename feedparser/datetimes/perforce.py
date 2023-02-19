@@ -40,7 +40,7 @@ def _parse_date_perforce(date_string):
         return None
     dow, year, month, day, hour, minute, second, tz = m.groups()
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-    new_date_string = "%s, %s %s %s %s:%s:%s %s" % (dow, day, months[int(month) - 1], year, hour, minute, second, tz)
+    new_date_string = f"{dow}, {day} {months[int(month) - 1]} {year} {hour}:{minute}:{second} {tz}"
     tm = email.utils.parsedate_tz(new_date_string)
     if tm:
         return time.gmtime(email.utils.mktime_tz(tm))

@@ -37,7 +37,7 @@ class StrictXMLParser:
         self.baseuri = baseuri or ''
         self.lang = baselang
         self.encoding = encoding
-        super(StrictXMLParser, self).__init__()
+        super().__init__()
 
     @staticmethod
     def _normalize_attributes(kv):

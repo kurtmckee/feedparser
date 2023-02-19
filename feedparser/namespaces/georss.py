@@ -32,7 +32,7 @@ from __future__ import generator_stop
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     supported_namespaces = {
         'http://www.w3.org/2003/01/geo/wgs84_pos#': 'geo',
         'http://www.georss.org/georss': 'georss',
@@ -41,7 +41,7 @@ class Namespace(object):
 
     def __init__(self):
         self.ingeometry = 0
-        super(Namespace, self).__init__()
+        super().__init__()
 
     def _start_georssgeom(self, attrs_d):
         self.push('geometry', 0)

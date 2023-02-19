@@ -149,7 +149,7 @@ class FeedParserTestServer(threading.Thread):
 
 # _bytes is only used in everything_is_unicode().
 # In Python 2 it's str, and in Python 3 it's bytes.
-_bytes = type(b'')
+_bytes = bytes
 
 
 def everything_is_unicode(d):
@@ -173,10 +173,10 @@ def fail_unless_eval(self, xmlfile, eval_string, msg=None):
     """Fail unless eval(eval_string, env)"""
     env = feedparser.parse(xmlfile)
     if not eval(eval_string, globals(), env):
-        failure = msg or 'not eval(%s) \nWITH env(%s)' % (eval_string, pprint.pformat(env))
+        failure = msg or f'not eval({eval_string}) \nWITH env({pprint.pformat(env)})'
         raise self.failureException(failure)
     if not everything_is_unicode(env):
-        raise self.failureException("not everything is unicode \nWITH env(%s)" % (pprint.pformat(env), ))
+        raise self.failureException(f"not everything is unicode \nWITH env({pprint.pformat(env)})")
 
 
 class BaseTestCase(unittest.TestCase):
@@ -335,7 +335,7 @@ class TestEncodingsHelpers(BaseTestCase):
         from feedparser.encodings import convert_file_to_utf8, convert_to_utf8
 
         input = (
-            "abcd😀".encode('utf-8') * feedparser.encodings.CONVERT_FILE_PREFIX_LEN
+            "abcd😀".encode() * feedparser.encodings.CONVERT_FILE_PREFIX_LEN
             + "abcd😀".encode('utf-32')
         )
         headers = {}
@@ -720,11 +720,11 @@ class TestConvertToIdn(unittest.TestCase):
         self.assertEqual(r, 'http://example.test/')
 
     def test_idn(self):
-        r = feedparser.urls.convert_to_idn('http://%s/' % (self.hostname,))
+        r = feedparser.urls.convert_to_idn(f'http://{self.hostname}/')
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp/')
 
     def test_port(self):
-        r = feedparser.urls.convert_to_idn('http://%s:8080/' % (self.hostname,))
+        r = feedparser.urls.convert_to_idn(f'http://{self.hostname}:8080/')
         self.assertEqual(r, 'http://xn--hxajbheg2az3al.xn--jxalpdlp:8080/')
 
 
@@ -1040,32 +1040,32 @@ class TestParseFlags(unittest.TestCase):
 
     def test_sanitize_html_default(self):
         d = feedparser.parse(io.BytesIO(self.feed_xml))
-        self.assertEqual(u'', d.entries[0].content[0].value)
+        self.assertEqual('', d.entries[0].content[0].value)
 
     def test_sanitize_html_on(self):
         d = feedparser.parse(io.BytesIO(self.feed_xml), sanitize_html=True)
-        self.assertEqual(u'', d.entries[0].content[0].value)
+        self.assertEqual('', d.entries[0].content[0].value)
 
     def test_sanitize_html_off(self):
         d = feedparser.parse(io.BytesIO(self.feed_xml), sanitize_html=False)
-        self.assertEqual(u'<script>alert("boo!")</script>', d.entries[0].content[0].value)
+        self.assertEqual('<script>alert("boo!")</script>', d.entries[0].content[0].value)
 
     def test_resolve_relative_uris_default(self):
         d = feedparser.parse(io.BytesIO(self.feed_xml),
                              response_headers={'content-location': 'http://example.com/feed'})
-        self.assertEqual(u'<a href="http://example.com/boo.html">boo</a>', d.entries[1].content[0].value)
+        self.assertEqual('<a href="http://example.com/boo.html">boo</a>', d.entries[1].content[0].value)
 
     def test_resolve_relative_uris_on(self):
         d = feedparser.parse(io.BytesIO(self.feed_xml),
                              response_headers={'content-location': 'http://example.com/feed'},
                              resolve_relative_uris=True)
-        self.assertEqual(u'<a href="http://example.com/boo.html">boo</a>', d.entries[1].content[0].value)
+        self.assertEqual('<a href="http://example.com/boo.html">boo</a>', d.entries[1].content[0].value)
 
     def test_resolve_relative_uris_off(self):
         d = feedparser.parse(io.BytesIO(self.feed_xml),
                              response_headers={'content-location': 'http://example.com/feed.xml'},
                              resolve_relative_uris=False)
-        self.assertEqual(u'<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
+        self.assertEqual('<a href="/boo.html">boo</a>', d.entries[1].content[0].value)
 
     def test_optimistic_encoding_detection(self):
         length = feedparser.encodings.CONVERT_FILE_PREFIX_LEN
@@ -1181,7 +1181,7 @@ def get_description(xmlfile, data):
     search_results = desc_re.search(data)
     if not search_results:
         raise RuntimeError("can't parse %s" % xmlfile)
-    description, eval_string = [s.strip() for s in list(search_results.groups())]
+    description, eval_string = (s.strip() for s in list(search_results.groups()))
     description = xmlfile + ": " + description.decode('utf8')
     return description, eval_string, skip_unless
 
@@ -1246,7 +1246,7 @@ def runtests():
                 httpcount -= 1 + (xmlfile in wellformedfiles)
             continue
         if is_http:
-            xmlfile = 'http://%s:%s/%s' % (_HOST, _PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
+            xmlfile = 'http://{}:{}/{}'.format(_HOST, _PORT, posixpath.normpath(xmlfile.replace('\\', '/')))
         test_func = build_test_case(xmlfile, description, eval_string)
         if isinstance(add_to, tuple):
             setattr(add_to[0], test_name, test_func)

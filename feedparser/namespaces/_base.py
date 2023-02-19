@@ -33,7 +33,7 @@ from ..urls import make_safe_absolute_uri
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     """Support for the Atom, RSS, RDF, and CDF feed formats.
 
     The feed formats all share common elements, some of which have conflicting

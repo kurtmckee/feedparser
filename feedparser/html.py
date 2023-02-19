@@ -186,13 +186,13 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
                 value = self.bare_ampersand.sub("&amp;", value)
                 uattrs.append((key, value))
             strattrs = ''.join(
-                ' %s="%s"' % (key, value)
+                f' {key}="{value}"'
                 for key, value in uattrs
             )
         if tag in self.elements_no_end_tag:
-            self.pieces.append('<%s%s />' % (tag, strattrs))
+            self.pieces.append(f'<{tag}{strattrs} />')
         else:
-            self.pieces.append('<%s%s>' % (tag, strattrs))
+            self.pieces.append(f'<{tag}{strattrs}>')
 
     def unknown_endtag(self, tag):
         """

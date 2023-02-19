@@ -30,7 +30,7 @@ from ..datetimes import _parse_date
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     supported_namespaces = {
         'http://purl.org/dc/elements/1.1/': 'dc',
         'http://purl.org/dc/terms/': 'dcterms',

@@ -104,7 +104,7 @@ def _parse_date_rfc822(date):
     time_parts = parts[3].split(':')
     time_parts.extend(('0',) * (3 - len(time_parts)))
     try:
-        (hour, minute, second) = [int(i) for i in time_parts]
+        (hour, minute, second) = (int(i) for i in time_parts)
     except ValueError:
         return None
 

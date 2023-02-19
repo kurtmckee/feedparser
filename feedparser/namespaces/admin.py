@@ -29,7 +29,7 @@
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     # RDF Site Summary 1.0 Modules: Administrative
     # http://web.resource.org/rss/1.0/modules/admin/
 

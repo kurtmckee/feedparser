@@ -29,7 +29,7 @@
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     supported_namespaces = {
         # RDF-based namespace
         'http://creativecommons.org/ns#license': 'cc',

@@ -63,7 +63,7 @@ def _parse_date_w3dtf(datestr):
     # month to January and the default day to the 1st of the month.
     date.extend(['1'] * (3 - len(date)))
     try:
-        year, month, day = [int(i) for i in date]
+        year, month, day = (int(i) for i in date)
     except ValueError:
         # `date` may have more than 3 elements or may contain
         # non-integer strings.
@@ -97,7 +97,7 @@ def _parse_date_w3dtf(datestr):
         tzhour = timezonenames.get(parts[2], 0)
         tzmin = 0
     try:
-        hour, minute, second = [int(float(i)) for i in time]
+        hour, minute, second = (int(float(i)) for i in time)
     except ValueError:
         return None
     # Create the datetime object and timezone delta objects

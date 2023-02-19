@@ -32,7 +32,7 @@ import re
 from .. import util
 
 
-class Namespace(object):
+class Namespace:
     supported_namespaces = {
         'http://podlove.org/simple-chapters': 'psc',
     }
@@ -40,7 +40,7 @@ class Namespace(object):
     def __init__(self):
         # chapters will only be captured while psc_chapters_flag is True.
         self.psc_chapters_flag = False
-        super(Namespace, self).__init__()
+        super().__init__()
 
     def _start_psc_chapters(self, attrs_d):
         context = self._get_context()

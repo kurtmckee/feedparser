@@ -29,7 +29,7 @@
 from ..util import FeedParserDict
 
 
-class Namespace(object):
+class Namespace:
     supported_namespaces = {
         # Canonical namespace
         'http://search.yahoo.com/mrss/': 'media',
