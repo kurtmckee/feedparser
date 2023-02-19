@@ -32,10 +32,9 @@ from ..util import FeedParserDict
 class Namespace:
     supported_namespaces = {
         # Canonical namespace
-        'http://www.itunes.com/DTDs/PodCast-1.0.dtd': 'itunes',
-
+        "http://www.itunes.com/DTDs/PodCast-1.0.dtd": "itunes",
         # Extra namespace
-        'http://example.com/DTDs/PodCast-1.0.dtd': 'itunes',
+        "http://example.com/DTDs/PodCast-1.0.dtd": "itunes",
     }
 
     def _start_itunes_author(self, attrs_d):
@@ -73,37 +72,42 @@ class Namespace:
 
     def _start_itunes_owner(self, attrs_d):
         self.inpublisher = 1
-        self.push('publisher', 0)
+        self.push("publisher", 0)
 
     def _end_itunes_owner(self):
-        self.pop('publisher')
+        self.pop("publisher")
         self.inpublisher = 0
-        self._sync_author_detail('publisher')
+        self._sync_author_detail("publisher")
 
     def _end_itunes_keywords(self):
-        for term in self.pop('itunes_keywords').split(','):
+        for term in self.pop("itunes_keywords").split(","):
             if term.strip():
-                self._add_tag(term.strip(), 'http://www.itunes.com/', None)
+                self._add_tag(term.strip(), "http://www.itunes.com/", None)
 
     def _start_itunes_category(self, attrs_d):
-        self._add_tag(attrs_d.get('text'), 'http://www.itunes.com/', None)
-        self.push('category', 1)
+        self._add_tag(attrs_d.get("text"), "http://www.itunes.com/", None)
+        self.push("category", 1)
 
     def _start_itunes_image(self, attrs_d):
-        self.push('itunes_image', 0)
-        if attrs_d.get('href'):
-            self._get_context()['image'] = FeedParserDict({'href': attrs_d.get('href')})
-        elif attrs_d.get('url'):
-            self._get_context()['image'] = FeedParserDict({'href': attrs_d.get('url')})
+        self.push("itunes_image", 0)
+        if attrs_d.get("href"):
+            self._get_context()["image"] = FeedParserDict({"href": attrs_d.get("href")})
+        elif attrs_d.get("url"):
+            self._get_context()["image"] = FeedParserDict({"href": attrs_d.get("url")})
+
     _start_itunes_link = _start_itunes_image
 
     def _end_itunes_block(self):
-        value = self.pop('itunes_block', 0)
-        self._get_context()['itunes_block'] = (value == 'yes' or value == 'Yes') and 1 or 0
+        value = self.pop("itunes_block", 0)
+        self._get_context()["itunes_block"] = (
+            (value == "yes" or value == "Yes") and 1 or 0
+        )
 
     def _end_itunes_explicit(self):
-        value = self.pop('itunes_explicit', 0)
+        value = self.pop("itunes_explicit", 0)
         # Convert 'yes' -> True, 'clean' to False, and any other value to None
         # False and None both evaluate as False, so the difference can be ignored
         # by applications that only need to know if the content is explicit.
-        self._get_context()['itunes_explicit'] = (None, False, True)[(value == 'yes' and 2) or value == 'clean' or 0]
+        self._get_context()["itunes_explicit"] = (None, False, True)[
+            (value == "yes" and 2) or value == "clean" or 0
+        ]

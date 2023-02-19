@@ -30,9 +30,9 @@ from .datetimes import registerDateHandler
 from .exceptions import *
 from .util import FeedParserDict
 
-__author__ = 'Kurt McKee <contactme@kurtmckee.org>'
-__license__ = 'BSD 2-clause'
-__version__ = '6.0.10'
+__author__ = "Kurt McKee <contactme@kurtmckee.org>"
+__license__ = "BSD 2-clause"
+__version__ = "6.0.10"
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should

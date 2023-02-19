@@ -31,21 +31,23 @@ from .w3dtf import _parse_date_w3dtf
 
 # Unicode strings for Hungarian date strings
 _hungarian_months = {
-    'janu\u00e1r':   '01',  # e1 in iso-8859-2
-    'febru\u00e1ri': '02',  # e1 in iso-8859-2
-    'm\u00e1rcius':  '03',  # e1 in iso-8859-2
-    '\u00e1prilis':  '04',  # e1 in iso-8859-2
-    'm\u00e1ujus':   '05',  # e1 in iso-8859-2
-    'j\u00fanius':   '06',  # fa in iso-8859-2
-    'j\u00falius':   '07',  # fa in iso-8859-2
-    'augusztus':     '08',
-    'szeptember':    '09',
-    'okt\u00f3ber':  '10',  # f3 in iso-8859-2
-    'november':      '11',
-    'december':      '12',
+    "janu\u00e1r": "01",  # e1 in iso-8859-2
+    "febru\u00e1ri": "02",  # e1 in iso-8859-2
+    "m\u00e1rcius": "03",  # e1 in iso-8859-2
+    "\u00e1prilis": "04",  # e1 in iso-8859-2
+    "m\u00e1ujus": "05",  # e1 in iso-8859-2
+    "j\u00fanius": "06",  # fa in iso-8859-2
+    "j\u00falius": "07",  # fa in iso-8859-2
+    "augusztus": "08",
+    "szeptember": "09",
+    "okt\u00f3ber": "10",  # f3 in iso-8859-2
+    "november": "11",
+    "december": "12",
 }
 
-_hungarian_date_format_re = re.compile(r'(\d{4})-([^-]+)-(\d{,2})T(\d{,2}):(\d{2})([+-](\d{,2}:\d{2}))')
+_hungarian_date_format_re = re.compile(
+    r"(\d{4})-([^-]+)-(\d{,2})T(\d{,2}):(\d{2})([+-](\d{,2}:\d{2}))"
+)
 
 
 def _parse_date_hungarian(date_string):
@@ -56,9 +58,9 @@ def _parse_date_hungarian(date_string):
     month = _hungarian_months[m.group(2)]
     day = m.group(3)
     if len(day) == 1:
-        day = '0' + day
+        day = "0" + day
     hour = m.group(4)
     if len(hour) == 1:
-        hour = '0' + hour
+        hour = "0" + hour
     w3dtfdate = f"{m.group(1)}-{month}-{day}T{hour}:{m.group(5)}{m.group(6)}"
     return _parse_date_w3dtf(w3dtfdate)

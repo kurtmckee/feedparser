@@ -31,33 +31,33 @@ import re
 from .sgml import *
 
 _cp1252 = {
-    128: '\u20ac',  # euro sign
-    130: '\u201a',  # single low-9 quotation mark
-    131: '\u0192',  # latin small letter f with hook
-    132: '\u201e',  # double low-9 quotation mark
-    133: '\u2026',  # horizontal ellipsis
-    134: '\u2020',  # dagger
-    135: '\u2021',  # double dagger
-    136: '\u02c6',  # modifier letter circumflex accent
-    137: '\u2030',  # per mille sign
-    138: '\u0160',  # latin capital letter s with caron
-    139: '\u2039',  # single left-pointing angle quotation mark
-    140: '\u0152',  # latin capital ligature oe
-    142: '\u017d',  # latin capital letter z with caron
-    145: '\u2018',  # left single quotation mark
-    146: '\u2019',  # right single quotation mark
-    147: '\u201c',  # left double quotation mark
-    148: '\u201d',  # right double quotation mark
-    149: '\u2022',  # bullet
-    150: '\u2013',  # en dash
-    151: '\u2014',  # em dash
-    152: '\u02dc',  # small tilde
-    153: '\u2122',  # trade mark sign
-    154: '\u0161',  # latin small letter s with caron
-    155: '\u203a',  # single right-pointing angle quotation mark
-    156: '\u0153',  # latin small ligature oe
-    158: '\u017e',  # latin small letter z with caron
-    159: '\u0178',  # latin capital letter y with diaeresis
+    128: "\u20ac",  # euro sign
+    130: "\u201a",  # single low-9 quotation mark
+    131: "\u0192",  # latin small letter f with hook
+    132: "\u201e",  # double low-9 quotation mark
+    133: "\u2026",  # horizontal ellipsis
+    134: "\u2020",  # dagger
+    135: "\u2021",  # double dagger
+    136: "\u02c6",  # modifier letter circumflex accent
+    137: "\u2030",  # per mille sign
+    138: "\u0160",  # latin capital letter s with caron
+    139: "\u2039",  # single left-pointing angle quotation mark
+    140: "\u0152",  # latin capital ligature oe
+    142: "\u017d",  # latin capital letter z with caron
+    145: "\u2018",  # left single quotation mark
+    146: "\u2019",  # right single quotation mark
+    147: "\u201c",  # left double quotation mark
+    148: "\u201d",  # right double quotation mark
+    149: "\u2022",  # bullet
+    150: "\u2013",  # en dash
+    151: "\u2014",  # em dash
+    152: "\u02dc",  # small tilde
+    153: "\u2122",  # trade mark sign
+    154: "\u0161",  # latin small letter s with caron
+    155: "\u203a",  # single right-pointing angle quotation mark
+    156: "\u0153",  # latin small ligature oe
+    158: "\u017e",  # latin small letter z with caron
+    159: "\u0178",  # latin capital letter y with diaeresis
 }
 
 
@@ -65,28 +65,28 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
     special = re.compile("""[<>'"]""")
     bare_ampersand = re.compile(r"&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
     elements_no_end_tag = {
-        'area',
-        'base',
-        'basefont',
-        'br',
-        'col',
-        'command',
-        'embed',
-        'frame',
-        'hr',
-        'img',
-        'input',
-        'isindex',
-        'keygen',
-        'link',
-        'meta',
-        'param',
-        'source',
-        'track',
-        'wbr',
+        "area",
+        "base",
+        "basefont",
+        "br",
+        "col",
+        "command",
+        "embed",
+        "frame",
+        "hr",
+        "img",
+        "input",
+        "isindex",
+        "keygen",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr",
     }
 
-    def __init__(self, encoding=None, _type='application/xhtml+xml'):
+    def __init__(self, encoding=None, _type="application/xhtml+xml"):
         if encoding:
             self.encoding = encoding
         self._type = _type
@@ -105,9 +105,9 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
 
         tag = match.group(1)
         if tag in self.elements_no_end_tag:
-            return '<' + tag + ' />'
+            return "<" + tag + " />"
         else:
-            return '<' + tag + '></' + tag + '>'
+            return "<" + tag + "></" + tag + ">"
 
     # By declaring these methods and overriding their compiled code
     # with the code from sgmllib, the original code will execute in
@@ -128,8 +128,8 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
 
     def parse_starttag(self, i):
         j = self.__parse_starttag(i)
-        if self._type == 'application/xhtml+xml':
-            if j > 2 and self.rawdata[j-2:j] == '/>':
+        if self._type == "application/xhtml+xml":
+            if j > 2 and self.rawdata[j - 2 : j] == "/>":
                 self.unknown_endtag(self.lasttag)
         return j
 
@@ -139,10 +139,10 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         :rtype: None
         """
 
-        data = re.sub(r'<!((?!DOCTYPE|--|\[))', r'&lt;!\1', data, re.IGNORECASE)
-        data = re.sub(r'<([^<>\s]+?)\s*/>', self._shorttag_replace, data)
-        data = data.replace('&#39;', "'")
-        data = data.replace('&#34;', '"')
+        data = re.sub(r"<!((?!DOCTYPE|--|\[))", r"&lt;!\1", data, re.IGNORECASE)
+        data = re.sub(r"<([^<>\s]+?)\s*/>", self._shorttag_replace, data)
+        data = data.replace("&#39;", "'")
+        data = data.replace("&#34;", '"')
         super().feed(data)
         super().close()
 
@@ -160,8 +160,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         # *attrs* into a dictionary, then convert it back to a list.
         attrs_d = {k.lower(): v for k, v in attrs}
         attrs = [
-            (k, k in ('rel', 'type') and v.lower() or v)
-            for k, v in attrs_d.items()
+            (k, k in ("rel", "type") and v.lower() or v) for k, v in attrs_d.items()
         ]
         attrs.sort()
         return attrs
@@ -177,22 +176,19 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         # attrs is a list of (attr, value) tuples
         # e.g. for <pre class='screen'>, tag='pre', attrs=[('class', 'screen')]
         uattrs = []
-        strattrs = ''
+        strattrs = ""
         if attrs:
             for key, value in attrs:
-                value = value.replace('>', '&gt;')
-                value = value.replace('<', '&lt;')
-                value = value.replace('"', '&quot;')
+                value = value.replace(">", "&gt;")
+                value = value.replace("<", "&lt;")
+                value = value.replace('"', "&quot;")
                 value = self.bare_ampersand.sub("&amp;", value)
                 uattrs.append((key, value))
-            strattrs = ''.join(
-                f' {key}="{value}"'
-                for key, value in uattrs
-            )
+            strattrs = "".join(f' {key}="{value}"' for key, value in uattrs)
         if tag in self.elements_no_end_tag:
-            self.pieces.append(f'<{tag}{strattrs} />')
+            self.pieces.append(f"<{tag}{strattrs} />")
         else:
-            self.pieces.append(f'<{tag}{strattrs}>')
+            self.pieces.append(f"<{tag}{strattrs}>")
 
     def unknown_endtag(self, tag):
         """
@@ -214,15 +210,15 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         # Called for each character reference, e.g. '&#160;' will extract '160'
         # Reconstruct the original character reference.
         ref = ref.lower()
-        if ref.startswith('x'):
+        if ref.startswith("x"):
             value = int(ref[1:], 16)
         else:
             value = int(ref)
 
         if value in _cp1252:
-            self.pieces.append('&#%s;' % hex(ord(_cp1252[value]))[1:])
+            self.pieces.append("&#%s;" % hex(ord(_cp1252[value]))[1:])
         else:
-            self.pieces.append('&#%s;' % ref)
+            self.pieces.append("&#%s;" % ref)
 
     def handle_entityref(self, ref):
         """
@@ -232,10 +228,10 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
 
         # Called for each entity reference, e.g. '&copy;' will extract 'copy'
         # Reconstruct the original entity reference.
-        if ref in html.entities.name2codepoint or ref == 'apos':
-            self.pieces.append('&%s;' % ref)
+        if ref in html.entities.name2codepoint or ref == "apos":
+            self.pieces.append("&%s;" % ref)
         else:
-            self.pieces.append('&amp;%s' % ref)
+            self.pieces.append("&amp;%s" % ref)
 
     def handle_data(self, text):
         """
@@ -256,7 +252,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
 
         # Called for HTML comments, e.g. <!-- insert Javascript code here -->
         # Reconstruct the original comment.
-        self.pieces.append('<!--%s-->' % text)
+        self.pieces.append("<!--%s-->" % text)
 
     def handle_pi(self, text):
         """
@@ -266,7 +262,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
 
         # Called for each processing instruction, e.g. <?instruction>
         # Reconstruct original processing instruction.
-        self.pieces.append('<?%s>' % text)
+        self.pieces.append("<?%s>" % text)
 
     def handle_decl(self, text):
         """
@@ -278,9 +274,9 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         # <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
         #     "http://www.w3.org/TR/html4/loose.dtd">
         # Reconstruct original DOCTYPE
-        self.pieces.append('<!%s>' % text)
+        self.pieces.append("<!%s>" % text)
 
-    _new_declname_match = re.compile(r'[a-zA-Z][-_.a-zA-Z0-9:]*\s*').match
+    _new_declname_match = re.compile(r"[a-zA-Z][-_.a-zA-Z0-9:]*\s*").match
 
     def _scan_name(self, i, declstartpos):
         """
@@ -311,7 +307,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         :rtype: str
         """
 
-        return '&#%s;' % name
+        return "&#%s;" % name
 
     def convert_entityref(self, name):
         """
@@ -319,7 +315,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         :rtype: str
         """
 
-        return '&%s;' % name
+        return "&%s;" % name
 
     def output(self):
         """Return processed HTML as a single string.
@@ -327,7 +323,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         :rtype: str
         """
 
-        return ''.join(self.pieces)
+        return "".join(self.pieces)
 
     def parse_declaration(self, i):
         """
@@ -339,5 +335,5 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
             return sgmllib.SGMLParser.parse_declaration(self, i)
         except (AssertionError, sgmllib.SGMLParseError):
             # Escape the doctype declaration and continue parsing.
-            self.handle_data('&lt;')
-            return i+1
+            self.handle_data("&lt;")
+            return i + 1

@@ -27,11 +27,11 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 __all__ = [
-    'FeedparserError',
-    'CharacterEncodingOverride',
-    'CharacterEncodingUnknown',
-    'NonXMLContentType',
-    'UndeclaredNamespace',
+    "FeedparserError",
+    "CharacterEncodingOverride",
+    "CharacterEncodingUnknown",
+    "NonXMLContentType",
+    "UndeclaredNamespace",
 ]
 
 

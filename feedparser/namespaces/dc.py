@@ -32,8 +32,8 @@ from ..util import FeedParserDict
 
 class Namespace:
     supported_namespaces = {
-        'http://purl.org/dc/elements/1.1/': 'dc',
-        'http://purl.org/dc/terms/': 'dcterms',
+        "http://purl.org/dc/elements/1.1/": "dc",
+        "http://purl.org/dc/terms/": "dcterms",
     }
 
     def _end_dc_author(self):
@@ -109,25 +109,29 @@ class Namespace:
         self._start_updated(attrs_d)
 
     def _start_dcterms_valid(self, attrs_d):
-        self.push('validity', 1)
+        self.push("validity", 1)
 
     def _end_dcterms_valid(self):
-        for validity_detail in self.pop('validity').split(';'):
-            if '=' in validity_detail:
-                key, value = validity_detail.split('=', 1)
-                if key == 'start':
-                    self._save('validity_start', value, overwrite=True)
-                    self._save('validity_start_parsed', _parse_date(value), overwrite=True)
-                elif key == 'end':
-                    self._save('validity_end', value, overwrite=True)
-                    self._save('validity_end_parsed', _parse_date(value), overwrite=True)
+        for validity_detail in self.pop("validity").split(";"):
+            if "=" in validity_detail:
+                key, value = validity_detail.split("=", 1)
+                if key == "start":
+                    self._save("validity_start", value, overwrite=True)
+                    self._save(
+                        "validity_start_parsed", _parse_date(value), overwrite=True
+                    )
+                elif key == "end":
+                    self._save("validity_end", value, overwrite=True)
+                    self._save(
+                        "validity_end_parsed", _parse_date(value), overwrite=True
+                    )
 
     def _start_dc_contributor(self, attrs_d):
         self.incontributor = 1
         context = self._get_context()
-        context.setdefault('contributors', [])
-        context['contributors'].append(FeedParserDict())
-        self.push('name', 0)
+        context.setdefault("contributors", [])
+        context["contributors"].append(FeedParserDict())
+        self.push("name", 0)
 
     def _end_dc_contributor(self):
         self._end_name()
