@@ -24,7 +24,6 @@ sgmllib3k = "^1.0.0"
 
 
 [tool.poetry.dev-dependencies]
-Sphinx = "^3.4.1"
 scriv = "^0.10.0"
 
 
