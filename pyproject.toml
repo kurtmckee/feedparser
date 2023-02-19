@@ -23,8 +23,8 @@ python = "^3.6"
 sgmllib3k = "^1.0.0"
 
 
-[tool.poetry.dev-dependencies]
-scriv = "^0.10.0"
+[tool.poetry.group.dev.dependencies]
+scriv = {extras = ["toml"], version = "^1.2.1"}
 
 
 [build-system]
@@ -33,8 +33,17 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.scriv]
-version = "literal: feedparser/__init__.py: __version__"
-categories = ["Added", "Fixed", "Removed", "Changed", "Deprecated", "Security"]
+version = "literal: pyproject.toml: tool.poetry.version"
+categories = [
+    "Python support",
+    "Added",
+    "Fixed",
+    "Removed",
+    "Changed",
+    "Deprecated",
+    "Security",
+    "Stewardship",
+]
 entry_title_template = "{{ version }} - {{ date.strftime('%Y-%m-%d') }}"
 format = "rst"
 fragment_directory = "changelog.d"
