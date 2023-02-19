@@ -1,116 +1,110 @@
-name: "feedparser"
+name: "CI"
 
-on: [push, pull_request]
+on:
+  - "push"
+  - "pull_request"
 
 jobs:
-  code:
-    name: "Python ${{ matrix.python-version }} on ${{ matrix.os}}"
-
-    runs-on: "${{ matrix.os }}"
+  test:
+    name: "Test on ${{ matrix.config.os-name }}"
+    runs-on: "${{ matrix.config.runner }}"
 
     strategy:
       matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-        python-version:
-          - "3.7"
-          - "3.8"
-          - "3.9"
-          - "3.10"
-          - "3.11"
-          - "pypy-3.9"
+        config:
+          - os-name: "Linux"
+            runner: "ubuntu-latest"
+            test-label: "ci-test-linux"
+          - os-name: "macOS"
+            runner: "macos-latest"
+            test-label: "ci-test-macos"
+          - os-name: "Windows"
+            runner: "windows-latest"
+            test-label: "ci-test-windows"
       fail-fast: false
 
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v3
+      - name: "Checkout the repo"
+        uses: "actions/checkout@v3"
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - name: "Setup Python"
+        id: "setup-python"
+        uses: "actions/setup-python@v4"
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: |
+            3.7
+            3.8
+            3.9
+            3.10
+            3.11
+            pypy-3.9
 
-      - name: Cache virtual environment
-        id: cache
-        uses: actions/cache@v3
+      - name: "Determine month number"
+        shell: "bash"
+        run: |
+          date +'month-number=%m' >> $GITHUB_ENV
+          date +'%m' > month-number.txt
+
+      - name: "Determine venv path"
+        shell: "bash"
+        run: "echo 'venv-path=${{ matrix.config.os-name == 'Windows' && '.venv/Scripts' || '.venv/bin' }}' >> $GITHUB_ENV"
+
+      - name: "Restore cache"
+        id: "restore-cache"
+        uses: "actions/cache@v3"
         with:
-          path: venv
-          key: "venv-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('pyproject.toml') }}"
+          path: |
+            .tox/
+            .venv/
+          key: "test-${{ matrix.config.runner }}-${{ hashFiles('pyproject.toml', 'tox.ini', 'month-number.txt') }}"
 
-      - name: Create virtual environment
-        if: |
-          (startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS'))
-          && steps.cache.outputs.cache-hit != 'true'
+      - name: "Create virtual environment"
+        if: "steps.restore-cache.outputs.cache-hit == false"
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip
-          python -m pip install poetry
-          poetry update
+          python -m venv .venv
+          ${{ env.venv-path }}/python -m pip install --upgrade pip setuptools wheel
+          ${{ env.venv-path }}/python -m pip install tox
 
-      - name: Create virtual environment
-        if: |
-          startsWith(runner.os, 'Windows')
-          && steps.cache.outputs.cache-hit != 'true'
-        run: |
-          python -m venv venv
-          .\venv\scripts\activate.ps1
-          python -m pip install --upgrade pip
-          python -m pip install poetry
-          poetry update
+      - name: "Run tests"
+        run: "${{ env.venv-path }}/tox run -m ${{ matrix.config.test-label }}"
 
-      - name: Run tox (*nix)
-        if: ${{ startsWith(runner.os, 'Linux') || startsWith(runner.os, 'macOS') }}
-        run: |
-          source venv/bin/activate
-          tox -e py,py-chardet
-
-      - name: Run tox (Windows)
-        if: ${{ startsWith(runner.os, 'Windows') }}
-        run: |
-          .\venv\scripts\activate.ps1
-          tox -e py,py-chardet
-
-      - name: Run tox (mypy)
-        if: ${{ startsWith(runner.os, 'Linux') && matrix.python-version == '3.10' }}
-        run: |
-          source venv/bin/activate
-          tox -e mypy
-
-  docs:
-    name: "Build documentation"
-
-    runs-on: ubuntu-latest
+  lint:
+    name: "Lint"
+    runs-on: "ubuntu-latest"
 
     steps:
-      - name: Checkout the repo
-        uses: actions/checkout@v3
+      - name: "Checkout the repo"
+        uses: "actions/checkout@v3"
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
+      - name: "Setup Python"
+        id: "setup-python"
+        uses: "actions/setup-python@v4"
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
-      - name: Cache virtual environment
-        id: cache
-        uses: actions/cache@v3
+      - name: "Determine month number"
+        shell: "bash"
+        run: "date +'%m' > month-number.txt"
+
+      - name: "Restore cache"
+        id: "restore-cache"
+        uses: "actions/cache@v3"
         with:
-          path: venv
-          key: "venv-${{ hashFiles('pyproject.toml') }}"
+          path: |
+            .tox/
+            .venv/
+          key: "lint-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('month-number.txt', 'pyproject.toml', 'tox.ini') }}"
 
 
-      - name: Create virtual environment
-        if: steps.cache.outputs.cache-hit != 'true'
+      - name: "Create virtual environment"
+        if: "steps.restore-cache.outputs.cache-hit == false"
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          python -m pip install --upgrade pip
-          python -m pip install poetry
-          poetry update
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip setuptools wheel
+          .venv/bin/python -m pip install tox
 
-      - name: Test building the documentation
-        run: |
-          source venv/bin/activate
-          tox -e docs
+      - name: "Build the documentation"
+        run: ".venv/bin/tox run -e docs"
+
+      - name: "Check type annotations"
+        run: ".venv/bin/tox run -e mypy"
