@@ -57,4 +57,6 @@ profile = "black"
 
 
 [tool.mypy]
+packages = "feedparser"
 show_error_codes = true
+sqlite_cache = true

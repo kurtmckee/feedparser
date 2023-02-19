@@ -91,6 +91,7 @@ jobs:
         uses: "actions/cache@v3"
         with:
           path: |
+            .mypy_cache/
             .tox/
             .venv/
           key: "lint-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('month-number.txt', 'pyproject.toml', 'tox.ini') }}"
