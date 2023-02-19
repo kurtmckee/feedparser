@@ -27,9 +27,6 @@ sgmllib3k = "^1.0.0"
 Sphinx = "^3.4.1"
 scriv = "^0.10.0"
 
-# mypy depends on typed_ast, which doesn't work with PyPy3.
-# https://github.com/python/typed_ast/issues/111
-mypy = {version = "^0.910", markers = "implementation_name != 'pypy'"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
