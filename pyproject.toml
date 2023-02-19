@@ -42,5 +42,10 @@ insert_marker = "scriv-insert-here"
 main_branches = ["develop", "master"]
 new_fragment_template = "file: fragment-template.rst.txt"
 
+
+[tool.isort]
+profile = "black"
+
+
 [tool.mypy]
 show_error_codes = true
