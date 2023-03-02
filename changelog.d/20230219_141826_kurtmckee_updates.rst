@@ -1,5 +1,5 @@
-Stewardship
------------
+Project development
+-------------------
 
 *   Add an `EditorConfig <https://editorconfig.org/>`_ configuration.
 *   Add a `pre-commit <https://pre-commit.com/>`_ configuration.

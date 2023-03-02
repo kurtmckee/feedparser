@@ -1,4 +1,4 @@
-Changed
--------
+Documentation
+-------------
 
 *   Standardize all ``CHANGELOG.rst`` entries.
