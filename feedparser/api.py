@@ -32,7 +32,7 @@ import time
 import urllib.error
 import urllib.parse
 import xml.sax
-from typing import Optional, IO, Dict, List, Union
+from typing import IO, Dict, List, Optional, Union
 
 from . import http
 from .datetimes import _parse_date, registerDateHandler
