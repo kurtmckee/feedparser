@@ -1,5 +1,5 @@
 <!--
-Description: entry title type='' -- no base64/unicodedecodeerror crash
+Description: entry title type='' - no base64/unicodedecodeerror crash
 Expect:      entries[0]['title'] == 'evil'
 -->
 <feed xmlns="http://www.w3.org/2005/Atom">
