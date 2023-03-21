@@ -5,59 +5,63 @@ import pytest
 import feedparser
 import feedparser.encodings
 
-# feed_xml = b"""
-#     <rss version="2.0">
-#         <channel>
-#             <item>
-#                 <body><script>alert("boo!")</script></body>
-#             </item>
-#             <item>
-#                 <body><a href="/boo.html">boo</a></body>
-#             </item>
-#         </channel>
-#     </rss>
-# """
-#
-#
-# def test_sanitize_html_default():
-#     d = feedparser.parse(io.BytesIO(feed_xml))
-#     assert d.entries[0].content[0].value == ""
-#
-#
-# def test_sanitize_html_on():
-#     d = feedparser.parse(io.BytesIO(feed_xml), sanitize_html=True)
-#     assert d.entries[0].content[0].value == ""
-#
-#
-# def test_sanitize_html_off():
-#     d = feedparser.parse(io.BytesIO(feed_xml), sanitize_html=False)
-#     assert d.entries[0].content[0].value == '<script>alert("boo!")</script>'
-#
-#
-# def test_resolve_relative_uris_default():
-#     d = feedparser.parse(
-#         io.BytesIO(feed_xml),
-#         response_headers={"content-location": "http://example.com/feed"},
-#     )
-#     assert d.entries[1].content[0].value == '<a href="http://example.com/boo.html">boo</a>'
-#
-#
-# def test_resolve_relative_uris_on():
-#     d = feedparser.parse(
-#         io.BytesIO(feed_xml),
-#         response_headers={"content-location": "http://example.com/feed"},
-#         resolve_relative_uris=True,
-#     )
-#     assert d.entries[1].content[0].value == '<a href="http://example.com/boo.html">boo</a>'
-#
-#
-# def test_resolve_relative_uris_off():
-#     d = feedparser.parse(
-#         io.BytesIO(feed_xml),
-#         response_headers={"content-location": "http://example.com/feed.xml"},
-#         resolve_relative_uris=False,
-#     )
-#     assert d.entries[1].content[0].value == '<a href="/boo.html">boo</a>'
+feed_xml = b"""
+    <rss version="2.0">
+        <channel>
+            <item>
+                <body><script>alert("boo!")</script></body>
+            </item>
+            <item>
+                <body><a href="/boo.html">boo</a></body>
+            </item>
+        </channel>
+    </rss>
+"""
+
+
+def test_sanitize_html_default():
+    d = feedparser.parse(io.BytesIO(feed_xml))
+    assert d.entries[0].content[0].value == ""
+
+
+def test_sanitize_html_on():
+    d = feedparser.parse(io.BytesIO(feed_xml), sanitize_html=True)
+    assert d.entries[0].content[0].value == ""
+
+
+def test_sanitize_html_off():
+    d = feedparser.parse(io.BytesIO(feed_xml), sanitize_html=False)
+    assert d.entries[0].content[0].value == '<script>alert("boo!")</script>'
+
+
+def test_resolve_relative_uris_default():
+    d = feedparser.parse(
+        io.BytesIO(feed_xml),
+        response_headers={"content-location": "http://example.com/feed"},
+    )
+    assert d.entries[1].content[0].value == (
+        '<a href="http://example.com/boo.html">boo</a>'
+    )
+
+
+def test_resolve_relative_uris_on():
+    d = feedparser.parse(
+        io.BytesIO(feed_xml),
+        response_headers={"content-location": "http://example.com/feed"},
+        resolve_relative_uris=True,
+    )
+    assert d.entries[1].content[0].value == (
+        '<a href="http://example.com/boo.html">boo</a>'
+    )
+
+
+def test_resolve_relative_uris_off():
+    d = feedparser.parse(
+        io.BytesIO(feed_xml),
+        response_headers={"content-location": "http://example.com/feed.xml"},
+        resolve_relative_uris=False,
+    )
+    assert d.entries[1].content[0].value == '<a href="/boo.html">boo</a>'
 
 
 length = feedparser.encodings.CONVERT_FILE_PREFIX_LEN

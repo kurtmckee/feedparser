@@ -75,7 +75,7 @@ def _parse_date_greek(date_string):
     wday = _greek_wdays[m.group(1)]
     month = _greek_months[m.group(3)]
     rfc822date = (
-        "%(wday)s, %(day)s %(month)s %(year)s %(hour)s:%(minute)s:%(second)s %(zonediff)s"
+        "%(wday)s, %(day)s %(month)s %(year)s %(hour)s:%(minute)s:%(second)s %(offset)s"
         % {
             "wday": wday,
             "day": m.group(2),
@@ -84,7 +84,7 @@ def _parse_date_greek(date_string):
             "hour": m.group(5),
             "minute": m.group(6),
             "second": m.group(7),
-            "zonediff": m.group(8),
+            "offset": m.group(8),
         }
     )
     return _parse_date_rfc822(rfc822date)

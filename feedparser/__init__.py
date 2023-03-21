@@ -27,7 +27,13 @@
 
 from .api import parse
 from .datetimes import registerDateHandler
-from .exceptions import *
+from .exceptions import (
+    CharacterEncodingOverride,
+    CharacterEncodingUnknown,
+    FeedparserError,
+    NonXMLContentType,
+    UndeclaredNamespace,
+)
 from .util import FeedParserDict
 
 __author__ = "Kurt McKee <contactme@kurtmckee.org>"
@@ -51,3 +57,15 @@ SANITIZE_HTML = 1
 # If you want feedparser to use only a prefix of the feed to detect encodings
 # (uses less memory), set this to 1.
 OPTIMISTIC_ENCODING_DETECTION = 1
+
+
+__all__ = (
+    "parse",
+    "registerDateHandler",
+    "FeedParserDict",
+    "FeedparserError",
+    "CharacterEncodingOverride",
+    "CharacterEncodingUnknown",
+    "NonXMLContentType",
+    "UndeclaredNamespace",
+)

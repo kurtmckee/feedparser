@@ -37,7 +37,7 @@ def test_issue_328_fallback_behavior():
         pass
     else:
         # Wrong behavior
-        assert False, "No DeprecationWarning was raised"
+        raise AssertionError("No DeprecationWarning was raised")
     try:
         d["updated_parsed"]
     except DeprecationWarning:
@@ -45,7 +45,7 @@ def test_issue_328_fallback_behavior():
         pass
     else:
         # Wrong behavior
-        assert False, "No DeprecationWarning was raised"
+        raise AssertionError("No DeprecationWarning was raised")
     # Ensure that `updated` maps to `published`
     warnings.filterwarnings("ignore")
     assert d["updated"] == "pub string"

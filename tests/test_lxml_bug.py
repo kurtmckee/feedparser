@@ -16,4 +16,4 @@ def test_lxml_etree_bug():
     # Importing lxml.etree currently causes libxml2 to
     # throw SAXException instead of SAXParseException.
     feedparser.parse(io.BytesIO(doc))
-    assert False, "what is this testing?"
+    raise AssertionError("what is this testing?")

@@ -39,6 +39,12 @@ from .sanitizer import HTMLSanitizer, sanitize_html
 from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
 from .util import FeedParserDict
 
+email_pattern = re.compile(
+    r"(([a-zA-Z0-9_.+-]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)"
+    r"|(([a-zA-Z0-9-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?))"
+    r"(\?subject=\S+)?"
+)
+
 
 class XMLParserMixin(
     _base.Namespace,
@@ -70,7 +76,9 @@ class XMLParserMixin(
         "http://backend.userland.com/blogChannelModule": "blogChannel",
         "http://creativecommons.org/ns#license": "cc",
         "http://web.resource.org/cc/": "cc",
-        "http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html": "creativeCommons",
+        "http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html": (
+            "creativeCommons"
+        ),
         "http://backend.userland.com/creativeCommonsRssModule": "creativeCommons",
         "http://purl.org/rss/1.0/modules/company": "co",
         "http://purl.org/rss/1.0/modules/content/": "content",
@@ -790,10 +798,7 @@ class XMLParserMixin(
             author, email = context.get(key), None
             if not author:
                 return
-            emailmatch = re.search(
-                r"(([a-zA-Z0-9_.+-]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([a-zA-Z0-9-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?))(\?subject=\S+)?",
-                author,
-            )
+            emailmatch = email_pattern.search(author)
             if emailmatch:
                 email = emailmatch.group(0)
                 # probably a better way to do the following, but it passes

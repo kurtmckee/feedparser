@@ -35,7 +35,6 @@ import xml.sax
 from typing import IO, Dict, List, Optional, Union
 
 from . import http
-from .datetimes import _parse_date, registerDateHandler
 from .encodings import MissingEncoding, convert_file_to_utf8
 from .html import BaseHTMLProcessor
 from .mixin import XMLParserMixin
@@ -43,7 +42,7 @@ from .parsers.json import JSONParser
 from .parsers.loose import LooseXMLParser
 from .parsers.strict import StrictXMLParser
 from .sanitizer import replace_doctype
-from .urls import convert_to_idn, make_safe_absolute_uri
+from .urls import make_safe_absolute_uri
 from .util import FeedParserDict
 
 # List of preferred XML parsers, by SAX driver name.  These will be tried first,
@@ -163,7 +162,7 @@ def _open_resource(
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
         return open(url_file_stream_or_string, "rb")
-    except (OSError, UnicodeEncodeError, TypeError, ValueError):
+    except (OSError, TypeError, ValueError):
         # if url_file_stream_or_string is a str object that
         # cannot be converted to the encoding returned by
         # sys.getfilesystemencoding(), a UnicodeEncodeError
