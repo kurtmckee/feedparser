@@ -36,7 +36,9 @@ class Namespace:
         # Old RDF-based namespace
         "http://web.resource.org/cc/": "cc",
         # RSS-based namespace
-        "http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html": "creativecommons",
+        "http://cyber.law.harvard.edu/rss/creativeCommonsRssModule.html": (
+            "creativecommons"
+        ),
         # Old RSS-based namespace
         "http://backend.userland.com/creativeCommonsRssModule": "creativecommons",
     }

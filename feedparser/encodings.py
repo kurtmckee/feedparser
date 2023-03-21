@@ -262,7 +262,8 @@ def convert_to_utf8(http_headers, data, result):
     # - http_encoding is the encoding declared in the Content-Type HTTP header
     # - xml_encoding is the encoding declared in the <?xml declaration
     # - bom_encoding is the encoding sniffed from the first 4 bytes of the XML data
-    # - rfc3023_encoding is the actual encoding, as per RFC 3023 and a variety of other conflicting specifications
+    # - rfc3023_encoding is the actual encoding, as per RFC 3023
+    #   and a variety of other conflicting specifications
     error = None
 
     if http_headers and (not acceptable_content_type):

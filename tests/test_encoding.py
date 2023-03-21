@@ -14,7 +14,10 @@ http_files = [file for file in encoding_files if "http" in file]
 
 
 def test_doctype_replacement():
-    """Ensure that non-ASCII-compatible encodings don't hide disallowed ENTITY declarations"""
+    """
+    Ensure that non-ASCII-compatible encodings don't hide disallowed ENTITY declarations
+    """
+
     doc = """<?xml version="1.0" encoding="utf-16be"?>
     <!DOCTYPE feed [
         <!ENTITY exponential1 "bogus ">

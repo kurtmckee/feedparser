@@ -28,7 +28,20 @@
 import html.entities
 import re
 
-from .sgml import *
+# These items must all be imported into this module due to .__code__ replacements.
+from .sgml import (  # noqa: F401
+    attrfind,
+    charref,
+    endbracket,
+    entityref,
+    incomplete,
+    interesting,
+    sgmllib,
+    shorttag,
+    shorttagopen,
+    starttagopen,
+    tagfind,
+)
 
 _cp1252 = {
     128: "\u20ac",  # euro sign

@@ -69,7 +69,7 @@ class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 
 class FeedParserTestServer(threading.Thread):
-    """HTTP Server that runs in a thread and handles a predetermined number of requests"""
+    """HTTP Server that runs in a thread and handles unlimitied requests."""
 
     def __init__(self):
         threading.Thread.__init__(self, daemon=True)
