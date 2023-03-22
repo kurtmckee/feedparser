@@ -6,9 +6,11 @@
 
 build/
 dist/
+htmlcov/
 
 *.egg-info/
 
+.coverage*
 *.html
 *.pyc
 
