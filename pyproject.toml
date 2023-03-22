@@ -61,3 +61,28 @@ profile = "black"
 packages = "feedparser"
 show_error_codes = true
 sqlite_cache = true
+
+
+[tool.coverage.run]
+parallel = true
+branch = true
+source = [
+    "feedparser",
+    "tests",
+]
+
+
+[tool.coverage.paths]
+source = [
+    "src",
+    "*/site-packages",
+]
+
+
+[tool.coverage.report]
+skip_covered = true
+fail_under = 92
+
+
+[tool.coverage.html]
+directory = "htmlcov/"
