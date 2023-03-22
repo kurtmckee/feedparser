@@ -81,7 +81,7 @@ source = [
 
 [tool.coverage.report]
 skip_covered = true
-fail_under = 92
+fail_under = 93
 
 
 [tool.coverage.html]

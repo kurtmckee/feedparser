@@ -44,10 +44,7 @@ def test_gb2312_converted_to_gb18030_in_xml_encoding():
 def test_local_encoding_file(file):
     data, text = get_file_contents(file)
     description, eval_string, skip_unless = get_test_data(file, text)
-    try:
-        eval(skip_unless)
-    except LookupError as error:
-        pytest.skip(error.args[0])
+    assert eval(skip_unless)
     fail_unless_eval(file, eval_string)
 
 

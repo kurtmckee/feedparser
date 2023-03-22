@@ -57,8 +57,7 @@ def get_test_data(path: str, text: str) -> tuple[str, list[str], str]:
     else:
         skip_unless = "1"
     search_results = desc_re.search(text)
-    if not search_results:
-        raise RuntimeError("can't parse %s" % path)
+    assert search_results is not None
     description, eval_string = (s.strip() for s in list(search_results.groups()))
     description = path + ": " + description
     return description, eval_string, skip_unless
@@ -87,6 +86,5 @@ def fail_unless_eval(xmlfile, eval_string, msg=None):
     if not eval(eval_string, globals(), env):
         failure = msg or f"not eval({eval_string}) \nWITH env({pprint.pformat(env)})"
         raise AssertionError(failure)
-    if not everything_is_unicode(env):
-        failure = f"not everything is unicode \nWITH env({pprint.pformat(env)})"
-        raise AssertionError(failure)
+    failure = f"not everything is unicode \nWITH env({pprint.pformat(env)})"
+    assert everything_is_unicode(env), failure
