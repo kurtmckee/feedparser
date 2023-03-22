@@ -1,5 +1,7 @@
 import warnings
 
+import pytest
+
 import feedparser
 
 
@@ -30,22 +32,10 @@ def test_issue_328_fallback_behavior():
     assert "updated" not in d
     assert "updated_parsed" not in d
     # Ensure that accessing `updated` throws a DeprecationWarning
-    try:
+    with pytest.warns(DeprecationWarning):
         d["updated"]
-    except DeprecationWarning:
-        # Expected behavior
-        pass
-    else:
-        # Wrong behavior
-        raise AssertionError("No DeprecationWarning was raised")
-    try:
+    with pytest.warns(DeprecationWarning):
         d["updated_parsed"]
-    except DeprecationWarning:
-        # Expected behavior
-        pass
-    else:
-        # Wrong behavior
-        raise AssertionError("No DeprecationWarning was raised")
     # Ensure that `updated` maps to `published`
     warnings.filterwarnings("ignore")
     assert d["updated"] == "pub string"

@@ -25,8 +25,7 @@ for path_ in pathlib.Path("tests/illformed").rglob("*.xml"):
 def test_strict_parser(info):
     path, data, text, description, eval_string, skip_unless = info
     try:
-        if not eval(skip_unless, globals(), {}):
-            raise ValueError
+        eval(skip_unless, globals(), {})
     except (ModuleNotFoundError, ValueError):
         pytest.skip(description)
     result = feedparser.parse(data)
@@ -37,11 +36,6 @@ def test_strict_parser(info):
 @pytest.mark.parametrize("info", http_tests)
 def test_http_conditions(info, http_server, get_url):
     path, data, text, description, eval_string, skip_unless = info
-    try:
-        if not eval(skip_unless, globals(), {}):
-            raise ValueError
-    except (ModuleNotFoundError, ValueError):
-        pytest.skip(description)
     url = get_url(str(path))
     result = feedparser.parse(url)
     assert result["bozo"] is True

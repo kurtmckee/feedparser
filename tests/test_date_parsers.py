@@ -18,22 +18,9 @@ def test_none():
     assert _parse_date(None) is None
 
 
-def _check_date(fn, dt, expected_value):
-    try:
-        parsed_value = fn(dt)
-    except (OverflowError, ValueError):
-        parsed_value = None
-    assert parsed_value == expected_value
-
-
 def test_year_10000_date():
-    # On some systems this date string will trigger an OverflowError.
-    # On Jython and x64 systems, however, it's interpreted just fine.
-    try:
-        date = _parse_date_rfc822("Sun, 31 Dec 9999 23:59:59 -9999")
-    except OverflowError:
-        date = None
-    assert date in (None, (10000, 1, 5, 4, 38, 59, 2, 5, 0))
+    date = _parse_date_rfc822("Sun, 31 Dec 9999 23:59:59 -9999")
+    assert date is None
 
 
 @pytest.mark.parametrize(
@@ -326,8 +313,5 @@ def test_year_10000_date():
     ),
 )
 def test_date_parser(parse_date, input_value, expected_value):
-    try:
-        parsed_value = parse_date(input_value)
-    except (OverflowError, ValueError):
-        parsed_value = None
+    parsed_value = parse_date(input_value)
     assert parsed_value == expected_value
