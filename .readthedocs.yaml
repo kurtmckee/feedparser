@@ -15,4 +15,4 @@ sphinx:
 # Enforce specific versions of Sphinx.
 python:
   install:
-    - requirements: "docs/requirements.txt"
+    - requirements: "requirements/docs.txt"
