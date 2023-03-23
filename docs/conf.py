@@ -21,6 +21,7 @@ nitpicky = True
 # HTML options
 # Files in `html_static_path` will be copied to `_static/` when compiled.
 html_static_path = ["_static"]
+html_theme = "sphinx_rtd_theme"
 
 # Use a custom extension to make Sphinx add a <link> to `feedparser.css`.
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
