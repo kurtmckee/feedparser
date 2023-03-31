@@ -189,4 +189,4 @@ def test_encoding(encoding):
 
     result = feedparser.parse(data.strip().encode(encoding))
     assert result["encoding"] == encoding
-    assert result["feed"]["title"] == b"\x80".decode(encoding)
+    assert result["feed"]["title"] == expected
