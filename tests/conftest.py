@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import http.server
-import io
-import os
 import posixpath
 import re
 import threading
@@ -16,8 +14,10 @@ HOST = "127.0.0.1"  # also not really configurable
 class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
     headers_re = re.compile(rb"^Header:\s+([^:]+):(.+)$", re.MULTILINE)
 
-    def send_head(self):
-        """Send custom headers defined in test case
+    def do_GET(self):
+        """Handle a GET request.
+
+        HTTP headers will be customized based on what's defined in the requested path.
 
         Example:
         <!--
@@ -25,13 +25,19 @@ class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
         Header:   X-Foo: bar
         -->
         """
+
         # Short-circuit the HTTP status test `test_redirect_to_304()`
         if self.path == "/-/return-304.xml":
             self.send_response(304)
             self.send_header("Content-type", "text/xml")
             self.end_headers()
-            return io.BytesIO(b"")
+            self.wfile.write(b"")
+            return
+
         path = self.translate_path(self.path)
+        with open(path, "rb") as file:
+            blob = file.read()
+
         # the compression tests' filenames determine the header sent
         if self.path.startswith("/tests/compression"):
             if self.path.endswith("gz"):
@@ -40,13 +46,10 @@ class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
                 headers = {"Content-Encoding": "deflate"}
             headers["Content-type"] = "application/xml"
         else:
-            with open(path, "rb") as f:
-                blob = f.read()
             headers = {
                 k.decode("utf-8"): v.decode("utf-8").strip()
                 for k, v in self.headers_re.findall(blob)
             }
-        f = open(path, "rb")
         if self.headers.get("if-modified-since") == headers.get(
             "Last-Modified", "nom"
         ) or self.headers.get("if-none-match") == headers.get("ETag", "nomatch"):
@@ -57,12 +60,12 @@ class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(int(headers["Status"]))
         headers.setdefault("Content-type", self.guess_type(path))
         self.send_header("Content-type", headers["Content-type"])
-        self.send_header("Content-Length", str(os.stat(f.name)[6]))
+        self.send_header("Content-Length", len(blob))
         for k, v in headers.items():
             if k not in ("Status", "Content-type"):
                 self.send_header(k, v)
         self.end_headers()
-        return f
+        self.wfile.write(blob)
 
     def log_request(self, *args):
         pass
