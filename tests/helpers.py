@@ -15,9 +15,7 @@ def get_file_contents(file: str) -> tuple[bytes, str]:
     with open(file, "rb") as fp:
         data = fp.read()
 
-    if data[:4] == b"\x4c\x6f\xa7\x94":
-        return data, data.decode("cp037")
-    elif data[:4] == b"\x00\x00\xfe\xff":
+    if data[:4] == b"\x00\x00\xfe\xff":
         return data, data.decode("utf-32be")
     elif data[:4] == b"\xff\xfe\x00\x00":
         return data, data.decode("utf-32le")

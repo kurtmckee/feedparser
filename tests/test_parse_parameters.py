@@ -86,9 +86,6 @@ class NonSeekableFileWrapper:
     def read(self, *args, **kwargs):
         return self.file.read(*args, **kwargs)
 
-    def close(self):
-        pass
-
 
 @pytest.mark.parametrize(
     "kwargs",
