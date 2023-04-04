@@ -1,0 +1,7 @@
+<!--
+Header:      X-Foo: bar
+Description: modified should not exist in results if not present in HTTP headers
+Expect:      not bozo and not 'modified' in locals()
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+</feed>

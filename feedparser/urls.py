@@ -96,31 +96,6 @@ def _urljoin(base, uri):
     return uri
 
 
-def convert_to_idn(url):
-    """Convert a URL to IDN notation"""
-    # this function should only be called with a unicode string
-    # strategy: if the host cannot be encoded in ascii, then
-    # it'll be necessary to encode it in idn form
-    parts = list(urllib.parse.urlsplit(url))
-    try:
-        parts[1].encode("ascii")
-    except UnicodeEncodeError:
-        # the url needs to be converted to idn notation
-        host = parts[1].rsplit(":", 1)
-        newhost = []
-        port = ""
-        if len(host) == 2:
-            port = host.pop()
-        for h in host[0].split("."):
-            newhost.append(h.encode("idna").decode("utf-8"))
-        parts[1] = ".".join(newhost)
-        if port:
-            parts[1] += ":" + port
-        return urllib.parse.urlunsplit(parts)
-    else:
-        return url
-
-
 def make_safe_absolute_uri(base, rel=None):
     # bail if ACCEPTABLE_URI_SCHEMES is empty
     if not ACCEPTABLE_URI_SCHEMES:

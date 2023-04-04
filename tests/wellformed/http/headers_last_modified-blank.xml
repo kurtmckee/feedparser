@@ -1,0 +1,7 @@
+<!--
+Header:      Last-Modified:
+Description: modified should not exist in results when blank
+Expect:      not bozo and not 'modified' in locals()
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+</feed>

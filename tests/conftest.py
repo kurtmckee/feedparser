@@ -12,7 +12,7 @@ HOST = "127.0.0.1"  # also not really configurable
 
 
 class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
-    headers_re = re.compile(rb"^Header:\s+([^:]+):(.+)$", re.MULTILINE)
+    headers_re = re.compile(rb"^Header:\s+([^:]+):(.*)$", re.MULTILINE)
 
     def do_GET(self):
         """Handle a GET request.
@@ -26,36 +26,15 @@ class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
         -->
         """
 
-        # Short-circuit the HTTP status test `test_redirect_to_304()`
-        if self.path == "/-/return-304.xml":
-            self.send_response(304)
-            self.send_header("Content-type", "text/xml")
-            self.end_headers()
-            self.wfile.write(b"")
-            return
-
         path = self.translate_path(self.path)
         with open(path, "rb") as file:
             blob = file.read()
 
-        # the compression tests' filenames determine the header sent
-        if self.path.startswith("/tests/compression"):
-            if self.path.endswith("gz"):
-                headers = {"Content-Encoding": "gzip"}
-            else:
-                headers = {"Content-Encoding": "deflate"}
-            headers["Content-type"] = "application/xml"
-        else:
-            headers = {
-                k.decode("utf-8"): v.decode("utf-8").strip()
-                for k, v in self.headers_re.findall(blob)
-            }
-        if self.headers.get("if-modified-since") == headers.get(
-            "Last-Modified", "nom"
-        ) or self.headers.get("if-none-match") == headers.get("ETag", "nomatch"):
-            status = "304"
-        else:
-            status = "200"
+        headers = {
+            k.decode("utf-8"): v.decode("utf-8").strip()
+            for k, v in self.headers_re.findall(blob)
+        }
+        status = "200"
         headers.setdefault("Status", status)
         self.send_response(int(headers["Status"]))
         headers.setdefault("Content-type", self.guess_type(path))
