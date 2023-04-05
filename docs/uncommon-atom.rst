@@ -14,7 +14,7 @@ Accessing contributors
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> e = d.entries[0]
     >>> len(e.contributors)
     2
@@ -38,7 +38,7 @@ Accessing multiple links
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> e = d.entries[0]
     >>> len(e.links)
     4

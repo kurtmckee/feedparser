@@ -22,7 +22,7 @@ Customizing the User-Agent
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml',
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml',
     agent='MyApp/1.0 +http://example.com/')
 
 You can also set the User-Agent once, globally, and then call the ``parse``
@@ -36,7 +36,7 @@ Customizing the User-Agent permanently
 
     >>> import feedparser
     >>> feedparser.USER_AGENT = "MyApp/1.0 +http://example.com/"
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
 
 
 :program:`Universal Feed Parser` also lets you set the referrer when you
@@ -52,5 +52,5 @@ Customizing the referrer
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml',
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml',
     referrer='http://example.com/')

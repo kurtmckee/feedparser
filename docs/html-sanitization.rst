@@ -739,7 +739,7 @@ attributes:
 Embedding Javascript in :abbr:`CSS (Cascading Style Sheets)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This sample is taken from `http://feedparser.org/docs/examples/rss20.xml <http://feedparser.org/docs/examples/rss20.xml>`_:
+This sample is taken from `$READTHEDOCS_CANONICAL_URL/examples/rss20.xml <$READTHEDOCS_CANONICAL_URL/examples/rss20.xml>`_:
 
 .. sourcecode:: html
 

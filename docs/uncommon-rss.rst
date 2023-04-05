@@ -14,7 +14,7 @@ Accessing feed image
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
     >>> d.feed.image
     {'title': 'Example banner',
     'href': 'http://example.org/banner.png',
@@ -35,7 +35,7 @@ Accessing multiple categories
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
     >>> d.feed.categories
     [('Syndic8', '1024'),
     ('dmoz', 'Top/Society/People/Personal_Homepages/P/')]
@@ -60,7 +60,7 @@ Accessing enclosures
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
     >>> e = d.entries[0]
     >>> len(e.enclosures)
     1
@@ -78,7 +78,7 @@ No one is quite sure what a cloud is.
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
     >>> d.feed.cloud
     {'domain': 'rpc.example.com',
     'port': '80',

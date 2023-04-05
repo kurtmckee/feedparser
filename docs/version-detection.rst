@@ -11,19 +11,19 @@ Accessing feed version
 
 ::
 
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d.version
     'atom10'
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom03.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom03.xml')
     >>> d.version
     'atom03'
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
     >>> d.version
     'rss20'
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss20dc.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20dc.xml')
     >>> d.version
     'rss20'
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/rss10.rdf')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss10.rdf')
     >>> d.version
     'rss10'
 

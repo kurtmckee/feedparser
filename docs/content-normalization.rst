@@ -18,7 +18,7 @@ Accessing an Atom feed as an :abbr:`RSS (Rich Site Summary)` feed
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d['channel']['title']
     'Sample Feed'
     >>> d['channel']['link']
@@ -46,7 +46,7 @@ Accessing an :abbr:`RSS (Rich Site Summary)` feed as an Atom feed
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse(' http://feedparser.org/docs/examples/rss20.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
     >>> d.feed.subtitle_detail
     {'type': 'text/html',
     'base': 'http://feedparser.org/docs/examples/rss20.xml',

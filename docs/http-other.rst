@@ -15,7 +15,7 @@ Sending custom :abbr:`HTTP (Hypertext Transfer Protocol)` request headers
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom03.xml',
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom03.xml',
                               request_headers={'Cache-control': 'max-age=0'})
 
 
@@ -25,7 +25,7 @@ Accessing other :abbr:`HTTP (Hypertext Transfer Protocol)` response headers
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom03.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom03.xml')
     >>> d.headers
     {'date': 'Fri, 11 Jun 2004 23:57:50 GMT',
     'server': 'Apache/2.0.49 (Debian GNU/Linux)',

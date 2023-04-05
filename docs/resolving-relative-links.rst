@@ -138,7 +138,7 @@ xml:base on the root-level element
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse("http://feedparser.org/docs/examples/base.xml")
+    >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
     >>> d.feed.link
     'http://example.org/index.html'
     >>> d.feed.generator_detail.href
@@ -154,7 +154,7 @@ Overriding xml:base on an <entry>
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse("http://feedparser.org/docs/examples/base.xml")
+    >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
     >>> d.entries[0].link
     'http://example.org/archives/000001.html'
     >>> d.entries[0].author_detail.href
@@ -176,7 +176,7 @@ Relative links within embedded :abbr:`HTML (HyperText Markup Language)`
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse("http://feedparser.org/docs/examples/base.xml")
+    >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
     >>> d.entries[0].content[0].value
     '<p id="anchor1"><a href="http://example.org/archives/000001.html#anchor2">skip to anchor 2</a></p>
     <p>Some content</p>
@@ -193,7 +193,7 @@ xml:base and sibling attributes
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse("http://feedparser.org/docs/examples/base.xml")
+    >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
     >>> d.entries[0].links[1].rel
     'service.edit'
     >>> d.entries[0].links[1].href
@@ -212,7 +212,7 @@ Content-Location :abbr:`HTTP (Hypertext Transfer Protocol)` header
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse("http://feedparser.org/docs/examples/http_base.xml")
+    >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/http_base.xml")
     >>> d.feed.link
     'http://example.org/index.html'
     >>> d.entries[0].link
@@ -232,7 +232,7 @@ Feed :abbr:`URL (Uniform Resource Locator)` as default base :abbr:`URI (Uniform 
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse("http://feedparser.org/docs/examples/no_base.xml")
+    >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/no_base.xml")
     >>> d.feed.link
     'http://feedparser.org/docs/examples/index.html
     >>> d.entries[0].link
@@ -256,7 +256,7 @@ How to disable relative :abbr:`URI (Uniform Resource Identifier)` resolution
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/base.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/base.xml')
     >>> d.entries[0].content[0].base
     'http://example.org/archives/000001.html'
     >>> print d.entries[0].content[0].value
@@ -264,7 +264,7 @@ How to disable relative :abbr:`URI (Uniform Resource Identifier)` resolution
     <p>Some content</p>
     <p id="anchor2">This is anchor 2</p>
     >>> feedparser.RESOLVE_RELATIVE_URIS = 0
-    >>> d2 = feedparser.parse('http://feedparser.org/docs/examples/base.xml')
+    >>> d2 = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/base.xml')
     >>> d2.entries[0].content[0].base
     'http://example.org/archives/000001.html'
     >>> print d2.entries[0].content[0].value
