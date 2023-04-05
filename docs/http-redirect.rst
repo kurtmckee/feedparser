@@ -24,7 +24,7 @@ Noticing temporary redirects
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/temporary.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/temporary.xml')
     >>> d.status
     302
     >>> d.href
@@ -51,7 +51,7 @@ Noticing permanent redirects
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/permanent.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/permanent.xml')
     >>> d.status
     301
     >>> d.href
@@ -76,6 +76,6 @@ Noticing feeds marked "gone"
 
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/gone.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/gone.xml')
     >>> d.status
     410

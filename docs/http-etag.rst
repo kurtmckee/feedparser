@@ -21,10 +21,10 @@ Using ETags to reduce bandwidth
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d.etag
     '"6c132-941-ad7e3080"'
-    >>> d2 = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml', etag=d.etag)
+    >>> d2 = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml', etag=d.etag)
     >>> d2.status
     304
     >>> d2.feed
@@ -49,12 +49,12 @@ Using Last-Modified headers to reduce bandwidth
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d.modified
     Fri, 11 Jun 2012 23:00:34 GMT
     >>> d.modified_parsed
     (2004, 6, 11, 23, 0, 34, 4, 163, 0)
-    >>> d2 = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml', modified=d.modified)
+    >>> d2 = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml', modified=d.modified)
     >>> d2.status
     304
     >>> d2.feed

@@ -14,7 +14,7 @@ Testing if elements are present
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> 'title' in d.feed
     True
     >>> 'ttl' in d.feed

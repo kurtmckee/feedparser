@@ -69,7 +69,7 @@ Downloading a feed protected by :abbr:`HTTP (Hypertext Transfer Protocol)` basic
     # handlers is a list because there might be more than one
     # type of handler (urllib2 defines lots of different ones,
     # and you can build your own)
-    d = feedparser.parse('http://feedparser.org/docs/examples/basic_auth.xml',
+    d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/basic_auth.xml',
                          handlers=[auth])
 
 
@@ -90,7 +90,7 @@ Downloading a feed protected by :abbr:`HTTP (Hypertext Transfer Protocol)` diges
 
     auth = urllib2.HTTPDigestAuthHandler()
     auth.add_password('DigestTest', 'feedparser.org', 'test', 'digest')
-    d = feedparser.parse('http://feedparser.org/docs/examples/digest_auth.xml',
+    d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/digest_auth.xml',
                           handlers=[auth])
 
 
@@ -119,12 +119,12 @@ Determining that a feed is password-protected
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/basic_auth.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/basic_auth.xml')
     >>> d.status
     401
     >>> d.headers['www-authenticate']
     'Basic realm="Use test/basic"'
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/digest_auth.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/digest_auth.xml')
     >>> d.status
     401
     >>> d.headers['www-authenticate']

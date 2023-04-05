@@ -1,4 +1,3 @@
-import os
 import pathlib
 import re
 import sys
@@ -22,7 +21,15 @@ nitpicky = True
 # Files in `html_static_path` will be copied to `_static/` when compiled.
 html_static_path = ["_static"]
 html_theme = "sphinx_rtd_theme"
+# Example feeds that will be hosted by Read the Docs.
+# The files are double-nested in 'examples/examples/'
+# because they're copied to the root of the drive.
+html_extra_path = ["examples"]
 
-# Use a custom extension to make Sphinx add a <link> to `feedparser.css`.
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-extensions = ["add_custom_css"]
+sys.path.append(str(pathlib.Path(__file__).parent / "extensions"))
+extensions = [
+    # Make Sphinx add a <link> to `feedparser.css`.
+    "add_custom_css",
+    # Unconditionally replace $XYZ variables in .rst sources.
+    "variable_substitutions",
+]

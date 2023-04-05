@@ -22,7 +22,7 @@ Accessing namespaced elements
 ::
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/prism.rdf')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/prism.rdf')
     >>> d.feed.prism_issn
     '0028-0836'
     >>> d.namespaces
@@ -55,7 +55,7 @@ Accessing namespaced elements with non-standard prefixes
 ..  code-block:: pycon
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/nonstandard_prefix.rdf')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/nonstandard_prefix.rdf')
     >>> d.feed.prism_issn
     '0028-0836'
     >>> d.feed.foo_issn

@@ -16,7 +16,7 @@ Detecting a non-well-formed feed
 
 ::
 
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d.bozo
     0
     >>> d = feedparser.parse('http://feedparser.org/tests/illformed/rss/aaa_illformed.xml')

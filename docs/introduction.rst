@@ -29,7 +29,7 @@ Parsing a feed from a remote :abbr:`URL (Uniform Resource Locator)`
 
 
     >>> import feedparser
-    >>> d = feedparser.parse('http://feedparser.org/docs/examples/atom10.xml')
+    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d['feed']['title']
     'Sample Feed'
 
