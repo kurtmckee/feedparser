@@ -9,7 +9,6 @@ This extension helps ensure that the documentation points at the correct doc URL
 
 import os
 
-
 READTHEDOCS_CANONICAL_URL = os.getenv(
     "READTHEDOCS_CANONICAL_URL",
     "https://domain.example/",

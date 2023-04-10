@@ -4,9 +4,7 @@ import feedparser
 
 
 def test_fileobj():
-    r = feedparser.api._open_resource(
-        io.BytesIO(b""), {}
-    ).read()
+    r = feedparser.api._open_resource(io.BytesIO(b""), {}).read()
     assert r == b""
 
 
