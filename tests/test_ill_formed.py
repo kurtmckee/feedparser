@@ -8,16 +8,22 @@ import pytest
 
 import feedparser
 
-from .helpers import everything_is_unicode, get_file_contents, get_test_data
+from .helpers import (
+    everything_is_unicode,
+    get_file_contents,
+    get_http_test_data,
+    get_test_data,
+)
 
 tests: list[tuple[typing.Any, ...]] = []
 http_tests: list[tuple[typing.Any, ...]] = []
 for path_ in pathlib.Path("tests/illformed").rglob("*.xml"):
     data_, text_ = get_file_contents(str(path_))
-    info_ = (path_, data_, text_, *get_test_data(str(path_), text_))
     if "http" in str(path_):
+        info_ = (path_, data_, text_, *get_http_test_data(str(path_), data_, text_))
         http_tests.append(info_)
     else:
+        info_ = (path_, data_, text_, *get_test_data(str(path_), text_))
         tests.append(info_)
 
 
@@ -34,9 +40,8 @@ def test_strict_parser(info):
 
 
 @pytest.mark.parametrize("info", http_tests)
-def test_http_conditions(info, http_server, get_url):
-    path, data, text, description, eval_string, skip_unless = info
-    url = get_url(str(path))
+def test_http_conditions(info):
+    path, data, text, url, description, eval_string, skip_unless = info
     result = feedparser.parse(url)
     assert result["bozo"] is True
     assert eval(eval_string, {"datetime": datetime}, result), description

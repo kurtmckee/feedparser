@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import posixpath
 import pprint
 import re
+import typing
+
+import responses
 
 import feedparser
 
 skip_re = re.compile(r"SkipUnless:\s*(.*?)\n")
 desc_re = re.compile(r"Description:\s*(.*?)\s*Expect:\s*(.*)\s*-->")
+headers_re = re.compile(r"^Header:\s+([^:]+):(.*)$", re.MULTILINE)
 
 
 def get_file_contents(file: str) -> tuple[bytes, str]:
@@ -86,3 +91,36 @@ def fail_unless_eval(xmlfile, eval_string, msg=None):
         raise AssertionError(failure)
     failure = f"not everything is unicode \nWITH env({pprint.pformat(env)})"
     assert everything_is_unicode(env), failure
+
+
+def get_http_test_data(
+    path: str, data: bytes, text: str
+) -> tuple[str, str, list[str], str]:
+    """Register an HTTP response.
+
+    HTTP headers will be customized as specified by comments in the XML data.
+    For example:
+
+    ..  code-block:: xml
+
+        <!--
+        Header:   Content-type: application/atom+xml
+        Header:   X-Foo: bar
+        -->
+    """
+
+    headers: dict[str, typing.Any] = {"Content-Length": str(len(data))}
+    headers.update({k: v.strip() for k, v in headers_re.findall(text)})
+    content_type = headers.pop("Content-type", "text/xml")
+    target = posixpath.normpath(path.replace("\\", "/"))
+    url = f"http://127.0.0.1:8097/{target}"
+
+    responses.get(
+        url,
+        headers=headers,
+        content_type=content_type,
+        body=data,
+    )
+
+    description, eval_string, skip_unless = get_test_data(path, text)
+    return url, description, eval_string, skip_unless
