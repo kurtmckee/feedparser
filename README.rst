@@ -49,6 +49,3 @@ Feedparser has an extensive test suite, powered by Tox. To run it, type this:
     (venv) $ python -m pip install --upgrade pip
     (venv) $ python -m pip install tox
     (venv) $ tox
-
-This will spawn an HTTP server that will listen on port 8097. The tests will
-fail if that port is in use.

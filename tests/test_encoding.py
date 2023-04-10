@@ -6,7 +6,12 @@ import pytest
 
 import feedparser
 
-from .helpers import fail_unless_eval, get_file_contents, get_test_data
+from .helpers import (
+    fail_unless_eval,
+    get_file_contents,
+    get_http_test_data,
+    get_test_data,
+)
 
 encoding_files = glob.glob(os.path.join(".", "tests", "encoding", "*.xml"))
 local_files = [file for file in encoding_files if "http" not in file]
@@ -49,10 +54,9 @@ def test_local_encoding_file(file):
 
 
 @pytest.mark.parametrize("file", http_files)
-def test_http_encoding_file(file, http_server, get_url):
+def test_http_encoding_file(file):
     data, text = get_file_contents(file)
-    description, eval_string, skip_unless = get_test_data(file, text)
-    url = get_url(file)
+    url, description, eval_string, skip_unless = get_http_test_data(file, data, text)
     fail_unless_eval(url, eval_string)
 
 

@@ -1,84 +1,7 @@
 from __future__ import annotations
 
-import http.server
-import posixpath
-import re
-import threading
-
 import pytest
-
-PORT = 8097  # not really configurable, must match hardcoded port in tests
-HOST = "127.0.0.1"  # also not really configurable
-
-
-class FeedParserTestRequestHandler(http.server.SimpleHTTPRequestHandler):
-    headers_re = re.compile(rb"^Header:\s+([^:]+):(.*)$", re.MULTILINE)
-
-    def do_GET(self):
-        """Handle a GET request.
-
-        HTTP headers will be customized based on what's defined in the requested path.
-
-        Example:
-        <!--
-        Header:   Content-type: application/atom+xml
-        Header:   X-Foo: bar
-        -->
-        """
-
-        path = self.translate_path(self.path)
-        with open(path, "rb") as file:
-            blob = file.read()
-
-        headers = {
-            k.decode("utf-8"): v.decode("utf-8").strip()
-            for k, v in self.headers_re.findall(blob)
-        }
-        status = "200"
-        headers.setdefault("Status", status)
-        self.send_response(int(headers["Status"]))
-        headers.setdefault("Content-type", self.guess_type(path))
-        self.send_header("Content-type", headers["Content-type"])
-        self.send_header("Content-Length", len(blob))
-        for k, v in headers.items():
-            if k not in ("Status", "Content-type"):
-                self.send_header(k, v)
-        self.end_headers()
-        self.wfile.write(blob)
-
-    def log_request(self, *args):
-        pass
-
-
-class FeedParserTestServer(threading.Thread):
-    """HTTP Server that runs in a thread and handles unlimitied requests."""
-
-    def __init__(self):
-        threading.Thread.__init__(self, daemon=True)
-        self.ready = threading.Event()
-        self.httpd = None
-
-    def run(self):
-        self.httpd = http.server.HTTPServer((HOST, PORT), FeedParserTestRequestHandler)
-        self.ready.set()
-        self.httpd.serve_forever()
-
-
-@pytest.fixture(scope="session")
-def http_server():
-    httpd = FeedParserTestServer()
-    httpd.start()
-    httpd.ready.wait()
-    yield
-
-
-@pytest.fixture(scope="session")
-def get_url():
-    def function(file: str) -> str:
-        path = posixpath.normpath(file.replace("\\", "/"))
-        return f"http://{HOST}:{PORT}/{path}"
-
-    yield function
+import responses
 
 
 @pytest.fixture
@@ -87,3 +10,8 @@ def use_loose_parser(monkeypatch):
 
     monkeypatch.setattr(feedparser.api, "_XML_AVAILABLE", False)
     yield
+
+
+@pytest.fixture(scope="session", autouse=True)
+def mock_responses():
+    responses.start()
