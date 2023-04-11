@@ -1,5 +1,4 @@
 import io
-import unittest
 
 import pytest
 
@@ -73,36 +72,6 @@ def test_convert_file_to_utf8_decode_error_fallback():
     )
 
 
-class TestEncodingsHelpers(unittest.TestCase):
-    ...
-
-
-def make_prefix_file_wrapper_test(make_file):
-    def test(self):
-        f = feedparser.encodings.PrefixFileWrapper(b"abc", make_file(b"def"))
-        self.assertEqual(f.read(), b"abcdef")
-        self.assertEqual(f.read(), b"")
-
-        f = feedparser.encodings.PrefixFileWrapper(b"abc", make_file(b"def"))
-        self.assertEqual(f.read(2), b"ab")
-        self.assertEqual(f.read(2), b"cd")
-        self.assertEqual(f.read(2), b"ef")
-        self.assertEqual(f.read(2), b"")
-        self.assertEqual(f.read(), b"")
-
-        f = feedparser.encodings.PrefixFileWrapper(b"abc", make_file(b"def"))
-        self.assertEqual(f.read(3), b"abc")
-        self.assertEqual(f.read(3), b"def")
-        self.assertEqual(f.read(3), b"")
-        self.assertEqual(f.read(), b"")
-
-        f = feedparser.encodings.PrefixFileWrapper(b"abc", make_file(b"def"))
-        self.assertEqual(f.read(0), b"")
-        self.assertEqual(f.read(), b"abcdef")
-
-    return test
-
-
 def _make_file(data):
     return io.BytesIO(data)
 
@@ -125,124 +94,114 @@ class ReadOneByOne(io.BytesIO):
         return super().read(1)
 
 
-PREFIX_FILE_WRAPPER_FACTORIES = [
-    _make_file,
-    _make_file_in_the_middle,
-    _make_file_one_by_one,
-]
+@pytest.mark.parametrize(
+    "factory",
+    [
+        _make_file,
+        _make_file_in_the_middle,
+        _make_file_one_by_one,
+    ],
+)
+def test_prefix_file_wrapper(factory):
+    f = feedparser.encodings.PrefixFileWrapper(b"abc", factory(b"def"))
+    assert f.read() == b"abcdef"
+    assert f.read() == b""
 
-for factory in PREFIX_FILE_WRAPPER_FACTORIES:
-    func = make_prefix_file_wrapper_test(factory)
-    setattr(
-        TestEncodingsHelpers,
-        f"test_prefix_file_wrapper_{factory.__name__.lstrip('_')}",
-        func,
+    f = feedparser.encodings.PrefixFileWrapper(b"abc", factory(b"def"))
+    assert f.read(2) == b"ab"
+    assert f.read(2) == b"cd"
+    assert f.read(2) == b"ef"
+    assert f.read(2) == b""
+    assert f.read() == b""
+
+    f = feedparser.encodings.PrefixFileWrapper(b"abc", factory(b"def"))
+    assert f.read(3) == b"abc"
+    assert f.read(3) == b"def"
+    assert f.read(3) == b""
+    assert f.read() == b""
+
+    f = feedparser.encodings.PrefixFileWrapper(b"abc", factory(b"def"))
+    assert f.read(0) == b""
+    assert f.read() == b"abcdef"
+
+
+# Each emoji is 4 bytes long when encoded in UTF-8.
+@pytest.mark.parametrize("data", ("😀😛🤯😱", "😀a😛b🤯c😱"))
+@pytest.mark.parametrize(
+    "data_multiplier, kwargs",
+    (
+        (1, {"prefix_len": 3}),
+        (1, {"prefix_len": 4}),
+        (1, {"prefix_len": 5}),
+        (1, {"prefix_len": 8}),
+        (1, {"prefix_len": 40}),
+        (8, {"prefix_len": 2, "read_to_ascii_len": 4}),
+        (8, {"prefix_len": 4, "read_to_ascii_len": 4}),
+    ),
+)
+@pytest.mark.parametrize("headers", ({}, {"content-type": "not-a-valid-content-type"}))
+def test_convert_file_prefix_to_utf8(data, data_multiplier, kwargs, headers):
+    data = data * data_multiplier
+
+    expected_result = {}
+    expected_output = feedparser.encodings.convert_to_utf8(
+        headers, data.encode("utf-8"), expected_result
     )
-del factory, func
+    file = io.BytesIO(data.encode("utf-8"))
+
+    actual_result = {}
+    prefix = feedparser.encodings.convert_file_prefix_to_utf8(
+        headers, file, actual_result, **kwargs
+    )
+    rest = file.read()
+
+    assert prefix + rest == expected_output
+    assert prefix.decode("utf-8") + rest.decode("utf-8") == expected_output.decode(
+        "utf-8"
+    )
+
+    expected_result.pop("bozo_exception", None)
+    actual_result.pop("bozo_exception", None)
+    assert actual_result == expected_result
 
 
-def make_convert_file_prefix_to_utf8_test(headers):
-    from feedparser.encodings import convert_file_prefix_to_utf8, convert_to_utf8
-
-    def test(self):
-        def call(data, **kwargs):
-            expected_result = {}
-            expected_output = convert_to_utf8(
-                headers, data.encode("utf-8"), expected_result
-            )
-            file = io.BytesIO(data.encode("utf-8"))
-
-            actual_result = {}
-            prefix = convert_file_prefix_to_utf8(headers, file, actual_result, **kwargs)
-            rest = file.read()
-
-            self.assertEqual(prefix + rest, expected_output)
-            self.assertEqual(
-                prefix.decode("utf-8") + rest.decode("utf-8"),
-                expected_output.decode("utf-8"),
-            )
-
-            expected_result.pop("bozo_exception", None)
-            actual_result.pop("bozo_exception", None)
-            self.assertEqual(actual_result, expected_result)
-
-        # these should be parametrized, but it's too complicated to do
-
-        # each of the emojis is 4 bytes long when encoded as utf-8
-        data = "😀😛🤯😱"
-        call(data, prefix_len=3)
-        call(data, prefix_len=4)
-        call(data, prefix_len=5)
-        call(data, prefix_len=8)
-        call(data, prefix_len=40)
-        call(data * 8, prefix_len=2, read_to_ascii_len=4)
-        call(data * 8, prefix_len=4, read_to_ascii_len=4)
-
-        data = "😀a😛b🤯c😱"
-        call(data, prefix_len=3)
-        call(data, prefix_len=4)
-        call(data, prefix_len=5)
-        call(data * 8, prefix_len=2, read_to_ascii_len=4)
-        call(data * 8, prefix_len=4, read_to_ascii_len=4)
-
-    return test
-
-
-def make_convert_file_to_utf8_test(headers, length):
-    from feedparser.encodings import convert_file_to_utf8, convert_to_utf8
-
+@pytest.mark.parametrize("headers", ({}, {"content-type": "not-a-valid-content-type"}))
+@pytest.mark.parametrize(
+    "length",
+    (
+        feedparser.encodings.CONVERT_FILE_PREFIX_LEN,
+        feedparser.encodings.CONVERT_FILE_STR_PREFIX_LEN,
+    ),
+)
+def test_convert_file_to_utf8(headers, length):
     digits = b"0123456789abcdef"
-    input = convert_to_utf8({}, b"", {}) + digits * int(length / len(digits) + 2)
-
-    def test(self):
-        expected_result = {}
-        expected_output = convert_to_utf8(headers, input, expected_result)
-        expected_result.pop("bozo_exception", None)
-
-        actual_result = {}
-        factory = convert_file_to_utf8(headers, io.BytesIO(input), actual_result)
-
-        self.assertEqual(
-            factory.get_text_file().read(), expected_output.decode("utf-8")
-        )
-        self.assertEqual(factory.get_binary_file().read(), expected_output)
-
-        actual_result.pop("bozo_exception", None)
-        self.assertEqual(actual_result, expected_result)
-
-        actual_result = {}
-        factory = convert_file_to_utf8(
-            headers, io.StringIO(input.decode("utf-8")), actual_result
-        )
-
-        self.assertEqual(
-            factory.get_text_file().read(), expected_output.decode("utf-8")
-        )
-
-        actual_result.pop("bozo_exception", None)
-        self.assertEqual(actual_result, expected_result)
-
-    return test
-
-
-CONVERT_TO_UTF8_HEADERS = {
-    "simple": {},
-    "bad_content_type": {"content-type": "not-a-valid-content-type"},
-}
-CONVERT_TO_UTF8_LENGTHS = [
-    feedparser.encodings.CONVERT_FILE_PREFIX_LEN,
-    feedparser.encodings.CONVERT_FILE_STR_PREFIX_LEN,
-]
-
-for name, headers in CONVERT_TO_UTF8_HEADERS.items():
-    setattr(
-        TestEncodingsHelpers,
-        f"test_convert_file_prefix_to_utf8_{name}",
-        make_convert_file_prefix_to_utf8_test(headers),
+    data = feedparser.encodings.convert_to_utf8({}, b"", {}) + digits * int(
+        length / len(digits) + 2
     )
-    for length in CONVERT_TO_UTF8_LENGTHS:
-        setattr(
-            TestEncodingsHelpers,
-            f"test_convert_file_to_utf8_{name}",
-            make_convert_file_to_utf8_test(headers, length),
-        )
+
+    expected_result = {}
+    expected_output = feedparser.encodings.convert_to_utf8(
+        headers, data, expected_result
+    )
+    expected_result.pop("bozo_exception", None)
+
+    actual_result = {}
+    factory = feedparser.encodings.convert_file_to_utf8(
+        headers, io.BytesIO(data), actual_result
+    )
+
+    assert factory.get_text_file().read() == expected_output.decode("utf-8")
+    assert factory.get_binary_file().read() == expected_output
+
+    actual_result.pop("bozo_exception", None)
+    assert actual_result == expected_result
+
+    actual_result = {}
+    factory = feedparser.encodings.convert_file_to_utf8(
+        headers, io.StringIO(data.decode("utf-8")), actual_result
+    )
+
+    assert factory.get_text_file().read() == expected_output.decode("utf-8")
+
+    actual_result.pop("bozo_exception", None)
+    assert actual_result == expected_result
