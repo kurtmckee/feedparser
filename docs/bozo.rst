@@ -14,7 +14,7 @@ suggesting this terminology.
 Detecting a non-well-formed feed
 --------------------------------
 
-::
+..  code-block:: pycon
 
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d.bozo

@@ -38,8 +38,8 @@ The channel elements are available in ``d.feed``.
 
 Accessing Common Channel Elements
 ---------------------------------
-::
 
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
@@ -59,8 +59,8 @@ The items are available in ``d.entries``, which is a list.  You access items in 
 
 Accessing Common Item Elements
 ------------------------------
-::
 
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')

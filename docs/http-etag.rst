@@ -18,7 +18,7 @@ status code (``304``) and no feed data.
 Using ETags to reduce bandwidth
 -------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
@@ -46,7 +46,7 @@ status code ``304`` and no feed data.
 Using Last-Modified headers to reduce bandwidth
 -----------------------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')

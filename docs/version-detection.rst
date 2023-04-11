@@ -9,7 +9,7 @@ applications may choose to handle different feed types in different ways.
 Accessing feed version
 ----------------------
 
-::
+..  code-block:: pycon
 
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
     >>> d.version

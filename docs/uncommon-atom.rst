@@ -11,7 +11,7 @@ list.
 Accessing contributors
 ----------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
@@ -35,7 +35,7 @@ MIME-style content type, and its rel attribute.
 Accessing multiple links
 ------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')

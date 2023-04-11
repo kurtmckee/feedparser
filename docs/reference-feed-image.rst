@@ -75,8 +75,8 @@ Summary)` 0.91.
 .. rubric:: Annotated example
 
 This is a feed image:
-::
 
+..  code-block:: xml
 
     <image>
     <title>Feed logo</title>
@@ -89,8 +89,8 @@ This is a feed image:
 
 
 This feed image could be rendered in :abbr:`HTML (HyperText Markup Language)` as this:
-::
 
+..  code-block:: html
 
     <a href="http://example.org/">
     <img src="http://example.org/logo.png"

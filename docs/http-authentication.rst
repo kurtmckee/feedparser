@@ -14,7 +14,7 @@ The easiest way is to embed the username and password in the feed
 
 In this example, the username is test and the password is basic.
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('http://test:basic@feedparser.org/docs/examples/basic_auth.xml')
@@ -36,7 +36,7 @@ Downloading a feed protected by digest authentication (the easy but horribly ins
 
 In this example, the username is test and the password is digest.
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('http://test:digest@feedparser.org/docs/examples/digest_auth.xml')
@@ -52,7 +52,7 @@ HTTPBasicAuthHandler is part of the standard `urllib2 <http://docs.python.org/li
 Downloading a feed protected by :abbr:`HTTP (Hypertext Transfer Protocol)` basic authentication (the hard way)
 --------------------------------------------------------------------------------------------------------------
 
-::
+..  code-block:: python
 
     import urllib2, feedparser
 
@@ -84,7 +84,7 @@ since the password will be encrypted before being sent to the server.
 Downloading a feed protected by :abbr:`HTTP (Hypertext Transfer Protocol)` digest authentication (the secure way)
 -----------------------------------------------------------------------------------------------------------------
 
-::
+..  code-block:: python
 
     import urllib2, feedparser
 
@@ -116,7 +116,7 @@ information in the www-authenticate header is probably safe to ignore; the
 Determining that a feed is password-protected
 ---------------------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/basic_auth.xml')

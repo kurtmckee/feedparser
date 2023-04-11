@@ -19,7 +19,7 @@ default namespace, it is listed as ``namespaces['']``.
 Accessing namespaced elements
 -----------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/prism.rdf')

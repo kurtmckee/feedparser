@@ -135,7 +135,7 @@ For example, an xml:base on the root-level element sets the base
 xml:base on the root-level element
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
@@ -151,7 +151,7 @@ An xml:base attribute on an <entry> overrides the xml:base on the parent <feed>.
 Overriding xml:base on an <entry>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
@@ -173,7 +173,7 @@ content.
 Relative links within embedded :abbr:`HTML (HyperText Markup Language)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
@@ -190,7 +190,7 @@ The xml:base affects other attributes in the element in which it is declared.
 xml:base and sibling attributes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/base.xml")
@@ -209,7 +209,7 @@ overridden by any child element that declares an xml:base attribute.
 Content-Location :abbr:`HTTP (Hypertext Transfer Protocol)` header
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/http_base.xml")
@@ -229,7 +229,7 @@ by any element that declares an xml:base attribute.
 Feed :abbr:`URL (Uniform Resource Locator)` as default base :abbr:`URI (Uniform Resource Identifier)`
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse("$READTHEDOCS_CANONICAL_URL/examples/no_base.xml")
@@ -253,7 +253,7 @@ but not in other contexts such as :ref:`reference.entry.link`.
 How to disable relative :abbr:`URI (Uniform Resource Identifier)` resolution
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/base.xml')
