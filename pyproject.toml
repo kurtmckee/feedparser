@@ -87,3 +87,9 @@ fail_under = 93
 
 [tool.coverage.html]
 directory = "htmlcov/"
+
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+]
