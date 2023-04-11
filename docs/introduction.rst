@@ -25,8 +25,8 @@ filename, or a raw string containing feed data in any format.
 
 Parsing a feed from a remote :abbr:`URL (Uniform Resource Locator)`
 -------------------------------------------------------------------
-::
 
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
@@ -44,7 +44,7 @@ The following example assumes you are on Windows, and that you have saved a feed
     :program:`Universal Feed Parser` works on any platform that can run
     :program:`Python`; use the path syntax appropriate for your platform.
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse(r'c:\incoming\atom10.xml')
@@ -56,8 +56,8 @@ The following example assumes you are on Windows, and that you have saved a feed
 
 Parsing a feed from a string
 ----------------------------
-::
 
+..  code-block:: pycon
 
     >>> import feedparser
     >>> rawdata = """<rss version="2.0">

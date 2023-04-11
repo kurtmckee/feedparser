@@ -135,7 +135,7 @@ value, a 9-tuple :program:`Python` date in UTC.
 Registering a third-party date handler
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-::
+..  code-block:: python
 
     import feedparser
     import re

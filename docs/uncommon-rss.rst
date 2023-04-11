@@ -11,7 +11,7 @@ aggregators display as a logo.
 Accessing feed image
 --------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
@@ -32,7 +32,7 @@ of tuples, rather than a list of dictionaries.
 Accessing multiple categories
 -----------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
@@ -57,7 +57,7 @@ and makes them available as a list.
 Accessing enclosures
 --------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')
@@ -75,7 +75,7 @@ Accessing feed cloud
 
 No one is quite sure what a cloud is.
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/rss20.xml')

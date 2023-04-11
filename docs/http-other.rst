@@ -12,7 +12,7 @@ headers as a dictionary.  When you download a feed from a remote web server,
 Sending custom :abbr:`HTTP (Hypertext Transfer Protocol)` request headers
 -------------------------------------------------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom03.xml',
@@ -22,7 +22,7 @@ Sending custom :abbr:`HTTP (Hypertext Transfer Protocol)` request headers
 Accessing other :abbr:`HTTP (Hypertext Transfer Protocol)` response headers
 ---------------------------------------------------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom03.xml')

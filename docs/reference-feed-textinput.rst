@@ -46,8 +46,8 @@ of the form.
 .. rubric:: Annotated example
 
 This is a text input in a feed:
-::
 
+..  code-block:: xml
 
     <textInput>
     <title>Go!</title>
@@ -58,8 +58,8 @@ This is a text input in a feed:
 
 
 This is how it could be rendered in :abbr:`HTML (HyperText Markup Language)`:
-::
 
+..  code-block:: html
 
     <form method="get" action="http://example.org/search">
     <label for="keyword">Search this site:</label>

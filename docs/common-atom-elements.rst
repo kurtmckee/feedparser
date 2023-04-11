@@ -64,7 +64,7 @@ The feed elements are available in ``d.feed``.
 Accessing Common Feed Elements
 ------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
@@ -88,7 +88,7 @@ the order in which they appear in the original feed, so the first entry is
 Accessing Common Entry Elements
 -------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')

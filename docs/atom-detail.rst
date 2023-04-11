@@ -10,7 +10,7 @@ the value itself.
 Detailed Information on Feed Elements
 -------------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')

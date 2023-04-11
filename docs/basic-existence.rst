@@ -11,7 +11,7 @@ dictionary idioms.
 Testing if elements are present
 -------------------------------
 
-::
+..  code-block:: pycon
 
     >>> import feedparser
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')

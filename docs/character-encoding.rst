@@ -19,7 +19,7 @@ In :abbr:`XML (Extensible Markup Language)`, the character encoding is optional
 and may be given in the :abbr:`XML (Extensible Markup Language)` declaration in
 the first line of the document, like this:
 
-.. sourcecode:: xml
+..  code-block:: xml
 
     <?xml version="1.0" encoding="utf-8"?>
 
@@ -37,7 +37,7 @@ defaults to UTF-8.
 of specifying the character encoding, as part of the Content-Type :abbr:`HTTP (Hypertext Transfer Protocol)`
 header, which looks like this:
 
-::
+..  code-block:: text
 
     Content-Type: text/html; charset="utf-8"
 
