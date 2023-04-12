@@ -12,13 +12,13 @@ colorama==0.4.6
     # via
     #   build
     #   click
-importlib-metadata==6.1.0
+importlib-metadata==6.3.0
     # via
     #   build
     #   click
 packaging==23.0
     # via build
-pip-tools==6.12.3
+pip-tools==6.13.0
     # via -r requirements/pip-tools.in
 pyproject-hooks==1.0.0
     # via build

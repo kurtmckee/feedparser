@@ -4,7 +4,7 @@
 #
 #    tox run -e update_requirements
 #
-mypy==1.1.1
+mypy==1.2.0
     # via -r requirements/mypy.in
 mypy-extensions==1.0.0
     # via mypy
