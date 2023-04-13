@@ -274,13 +274,14 @@ def _parse_file_inplace(
     # because the SAX parser closes the file when done;
     # we don't want that, since we might try again with the loose parser.
 
-    use_json_parser = result["content-type"] == "application/json"
-    use_strict_parser = result["encoding"] and True or False
+    use_json_parser = False
+    if result["content-type"] in {"application/json", "application/feed+json"}:
+        use_json_parser = True
+    use_strict_parser = bool(result["encoding"])
 
-    if not use_json_parser:
-        result["version"], stream_factory.prefix, entities = replace_doctype(
-            stream_factory.prefix
-        )
+    result["version"], stream_factory.prefix, entities = replace_doctype(
+        stream_factory.prefix
+    )
 
     # Ensure that baseuri is an absolute URI using an acceptable URI scheme.
     contentloc = result["headers"].get("content-location", "")
@@ -300,16 +301,7 @@ def _parse_file_inplace(
 
     feed_parser: Union[JSONParser, StrictFeedParser, LooseFeedParser]
 
-    if use_json_parser:
-        result["version"] = None
-        feed_parser = JSONParser(baseuri, baselang, "utf-8")
-        try:
-            feed_parser.feed(stream_factory.get_file())
-        except Exception as e:
-            result["bozo"] = 1
-            result["bozo_exception"] = e
-
-    elif use_strict_parser:
+    if use_strict_parser and not use_json_parser:
         # Initialize the SAX parser.
         feed_parser = StrictFeedParser(baseuri, baselang, "utf-8")
         feed_parser.resolve_relative_uris = resolve_relative_uris
@@ -339,9 +331,9 @@ def _parse_file_inplace(
             result["bozo_exception"] = feed_parser.exc or e
             use_strict_parser = False
 
-    # The loose XML parser will be tried if the JSON parser was not used,
-    # and if the strict XML parser was not used (or if it failed).
-    if not use_json_parser and not use_strict_parser:
+    # The loose XML parser will be tried if the strict XML parser was not used
+    # (or if it failed to parse the feed).
+    if not use_strict_parser and not use_json_parser:
         feed_parser = LooseFeedParser(baseuri, baselang, "utf-8", entities)
         feed_parser.resolve_relative_uris = resolve_relative_uris
         feed_parser.sanitize_html = sanitize_html
@@ -361,6 +353,20 @@ def _parse_file_inplace(
         # replace the read() call above with read(size)/feed() calls in a loop.
 
         feed_parser.feed(data)
+
+        # If parsing with the loose XML parser resulted in no information,
+        # flag that the JSON parser should be tried.
+        if not (feed_parser.entries or feed_parser.feeddata or feed_parser.version):
+            use_json_parser = True
+
+    if use_json_parser:
+        result["version"] = None
+        feed_parser = JSONParser(baseuri, baselang, "utf-8")
+        try:
+            feed_parser.feed(stream_factory.get_file())
+        except Exception as e:
+            result["bozo"] = 1
+            result["bozo_exception"] = e
 
     result["feed"] = feed_parser.feeddata
     result["entries"] = feed_parser.entries
