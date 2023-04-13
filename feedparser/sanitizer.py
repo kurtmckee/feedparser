@@ -25,6 +25,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import re
 
 from .html import BaseHTMLProcessor
@@ -914,20 +916,33 @@ RE_DOCTYPE_PATTERN = re.compile(rb"^\s*<!DOCTYPE([^>]*?)>", re.MULTILINE)
 RE_SAFE_ENTITY_PATTERN = re.compile(rb'\s+(\w+)\s+"(&#\w+;|[^&"]*)"')
 
 
-def replace_doctype(data):
-    """Strips and replaces the DOCTYPE, returns (rss_version, stripped_data)
+def replace_doctype(data: bytes) -> tuple[str | None, bytes, dict[str, str]]:
+    """Strip and replaces the DOCTYPE.
 
-    rss_version may be 'rss091n' or None
-    stripped_data is the same XML document with a replaced DOCTYPE
+    One RSS format -- Netscape's RSS 0.91 -- is identified within the XML declaration.
+    Therefore, this function must identify that version while replacing the DOCTYPE.
+
+    As a convenience to the loose XML parser, entities are pre-computed and returned.
+
+    The tuple that is returned has the following values, in order:
+
+    1.  The version extracted from the XML DOCTYPE.
+        The value will either be "rss091n" or None.
+    2.  Binary XML content with a replaced DOCTYPE.
+    3.  A dictionary of entities and replacements.
     """
+
+    # Verify this looks like an XML feed.
+    if not re.match(rb"^\s*<", data):
+        return None, data, {}
 
     # Divide the document into two groups by finding the location
     # of the first element that doesn't begin with '<?' or '<!'.
-    start = re.search(rb"<\w", data)
-    start = start and start.start() or -1
-    head, data = data[: start + 1], data[start + 1 :]
+    match = re.search(rb"<\w", data)
+    first_element = match.start() + 1 if match is not None else 0
+    head, data = data[:first_element], data[first_element:]
 
-    # Save and then remove all of the ENTITY declarations.
+    # Save, and then remove, any ENTITY declarations.
     entity_results = RE_ENTITY_PATTERN.findall(head)
     head = RE_ENTITY_PATTERN.sub(b"", head)
 
@@ -952,8 +967,8 @@ def replace_doctype(data):
     data = RE_DOCTYPE_PATTERN.sub(replacement, head) + data
 
     # Precompute the safe entities for the loose parser.
-    safe_entities = {
+    entities = {
         k.decode("utf-8"): v.decode("utf-8")
         for k, v in RE_SAFE_ENTITY_PATTERN.findall(replacement)
     }
-    return version, data, safe_entities
+    return version, data, entities

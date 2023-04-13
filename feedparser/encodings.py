@@ -26,10 +26,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from __future__ import annotations
+
 import codecs
 import io
 import re
-import typing as t
+import typing
 
 try:
     try:
@@ -47,6 +49,7 @@ else:
 from .exceptions import (
     CharacterEncodingOverride,
     CharacterEncodingUnknown,
+    FeedparserError,
     NonXMLContentType,
 )
 
@@ -58,7 +61,7 @@ UTF16LE_MARKER = b"\x3C\x00\x3F\x00"
 UTF32BE_MARKER = b"\x00\x00\x00\x3C"
 UTF32LE_MARKER = b"\x3C\x00\x00\x00"
 
-ZERO_BYTES = "\x00\x00"
+ZERO_BYTES = b"\x00\x00"
 
 # Match the opening XML declaration.
 # Example: <?xml version="1.0" encoding="utf-8"?>
@@ -69,7 +72,7 @@ RE_XML_DECLARATION = re.compile(r"^<\?xml[^>]*?>")
 RE_XML_PI_ENCODING = re.compile(rb'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
 
 
-def parse_content_type(line: str) -> t.Tuple[str, str]:
+def parse_content_type(line: str) -> tuple[str, str]:
     """Parse an HTTP Content-Type header.
 
     The return value will be a tuple of strings:
@@ -93,11 +96,10 @@ def parse_content_type(line: str) -> t.Tuple[str, str]:
     return mime_type, charset_value
 
 
-def convert_to_utf8(http_headers, data, result):
-    """Detect and convert the character encoding to UTF-8.
-
-    http_headers is a dictionary
-    data is a raw string (not Unicode)"""
+def convert_to_utf8(
+    http_headers: dict[str, str], data: bytes, result: dict[str, typing.Any]
+) -> bytes:
+    """Detect and convert the character encoding to UTF-8."""
 
     # This is so much trickier than it sounds, it's not even funny.
     # According to RFC 3023 ('XML Media Types'), if the HTTP Content-Type
@@ -136,9 +138,7 @@ def convert_to_utf8(http_headers, data, result):
 
     # Of course, none of this guarantees that we will be able to parse the
     # feed in the declared character encoding (assuming it was declared
-    # correctly, which many are not).  iconv_codec can help a lot;
-    # you should definitely install it if you can.
-    # http://cjkpython.i18n.org/
+    # correctly, which many are not).
 
     bom_encoding = ""
     xml_encoding = ""
@@ -239,7 +239,7 @@ def convert_to_utf8(http_headers, data, result):
         acceptable_content_type = 1
         rfc3023_encoding = http_encoding or "us-ascii"
     elif http_content_type in json_content_types or (
-        not http_content_type and data and data.lstrip()[0] == "{"
+        not http_content_type and data and data.lstrip().startswith(b"{")
     ):
         http_content_type = json_content_types[0]
         acceptable_content_type = 1
@@ -264,7 +264,7 @@ def convert_to_utf8(http_headers, data, result):
     # - bom_encoding is the encoding sniffed from the first 4 bytes of the XML data
     # - rfc3023_encoding is the actual encoding, as per RFC 3023
     #   and a variety of other conflicting specifications
-    error = None
+    error: FeedparserError | None = None
 
     if http_headers and (not acceptable_content_type):
         if "content-type" in http_headers:
@@ -274,10 +274,10 @@ def convert_to_utf8(http_headers, data, result):
         error = NonXMLContentType(msg)
 
     # determine character encoding
-    known_encoding = 0
+    known_encoding = False
     tried_encodings = []
     # try: HTTP encoding, declared XML encoding, encoding sniffed from BOM
-    for proposed_encoding in (
+    for encoding_to_try in (
         rfc3023_encoding,
         xml_encoding,
         bom_encoding,
@@ -286,28 +286,31 @@ def convert_to_utf8(http_headers, data, result):
         "windows-1252",
         "iso-8859-2",
     ):
-        if callable(proposed_encoding):
-            proposed_encoding = proposed_encoding(data)
+        if callable(encoding_to_try):
+            proposed_encoding = encoding_to_try(data)
+        else:
+            proposed_encoding = encoding_to_try
         if not proposed_encoding:
             continue
         if proposed_encoding in tried_encodings:
             continue
         tried_encodings.append(proposed_encoding)
         try:
-            data = data.decode(proposed_encoding)
+            text = data.decode(proposed_encoding)
         except (UnicodeDecodeError, LookupError):
-            pass
-        else:
-            known_encoding = 1
-            if not json:
-                # Update the encoding in the opening XML processing instruction.
-                new_declaration = """<?xml version='1.0' encoding='utf-8'?>"""
-                if RE_XML_DECLARATION.search(data):
-                    data = RE_XML_DECLARATION.sub(new_declaration, data)
-                else:
-                    data = new_declaration + "\n" + data
-            data = data.encode("utf-8")
-            break
+            continue
+
+        known_encoding = True
+        if not json:
+            # Update the encoding in the opening XML processing instruction.
+            new_declaration = """<?xml version='1.0' encoding='utf-8'?>"""
+            if RE_XML_DECLARATION.search(text):
+                text = RE_XML_DECLARATION.sub(new_declaration, text)
+            else:
+                text = new_declaration + "\n" + text
+        data = text.encode("utf-8")
+        break
+
     # if still no luck, give up
     if not known_encoding:
         error = CharacterEncodingUnknown(
@@ -348,7 +351,7 @@ def convert_file_to_utf8(
 ):
     """Like convert_to_utf8(), but for a stream.
 
-    Unlike convert_to_utf8(), do not read the the entire file in memory;
+    Unlike convert_to_utf8(), do not read the entire file in memory;
     instead, return a text stream that decodes it on the fly.
     This should consume significantly less memory,
     because it avoids (repeatedly) converting the entire file contents
@@ -421,7 +424,7 @@ def convert_file_to_utf8(
 
 def convert_file_prefix_to_utf8(
     http_headers,
-    file: t.IO[bytes],
+    file: typing.IO[bytes],
     result,
     *,
     prefix_len: int = CONVERT_FILE_PREFIX_LEN,
@@ -458,7 +461,7 @@ def convert_file_prefix_to_utf8(
 
         prefix += byte
 
-        fake_result: t.Any = {}
+        fake_result: typing.Any = {}
         converted_prefix = convert_to_utf8(http_headers, prefix, fake_result)
 
         # an encoding was detected successfully, keep it
@@ -495,7 +498,7 @@ def convert_file_prefix_to_utf8(
     return converted_prefix
 
 
-def read_to_after_ascii_byte(file: t.IO[bytes], max_len: int) -> bytes:
+def read_to_after_ascii_byte(file: typing.IO[bytes], max_len: int) -> bytes:
     offset = file.tell()
     buffer = b""
 
