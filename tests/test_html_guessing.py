@@ -2,7 +2,7 @@
 
 import pytest
 
-import feedparser.mixin
+import feedparser.util
 
 
 @pytest.mark.parametrize(
@@ -19,8 +19,10 @@ import feedparser.mixin
         ("&copy;", True, "named entity reference"),
         ("&#169;", True, "numeric entity reference"),
         ("&#xA9;", True, "hex numeric entity reference"),
+        ("It's time to </blink>", False, "unacceptable element"),
+        ("U&IRGR8;)", False, "unknown entity"),
     ),
 )
 def test_html_guessing(input_text, expected_result, test_name):
-    guess_result = bool(feedparser.mixin.XMLParserMixin.looks_like_html(input_text))
+    guess_result = feedparser.util.looks_like_html(input_text)
     assert guess_result is expected_result

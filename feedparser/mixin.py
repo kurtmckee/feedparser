@@ -34,9 +34,9 @@ import xml.sax.saxutils
 
 from .html import _cp1252
 from .namespaces import _base, cc, dc, georss, itunes, mediarss, psc
-from .sanitizer import HTMLSanitizer, sanitize_html
+from .sanitizer import sanitize_html
 from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
-from .util import FeedParserDict
+from .util import FeedParserDict, looks_like_html
 
 email_pattern = re.compile(
     r"(([a-zA-Z0-9_.+-]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)"
@@ -548,7 +548,7 @@ class XMLParserMixin(
             not self.version.startswith("atom")
             and self.contentparams.get("type") == "text/plain"
         ):
-            if self.looks_like_html(output):
+            if looks_like_html(output):
                 self.contentparams["type"] = "text/html"
 
         # remove temporary cruft from contentparams
@@ -677,37 +677,6 @@ class XMLParserMixin(
         self.incontent -= 1
         self.contentparams.clear()
         return value
-
-    # a number of elements in a number of RSS variants are nominally plain
-    # text, but this is routinely ignored.  This is an attempt to detect
-    # the most common cases.  As false positives often result in silent
-    # data loss, this function errs on the conservative side.
-    @staticmethod
-    def looks_like_html(s):
-        """
-        :type s: str
-        :rtype: bool
-        """
-
-        # must have a close tag or an entity reference to qualify
-        if not (re.search(r"</(\w+)>", s) or re.search(r"&#?\w+;", s)):
-            return False
-
-        # all tags must be in a restricted subset of valid HTML tags
-        if any(
-            t
-            for t in re.findall(r"</?(\w+)", s)
-            if t.lower() not in HTMLSanitizer.acceptable_elements
-        ):
-            return False
-
-        # all entities must have been defined as valid HTML entities
-        if any(
-            e for e in re.findall(r"&(\w+);", s) if e not in html.entities.entitydefs
-        ):
-            return False
-
-        return True
 
     def _map_to_standard_prefix(self, name):
         colonpos = name.find(":")

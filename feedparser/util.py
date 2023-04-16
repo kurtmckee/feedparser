@@ -25,7 +25,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import html.entities
+import re
 import warnings
+
+from .sanitizer import HTMLSanitizer
 
 
 class FeedParserDict(dict):
@@ -155,3 +159,45 @@ class FeedParserDict(dict):
         # This is incorrect behavior -- dictionaries shouldn't be hashable.
         # Note to self: remove this behavior in the future.
         return id(self)
+
+
+def looks_like_html(content: str) -> bool:
+    """Guess whether some text looks like HTML.
+
+    A number of elements in several XML specifications are nominally plain text,
+    but feed authors and generators may ignore the specifications they're using.
+
+    In addition, the JSON feed spec fails to document some values' content types,
+    which means that titles and descriptions might -- or might not -- be HTML.
+
+    This function attempts to guess whether content looks like HTML
+    or should be rendered as plain text in an HTML context.
+
+    As false positives can result in silent data loss,
+    this function errs on the side of caution.
+    """
+
+    # If the content doesn't have closing tags or entity references, it's just text.
+    if not (re.search(r"</(\w+)>", content) or re.search(r"&#?\w+;", content)):
+        return False
+
+    # If any tags are found that are not considered safe for rendering, it's just text.
+    # For example, a title like "It's time to </blink>" should be treated as text.
+    # In effect, it should be escaped when rendered in an HTML context,
+    # and this is suggested by treating the text as 'text/plain'.
+    if not all(
+        tag.lower() in HTMLSanitizer.acceptable_elements
+        for tag in re.findall(r"</?(\w+)", content)
+    ):
+        return False
+
+    # If any entities references are undefined, it's just text.
+    # For example, a title like "U&IRGR8;)" should be treated as text.
+    # In effect, it should be escaped when rendered in an HTML context,
+    # and this is suggested by treating the text as 'text/plain'.
+    if not all(
+        entity in html.entities.entitydefs for entity in re.findall(r"&(\w+);", content)
+    ):
+        return False
+
+    return True
