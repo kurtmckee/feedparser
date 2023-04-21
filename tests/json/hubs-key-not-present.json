@@ -1,0 +1,6 @@
+{
+  "__description": "hubs: should not exist if not present in feed",
+  "__tests": [
+    "'hubs' not in feed"
+  ]
+}

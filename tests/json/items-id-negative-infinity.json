@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: negative infinity",
+  "__tests": [
+    "entries[0]['id'] == '-Infinity'"
+  ],
+  "items": [
+    {
+      "id": -Infinity
+    }
+  ]
+}

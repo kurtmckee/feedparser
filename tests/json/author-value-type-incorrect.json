@@ -1,0 +1,9 @@
+{
+  "__description": "author: value is not an object",
+  "__tests": [
+    "'author' not in feed",
+    "'author_detail' not in feed",
+    "'authors' not in feed"
+  ],
+  "author": [1, 2, 3]
+}

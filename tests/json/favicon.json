@@ -1,0 +1,7 @@
+{
+  "__description": "favicon: valid string",
+  "__tests": [
+    "feed['icon'] == 'https://domain.test/small-image.png'"
+  ],
+  "favicon": "https://domain.test/small-image.png"
+}

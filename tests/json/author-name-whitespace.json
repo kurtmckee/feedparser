@@ -1,0 +1,11 @@
+{
+  "__description": "author.name: whitespace must be stripped",
+  "__tests": [
+    "feed['author'] == 'abc'",
+    "feed['author_detail']['name'] == 'abc'",
+    "feed['authors'][0]['name'] == 'abc'"
+  ],
+  "author": {
+    "name": " abc "
+  }
+}

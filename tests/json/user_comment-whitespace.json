@@ -1,0 +1,8 @@
+{
+  "__description": "user_comment: whitespace must be stripped",
+  "__tests": [
+    "feed['info'] == 'abc'",
+    "feed['info_detail']['value'] == 'abc'"
+  ],
+  "user_comment": " abc "
+}

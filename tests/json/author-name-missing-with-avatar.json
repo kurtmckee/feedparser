@@ -1,0 +1,13 @@
+{
+  "__description": "author.name: `name` key missing, but `avatar` present",
+  "__tests": [
+    "'author' not in feed",
+    "len(feed['author_detail'].keys()) == 1",
+    "'name' not in feed['author_detail']",
+    "len(feed['authors'][0].keys()) == 1",
+    "'name' not in feed['authors'][0]"
+  ],
+  "author": {
+    "avatar": "https://domain.example/i.jpeg"
+  }
+}

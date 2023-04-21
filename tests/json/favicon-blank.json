@@ -1,0 +1,7 @@
+{
+  "__description": "favicon: blank values are not lost",
+  "__tests": [
+    "feed['icon'] == ''"
+  ],
+  "favicon": " "
+}

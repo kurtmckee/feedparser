@@ -1,0 +1,7 @@
+{
+  "__description": "home_page_url: blank values are not lost",
+  "__tests": [
+    "feed.link == ''"
+  ],
+  "home_page_url": " "
+}

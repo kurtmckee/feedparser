@@ -1,0 +1,11 @@
+{
+  "__description": "author.avatar: whitespace must be stripped",
+  "__tests": [
+    "feed['author_detail']['image'] == 'https://domain.example/i.jpeg'",
+    "feed['authors'][0]['image'] == 'https://domain.example/i.jpeg'"
+  ],
+  "author": {
+    "name": "abc",
+    "avatar": " https://domain.example/i.jpeg "
+  }
+}

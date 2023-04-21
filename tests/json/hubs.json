@@ -1,0 +1,20 @@
+{
+  "__description": "hubs: valid values",
+  "__tests": [
+    "len(feed['hubs']) == 2",
+    "feed['hubs'][0]['url'] == 'https://domain1.example/'",
+    "feed['hubs'][0]['type'] == 'webSub'",
+    "feed['hubs'][1]['url'] == 'https://domain2.example/'",
+    "feed['hubs'][1]['type'] == 'rssCloud'"
+  ],
+  "hubs": [
+    {
+      "url": "https://domain1.example/",
+      "type": "webSub"
+    },
+    {
+      "url": "https://domain2.example/",
+      "type": "rssCloud"
+    }
+  ]
+}

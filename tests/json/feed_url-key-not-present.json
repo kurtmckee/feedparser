@@ -1,0 +1,7 @@
+{
+  "__description": "feed_url: should not exist if not present in feed",
+  "__tests": [
+    "'id' not in feed",
+    "'links' not in feed"
+  ]
+}

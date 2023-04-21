@@ -1,0 +1,11 @@
+{
+  "__description": "author.url: value is not a string",
+  "__tests": [
+    "'href' not in feed['author_detail']",
+    "'href' not in feed['authors'][0]"
+  ],
+  "author": {
+    "name": "abc",
+    "url": [1, 2, 3]
+  }
+}

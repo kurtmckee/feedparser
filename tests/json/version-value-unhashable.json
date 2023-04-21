@@ -1,0 +1,7 @@
+{
+  "__description": "version: value is an unhashable type in Python, which raises TypeErrors during dict lookups",
+  "__tests": [
+    "version == 'json'"
+  ],
+  "version": []
+}

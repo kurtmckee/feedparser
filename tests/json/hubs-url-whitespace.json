@@ -1,0 +1,12 @@
+{
+  "__description": "hubs: whitespace must be stripped from the 'url' value",
+  "__tests": [
+    "feed['hubs'][0]['url'] == 'https://domain1.example/'"
+  ],
+  "hubs": [
+    {
+      "url": " https://domain1.example/ ",
+      "type": "webSub"
+    }
+  ]
+}

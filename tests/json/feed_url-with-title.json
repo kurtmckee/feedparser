@@ -1,0 +1,8 @@
+{
+  "__description": "feed_url: link includes the feed title",
+  "__tests": [
+    "feed['links'][0]['title'] == 'Example'"
+  ],
+  "title": " Example ",
+  "feed_url": "https://domain.test/"
+}

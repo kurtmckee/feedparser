@@ -326,7 +326,7 @@ def _parse_file_inplace(
         try:
             saxparser.parse(source)
         except xml.sax.SAXException as e:
-            result["bozo"] = 1
+            result["bozo"] = True
             result["bozo_exception"] = feed_parser.exc or e
             use_strict_parser = False
 
@@ -357,14 +357,17 @@ def _parse_file_inplace(
         # flag that the JSON parser should be tried.
         if not (feed_parser.entries or feed_parser.feeddata or feed_parser.version):
             use_json_parser = True
+            result["bozo"] = False
+            result.pop("bozo_exception", None)
 
     if use_json_parser:
         result["version"] = None
         feed_parser = JSONParser(baseuri, baselang, "utf-8")
+        feed_parser.sanitize_html = sanitize_html
         try:
             feed_parser.feed(stream_factory.get_file())
         except Exception as e:
-            result["bozo"] = 1
+            result["bozo"] = True
             result["bozo_exception"] = e
 
     result["feed"] = feed_parser.feeddata

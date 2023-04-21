@@ -1,0 +1,8 @@
+{
+  "__description": "user_comment: blank values are not lost",
+  "__tests": [
+    "feed['info'] == ''",
+    "feed['info_detail']['value'] == ''"
+  ],
+  "user_comment": " "
+}

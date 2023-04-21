@@ -1,0 +1,8 @@
+{
+  "__description": "user_comment: value is not a string",
+  "__tests": [
+    "'info' not in feed",
+    "'info_detail' not in feed"
+  ],
+  "user_comment": [1, 2, 3]
+}

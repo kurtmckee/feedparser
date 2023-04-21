@@ -1,0 +1,7 @@
+{
+  "__description": "home_page_url: whitespace must be stripped",
+  "__tests": [
+    "feed.link == 'https://domain.test/'"
+  ],
+  "home_page_url": " https://domain.test/ "
+}

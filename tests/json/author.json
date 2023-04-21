@@ -1,0 +1,14 @@
+{
+  "__description": "author: valid value",
+  "__tests": [
+    "feed['author'] == 'abc'",
+    "len(feed['author_detail'].keys()) == 1",
+    "feed['author_detail']['name'] == 'abc'",
+    "len(feed['authors']) == 1",
+    "len(feed['authors'][0].keys()) == 1",
+    "feed['authors'][0]['name'] == 'abc'"
+  ],
+  "author": {
+    "name": "abc"
+  }
+}

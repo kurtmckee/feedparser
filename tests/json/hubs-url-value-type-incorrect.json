@@ -1,0 +1,12 @@
+{
+  "__description": "hubs: 'url' value must be a string",
+  "__tests": [
+    "len(feed['hubs']) == 0"
+  ],
+  "hubs": [
+    {
+      "url": [1, 2, 3],
+      "type": "webSub"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "__description": "author.name: value is not a string",
+  "__tests": [
+    "'author' not in feed",
+    "'author_detail' not in feed",
+    "'authors' not in feed"
+  ],
+  "author": {
+    "name": [1, 2, 3]
+  }
+}

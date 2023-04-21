@@ -1,5 +1,8 @@
 {
-    "__TEST__": "Description: basic JSON tests Expect: not bozo and feed.title == 'My Example Feed' and len(entries) == 2 -->",
+    "__tests": [
+        "feed.title == 'My Example Feed'",
+        "len(entries) == 2"
+    ],
     "version": "https://jsonfeed.org/version/1",
     "title": "My Example Feed",
     "home_page_url": "https://example.org/",

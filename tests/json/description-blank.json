@@ -1,0 +1,8 @@
+{
+  "__description": "description: blank values are not lost",
+  "__tests": [
+    "feed['subtitle'] == ''",
+    "feed['subtitle_detail']['value'] == ''"
+  ],
+  "description": " "
+}

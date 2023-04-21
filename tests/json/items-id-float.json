@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: float",
+  "__tests": [
+    "entries[0]['id'] == '200.0'"
+  ],
+  "items": [
+    {
+      "id": 1.9999999999999999e2
+    }
+  ]
+}

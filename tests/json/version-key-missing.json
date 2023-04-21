@@ -1,0 +1,6 @@
+{
+  "__description": "version: key missing",
+  "__tests": [
+    "version == 'json'"
+  ]
+}

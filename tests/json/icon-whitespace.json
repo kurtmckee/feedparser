@@ -1,0 +1,7 @@
+{
+  "__description": "icon: whitespace must be stripped",
+  "__tests": [
+    "feed['image']['href'] == 'https://domain.test/big-image.png'"
+  ],
+  "icon": " https://domain.test/big-image.png "
+}

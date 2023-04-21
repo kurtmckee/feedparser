@@ -1,0 +1,7 @@
+{
+  "__description": "description: should not exist if not present in feed",
+  "__tests": [
+    "'subtitle' not in feed",
+    "'subtitle_detail' not in feed"
+  ]
+}

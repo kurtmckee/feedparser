@@ -1,0 +1,9 @@
+{
+  "__description": "author: ignored when the object is empty",
+  "__tests": [
+    "'author' not in feed",
+    "'author_detail' not in feed",
+    "'authors' not in feed"
+  ],
+  "author": {}
+}

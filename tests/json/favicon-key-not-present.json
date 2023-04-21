@@ -1,0 +1,6 @@
+{
+  "__description": "favicon: should not exist if not present in feed",
+  "__tests": [
+    "'icon' not in feed"
+  ]
+}

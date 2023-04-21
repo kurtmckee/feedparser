@@ -1,0 +1,7 @@
+{
+  "__description": "version: blank values still fallback to 'json'",
+  "__tests": [
+    "version == 'json'"
+  ],
+  "version": " "
+}

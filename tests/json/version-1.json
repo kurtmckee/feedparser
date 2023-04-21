@@ -1,0 +1,7 @@
+{
+  "__description": "version: JSON 1",
+  "__tests": [
+    "version == 'json1'"
+  ],
+  "version": "https://jsonfeed.org/version/1"
+}

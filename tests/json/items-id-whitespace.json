@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: whitespace must be stripped",
+  "__tests": [
+    "entries[0]['id'] == 'https://domain.example/entry'"
+  ],
+  "items": [
+    {
+      "id": " https://domain.example/entry "
+    }
+  ]
+}

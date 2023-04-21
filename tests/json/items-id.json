@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: valid value",
+  "__tests": [
+    "entries[0]['id'] == 'https://domain.example/entry'"
+  ],
+  "items": [
+    {
+      "id": "https://domain.example/entry"
+    }
+  ]
+}

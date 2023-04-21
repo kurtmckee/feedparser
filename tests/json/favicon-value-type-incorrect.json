@@ -1,0 +1,7 @@
+{
+  "__description": "favicon: value is not a string",
+  "__tests": [
+    "'icon' not in feed"
+  ],
+  "favicon": [1, 2, 3]
+}

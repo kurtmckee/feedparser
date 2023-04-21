@@ -1,0 +1,7 @@
+{
+  "__description": "version: whitespace must be stripped",
+  "__tests": [
+    "version == 'json11'"
+  ],
+  "version": " https://jsonfeed.org/version/1.1 "
+}

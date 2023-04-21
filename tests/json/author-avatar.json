@@ -1,0 +1,14 @@
+{
+  "__description": "author.avatar: valid value",
+  "__tests": [
+    "len(feed['author_detail'].keys()) == 2",
+    "feed['author_detail']['image'] == 'https://domain.example/i.jpeg'",
+    "len(feed['authors']) == 1",
+    "len(feed['authors'][0].keys()) == 2",
+    "feed['authors'][0]['image'] == 'https://domain.example/i.jpeg'"
+  ],
+  "author": {
+    "name": "abc",
+    "avatar": "https://domain.example/i.jpeg"
+  }
+}

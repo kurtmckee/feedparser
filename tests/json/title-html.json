@@ -1,0 +1,10 @@
+{
+  "__description": "title: valid string -- html",
+  "__tests": [
+    "feed['title'] == 'The <em>real</em> deal'",
+    "len(feed['title_detail'].keys()) == 2",
+    "feed['title_detail']['type'] == 'text/html'",
+    "feed['title_detail']['value'] == 'The <em>real</em> deal'"
+  ],
+  "title": "The <em>real</em> deal"
+}

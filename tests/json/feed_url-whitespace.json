@@ -1,0 +1,8 @@
+{
+  "__description": "feed_url: whitespace must be stripped",
+  "__tests": [
+    "feed['id'] == 'https://domain.test/'",
+    "feed['links'][0]['href'] == 'https://domain.test/'"
+  ],
+  "feed_url": " https://domain.test/ "
+}

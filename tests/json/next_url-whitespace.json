@@ -1,0 +1,7 @@
+{
+  "__description": "next_url: whitespace must be stripped",
+  "__tests": [
+    "feed['links'][0]['href'] == 'https://domain.test/'"
+  ],
+  "next_url": " https://domain.test/ "
+}

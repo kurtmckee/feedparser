@@ -1,0 +1,7 @@
+{
+  "__description": "next_url: blank values are not lost",
+  "__tests": [
+    "feed['links'][0]['href'] == ''"
+  ],
+  "next_url": " "
+}

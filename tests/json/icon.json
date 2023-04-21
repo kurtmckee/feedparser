@@ -1,0 +1,8 @@
+{
+  "__description": "icon: valid string",
+  "__tests": [
+    "feed['image']['href'] == 'https://domain.test/big-image.png'",
+    "len(feed['image']) == 1"
+  ],
+  "icon": "https://domain.test/big-image.png"
+}

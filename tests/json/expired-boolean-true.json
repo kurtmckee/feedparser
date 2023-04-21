@@ -1,0 +1,7 @@
+{
+  "__description": "expired: boolean true means 'true'",
+  "__tests": [
+    "feed['complete'] is True"
+  ],
+  "expired": true
+}

@@ -1,0 +1,11 @@
+{
+  "__description": "feed_url: valid string",
+  "__tests": [
+    "feed['id'] == 'https://domain.test/'",
+    "len(feed['links']) == 1",
+    "feed['links'][0]['href'] == 'https://domain.test/'",
+    "feed['links'][0]['rel'] == 'self'",
+    "'type' not in feed['links'][0]"
+  ],
+  "feed_url": "https://domain.test/"
+}

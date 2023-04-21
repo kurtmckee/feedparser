@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: int",
+  "__tests": [
+    "entries[0]['id'] == '1'"
+  ],
+  "items": [
+    {
+      "id": 1
+    }
+  ]
+}

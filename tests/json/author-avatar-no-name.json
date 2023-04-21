@@ -1,0 +1,10 @@
+{
+  "__description": "author.avatar: missing a `name` key",
+  "__tests": [
+    "feed['author_detail']['image'] == 'https://domain.example/i.jpeg'",
+    "feed['authors'][0]['image'] == 'https://domain.example/i.jpeg'"
+  ],
+  "author": {
+    "avatar": "https://domain.example/i.jpeg"
+  }
+}

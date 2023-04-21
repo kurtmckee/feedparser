@@ -1,0 +1,7 @@
+{
+  "__description": "hubs: value must be a list",
+  "__tests": [
+    "len(feed['hubs']) == 0"
+  ],
+  "hubs": {"a": "b"}
+}

@@ -1,0 +1,6 @@
+{
+  "__description": "icon: should not exist if not present in feed",
+  "__tests": [
+    "'image' not in feed"
+  ]
+}

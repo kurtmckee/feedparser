@@ -1,0 +1,8 @@
+{
+  "__description": "description: value is not a string",
+  "__tests": [
+    "'subtitle' not in feed",
+    "'subtitle_detail' not in feed"
+  ],
+  "description": [1, 2, 3]
+}

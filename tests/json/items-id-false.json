@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: false",
+  "__tests": [
+    "entries[0]['id'] == 'false'"
+  ],
+  "items": [
+    {
+      "id": false
+    }
+  ]
+}

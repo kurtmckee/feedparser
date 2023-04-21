@@ -1,0 +1,8 @@
+{
+  "__description": "feed_url: blank values are not lost",
+  "__tests": [
+    "feed['id'] == ''",
+    "feed['links'][0]['href'] == ''"
+  ],
+  "feed_url": " "
+}

@@ -1,0 +1,7 @@
+{
+  "__description": "feed_url: no link title when the feed has no title",
+  "__tests": [
+    "'title' not in feed['links'][0]"
+  ],
+  "feed_url": "https://domain.test/"
+}

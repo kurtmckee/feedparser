@@ -1,0 +1,16 @@
+{
+  "__description": "hubs: incorrect item types must not invalidate the entire hub",
+  "__tests": [
+    "len(feed['hubs']) == 1",
+    "feed['hubs'][0]['url'] == 'https://domain1.example/'",
+    "feed['hubs'][0]['type'] == 'webSub'"
+  ],
+  "hubs": [
+    false,
+    {
+      "url": "https://domain1.example/",
+      "type": "webSub"
+    },
+    false
+  ]
+}

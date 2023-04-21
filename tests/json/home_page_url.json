@@ -1,0 +1,11 @@
+{
+  "__description": "home_page_url: valid string",
+  "__tests": [
+    "feed['link'] == 'https://domain.test/'",
+    "len(feed['links']) == 1",
+    "feed['links'][0]['href'] == 'https://domain.test/'",
+    "feed['links'][0]['rel'] == 'alternate'",
+    "'type' not in feed['links'][0]"
+  ],
+  "home_page_url": "https://domain.test/"
+}

@@ -1,0 +1,7 @@
+{
+  "__description": "icon: value is not a string",
+  "__tests": [
+    "'image' not in feed"
+  ],
+  "icon": [1, 2, 3]
+}

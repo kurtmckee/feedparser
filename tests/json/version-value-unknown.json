@@ -1,0 +1,7 @@
+{
+  "__description": "version: value unknown",
+  "__tests": [
+    "version == 'json'"
+  ],
+  "version": "bogus"
+}

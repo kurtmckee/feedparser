@@ -1,0 +1,11 @@
+{
+  "__description": "author.avatar: value is not a string",
+  "__tests": [
+    "'image' not in feed['author_detail']",
+    "'image' not in feed['authors'][0]"
+  ],
+  "author": {
+    "name": "abc",
+    "avatar": [1, 2, 3]
+  }
+}

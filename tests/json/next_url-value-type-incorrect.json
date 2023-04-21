@@ -1,0 +1,7 @@
+{
+  "__description": "next_url: value is not a string",
+  "__tests": [
+    "'links' not in feed"
+  ],
+  "next_url": [1, 2, 3]
+}

@@ -1,0 +1,7 @@
+{
+  "__description": "icon: blank values are not lost",
+  "__tests": [
+    "feed['image']['href'] == ''"
+  ],
+  "icon": " "
+}

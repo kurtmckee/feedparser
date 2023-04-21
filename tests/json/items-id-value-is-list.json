@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: non-scalar (list) is ignored",
+  "__tests": [
+    "len(entries) == 0"
+  ],
+  "items": [
+    {
+      "id": [1, 2, 3]
+    }
+  ]
+}

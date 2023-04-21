@@ -1,0 +1,10 @@
+{
+  "__description": "user_comment: valid string -- html",
+  "__tests": [
+    "feed['info'] == 'The <em>real</em> deal'",
+    "len(feed['info_detail'].keys()) == 2",
+    "feed['info_detail']['value'] == 'The <em>real</em> deal'",
+    "feed['info_detail']['type'] == 'text/html'"
+  ],
+  "user_comment": "The <em>real</em> deal"
+}

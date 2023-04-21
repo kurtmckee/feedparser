@@ -1,0 +1,6 @@
+{
+  "__description": "expired: should not exist if not present in feed",
+  "__tests": [
+    "'complete' not in feed"
+  ]
+}

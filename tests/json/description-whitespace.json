@@ -1,0 +1,8 @@
+{
+  "__description": "description: whitespace must be stripped",
+  "__tests": [
+    "feed['subtitle'] == 'abc'",
+    "feed['subtitle_detail']['value'] == 'abc'"
+  ],
+  "description": " abc "
+}

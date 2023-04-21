@@ -1,0 +1,11 @@
+{
+  "__description": "items.url: valid value",
+  "__tests": [
+    "entries[0]['link'] == 'https://domain.example/entry'"
+  ],
+  "items": [
+    {
+      "url": "https://domain.example/entry"
+    }
+  ]
+}

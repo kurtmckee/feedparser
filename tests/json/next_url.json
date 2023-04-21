@@ -1,0 +1,10 @@
+{
+  "__description": "next_url: valid string",
+  "__tests": [
+    "len(feed['links']) == 1",
+    "len(feed['links'][0].keys()) == 2",
+    "feed['links'][0]['href'] == 'https://domain.test/'",
+    "feed['links'][0]['rel'] == 'next'"
+  ],
+  "next_url": "https://domain.test/"
+}

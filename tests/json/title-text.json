@@ -1,0 +1,10 @@
+{
+  "__description": "title: valid string -- text",
+  "__tests": [
+    "feed['title'] == 'abc\ud83d\ude0e\ud83c\udf34\ud83c\udfb6def'",
+    "len(feed['title_detail']) == 2",
+    "feed['title_detail']['type'] == 'text/plain'",
+    "feed['title_detail']['value'] == 'abc\ud83d\ude0e\ud83c\udf34\ud83c\udfb6def'"
+  ],
+  "title": "abc😎🌴🎶def"
+}

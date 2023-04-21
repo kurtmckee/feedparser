@@ -1,0 +1,11 @@
+{
+  "__description": "items.id: not a number",
+  "__tests": [
+    "entries[0]['id'] == 'NaN'"
+  ],
+  "items": [
+    {
+      "id": NaN
+    }
+  ]
+}
