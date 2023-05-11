@@ -36,5 +36,5 @@ repos:
     rev: v3.3.1
     hooks:
       - id: pyupgrade
-        name: "Enforce Python 3.7 idioms"
-        args: [--py37-plus]
+        name: "Enforce Python 3.8 idioms"
+        args: [--py38-plus]
