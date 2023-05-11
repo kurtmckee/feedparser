@@ -233,7 +233,7 @@ class XMLParserMixin(
         if isinstance(baseuri, bytes):
             baseuri = baseuri.decode(self.encoding, "ignore")
         # ensure that self.baseuri is always an absolute URI that
-        # uses a whitelisted URI scheme (e.g. not `javscript:`)
+        # uses a whitelisted URI scheme (e.g. not `javascript:`)
         if self.baseuri:
             self.baseuri = make_safe_absolute_uri(self.baseuri, baseuri) or self.baseuri
         else:
