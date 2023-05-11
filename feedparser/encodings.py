@@ -335,7 +335,7 @@ def convert_to_utf8(
 
 
 # How much to read from a binary file in order to detect encoding.
-# In inital tests, 4k was enough for ~160 mostly-English feeds;
+# In initial tests, 4k was enough for ~160 mostly-English feeds;
 # 64k seems like a safe margin.
 CONVERT_FILE_PREFIX_LEN = 2**16
 
