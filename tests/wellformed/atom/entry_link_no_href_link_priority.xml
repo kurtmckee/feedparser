@@ -1,0 +1,14 @@
+<!--
+Description: entry link no href, the alternate one should be prioritized
+Expect:      entries[0]['link'] == entries[1]['link'] == 'http://www.example.com/alternate'
+-->
+<feed version="0.3" xmlns="http://purl.org/atom/ns#">
+<entry>
+  <link rel="alternate" type="text/html">http://www.example.com/alternate</link>
+  <link rel="enclosure" type="text/html">http://www.example.com/enclosure</link>
+</entry>
+<entry>
+  <link rel="enclosure" type="text/html">http://www.example.com/enclosure</link>
+  <link rel="alternate" type="text/html">http://www.example.com/alternate</link>
+</entry>
+</feed>

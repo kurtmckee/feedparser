@@ -1,0 +1,10 @@
+<!--
+Description: entry link no href
+Expect:      entries[0]['links'][0]['href'] == entries[0]['links'][1]['href'] == 'http://www.example.com/'
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+<entry>
+  <link rel="alternate" type="text/html">http://www.example.com/</link>
+  <link rel="enclosure" type="text/html">http://www.example.com/</link>
+</entry>
+</feed>

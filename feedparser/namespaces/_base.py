@@ -361,21 +361,24 @@ class Namespace:
         attrs_d = self._enforce_href(attrs_d)
         if "href" in attrs_d:
             attrs_d["href"] = self.resolve_uri(attrs_d["href"])
+        if (
+            attrs_d.get("rel") == "alternate"
+            and self.map_content_type(attrs_d.get("type")) in self.html_types
+        ):
+            self.isentrylink = 1
         expecting_text = self.infeed or self.inentry or self.insource
         context.setdefault("links", [])
         if not (self.inentry and self.inimage):
             context["links"].append(FeedParserDict(attrs_d))
         if "href" in attrs_d:
-            if (
-                attrs_d.get("rel") == "alternate"
-                and self.map_content_type(attrs_d.get("type")) in self.html_types
-            ):
+            if self.isentrylink:
                 context["link"] = attrs_d["href"]
         else:
             self.push("link", expecting_text)
 
     def _end_link(self):
         self.pop("link")
+        self.isentrylink = 0
 
     def _start_guid(self, attrs_d):
         self.guidislink = attrs_d.get("ispermalink", "true") == "true"

@@ -192,6 +192,7 @@ class XMLParserMixin(
         self.incontributor = 0
         self.inpublisher = 0
         self.insource = 0
+        self.isentrylink = 0
 
         self.sourcedata = FeedParserDict()
         self.contentparams = FeedParserDict()
@@ -624,7 +625,8 @@ class XMLParserMixin(
                     # unhandled character references. fix this special case.
                     output = output.replace("&amp;", "&")
                     output = re.sub("&([A-Za-z0-9_]+);", r"&\g<1>", output)
-                    self.entries[-1][element] = output
+                    if self.isentrylink or not self.entries[-1].get(element):
+                        self.entries[-1][element] = output
                     if output:
                         self.entries[-1]["links"][-1]["href"] = output
             else:
