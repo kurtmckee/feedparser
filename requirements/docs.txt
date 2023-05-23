@@ -12,8 +12,6 @@ certifi==2022.12.7
     # via requests
 charset-normalizer==3.1.0
     # via requests
-colorama==0.4.6
-    # via sphinx
 docutils==0.18.1
     # via
     #   sphinx
@@ -21,8 +19,6 @@ docutils==0.18.1
 idna==3.4
     # via requests
 imagesize==1.4.1
-    # via sphinx
-importlib-metadata==6.3.0
     # via sphinx
 jinja2==3.1.2
     # via sphinx
@@ -32,19 +28,17 @@ packaging==23.0
     # via sphinx
 pygments==2.15.0
     # via sphinx
-pytz==2023.3
-    # via babel
-requests==2.28.2
+requests==2.31.0
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
 sphinx==5.3.0
     # via
-    #   -r requirements/docs.in
+    #   -r docs.in
     #   sphinx-rtd-theme
     #   sphinxcontrib-jquery
 sphinx-rtd-theme==1.2.0
-    # via -r requirements/docs.in
+    # via -r docs.in
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
 sphinxcontrib-devhelp==1.0.2
@@ -59,9 +53,5 @@ sphinxcontrib-qthelp==1.0.3
     # via sphinx
 sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
-typing-extensions==4.5.0
-    # via importlib-metadata
 urllib3==1.26.15
     # via requests
-zipp==3.15.0
-    # via importlib-metadata
