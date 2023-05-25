@@ -1,8 +1,13 @@
 name: "CI"
 
 on:
-  - "push"
-  - "pull_request"
+  pull_request:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - "main"
+      - "releases"
 
 jobs:
   test:
