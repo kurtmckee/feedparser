@@ -38,3 +38,10 @@ repos:
       - id: pyupgrade
         name: "Enforce Python 3.8 idioms"
         args: [--py38-plus]
+
+  - repo: "https://github.com/python-jsonschema/check-jsonschema"
+    rev: "0.23.1"
+    hooks:
+      - id: "check-dependabot"
+      - id: "check-github-workflows"
+      - id: "check-readthedocs"
