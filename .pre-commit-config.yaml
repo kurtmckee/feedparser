@@ -33,14 +33,14 @@ repos:
       - id: isort
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.6.0
+    rev: v3.7.0
     hooks:
       - id: pyupgrade
         name: "Enforce Python 3.8 idioms"
         args: [--py38-plus]
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.23.1"
+    rev: "0.23.2"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
