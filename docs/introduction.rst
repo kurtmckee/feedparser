@@ -72,7 +72,3 @@ Parsing a feed from a string
 
 Values are returned as :program:`Python` Unicode strings (except when they're
 not -- see :ref:`advanced.encoding` for all the gory details).
-
-.. seealso::
-
-   `Introduction to Python Unicode strings <http://docs.python.org/tut/node5.html#SECTION005130000000000000000>`_
