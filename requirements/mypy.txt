@@ -4,7 +4,7 @@
 #
 #    tox run -e update_requirements
 #
-mypy==1.3.0
+mypy==1.4.1
     # via -r mypy.in
 mypy-extensions==1.0.0
     # via mypy
@@ -12,9 +12,9 @@ tomli==2.0.1
     # via mypy
 types-chardet==5.0.4.6
     # via -r mypy.in
-types-requests==2.31.0.0
+types-requests==2.31.0.2
     # via -r mypy.in
-types-urllib3==1.26.25.13
+types-urllib3==1.26.25.14
     # via types-requests
-typing-extensions==4.6.1
+typing-extensions==4.7.1
     # via mypy
