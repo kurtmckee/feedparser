@@ -152,7 +152,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         :rtype: None
         """
 
-        data = re.sub(r"<!((?!DOCTYPE|--|\[))", r"&lt;!\1", data, re.IGNORECASE)
+        data = re.sub(r"<!((?!DOCTYPE|--|\[))", r"&lt;!\1", data, flags=re.IGNORECASE)
         data = re.sub(r"<([^<>\s]+?)\s*/>", self._shorttag_replace, data)
         data = data.replace("&#39;", "'")
         data = data.replace("&#34;", '"')
