@@ -1,0 +1,17 @@
+{
+  "__description": "items.url: entry has a title",
+  "__tests": [
+    "entries[0]['link'] == 'https://domain.example/entry'",
+    "len(entries[0]['links']) == 1",
+    "len(entries[0]['links'][0].keys()) == 3",
+    "entries[0]['links'][0]['rel'] == 'self'",
+    "entries[0]['links'][0]['href'] == 'https://domain.example/entry'",
+    "entries[0]['links'][0]['title'] == 'abc'"
+  ],
+  "items": [
+    {
+      "title": "abc",
+      "url": "https://domain.example/entry"
+    }
+  ]
+}

@@ -3,5 +3,5 @@
   "__tests": [
     "feed['icon'] == ''"
   ],
-  "favicon": " "
+  "favicon": ""
 }

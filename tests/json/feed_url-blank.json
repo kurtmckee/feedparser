@@ -4,5 +4,5 @@
     "feed['id'] == ''",
     "feed['links'][0]['href'] == ''"
   ],
-  "feed_url": " "
+  "feed_url": ""
 }

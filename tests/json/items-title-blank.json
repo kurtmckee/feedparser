@@ -1,0 +1,14 @@
+{
+  "__description": "items.title: blank values are not lost",
+  "__tests": [
+    "entries[0]['title'] == ''",
+    "len(entries[0]['title_detail'].keys()) == 2",
+    "entries[0]['title_detail']['value'] == ''",
+    "entries[0]['title_detail']['type'] == 'text/plain'"
+  ],
+  "items": [
+    {
+      "title": ""
+    }
+  ]
+}

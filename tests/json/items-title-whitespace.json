@@ -1,0 +1,12 @@
+{
+  "__description": "items.title: whitespace must be stripped",
+  "__tests": [
+    "entries[0]['title'] == 'abc'",
+    "entries[0]['title_detail']['value'] == 'abc'"
+  ],
+  "items": [
+    {
+      "title": " abc "
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "__description": "title: html must be ignored",
+  "__tests": [
+    "feed['title'] == \"<blink><script>alert('abc');</script></blink>\"",
+    "len(feed['title_detail'].keys()) == 2",
+    "feed['title_detail']['type'] == 'text/plain'",
+    "feed['title_detail']['value'] == \"<blink><script>alert('abc');</script></blink>\""
+  ],
+  "title": "<blink><script>alert('abc');</script></blink>"
+}

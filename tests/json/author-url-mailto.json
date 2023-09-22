@@ -1,9 +1,9 @@
 {
   "__description": "author.url: `mailto:` URI",
   "__tests": [
-    "'url' not in feed['author_detail']",
+    "feed['author_detail']['href'] == 'mailto:user@domain.example'",
     "feed['author_detail']['email'] == 'user@domain.example'",
-    "'url' not in feed['authors'][0]",
+    "feed['authors'][0]['href'] == 'mailto:user@domain.example'",
     "feed['authors'][0]['email'] == 'user@domain.example'"
   ],
   "author": {

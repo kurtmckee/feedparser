@@ -1,10 +1,10 @@
 {
   "__description": "author.url: `mailto:` URI with parameters",
   "__tests": [
-    "'url' not in feed['author_detail']",
     "feed['author_detail']['href'] == 'mailto:user@domain.example?subject=Feed'",
-    "'url' not in feed['authors'][0]",
-    "feed['authors'][0]['href'] == 'mailto:user@domain.example?subject=Feed'"
+    "feed['author_detail']['email'] == 'user@domain.example'",
+    "feed['authors'][0]['href'] == 'mailto:user@domain.example?subject=Feed'",
+    "feed['authors'][0]['email'] == 'user@domain.example'"
   ],
   "author": {
     "name": "abc",

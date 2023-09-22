@@ -1,0 +1,14 @@
+{
+  "__description": "items.title: valid value",
+  "__tests": [
+    "entries[0]['title'] == 'abc'",
+    "len(entries[0]['title_detail'].keys()) == 2",
+    "entries[0]['title_detail']['value'] == 'abc'",
+    "entries[0]['title_detail']['type'] == 'text/plain'"
+  ],
+  "items": [
+    {
+      "title": "abc"
+    }
+  ]
+}

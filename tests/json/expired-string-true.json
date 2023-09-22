@@ -1,7 +1,7 @@
 {
   "__description": "expired: string 'true' is not 'true'",
   "__tests": [
-    "feed['complete'] is False"
+    "feed['expired'] is False"
   ],
   "expired": "true"
 }

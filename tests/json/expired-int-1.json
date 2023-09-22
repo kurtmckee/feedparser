@@ -1,0 +1,7 @@
+{
+  "__description": "expired: integer 1 means false",
+  "__tests": [
+    "feed['expired'] is False"
+  ],
+  "expired": 1
+}

@@ -4,5 +4,5 @@
     "feed['subtitle'] == ''",
     "feed['subtitle_detail']['value'] == ''"
   ],
-  "description": " "
+  "description": ""
 }

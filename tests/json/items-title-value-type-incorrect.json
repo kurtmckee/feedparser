@@ -1,0 +1,12 @@
+{
+  "__description": "items.title: value is not a string",
+  "__tests": [
+    "'title' not in entries[0]",
+    "'title_detail' not in entries[0]"
+  ],
+  "items": [
+    {
+      "title": [1, 2, 3]
+    }
+  ]
+}

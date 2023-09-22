@@ -1,0 +1,14 @@
+{
+  "__description": "items.title: html must be ignored",
+  "__tests": [
+    "entries[0]['title'] == \"<blink><script>alert('abc');</script></blink>\"",
+    "len(entries[0]['title_detail']) == 2",
+    "entries[0]['title_detail']['value'] == \"<blink><script>alert('abc');</script></blink>\"",
+    "entries[0]['title_detail']['type'] == 'text/plain'"
+  ],
+  "items": [
+    {
+      "title": "<blink><script>alert('abc');</script></blink>"
+    }
+  ]
+}

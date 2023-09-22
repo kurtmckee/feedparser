@@ -1,0 +1,7 @@
+{
+  "__description": "expired: an explicit null value means false",
+  "__tests": [
+    "feed['expired'] is False"
+  ],
+  "expired": null
+}

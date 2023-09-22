@@ -1,7 +1,7 @@
 {
   "__description": "author.name: `name` key missing, but `url` present",
   "__tests": [
-    "'author' not in feed",
+    "feed['author'] == 'https://domain.example/'",
     "len(feed['author_detail'].keys()) == 1",
     "'name' not in feed['author_detail']",
     "len(feed['authors'][0].keys()) == 1",

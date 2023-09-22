@@ -4,5 +4,5 @@
     "feed['info'] == ''",
     "feed['info_detail']['value'] == ''"
   ],
-  "user_comment": " "
+  "user_comment": ""
 }

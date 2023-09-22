@@ -3,8 +3,8 @@
   "__tests": [
     "feed['info'] == 'abc\ud83d\ude0e\ud83c\udf34\ud83c\udfb6def'",
     "len(feed['info_detail'].keys()) == 2",
-    "feed['info_detail']['value'] == 'abc\ud83d\ude0e\ud83c\udf34\ud83c\udfb6def'",
-    "feed['info_detail']['type'] == 'text/plain'"
+    "feed['info_detail']['type'] == 'text/plain'",
+    "feed['info_detail']['value'] == 'abc\ud83d\ude0e\ud83c\udf34\ud83c\udfb6def'"
   ],
   "user_comment": "abc😎🌴🎶def"
 }

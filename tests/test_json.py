@@ -14,5 +14,17 @@ def test_json(path):
     data = json.loads(text)
     result = feedparser.parse(text, sanitize_html=False)
     for test_string in data["__tests"]:
-        assert eval(test_string, result, locals()), test_string
+        assert eval(test_string, None, result), test_string
+
+    # Verify that all dicts are instances of FeedParserDict.
+    dicts: list[tuple[str, dict]] = [("top level", result)]
+    while dicts:
+        key, value = dicts.pop()
+        assert isinstance(value, feedparser.FeedParserDict), f"{key} is just a dict"
+        dicts.extend(
+            (k, v)
+            for k, v in value.items()
+            if isinstance(v, dict) and k != "namespaces" and k != "headers"
+        )
+
     assert result["bozo"] is False, result["bozo_exception"]

@@ -3,5 +3,5 @@
   "__tests": [
     "feed['links'][0]['href'] == ''"
   ],
-  "next_url": " "
+  "next_url": ""
 }

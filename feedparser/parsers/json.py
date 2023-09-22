@@ -32,7 +32,7 @@ import typing
 
 from ..datetimes import _parse_date
 from ..sanitizer import sanitize_html
-from ..util import FeedParserDict, looks_like_html
+from ..util import FeedParserDict
 
 JSON_VERSIONS = {
     "https://jsonfeed.org/version/1": "json1",
@@ -40,7 +40,7 @@ JSON_VERSIONS = {
 }
 
 
-def coerce_scalar(value: int | float | bool | None) -> str | None:
+def coerce_scalar_id(value: bool | float | int | None) -> str:
     """Coerce an item identifier to a string if it's a scalar.
 
     The JSON feed specification states that non-string IDs must be coerced to strings.
@@ -49,12 +49,8 @@ def coerce_scalar(value: int | float | bool | None) -> str | None:
     Objects and arrays (dicts and lists in Python) are ignored.
     """
 
-    if value is None:
-        return "null"
     if isinstance(value, bool):
         return str(value).lower()
-    if isinstance(value, int):
-        return str(value)
     if isinstance(value, float):
         if str(value) == "nan":
             return "NaN"
@@ -66,20 +62,16 @@ def coerce_scalar(value: int | float | bool | None) -> str | None:
         # However, floats are an imperfect data type.
         # For example, `1.0e2` in JSON is `100.0` in Python,
         # and `1.9999999999999999e2` in JSON is `200.0` in Python.
-        # There's no way to return the original interpretation as a string.
+        # There's no way to return the original text as a string.
         if isinstance(value, float):
             return str(value)
-    return None
+    if isinstance(value, int):
+        return str(value)
+
+    return "null"
 
 
 class JSONParser:
-    ITEM_FIELDS = (
-        ("title", "title"),
-        ("url", "link"),
-        ("summary", "summary"),
-        ("external_url", "source"),
-    )
-
     def __init__(self, baseuri=None, baselang=None, encoding=None):
         self.baseuri = baseuri or ""
         self.lang = baselang or None
@@ -87,11 +79,11 @@ class JSONParser:
         self.sanitize_html = False
 
         self.version = None
-        self.feeddata = FeedParserDict()
+        self.feeddata: FeedParserDict[str, typing.Any] = FeedParserDict()
         self.namespacesInUse = []
         self.entries = []
 
-    def feed(self, file):
+    def feed(self, file) -> None:
         data = json.load(file)
 
         # If the file parses as JSON, assume it's a JSON feed.
@@ -105,31 +97,21 @@ class JSONParser:
         title = data.get("title")
         if isinstance(title, str):
             title = title.strip()
-            is_html = looks_like_html(title)
-            content_type = "text/html" if is_html else "text/plain"
-            if is_html and self.sanitize_html:
-                title = sanitize_html(title, encoding=None, _type=content_type)
             self.feeddata["title"] = title
-            self.feeddata["title_detail"] = {
-                "value": title,
-                "type": content_type,
-            }
+            self.feeddata["title_detail"] = FeedParserDict(
+                value=title,
+                type="text/plain",
+            )
 
         # Handle `description`, if it exists.
         description = data.get("description")
         if isinstance(description, str):
             description = description.strip()
-            is_html = looks_like_html(description)
-            content_type = "text/html" if is_html else "text/plain"
-            if is_html and self.sanitize_html:
-                description = sanitize_html(
-                    description, encoding=None, _type=content_type
-                )
             self.feeddata["subtitle"] = description
-            self.feeddata["subtitle_detail"] = {
-                "value": description,
-                "type": content_type,
-            }
+            self.feeddata["subtitle_detail"] = FeedParserDict(
+                value=description,
+                type="text/plain",
+            )
 
         # Handle `feed_url`, if it exists.
         feed_url = data.get("feed_url")
@@ -137,31 +119,31 @@ class JSONParser:
             feed_url = feed_url.strip()
             # The feed URL is also...sigh...the feed ID.
             self.feeddata["id"] = feed_url
-            self.feeddata.setdefault("links", []).append(
-                {
-                    "href": feed_url,
-                    "rel": "self",
-                }
+            link_data = FeedParserDict(
+                href=feed_url,
+                rel="self",
             )
             if "title" in self.feeddata:
-                self.feeddata["links"][-1]["title"] = self.feeddata["title"]
+                link_data["title"] = self.feeddata["title"]
+            self.feeddata.setdefault("links", [])
+            self.feeddata["links"].append(link_data)
 
         # Handle `home_page_url`, if it exists.
         home_page_url = data.get("home_page_url")
         if isinstance(home_page_url, str):
             home_page_url = home_page_url.strip()
             self.feeddata["link"] = home_page_url
-            self.feeddata.setdefault("links", []).append(
-                {
-                    "href": home_page_url,
-                    "rel": "alternate",
-                }
+            link_data = FeedParserDict(
+                href=home_page_url,
+                rel="alternate",
             )
+            self.feeddata.setdefault("links", [])
+            self.feeddata["links"].append(link_data)
 
         # Handle `icon`, if it exists.
         icon = data.get("icon")
         if isinstance(icon, str):
-            self.feeddata["image"] = {"href": icon.strip()}
+            self.feeddata["image"] = FeedParserDict(href=icon.strip())
 
         # Handle `favicon`, if it exists.
         favicon = data.get("favicon")
@@ -172,34 +154,28 @@ class JSONParser:
         user_comment = data.get("user_comment")
         if isinstance(user_comment, str):
             user_comment = user_comment.strip()
-            is_html = looks_like_html(user_comment)
-            content_type = "text/html" if is_html else "text/plain"
-            if is_html and self.sanitize_html:
-                user_comment = sanitize_html(
-                    user_comment, encoding=None, _type=content_type
-                )
             self.feeddata["info"] = user_comment
-            self.feeddata["info_detail"] = {
-                "value": user_comment,
-                "type": content_type,
-            }
+            self.feeddata["info_detail"] = FeedParserDict(
+                value=user_comment,
+                type="text/plain",
+            )
 
         # Handle `next_url`, if it exists.
         next_url = data.get("next_url")
         if isinstance(next_url, str):
             next_url = next_url.strip()
-            self.feeddata.setdefault("links", []).append(
-                {
-                    "href": next_url,
-                    "rel": "next",
-                }
+            link_data = FeedParserDict(
+                href=next_url,
+                rel="next",
             )
+            self.feeddata.setdefault("links", [])
+            self.feeddata["links"].append(link_data)
 
         # Handle `expired`, if it exists.
         expired = data.get("expired", ...)
         if expired is not ...:
-            # The spec claims that only boolean true means "finished".
-            self.feeddata["complete"] = expired is True
+            # The spec states that only boolean true means "expired".
+            self.feeddata["expired"] = expired is True
 
         # Handle `hubs`, if it exists.
         hubs = data.get("hubs", ...)
@@ -214,10 +190,10 @@ class JSONParser:
                     if not (isinstance(url, str) and isinstance(type_, str)):
                         continue
                     self.feeddata["hubs"].append(
-                        {
-                            "url": url.strip(),
-                            "type": type_.strip(),
-                        }
+                        FeedParserDict(
+                            url=url.strip(),
+                            type=type_.strip(),
+                        )
                     )
 
         author_singular = data.get("author")
@@ -225,66 +201,201 @@ class JSONParser:
             parsed_author = self._parse_author(author_singular)
             if parsed_author:
                 self.feeddata["authors"] = [parsed_author]
+                # "or", instead of ".get(..., <default>)"
+                self.feeddata["author"] = (
+                    parsed_author.get("name")
+                    or parsed_author.get("email")
+                    or parsed_author.get("href")
+                    or parsed_author.get["avatar"]
+                )
                 self.feeddata["author_detail"] = parsed_author
-                if "name" in parsed_author:
-                    self.feeddata["author"] = parsed_author["name"]
 
         items = data.get("items")
         if isinstance(items, list):
             for item in items:
-                if isinstance(item, dict):
-                    entry = self.parse_entry(item)
-                    if entry:
-                        self.entries.append(entry)
+                if not isinstance(item, dict):
+                    continue
+                entry = self._parse_entry(item)
+                if entry:
+                    self.entries.append(entry)
 
-    def parse_entry(self, item: dict[str, typing.Any]) -> dict[str, str]:
+    def _parse_entry(
+        self, item: dict[str, typing.Any]
+    ) -> FeedParserDict[str, typing.Any]:
         entry = FeedParserDict()
 
-        # Handle `id`, if it exists.
+        # Handle `id`, if it exists and is a scalar value.
         id_ = item.get("id")
         if isinstance(id_, str):
             entry["id"] = id_.strip()
-        elif isinstance(id_, (int, float, bool, bool)) or id_ is None:
-            entry["id"] = coerce_scalar(id_)
+        elif isinstance(id_, (bool, float, int)) or id_ is None:
+            entry["id"] = coerce_scalar_id(id_)
 
-        for src, dst in self.ITEM_FIELDS:
-            if src in item:
-                entry[dst] = item[src]
-
-        if "content_text" in item:
-            entry["content"] = c = FeedParserDict()
-            c["value"] = item["content_text"]
-            c["type"] = "text"
-        elif "content_html" in item:
-            entry["content"] = c = FeedParserDict()
-            c["value"] = sanitize_html(
-                item["content_html"], self.encoding, "application/json"
+        # Handle `title`, if it exists.
+        title = item.get("title")
+        if isinstance(title, str):
+            title = title.strip()
+            entry["title"] = title
+            entry["title_detail"] = FeedParserDict(
+                value=title,
+                type="text/plain",
             )
-            c["type"] = "html"
 
-        if "date_published" in item:
-            entry["published"] = item["date_published"]
-            entry["published_parsed"] = _parse_date(item["date_published"])
-        if "date_updated" in item:
-            entry["updated"] = item["date_modified"]
-            entry["updated_parsed"] = _parse_date(item["date_modified"])
+        # Handle `url`, if it exists.
+        url = item.get("url")
+        if isinstance(url, str):
+            url = url.strip()
+            link_data = FeedParserDict(
+                rel="self",
+                href=url,
+            )
+            if "title" in entry:
+                link_data["title"] = entry["title"]
+            entry["link"] = url
+            entry.setdefault("links", [])
+            entry["links"].append(link_data)
 
-        if "tags" in item:
-            entry["category"] = item["tags"]
+        # Handle `external_url`, if it exists.
+        external_url = item.get("external_url")
+        if isinstance(external_url, str):
+            external_url = external_url.strip()
+            link_data = FeedParserDict(
+                rel="related",
+                href=external_url,
+            )
+            entry.setdefault("links", [])
+            entry["links"].append(link_data)
 
-        if "author" in item:
-            self._parse_author(item["author"])
+        # Handle `content_text`, if it exists.
+        content_text = item.get("content_text")
+        if isinstance(content_text, str):
+            content_text = content_text.strip()
+            entry.setdefault("content", [])
+            entry["content"].append(
+                FeedParserDict(
+                    value=content_text,
+                    type="text/plain",
+                )
+            )
 
-        if "attachments" in item:
-            entry["enclosures"] = [
-                self.parse_attachment(a) for a in item["attachments"]
-            ]
+        # Handle `content_html`, if it exists.
+        content_html = item.get("content_html")
+        if isinstance(content_html, str):
+            # JSON Feed fails to allow for content type declarations,
+            # so it's impossible to know whether the content is HTML or XHTML.
+            # "text/html" is chosen for lack of actual information.
+            content_html = content_html.strip()
+            content_type = "text/html"
+            if self.sanitize_html:
+                content_html = sanitize_html(content_html, self.encoding, content_type)
+            entry.setdefault("content", [])
+            entry["content"].append(
+                FeedParserDict(
+                    value=content_html,
+                    type=content_type,
+                )
+            )
+
+        # Handle `summary`, if it exists.
+        summary = item.get("summary")
+        if isinstance(summary, str):
+            summary = summary.strip()
+            entry["summary"] = summary
+            entry["summary_detail"] = FeedParserDict(
+                value=summary,
+                type="text/plain",
+            )
+
+        # Handle `image`, if it exists.
+        image = item.get("image")
+        if isinstance(image, str):
+            image = image.strip()
+            entry.setdefault("images", [])
+            entry["images"].append(
+                FeedParserDict(
+                    href=image,
+                    role="main",
+                )
+            )
+
+        # Handle `banner_image`, if it exists.
+        banner_image = item.get("banner_image")
+        if isinstance(banner_image, str):
+            banner_image = banner_image.strip()
+            entry.setdefault("images", [])
+            entry["images"].append(
+                FeedParserDict(
+                    href=banner_image,
+                    role="banner",
+                )
+            )
+
+        # Handle `date_published`, if it exists.
+        date_published = item.get("date_published")
+        if isinstance(date_published, str):
+            date_published = date_published.strip()
+            entry["published"] = date_published
+            entry["published_parsed"] = _parse_date(date_published)
+
+        # Handle `date_modified`, if it exists.
+        date_modified = item.get("date_modified")
+        if isinstance(date_modified, str):
+            date_modified = date_modified.strip()
+            entry["updated"] = date_modified
+            entry["updated_parsed"] = _parse_date(date_modified)
+
+        # Handle `author`, if it exists.
+        author_singular = item.get("author")
+        if isinstance("author", dict):
+            parsed_author = self._parse_author(author_singular)
+            if parsed_author:
+                entry["author"] = (
+                    parsed_author.get("name")
+                    or parsed_author.get("email")
+                    or parsed_author.get("url")
+                    or parsed_author["avatar"]
+                )
+                entry["author_detail"] = parsed_author
+
+        # Handle `tags`, if it exists.
+        tags = item.get("tags")
+        if isinstance(tags, list):
+            normalized_tags = self._parse_tags(tags)
+            entry.setdefault("tags", [])
+            entry["tags"].extend(normalized_tags)
+
+        # Handle `attachments`, if it exists.
+        attachments = item.get("attachments")
+        if isinstance(attachments, list):
+            parsed_attachments = self._parse_attachments(attachments)
+            if parsed_attachments:
+                entry["enclosures"] = parsed_attachments
 
         return entry
 
     @staticmethod
-    def _parse_author(info: dict[str, str]) -> dict[str, str]:
-        parsed_author: dict[str, str] = {}
+    def _parse_tags(tags: list[typing.Any]) -> list[FeedParserDict]:
+        """Parse a list of tags, keeping only non-empty strings."""
+
+        normalized_tags = []
+        for tag in tags:
+            if not isinstance(tag, str):
+                continue
+            tag = tag.strip()
+            if not tag:
+                continue
+            normalized_tags.append(
+                FeedParserDict(
+                    label=tag,
+                    term=tag,
+                )
+            )
+
+        return normalized_tags
+
+    @staticmethod
+    def _parse_author(info: dict[str, str]) -> FeedParserDict[str, str]:
+        parsed_author: FeedParserDict[str, str] = FeedParserDict()
 
         name = info.get("name")
         if isinstance(name, str):
@@ -295,7 +406,7 @@ class JSONParser:
             url = url.strip()
             parsed_author["href"] = url
             # URLs can be email addresses.
-            # However, only a "mailto:" URI supports options like:
+            # However, the "mailto:" URI supports options like:
             #
             #   mailto:user@domain.example?subject=Feed
             #
@@ -310,10 +421,34 @@ class JSONParser:
         return parsed_author
 
     @staticmethod
-    def parse_attachment(attachment):
-        enc = FeedParserDict()
-        enc["href"] = attachment["url"]
-        enc["type"] = attachment["mime_type"]
-        if "size_in_bytes" in attachment:
-            enc["length"] = attachment["size_in_bytes"]
-        return enc
+    def _parse_attachments(
+        attachments: list[dict[str, typing.Any]]
+    ) -> list[FeedParserDict[str, str | int | float]]:
+        """Parse a list of attachments."""
+
+        parsed_attachments = []
+        for attachment in attachments:
+            url = attachment.get("url")
+            if not isinstance(url, str):
+                continue
+            url = url.strip()
+            if not url:
+                continue
+            parsed_attachment = FeedParserDict(href=url)
+            parsed_attachments.append(parsed_attachment)
+
+            mime_type = attachment.get("mime_type")
+            if isinstance(mime_type, str):
+                mime_type = mime_type.strip()
+                if mime_type:
+                    parsed_attachment["type"] = mime_type
+
+            size_in_bytes = attachment.get("size_in_bytes")
+            if isinstance(size_in_bytes, int):
+                parsed_attachment["length"] = size_in_bytes
+
+            duration = attachment.get("duration_in_seconds")
+            if isinstance(duration, (int, float)):
+                parsed_attachment["duration"] = duration
+
+        return parsed_attachments

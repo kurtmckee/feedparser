@@ -1,13 +1,13 @@
 {
-  "__description": "author.name: `name` key missing, but `avatar` present",
+  "__description": "author.name: `name` key missing, but mailto: `url` present",
   "__tests": [
-    "feed['author'] == 'https://domain.example/i.jpeg'",
+    "feed['author'] == 'user@domain.example'",
     "len(feed['author_detail'].keys()) == 1",
     "'name' not in feed['author_detail']",
     "len(feed['authors'][0].keys()) == 1",
     "'name' not in feed['authors'][0]"
   ],
   "author": {
-    "avatar": "https://domain.example/i.jpeg"
+    "url": "mailto:user@domain.example?subject=Hello"
   }
 }

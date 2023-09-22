@@ -1,0 +1,12 @@
+{
+  "__description": "items.url: blank values are not lost",
+  "__tests": [
+    "entries[0]['link'] == ''",
+    "entries[0]['links'][0]['href'] == ''"
+  ],
+  "items": [
+    {
+      "url": ""
+    }
+  ]
+}

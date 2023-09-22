@@ -1,0 +1,10 @@
+{
+  "__description": "user_comment: html must be ignored",
+  "__tests": [
+    "feed['info'] == \"<blink><script>alert('abc');</script></blink>\"",
+    "len(feed['info_detail']) == 2",
+    "feed['info_detail']['type'] == 'text/plain'",
+    "feed['info_detail']['value'] == \"<blink><script>alert('abc');</script></blink>\""
+  ],
+  "user_comment": "<blink><script>alert('abc');</script></blink>"
+}

@@ -3,5 +3,5 @@
   "__tests": [
     "feed['image']['href'] == ''"
   ],
-  "icon": " "
+  "icon": ""
 }
