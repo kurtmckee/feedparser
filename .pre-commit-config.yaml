@@ -1,4 +1,5 @@
-# Run `pre-commit autoupdate` and `upadup` to update tool versions.
+ci:
+  autoupdate_schedule: "monthly"
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
