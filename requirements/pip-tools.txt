@@ -8,10 +8,6 @@ build==0.10.0
     # via pip-tools
 click==8.1.6
     # via pip-tools
-colorama==0.4.6
-    # via
-    #   build
-    #   click
 packaging==23.1
     # via build
 pip-tools==7.1.0
@@ -27,7 +23,7 @@ wheel==0.41.0
     # via pip-tools
 
 # The following packages are considered to be unsafe in a requirements file:
-pip==23.2.1
+pip==23.3
     # via pip-tools
 setuptools==68.0.0
     # via pip-tools
