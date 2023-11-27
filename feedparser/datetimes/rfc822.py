@@ -71,6 +71,7 @@ months = {
 }
 re_separator = re.compile(r"\s|,\s?")
 
+
 def _parse_date_rfc822(date):
     """Parse RFC 822 dates and times
     http://tools.ietf.org/html/rfc822#section-5
