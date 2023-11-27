@@ -26,6 +26,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import datetime
+import re
 
 timezone_names = {
     "ut": 0,
@@ -68,7 +69,7 @@ months = {
     "nov": 11,
     "dec": 12,
 }
-
+re_separator = re.compile(r"\s|,\s?")
 
 def _parse_date_rfc822(date):
     """Parse RFC 822 dates and times
@@ -85,7 +86,7 @@ def _parse_date_rfc822(date):
     :rtype: time.struct_time | None
     """
 
-    parts = date.lower().split()
+    parts = re_separator.split(date.lower())
     if len(parts) < 5:
         # Assume that the time and timezone are missing
         parts.extend(("00:00:00", "0000"))
