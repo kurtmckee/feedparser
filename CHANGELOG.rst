@@ -21,6 +21,11 @@ Please see the fragment files in the `changelog.d directory`_.
 ..  scriv-insert-here
 
 
+6.0.11 - 2023-12-10
+===================
+
+*   Resolve ``cgi`` module deprecation warnings. (#330)
+
 6.0.10 - 2022-05-21
 ===================
 
