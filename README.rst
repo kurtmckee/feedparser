@@ -1,9 +1,16 @@
-feedparser - Parse Atom and RSS feeds in Python.
+..
+    This file is part of feedparser.
+    Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
+    Copyright 2002-2008 Mark Pilgrim
+    Released under the BSD 2-clause license.
 
-| Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
-| Copyright 2002-2008 Mark Pilgrim
 
-feedparser is open source. See the LICENSE file for more information.
+feedparser
+##########
+
+Parse Atom and RSS feeds in Python.
+
+----
 
 
 Installation
@@ -11,7 +18,7 @@ Installation
 
 feedparser can be installed by running pip:
 
-..  code-block:: shell
+..  code-block:: console
 
     $ pip install feedparser
 
@@ -30,7 +37,7 @@ To build the documentation you'll need the Sphinx package, which is available at
 
 You can then build HTML pages using a command similar to:
 
-..  code-block:: shell
+..  code-block:: console
 
     $ sphinx-build -b html docs/ fpdocs
 
@@ -42,7 +49,7 @@ Testing
 
 Feedparser has an extensive test suite, powered by tox. To run it, type this:
 
-..  code-block:: shell
+..  code-block:: console
 
     $ python -m venv venv
     $ source venv/bin/activate  # or "venv\bin\activate.ps1" on Windows

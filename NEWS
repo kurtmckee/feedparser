@@ -1,5 +1,8 @@
 coming in the next release:
 
+6.0.11 - 9 December 2023
+    *   Resolve ``cgi`` module deprecation warnings. (#330)
+
 6.0.10 - 21 May 2022
     *   Populate ``<summary>`` correctly if it comes after ``<content>``. (#260)
 

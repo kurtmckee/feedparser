@@ -1,4 +1,4 @@
-# Copyright 2010-2020 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2004-2008 Mark Pilgrim
 # All rights reserved.
 #
