@@ -314,7 +314,7 @@ def _parse_file_inplace(
         except xml.sax.SAXNotSupportedException:
             pass
         saxparser.setContentHandler(feed_parser)
-        saxparser.setErrorHandler(feed_parser)
+        saxparser.setErrorHandler(feed_parser)  # type: ignore[arg-type]
         source = xml.sax.xmlreader.InputSource()
 
         # If an encoding was detected, decode the file on the fly;
