@@ -1,5 +1,5 @@
 # The loose feed parser that interfaces with an SGML parsing library
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #

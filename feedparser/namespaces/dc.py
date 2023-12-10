@@ -1,5 +1,5 @@
 # Support for the Dublin Core metadata extensions
-# Copyright 2010-2022 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
