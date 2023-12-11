@@ -137,20 +137,27 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: "Determine month number"
-        shell: "bash"
-        run: "date +'%m' > month-number.txt"
+      - name: "Detect Pythons"
+        uses: "kurtmckee/detect-pythons@cd2193638306e04e41ac36f0f9290f18680138ac" # v1.0.0
 
       - name: "Restore cache"
         id: "restore-cache"
         uses: "actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84" # v3.3.2
         with:
+          # The cache key includes the following to ensure it busts correctly:
+          #
+          # * All Python versions (detected by kurtmckee/detect-pythons, above)
+          #   This ensures that .venv/ symlinks to Python interpreters work.
+          # * The tox config (tox.ini)
+          # * The mypy config (pyproject.toml)
+          # * The Sphinx config (docs/conf.py)
+          # * The exact dependencies used during testing (requirements/*.txt)
+          #
+          key: "lint-hash=${{ hashFiles('.python-identifiers', 'tox.ini', 'pyproject.toml', 'docs/conf.py', 'requirements/*.txt') }}"
           path: |
             .mypy_cache/
             .tox/
             .venv/
-          key: "lint-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('month-number.txt', 'pyproject.toml', 'tox.ini') }}"
-
 
       - name: "Create virtual environment"
         if: "steps.restore-cache.outputs.cache-hit == false"
@@ -159,8 +166,5 @@ jobs:
           .venv/bin/python -m pip install --upgrade pip setuptools wheel
           .venv/bin/python -m pip install tox
 
-      - name: "Build the documentation"
-        run: ".venv/bin/tox run -e docs"
-
-      - name: "Check type annotations"
-        run: ".venv/bin/tox run -e mypy"
+      - name: "Lint"
+        run: ".venv/bin/tox run -e docs,mypy"
