@@ -1,4 +1,4 @@
-name: "CI"
+name: "🔬 Test"
 
 on:
   pull_request:
@@ -11,22 +11,64 @@ on:
 
 jobs:
   test:
-    name: "Test on ${{ matrix.config.os-name }}"
-    runs-on: "${{ matrix.config.runner }}"
-
     strategy:
-      matrix:
-        config:
-          - os-name: "Linux"
-            runner: "ubuntu-latest"
-            test-label: "ci-test-linux"
-          - os-name: "macOS"
-            runner: "macos-latest"
-            test-label: "ci-test-macos"
-          - os-name: "Windows"
-            runner: "windows-latest"
-            test-label: "ci-test-windows"
       fail-fast: false
+      matrix:
+        # macOS and Windows tests target only the upper and lower CPython versions.
+        interpreter:
+          - "CPython"
+        os:
+          - name: "macOS"
+            runner: "macos-latest"
+          - name: "Windows"
+            interpreters: "CPython"
+            runner: "windows-latest"
+        cpythons:
+          # The goal is to ensure that each individual runner
+          # is paired with all Python versions simultaneously.
+          # This nested-list syntax accomplishes that goal.
+          - - "3.8"
+            - "3.12"
+        # These last two keys are placeholders to ensure consistency in matrix values.
+        cpython-beta:
+          - ""
+        pypys:
+          - []
+
+        # The Linux runner tests all CPython and PyPy versions.
+        # To reduce clock time, CPython and PyPy are tested separately.
+        include:
+          # CPython
+          - interpreter: "CPython"
+            os:
+              name: "Linux (CPython)"
+              runner: "ubuntu-latest"
+            cpythons:
+              - "3.8"
+              - "3.9"
+              - "3.10"
+              - "3.11"
+              - "3.12"
+            cpython-beta: "3.13"
+            pypys: []
+          # PyPy
+          - interpreter: "PyPy"
+            os:
+              name: "Linux (PyPy)"
+              runner: "ubuntu-latest"
+            cpythons: []
+            cpython-beta: ""
+            pypys:
+              - "3.8"
+              - "3.9"
+              - "3.10"
+            # NOTE: Tox only offers "best effort" support for PyPy.
+            # To prevent installing tox on a PyPy interpreter,
+            # a CPython version must be added to the end of the PyPy list.
+            tox-python: "3.12"
+
+    name: "${{ matrix.os.name }}"
+    runs-on: "${{ matrix.os.runner }}"
 
     steps:
       - name: "Checkout the repo"
@@ -36,36 +78,35 @@ jobs:
         id: "setup-python"
         uses: "actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236" # v4.7.1
         with:
-          python-version: |
-            3.13
-            pypy-3.8
-            pypy-3.9
-            pypy-3.10
-            3.8
-            3.9
-            3.10
-            3.11
-            3.12
+          python-version: "${{
+            matrix.interpreter == 'PyPy'
+            && format('pypy-{0}\n{1}', join(matrix.pypys, '\npypy-'), matrix.tox-python)
+            || format('{0}\n{1}', matrix.cpython-beta, join(matrix.cpythons, '\n'))
+            }}"
           allow-prereleases: true
 
-      - name: "Determine month number"
-        shell: "bash"
-        run: |
-          date +'month-number=%m' >> $GITHUB_ENV
-          date +'%m' > month-number.txt
-
-      - name: "Determine venv path"
-        shell: "bash"
-        run: "echo 'venv-path=${{ matrix.config.os-name == 'Windows' && '.venv/Scripts' || '.venv/bin' }}' >> $GITHUB_ENV"
+      - name: "Detect Pythons"
+        uses: "kurtmckee/detect-pythons@cd2193638306e04e41ac36f0f9290f18680138ac" # v1.0.0
 
       - name: "Restore cache"
         id: "restore-cache"
         uses: "actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84" # v3.3.2
         with:
+          # The cache key includes the following to ensure it busts correctly:
+          #
+          # * All Python versions (detected by kurtmckee/detect-pythons, above)
+          #   This ensures that .venv/ symlinks to Python interpreters work.
+          # * The tox configuration (tox.ini)
+          # * The pytest configuration (pyproject.toml)
+          #
+          key: "test-os=${{ runner.os }}-interpreter=${{ matrix.interpreter }}-hash=${{ hashFiles('.python-identifiers', 'tox.ini', 'pyproject.toml') }}"
           path: |
             .tox/
             .venv/
-          key: "test-${{ matrix.config.runner }}-${{ hashFiles('pyproject.toml', 'tox.ini', 'month-number.txt') }}"
+
+      - name: "Determine venv path"
+        shell: "bash"
+        run: "echo 'venv-path=.venv/${{ runner.os == 'Windows' && 'Scripts' || 'bin' }}' >> $GITHUB_ENV"
 
       - name: "Create virtual environment"
         if: "steps.restore-cache.outputs.cache-hit == false"
@@ -74,8 +115,13 @@ jobs:
           ${{ env.venv-path }}/python -m pip install --upgrade pip setuptools wheel
           ${{ env.venv-path }}/python -m pip install tox
 
-      - name: "Run tests"
-        run: "${{ env.venv-path }}/tox run -m ${{ matrix.config.test-label }}"
+      - name: "Run tests (CPython interpreters)"
+        if: "matrix.interpreter == 'CPython'"
+        run: "${{ env.venv-path }}/tox run -e py${{ join(matrix.cpythons, '-chardet,py') }}-chardet${{ matrix.cpython-beta != '' && format(',py{0}-chardet', matrix.cpython-beta) || '' }}"
+
+      - name: "Run tests (PyPy interpreters)"
+        if: "matrix.interpreter == 'PyPy'"
+        run: "${{ env.venv-path }}/tox run -e pypy${{ join(matrix.pypys, '-chardet,pypy') }}-chardet"
 
   lint:
     name: "Lint"
