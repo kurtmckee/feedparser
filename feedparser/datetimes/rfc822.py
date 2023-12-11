@@ -91,6 +91,10 @@ def _parse_date_rfc822(date):
         parts.extend(("00:00:00", "0000"))
     # Remove the day name
     if parts[0][:3] in day_names:
+        # Comma without spaces:
+        # 'Fri,24 Nov 2023 18:28:36 -0000'
+        if "," in parts[0] and parts[0][-1] != ",":
+            parts.insert(1, parts[0].rpartition(",")[2])
         parts = parts[1:]
     if len(parts) < 5:
         # If there are still fewer than five parts, there's not enough

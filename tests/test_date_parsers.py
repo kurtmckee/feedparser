@@ -199,6 +199,12 @@ def test_year_10000_date():
             "Thu Aug 30 2012 17:26:16 +0200",
             (2012, 8, 30, 15, 26, 16, 3, 243, 0),
         ),
+        # Comma without spaces
+        (
+            _parse_date_rfc822,
+            "Fri,24 Nov 2023 18:28:36 -0000",
+            (2023, 11, 24, 18, 28, 36, 4, 328, 0),
+        ),
         (_parse_date_rfc822, "Sun, 16 Dec 2012 1:2:3:4 GMT", None),  # invalid time
         (_parse_date_rfc822, "Sun, 16 zzz 2012 11:47:32 GMT", None),  # invalid month
         (
