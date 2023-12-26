@@ -47,6 +47,7 @@ else:
 
 
 from .exceptions import (
+    CharacterEncodingErrorsReplace,
     CharacterEncodingOverride,
     CharacterEncodingUnknown,
     FeedparserError,
@@ -218,6 +219,21 @@ def convert_to_utf8(
     http_content_type = http_headers.get("content-type") or ""
     http_content_type, http_encoding = parse_content_type(http_content_type)
 
+    # Some UTF-8 documents may contain invalid characters, resulting in
+    # falling back to lazy_chardet_encoding or iso-8859-2.
+    # In such a case, lazy_chardet_encoding may not be able to detect the
+    # encoding correctly, and iso-8859-2 is apparently a wrong guess.
+
+    # Therefore, we use the flag to allow decoding UTF-8 documents with
+    # errors='replace'.
+
+    # Considering the fact that UTF-8 is the most popular encoding,
+    # the flag can be safely set if any metadata of the document explicitly
+    # indicates that the encoding is UTF-8.
+
+    # 1st pass: adhere to HTTP encoding (Content-Type)
+    utf_8_confident = http_encoding == "utf-8"
+
     acceptable_content_type = 0
     application_content_types = (
         "application/xml",
@@ -232,6 +248,11 @@ def convert_to_utf8(
         and http_content_type.endswith("+xml")
     ):
         acceptable_content_type = 1
+        # 2nd pass: adhere to the declared XML encoding
+        #           (but not in the inconsistent case)
+        utf_8_confident = utf_8_confident or (
+            xml_encoding == "utf-8" and not http_encoding
+        )
         rfc3023_encoding = http_encoding or xml_encoding or "utf-8"
     elif http_content_type in text_content_types or (
         http_content_type.startswith("text/") and http_content_type.endswith("+xml")
@@ -298,7 +319,19 @@ def convert_to_utf8(
         try:
             text = data.decode(proposed_encoding)
         except (UnicodeDecodeError, LookupError):
-            continue
+            if proposed_encoding != "utf-8" or not utf_8_confident:
+                continue
+            # try utf-8 with errors='replace' if we are confident
+            try:
+                text = data.decode("utf-8", errors="replace")
+            except (UnicodeDecodeError, LookupError):
+                continue
+            else:
+                error = CharacterEncodingErrorsReplace(
+                    "document explicitly declared its encoding as utf-8, "
+                    "but has encoding errors, "
+                    "which has been replaced with � (U+FFFD)"
+                )
 
         known_encoding = True
         if not json:
