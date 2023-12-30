@@ -30,6 +30,7 @@ import io
 import urllib.error
 import urllib.parse
 import xml.sax
+from requests.structures import CaseInsensitiveDict
 from typing import IO, Dict, Optional, Union
 
 from . import http
@@ -110,9 +111,9 @@ def _open_resource(
     looks_like_url = isinstance(
         url_file_stream_or_string, str
     ) and urllib.parse.urlparse(url_file_stream_or_string)[0] in (
-        "http",
-        "https",
-    )
+                         "http",
+                         "https",
+                     )
     if looks_like_url:
         data = http.get(url_file_stream_or_string, result)
         return io.BytesIO(data)
@@ -196,7 +197,7 @@ def parse(
         bozo=False,
         entries=[],
         feed=FeedParserDict(),
-        headers={},
+        headers=CaseInsensitiveDict(),
     )
 
     try:
