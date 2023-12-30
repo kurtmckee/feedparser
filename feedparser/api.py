@@ -30,8 +30,9 @@ import io
 import urllib.error
 import urllib.parse
 import xml.sax
-from requests.structures import CaseInsensitiveDict
 from typing import IO, Dict, Optional, Union
+
+from requests.structures import CaseInsensitiveDict
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
@@ -111,9 +112,9 @@ def _open_resource(
     looks_like_url = isinstance(
         url_file_stream_or_string, str
     ) and urllib.parse.urlparse(url_file_stream_or_string)[0] in (
-                         "http",
-                         "https",
-                     )
+        "http",
+        "https",
+    )
     if looks_like_url:
         data = http.get(url_file_stream_or_string, result)
         return io.BytesIO(data)
