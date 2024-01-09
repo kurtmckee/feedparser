@@ -76,7 +76,7 @@ jobs:
 
       - name: "Setup Python"
         id: "setup-python"
-        uses: "actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236" # v4.7.1
+        uses: "actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c" # v5.0.0
         with:
           python-version: "${{
             matrix.interpreter == 'PyPy'
@@ -86,7 +86,7 @@ jobs:
           allow-prereleases: true
 
       - name: "Detect Pythons"
-        uses: "kurtmckee/detect-pythons@cd2193638306e04e41ac36f0f9290f18680138ac" # v1.0.0
+        uses: "kurtmckee/detect-pythons@38187a5464f266e93e5c1467699f7be2bf521d2e" # v1.1.0
 
       - name: "Restore cache"
         id: "restore-cache"
@@ -133,12 +133,12 @@ jobs:
 
       - name: "Setup Python"
         id: "setup-python"
-        uses: "actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236" # v4.7.1
+        uses: "actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c" # v5.0.0
         with:
           python-version: "3.12"
 
       - name: "Detect Pythons"
-        uses: "kurtmckee/detect-pythons@cd2193638306e04e41ac36f0f9290f18680138ac" # v1.0.0
+        uses: "kurtmckee/detect-pythons@38187a5464f266e93e5c1467699f7be2bf521d2e" # v1.1.0
 
       - name: "Restore cache"
         id: "restore-cache"
