@@ -31,25 +31,25 @@ repos:
           - "--py38-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
-    rev: "23.11.0"
+    rev: "24.1.1"
     hooks:
       - id: "black"
         language_version: "python3.8"
 
   - repo: "https://github.com/pycqa/isort"
-    rev: "5.13.0"
+    rev: "5.13.2"
     hooks:
       - id: "isort"
 
   - repo: "https://github.com/pycqa/flake8"
-    rev: "6.1.0"
+    rev: "7.0.0"
     hooks:
       - id: "flake8"
         additional_dependencies:
           - "flake8-bugbear==23.12.2"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.27.3"
+    rev: "0.27.4"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
