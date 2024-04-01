@@ -528,7 +528,6 @@ class MissingEncoding(io.UnsupportedOperation):
 
 
 class StreamFactory:
-
     """Decode on the fly a binary stream that *may* have a known encoding.
 
     If the underlying stream is seekable, it is possible to call
