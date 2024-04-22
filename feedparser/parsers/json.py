@@ -86,17 +86,17 @@ class JSONParser:
                 entry[dst] = e[src]
 
         content = []
-        if "content_text" in e:
-            c = FeedParserDict()
-            c["value"] = e["content_text"]
-            c["type"] = "text"
-            content.append(c)
         if "content_html" in e:
             c = FeedParserDict()
             c["value"] = sanitize_html(
                 e["content_html"], self.encoding, "application/json"
             )
             c["type"] = "html"
+            content.append(c)
+        if "content_text" in e:
+            c = FeedParserDict()
+            c["value"] = e["content_text"]
+            c["type"] = "text"
             content.append(c)
         if content:
             entry["content"] = content
