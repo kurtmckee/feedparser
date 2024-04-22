@@ -85,7 +85,7 @@ class JSONParser:
             if src in e:
                 entry[dst] = e[src]
 
-        content = []
+        entry["content"] = content = []
         if "content_html" in e:
             c = FeedParserDict()
             c["value"] = sanitize_html(
@@ -98,8 +98,10 @@ class JSONParser:
             c["value"] = e["content_text"]
             c["type"] = "text"
             content.append(c)
-        if content:
-            entry["content"] = content
+        if not content:
+            raise ValueError(
+                f"item {entry['id']=} has neither 'content_text' nor 'content_html'"
+            )
 
         if "date_published" in e:
             entry["published"] = e["date_published"]
