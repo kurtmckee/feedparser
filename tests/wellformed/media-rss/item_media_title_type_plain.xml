@@ -1,6 +1,6 @@
 <!--
 Description: media:title @type="plain"
-Expect:      not bozo and entries[0]['title_detail']['type'] == 'text/plain'
+Expect:      not bozo and entries[0]['media_title'][0]['type'] == 'text/plain'
 -->
 <rss xmlns:media="http://search.yahoo.com/mrss/">
   <channel>
