@@ -8,7 +8,7 @@ repos:
       - id: "check-useless-excludes"
 
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
-    rev: "v4.5.0"
+    rev: "v4.6.0"
     hooks:
       - id: "check-added-large-files"
       - id: "check-merge-conflict"
@@ -31,7 +31,7 @@ repos:
           - "--py38-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
-    rev: "24.3.0"
+    rev: "24.4.2"
     hooks:
       - id: "black"
         language_version: "python3.8"
@@ -49,7 +49,7 @@ repos:
           - "flake8-bugbear==23.12.2"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.28.1"
+    rev: "0.28.2"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
