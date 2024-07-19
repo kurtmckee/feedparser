@@ -9,7 +9,7 @@ The default User-Agent string looks like this:
 
 ..  code-block:: text
 
-    UniversalFeedParser/5.0.1 +http://feedparser.org/
+    feedparser/6.0.11 +https://github.com/kurtmckee/feedparser/
 
 If you are embedding :program:`Universal Feed Parser` in a larger application,
 you should change the User-Agent to your application name and
