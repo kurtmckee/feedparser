@@ -314,10 +314,9 @@ class XMLParserMixin(
             if len(attrs_d) == 0:
                 # No attributes so merge it into the enclosing dictionary
                 return self.push(unknown_tag, 1)
-            else:
-                # Has attributes so create it in its own dictionary
-                context = self._get_context()
-                context[unknown_tag] = attrs_d
+            # Has attributes so create it in its own dictionary
+            context = self._get_context()
+            context[unknown_tag] = attrs_d
 
     def unknown_endtag(self, tag):
         # match namespaces
@@ -427,13 +426,11 @@ class XMLParserMixin(
                 return k
             self.handle_data(xml.sax.saxutils.escape(self.rawdata[i + 9 : k]), 0)
             return k + 3
-        else:
-            k = self.rawdata.find(">", i)
-            if k >= 0:
-                return k + 1
-            else:
-                # We have an incomplete CDATA block.
-                return k
+        k = self.rawdata.find(">", i)
+        if k >= 0:
+            return k + 1
+        # We have an incomplete CDATA block.
+        return k
 
     @staticmethod
     def map_content_type(content_type):

@@ -137,8 +137,7 @@ def _open_resource(
 def _to_in_memory_file(data):
     if isinstance(data, str):
         return io.StringIO(data)
-    else:
-        return io.BytesIO(data)
+    return io.BytesIO(data)
 
 
 class LooseFeedParser(LooseXMLParser, XMLParserMixin, BaseHTMLProcessor):
