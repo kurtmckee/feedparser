@@ -119,8 +119,7 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         tag = match.group(1)
         if tag in self.elements_no_end_tag:
             return "<" + tag + " />"
-        else:
-            return "<" + tag + "></" + tag + ">"
+        return "<" + tag + "></" + tag + ">"
 
     # By declaring these methods and overriding their compiled code
     # with the code from sgmllib, the original code will execute in
@@ -309,10 +308,9 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
             if (i + len(s)) == n:
                 return None, -1  # end of buffer
             return name.lower(), m.end()
-        else:
-            self.handle_data(rawdata)
-            # self.updatepos(declstartpos, i)
-            return None, -1
+        self.handle_data(rawdata)
+        # self.updatepos(declstartpos, i)
+        return None, -1
 
     def convert_charref(self, name):
         """

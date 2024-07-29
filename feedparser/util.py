@@ -123,8 +123,7 @@ class FeedParserDict(dict):
             self.__getitem__(key, _stacklevel=3)
         except KeyError:
             return False
-        else:
-            return True
+        return True
 
     has_key = __contains__
 
