@@ -57,6 +57,11 @@ repos:
       - id: "check-github-workflows"
       - id: "check-readthedocs"
 
+  - repo: "https://github.com/rhysd/actionlint"
+    rev: "v1.7.1"
+    hooks:
+      - id: "actionlint"
+
   - repo: "https://github.com/kurtmckee/pre-commit-hooks"
     rev: "v0.1.1"
     hooks:
