@@ -1,6 +1,9 @@
 ci:
   autoupdate_schedule: "monthly"
 
+default_language_version:
+  python: "python3.12"
+
 repos:
   - repo: "meta"
     hooks:
@@ -26,15 +29,14 @@ repos:
     rev: "v3.17.0"
     hooks:
       - id: "pyupgrade"
-        name: "Enforce Python 3.8+ idioms"
+        name: "Enforce Python 3.9+ idioms"
         args:
-          - "--py38-plus"
+          - "--py39-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
-    rev: "24.4.2"
+    rev: "24.8.0"
     hooks:
       - id: "black"
-        language_version: "python3.8"
 
   - repo: "https://github.com/pycqa/isort"
     rev: "5.13.2"
@@ -42,7 +44,7 @@ repos:
       - id: "isort"
 
   - repo: "https://github.com/pycqa/flake8"
-    rev: "7.1.0"
+    rev: "7.1.1"
     hooks:
       - id: "flake8"
         additional_dependencies:
@@ -54,3 +56,8 @@ repos:
       - id: "check-dependabot"
       - id: "check-github-workflows"
       - id: "check-readthedocs"
+
+  - repo: "https://github.com/kurtmckee/pre-commit-hooks"
+    rev: "v0.1.1"
+    hooks:
+      - id: "verify-consistent-pyproject-toml-python-requirements"
