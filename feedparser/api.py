@@ -1,5 +1,5 @@
 # The public API for feedparser
-# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2024 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -30,7 +30,7 @@ import io
 import urllib.error
 import urllib.parse
 import xml.sax
-from typing import IO, Dict, Optional, Union
+from typing import IO, Optional, Union
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
@@ -150,7 +150,7 @@ class StrictFeedParser(StrictXMLParser, XMLParserMixin, xml.sax.handler.ContentH
 
 def parse(
     url_file_stream_or_string,
-    response_headers: Optional[Dict[str, str]] = None,
+    response_headers: Optional[dict[str, str]] = None,
     resolve_relative_uris: Optional[bool] = None,
     sanitize_html: Optional[bool] = None,
     optimistic_encoding_detection: Optional[bool] = None,

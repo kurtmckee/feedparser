@@ -38,7 +38,7 @@ def test_doctype_replacement():
 def test_gb2312_converted_to_gb18030_in_xml_encoding():
     # \u55de was chosen because it exists in gb18030 but not gb2312
     feed = """<?xml version="1.0" encoding="gb2312"?>
-              <feed><title>\u55de</title></feed>"""
+            <feed><title>\u55de</title></feed>"""
     result = feedparser.parse(
         feed.encode("gb18030"), response_headers={"Content-Type": "text/xml"}
     )

@@ -1,0 +1,9 @@
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.9"
+coverage = {extras = ["toml"], version = "*"}
+pytest = "*"
+pytest-randomly = "*"
+responses = "*"

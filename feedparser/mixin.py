@@ -1,4 +1,4 @@
-# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2024 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -31,7 +31,6 @@ import copy
 import html.entities
 import re
 import xml.sax.saxutils
-from typing import Dict
 
 from .html import _cp1252
 from .namespaces import _base, cc, dc, georss, itunes, mediarss, psc
@@ -126,7 +125,7 @@ class XMLParserMixin(
         "http://www.w3.org/XML/1998/namespace": "xml",
         "http://podlove.org/simple-chapters": "psc",
     }
-    _matchnamespaces: Dict[str, str] = {}
+    _matchnamespaces: dict[str, str] = {}
 
     can_be_relative_uri = {
         "comments",

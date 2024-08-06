@@ -12,7 +12,7 @@ sphinx:
   configuration: "docs/conf.py"
   fail_on_warning: true
 
-# Enforce specific versions of Sphinx.
+# Use exact package and dependency versions.
 python:
   install:
-    - requirements: "requirements/docs.txt"
+    - requirements: "requirements/docs/requirements.txt"
