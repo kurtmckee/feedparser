@@ -1,7 +1,7 @@
 Contributors
 ============
 
-feedparser is written and maintained by `Kurt McKee <http://kurtmckee.org/>`_.
+feedparser is written and maintained by `Kurt McKee <https://kurtmckee.org/>`_.
 It was originally written by Mark Pilgrim.
 
 Many people have contributed to feedparser. They are listed below in
