@@ -28,36 +28,36 @@ History of Date Formats
 
 Here is a brief history of feed date formats:
 
-- :abbr:`CDF (Channel Definition Format)` states that all date values must
-  conform to ISO 8601:1988.  ISO 8601:1988 is not a freely
-  available specification, but a brief (non-normative) description of the date
-  formats it describes is available here: `ISO 8601:1988 Date/Time Representations <http://hydracen.com/dx/iso8601.htm>`_.
+-   :abbr:`CDF (Channel Definition Format)` states that all date values must
+    conform to ISO 8601:1988.  ISO 8601:1988 is not a freely
+    available specification, but a brief (non-normative) description of the date
+    formats it describes is available here: `ISO 8601:1988 Date/Time Representations <http://hydracen.com/dx/iso8601.htm>`_.
 
-- :abbr:`RSS (Rich Site Summary)` 0.90 has no date elements.
+-   :abbr:`RSS (Rich Site Summary)` 0.90 has no date elements.
 
-- Netscape :abbr:`RSS (Rich Site Summary)` 0.91 does not specify a date format,
-  but examples within the specification show :abbr:`RFC (Request For Comments)`
-  822-style dates with 4-digit years.
+-   Netscape :abbr:`RSS (Rich Site Summary)` 0.91 does not specify a date format,
+    but examples within the specification show :abbr:`RFC (Request For Comments)`
+    822-style dates with 4-digit years.
 
-- Userland :abbr:`RSS (Rich Site Summary)` 0.91 states, "All date-times in
-  :abbr:`RSS (Rich Site Summary)` conform to the Date and Time Specification of
-  :abbr:`RFC (Request For Comments)` 822." `RFC 822 <http://www.ietf.org/rfc/rfc822.txt>`_
-  mandates 2-digit years; it does not allow 4-digit years.
+-   Userland :abbr:`RSS (Rich Site Summary)` 0.91 states, "All date-times in
+    :abbr:`RSS (Rich Site Summary)` conform to the Date and Time Specification of
+    :abbr:`RFC (Request For Comments)` 822." `RFC 822 <http://www.ietf.org/rfc/rfc822.txt>`_
+    mandates 2-digit years; it does not allow 4-digit years.
 
-- :abbr:`RSS (Rich Site Summary)` 1.0 states that all date elements must
-  conform to `W3CDTF <http://www.w3.org/TR/NOTE-datetime>`_,
-  which is a profile of ISO 8601:1988.
+-   :abbr:`RSS (Rich Site Summary)` 1.0 states that all date elements must
+    conform to `W3CDTF <http://www.w3.org/TR/NOTE-datetime>`_,
+    which is a profile of ISO 8601:1988.
 
-- :abbr:`RSS (Rich Site Summary)` 2.0 states, "All date-times in :abbr:`RSS (Rich Site Summary)` conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred)."
+-   :abbr:`RSS (Rich Site Summary)` 2.0 states, "All date-times in :abbr:`RSS (Rich Site Summary)` conform to the Date and Time Specification of RFC 822, with the exception that the year may be expressed with two characters or four characters (four preferred)."
 
-- Atom 0.3 states that all date elements must conform to
-  `W3CDTF <http://www.w3.org/TR/NOTE-datetime>`_.
+-   Atom 0.3 states that all date elements must conform to
+    `W3CDTF <http://www.w3.org/TR/NOTE-datetime>`_.
 
-- Atom 1.0 states that all date elements "MUST conform to the date-time
-  production in `RFC 3339 <http://www.ietf.org/rfc/rfc3339.txt>`_.
-  In addition, an uppercase T character MUST be used to separate date and time,
-  and an uppercase Z character MUST be present in the absence of a numeric time
-  zone offset."
+-   Atom 1.0 states that all date elements "MUST conform to the date-time
+    production in `RFC 3339 <http://www.ietf.org/rfc/rfc3339.txt>`_.
+    In addition, an uppercase T character MUST be used to separate date and time,
+    and an uppercase Z character MUST be present in the absence of a numeric time
+    zone offset."
 
 
 Recognized Date Formats
@@ -109,15 +109,15 @@ abbreviations defined in :abbr:`RFC (Request For Comments)` 822.  In addition,
 :program:`Universal Feed Parser` recognizes the following invalid timezones:
 
 
-- ``AT`` is treated as ``AST``
+-   ``AT`` is treated as ``AST``
 
-- ``ET`` is treated as ``EST``
+-   ``ET`` is treated as ``EST``
 
-- ``CT`` is treated as ``CST``
+-   ``CT`` is treated as ``CST``
 
-- ``MT`` is treated as ``MST``
+-   ``MT`` is treated as ``MST``
 
-- ``PT`` is treated as ``PST``
+-   ``PT`` is treated as ``PST``
 
 
 
@@ -171,8 +171,8 @@ date string will still be available in the appropriate element in the results
 dictionary.
 
 
-.. tip::
+..  tip::
 
-   If you write a new date handler, you are encouraged (but not required) to
-   `submit a patch <http://sourceforge.net/projects/feedparser/>`_ so it can be
-   integrated into the next version of :program:`Universal Feed Parser`.
+    If you write a new date handler, you are encouraged (but not required) to
+    `submit a patch <http://sourceforge.net/projects/feedparser/>`_ so it can be
+    integrated into the next version of :program:`Universal Feed Parser`.

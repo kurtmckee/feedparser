@@ -7,16 +7,18 @@ headers as a dictionary.  When you download a feed from a remote web server,
 :abbr:`HTTP (Hypertext Transfer Protocol)` response headers as a dictionary.
 
 
-.. _example.http.headers.request:
+..  _example.http.headers.request:
 
 Sending custom :abbr:`HTTP (Hypertext Transfer Protocol)` request headers
 -------------------------------------------------------------------------
 
-..  code-block:: pycon
+..  code-block:: python
 
-    >>> import feedparser
-    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom03.xml',
-                              request_headers={'Cache-control': 'max-age=0'})
+    import feedparser
+    d = feedparser.parse(
+        '$READTHEDOCS_CANONICAL_URL/examples/atom03.xml',
+        request_headers={'Cache-control': 'max-age=0'},
+    )
 
 
 Accessing other :abbr:`HTTP (Hypertext Transfer Protocol)` response headers

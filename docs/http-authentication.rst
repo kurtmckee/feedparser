@@ -69,8 +69,10 @@ Downloading a feed protected by :abbr:`HTTP (Hypertext Transfer Protocol)` basic
     # handlers is a list because there might be more than one
     # type of handler (urllib2 defines lots of different ones,
     # and you can build your own)
-    d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/basic_auth.xml',
-                         handlers=[auth])
+    d = feedparser.parse(
+        '$READTHEDOCS_CANONICAL_URL/examples/basic_auth.xml',
+        handlers=[auth],
+    )
 
 
 
@@ -90,8 +92,10 @@ Downloading a feed protected by :abbr:`HTTP (Hypertext Transfer Protocol)` diges
 
     auth = urllib2.HTTPDigestAuthHandler()
     auth.add_password('DigestTest', 'feedparser.org', 'test', 'digest')
-    d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/digest_auth.xml',
-                          handlers=[auth])
+    d = feedparser.parse(
+        '$READTHEDOCS_CANONICAL_URL/examples/digest_auth.xml',
+        handlers=[auth],
+    )
 
 
 The examples so far have assumed that you know in advance that the feed is

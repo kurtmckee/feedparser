@@ -60,18 +60,18 @@ Accessing namespaced elements with non-standard prefixes
     '0028-0836'
     >>> d.feed.foo_issn
     Traceback (most recent call last):
-      File "feedparser\util.py", line 149, in __getattr__
-        return self.__getitem__(key)
-      File "feedparser\util.py", line 112, in __getitem__
-        return dict.__getitem__(self, key)
+        File "feedparser\util.py", line 149, in __getattr__
+            return self.__getitem__(key)
+        File "feedparser\util.py", line 112, in __getitem__
+            return dict.__getitem__(self, key)
     KeyError: 'foo_issn'
 
     During handling of the above exception, another exception occurred:
 
     Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "feedparser\util.py", line 151, in __getattr__
-        raise AttributeError("object has no attribute '%s'" % key)
+        File "<stdin>", line 1, in <module>
+        File "feedparser\util.py", line 151, in __getattr__
+            raise AttributeError("object has no attribute '%s'" % key)
     AttributeError: object has no attribute 'foo_issn'
     >>> d.namespaces
     {'': 'http://purl.org/rss/1.0/',
@@ -135,12 +135,12 @@ xlink           http://www.w3.org/1999/xlink
 xml             http://www.w3.org/XML/1998/namespace
 =============== =====================================================
 
-.. note::
+..  note::
 
     :program:`Universal Feed Parser` treats namespaces as case-insensitive to
     match the behavior of certain versions of :program:`iTunes`.
 
-.. warning::
+..  warning::
 
     Data from namespaced elements is not :ref:`sanitized <advanced.sanitization>`
     (even if it contains :abbr:`HTML (HyperText Markup Language)` markup).

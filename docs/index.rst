@@ -12,13 +12,13 @@ not have the latest version.
 This documentation is provided by the author "as is" without any express or
 implied warranties.  See :ref:`the documentation license <license>` for more details.
 
-.. toctree::
-   :maxdepth: 2
+..  toctree::
+    :maxdepth: 2
 
-   basic
-   advanced
-   http
-   annotated-examples
-   changelog
-   reference
-   license
+    basic
+    advanced
+    http
+    annotated-examples
+    changelog
+    reference
+    license

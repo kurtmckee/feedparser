@@ -3,8 +3,8 @@
 Reference
 #########
 
-.. toctree::
-   :maxdepth: 2
-   :glob:
+..  toctree::
+    :maxdepth: 2
+    :glob:
 
-   reference-*
+    reference-*
