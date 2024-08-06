@@ -27,7 +27,7 @@ jobs:
           # The goal is to ensure that each individual runner
           # is paired with all Python versions simultaneously.
           # This nested-list syntax accomplishes that goal.
-          - - "3.8"
+          - - "3.9"
             - "3.12"
         # These last two keys are placeholders to ensure consistency in matrix values.
         cpython-beta:
@@ -44,7 +44,6 @@ jobs:
               name: "Linux (CPython)"
               runner: "ubuntu-latest"
             cpythons:
-              - "3.8"
               - "3.9"
               - "3.10"
               - "3.11"
@@ -59,7 +58,6 @@ jobs:
             cpythons: []
             cpython-beta: ""
             pypys:
-              - "3.8"
               - "3.9"
               - "3.10"
             # NOTE: Tox only offers "best effort" support for PyPy.
