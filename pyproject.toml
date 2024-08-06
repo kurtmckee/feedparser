@@ -1,3 +1,11 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+
+# Poetry
+# ------
+
 [tool.poetry]
 name = "feedparser"
 version = "6.0.11"
@@ -12,9 +20,9 @@ license = "BSD-2-Clause"
 
 keywords = ["atom", "feed", "json", "rdf", "rss"]
 classifiers = [
-        "Development Status :: 5 - Production/Stable",
-        "Intended Audience :: Developers",
-        "Topic :: Text Processing :: Markup",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Text Processing :: Markup",
 ]
 include = ["feedparser/py.typed"]
 
@@ -24,14 +32,8 @@ sgmllib3k = "^1.0.0"
 requests = ">=2.20.0"
 
 
-[tool.poetry.group.dev.dependencies]
-scriv = {extras = ["toml"], version = "^1.2.1"}
-
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
+# Scriv
+# -----
 
 [tool.scriv]
 version = "literal: pyproject.toml: tool.poetry.version"
@@ -54,15 +56,24 @@ main_branches = ["develop", "master"]
 new_fragment_template = "file: fragment-template.rst.txt"
 
 
+# Isort
+# -----
+
 [tool.isort]
 profile = "black"
 
+
+# Mypy
+# ----
 
 [tool.mypy]
 packages = "feedparser"
 show_error_codes = true
 sqlite_cache = true
 
+
+# Coverage
+# --------
 
 [tool.coverage.run]
 parallel = true
@@ -72,22 +83,22 @@ source = [
     "tests",
 ]
 
-
 [tool.coverage.paths]
 source = [
     "src",
     "*/site-packages",
 ]
 
-
 [tool.coverage.report]
 skip_covered = true
 fail_under = 93
 
-
 [tool.coverage.html]
 directory = "htmlcov/"
 
+
+# Pytest
+# ------
 
 [tool.pytest.ini_options]
 filterwarnings = [
