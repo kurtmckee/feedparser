@@ -124,6 +124,10 @@ def test_prefix_file_wrapper(factory):
     assert f.read(0) == b""
     assert f.read() == b"abcdef"
 
+    f = feedparser.encodings.PrefixFileWrapper(b"abc", factory(b"def"))
+    assert f.read(2) == b"ab"
+    assert f.read() == b"cdef"
+
 
 # Each emoji is 4 bytes long when encoded in UTF-8.
 @pytest.mark.parametrize("data", ("😀😛🤯😱", "😀a😛b🤯c😱"))
