@@ -623,7 +623,7 @@ class PrefixFileWrapper:
 
         if self.offset < len(self.prefix):
             if size < 0:
-                chunk = self.prefix
+                chunk = self.prefix[self.offset :]
             else:
                 chunk = self.prefix[self.offset : self.offset + size]
                 size -= len(chunk)
