@@ -327,8 +327,12 @@ def _parse_file_inplace(
             saxparser.parse(source)
         except xml.sax.SAXException as e:
             result["bozo"] = 1
-            result["bozo_exception"] = feed_parser.exc or e
+            result["bozo_exception"] = e
             use_strict_parser = False
+        else:
+            if feed_parser.bozo:
+                result["bozo"] = 1
+                result["bozo_exception"] = feed_parser.exc
 
     # The loose XML parser will be tried if the strict XML parser was not used
     # (or if it failed to parse the feed).
