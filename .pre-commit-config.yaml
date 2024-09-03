@@ -51,12 +51,12 @@ repos:
           - "flake8-bugbear==24.4.26"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker.python"
-    rev: "2.7.3"
+    rev: "3.0.3"
     hooks:
       - id: "editorconfig-checker"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.29.1"
+    rev: "0.29.2"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
