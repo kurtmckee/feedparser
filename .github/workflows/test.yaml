@@ -1,0 +1,83 @@
+name: "🧪 Test"
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "develop"
+      - "master"
+      - "main"
+      - "releases"
+
+jobs:
+  test:
+    name: "${{ matrix.name }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: "Linux (CPython)"
+            runner: "ubuntu-latest"
+            cpythons:
+              - "3.9"
+              - "3.10"
+              - "3.11"
+              - "3.12"
+              - "3.13"
+            tox-factors:
+              - "chardet"
+            cache-key-hash-files:
+              - "pyproject.toml"
+              - "requirements/*/requirements.txt"
+
+          - name: "Linux (PyPy)"
+            runner: "ubuntu-latest"
+            pypys:
+              - "3.9"
+              - "3.10"
+            tox-factors:
+              - "chardet"
+            cache-key-hash-files:
+              - "pyproject.toml"
+              - "requirements/*/requirements.txt"
+
+            # macOS and Windows tests target only the upper and lower CPython versions.
+          - name: "macOS"
+            runner: "macos-latest"
+            cpythons:
+              - "3.9"
+              - "3.13"
+            tox-factors:
+              - "chardet"
+            cache-key-hash-files:
+              - "pyproject.toml"
+              - "requirements/*/requirements.txt"
+
+          - name: "Windows"
+            runner: "windows-latest"
+            cpythons:
+              - "3.9"
+              - "3.13"
+            tox-factors:
+              - "chardet"
+            cache-key-hash-files:
+              - "pyproject.toml"
+              - "requirements/*/requirements.txt"
+
+          - name: "Quality"
+            runner: "ubuntu-latest"
+            cpythons:
+              - "3.12"
+            tox-environments:
+              - "docs"
+              - "mypy"
+            cache-paths:
+              - ".mypy_cache/"
+            cache-key-hash-files:
+              - "docs/conf.py"
+              - "pyproject.toml"
+              - "requirements/*/requirements.txt"
+
+    uses: "kurtmckee/github-workflows/.github/workflows/tox.yaml@2f156c58bf4ceebc623014b407f5711899e41235" # v1.0
+    with:
+      config: "${{ toJSON(matrix) }}"
