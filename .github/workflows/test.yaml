@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - name: "Linux (CPython)"
+          - name: "Linux"
             runner: "ubuntu-latest"
             cpythons:
               - "3.9"
@@ -24,16 +24,7 @@ jobs:
               - "3.11"
               - "3.12"
               - "3.13"
-            tox-factors:
-              - "chardet"
-            cache-key-hash-files:
-              - "pyproject.toml"
-              - "requirements/*/requirements.txt"
-
-          - name: "Linux (PyPy)"
-            runner: "ubuntu-latest"
             pypys:
-              - "3.9"
               - "3.10"
             tox-factors:
               - "chardet"
