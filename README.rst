@@ -29,29 +29,26 @@ The feedparser documentation is available on the web at:
 
     https://feedparser.readthedocs.io/en/latest/
 
-It is also included in its source format, ReST, in the ``docs/`` directory.
-To build the documentation you'll need the Sphinx package, which is available at:
-
-    https://www.sphinx-doc.org/
-
-You can then build HTML pages using a command similar to:
+It can also be built and browsed locally using `tox`_:
 
 ..  code-block:: console
 
-    $ sphinx-build -b html docs/ fpdocs
+    $ tox run -e docs
 
-This will produce HTML documentation in the ``fpdocs/`` directory.
+This will produce HTML documentation in the ``build/docs/`` directory.
 
 
 Testing
 =======
 
-Feedparser has an extensive test suite, powered by Tox. To run it, type this:
+Feedparser has an extensive test suite, powered by `tox`_:
 
 ..  code-block:: console
 
-    $ python -m venv venv
-    $ source venv/bin/activate  # or "venv\bin\activate.ps1" on Windows
-    (venv) $ python -m pip install --upgrade pip
-    (venv) $ python -m pip install tox
-    (venv) $ tox
+    $ tox run-parallel
+
+
+..  Links
+..  =====
+..
+..  _tox: https://tox.wiki/
