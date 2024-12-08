@@ -67,7 +67,7 @@ jobs:
           - name: "Quality"
             runner: "ubuntu-latest"
             cpythons:
-              - "3.12"
+              - "3.13"
             tox-environments:
               - "docs"
               - "mypy"
