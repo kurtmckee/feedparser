@@ -1,4 +1,4 @@
 Python support
 --------------
 
-*   Support PyPy3.
+*   Support PyPy 3.10.
