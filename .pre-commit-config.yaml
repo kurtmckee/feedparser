@@ -2,7 +2,7 @@ ci:
   autoupdate_schedule: "monthly"
 
 default_language_version:
-  python: "python3.12"
+  python: "python3.13"
 
 repos:
   - repo: "meta"
@@ -48,7 +48,7 @@ repos:
     hooks:
       - id: "flake8"
         additional_dependencies:
-          - "flake8-bugbear==24.4.26"
+          - "flake8-bugbear==24.10.31"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker.python"
     rev: "3.0.3"

@@ -3,7 +3,7 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 
-# Poetry
+# poetry
 # ------
 
 [tool.poetry]
@@ -32,47 +32,7 @@ sgmllib3k = "^1.0.0"
 requests = ">=2.20.0"
 
 
-# Scriv
-# -----
-
-[tool.scriv]
-version = "literal: pyproject.toml: tool.poetry.version"
-categories = [
-    "Python support",
-    "Added",
-    "Fixed",
-    "Removed",
-    "Changed",
-    "Deprecated",
-    "Security",
-    "Documentation",
-    "Project development",
-]
-entry_title_template = "{{ version }} - {{ date.strftime('%Y-%m-%d') }}"
-format = "rst"
-fragment_directory = "changelog.d"
-insert_marker = "scriv-insert-here"
-main_branches = ["develop", "master"]
-new_fragment_template = "file: fragment-template.rst.txt"
-
-
-# Isort
-# -----
-
-[tool.isort]
-profile = "black"
-
-
-# Mypy
-# ----
-
-[tool.mypy]
-packages = "feedparser"
-show_error_codes = true
-sqlite_cache = true
-
-
-# Coverage
+# coverage
 # --------
 
 [tool.coverage.run]
@@ -97,10 +57,50 @@ fail_under = 93
 directory = "htmlcov/"
 
 
-# Pytest
+# isort
+# -----
+
+[tool.isort]
+profile = "black"
+
+
+# mypy
+# ----
+
+[tool.mypy]
+packages = "feedparser"
+show_error_codes = true
+sqlite_cache = true
+
+
+# pytest
 # ------
 
 [tool.pytest.ini_options]
 filterwarnings = [
     "error",
 ]
+
+
+# scriv
+# -----
+
+[tool.scriv]
+version = "literal: pyproject.toml: tool.poetry.version"
+categories = [
+    "Python support",
+    "Added",
+    "Fixed",
+    "Removed",
+    "Changed",
+    "Deprecated",
+    "Security",
+    "Documentation",
+    "Project development",
+]
+entry_title_template = "{{ version }} - {{ date.strftime('%Y-%m-%d') }}"
+format = "rst"
+fragment_directory = "changelog.d"
+insert_marker = "scriv-insert-here"
+main_branches = ["develop", "master"]
+new_fragment_template = "file: fragment-template.rst.txt"
