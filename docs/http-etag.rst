@@ -80,7 +80,7 @@ Clients should support both ETag and Last-Modified headers, as some servers supp
 
     You can control the behaviour of :abbr:`HTTP (Hypertext Transfer Protocol)`
     caches between your application and the origin server by using the
-    ``extra_headers`` parameter.  For example, you may want to send
+    ``request_headers`` parameter.  For example, you may want to send
     ``Cache-control: max-age=60`` to make the caches revalidate against the
     origin server unless their cached copy is less than a minute old.  Again,
     this should be used with consideration.
