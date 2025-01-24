@@ -73,7 +73,7 @@ registerDateHandler(_parse_date_rfc822)
 registerDateHandler(_parse_date_w3dtf)
 
 """
-Yo ahora lo que quiero hacer es convertir un pull request 
+Yo ahora lo que quiero hacer es convertir un pull request
 Con esto puedo escribir aqui todo lo que quiera
 
 
