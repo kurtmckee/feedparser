@@ -72,5 +72,5 @@ registerDateHandler(_parse_date_iso8601)
 registerDateHandler(_parse_date_rfc822)
 registerDateHandler(_parse_date_w3dtf)
 
-#I just want to add some lines of text 
-#To see how can i create a pull and request on git hub
+# I just want to add some lines of text
+# To see how can i create a pull and request on git hub
