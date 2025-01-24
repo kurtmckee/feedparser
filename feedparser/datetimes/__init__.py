@@ -72,9 +72,5 @@ registerDateHandler(_parse_date_iso8601)
 registerDateHandler(_parse_date_rfc822)
 registerDateHandler(_parse_date_w3dtf)
 
-"""
-Yo ahora lo que quiero hacer es convertir un pull request
-Con esto puedo escribir aqui todo lo que quiera
-
-
-"""
+#I just want to add some lines of text 
+#To see how can i create a pull and request on git hub
