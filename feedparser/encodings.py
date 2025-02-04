@@ -55,11 +55,11 @@ from .exceptions import (
 
 # Each marker represents some of the characters of the opening XML
 # processing instruction ('<?xm') in the specified encoding.
-EBCDIC_MARKER = b"\x4C\x6F\xA7\x94"
-UTF16BE_MARKER = b"\x00\x3C\x00\x3F"
-UTF16LE_MARKER = b"\x3C\x00\x3F\x00"
-UTF32BE_MARKER = b"\x00\x00\x00\x3C"
-UTF32LE_MARKER = b"\x3C\x00\x00\x00"
+EBCDIC_MARKER = b"\x4c\x6f\xa7\x94"
+UTF16BE_MARKER = b"\x00\x3c\x00\x3f"
+UTF16LE_MARKER = b"\x3c\x00\x3f\x00"
+UTF32BE_MARKER = b"\x00\x00\x00\x3c"
+UTF32LE_MARKER = b"\x3c\x00\x00\x00"
 
 ZERO_BYTES = b"\x00\x00"
 
