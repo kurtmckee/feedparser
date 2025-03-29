@@ -108,6 +108,7 @@ class HTMLSanitizer(BaseHTMLProcessor):
         "pre",
         "progress",
         "q",
+        "rp",
         "rt",
         "ruby",
         "s",
