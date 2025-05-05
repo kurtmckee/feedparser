@@ -44,19 +44,19 @@ repos:
       - id: "isort"
 
   - repo: "https://github.com/pycqa/flake8"
-    rev: "7.1.2"
+    rev: "7.2.0"
     hooks:
       - id: "flake8"
         additional_dependencies:
           - "flake8-bugbear==24.12.12"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker"
-    rev: "v3.2.0"
+    rev: "v3.2.1"
     hooks:
       - id: "editorconfig-checker"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.31.2"
+    rev: "0.33.0"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
