@@ -212,7 +212,7 @@ class RelativeURIResolver(BaseHTMLProcessor):
         for uri, desc in srcset_candidates(srcset):
             uri = self.resolve_uri(uri)
             if desc:
-                candidates.append("{} {}".format(uri, desc))
+                candidates.append(f"{uri} {desc}")
             else:
                 candidates.append(uri)
         return ", ".join(candidates)
