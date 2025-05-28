@@ -158,13 +158,9 @@ class RelativeURIResolver(BaseHTMLProcessor):
 
     def unknown_starttag(self, tag, attrs):
         attrs = self.normalize_attrs(attrs)
-        attrs = [
-            (
-                key,
-                ((tag, key) in self.relative_uris) and self.resolve_uri(value) or value,
-            )
-            for key, value in attrs
-        ]
+        for i, (key, value) in enumerate(attrs):
+            if (tag, key) in self.relative_uris:
+                attrs[i] = (key, self.resolve_uri(value))
         super().unknown_starttag(tag, attrs)
 
 
