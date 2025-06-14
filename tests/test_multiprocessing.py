@@ -4,15 +4,20 @@ import pytest
 
 import feedparser
 
-base_feed_str = b"""<?xml version='1.0' encoding='UTF-8'?>
-<rss version="2.0">
-<channel>
-<title>Foo</title>
-<link>https://foo.com/</link>
-<item><title>Title 1</title><link>https://foo.com/1</link><pubDate>Thu, 05 Jun 2025 18:27:58 -0000</pubDate></item>
-</channel>
-</rss>
-"""
+base_feed_str = (
+    b"<?xml version='1.0' encoding='UTF-8'?>\n"
+    b'<rss version="2.0">\n'
+    b"<channel>\n"
+    b"<title>Foo</title>\n"
+    b"<link>https://foo.com/</link>\n"
+    b"<item>"
+    b"<title>Title 1</title>"
+    b"<link>https://foo.com/1</link>"
+    b"<pubDate>Thu, 05 Jun 2025 18:27:58 -0000</pubDate>"
+    b"</item>\n"
+    b"</channel>\n"
+    b"</rss>\n"
+)
 
 
 def _parse_and_return_full(raw_feed: bytes):
