@@ -259,6 +259,7 @@ class HTMLSanitizer(BaseHTMLProcessor):
         "size",
         "span",
         "src",
+        "srcset",
         "start",
         "step",
         "style",
