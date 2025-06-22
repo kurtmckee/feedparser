@@ -1,35 +1,32 @@
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-
-# poetry
-# ------
-
-[tool.poetry]
+[project]
 name = "feedparser"
 version = "6.0.11"
 description = "Parse Atom/RSS/JSON feeds in Python"
 readme = "README.rst"
-
-repository = "https://github.com/kurtmckee/feedparser/"
-documentation = "https://feedparser.readthedocs.io/en/latest/"
-
-authors = ["Kurt McKee <contactme@kurtmckee.org>"]
+requires-python = ">=3.9"
+authors = [
+    { name = "Kurt McKee", email = "contactme@kurtmckee.org" }
+]
 license = "BSD-2-Clause"
-
 keywords = ["atom", "feed", "json", "rdf", "rss"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Topic :: Text Processing :: Markup",
 ]
-include = ["feedparser/py.typed"]
+dependencies = [
+    "sgmllib3k==1.0.0",
+    "requests>=2.20.0",
+]
 
-[tool.poetry.dependencies]
-python = ">=3.9"
-sgmllib3k = "^1.0.0"
-requests = ">=2.20.0"
+[project.urls]
+Source = "https://github.com/kurtmckee/feedparser"
+Documentation = "https://feedparser.readthedocs.io/en/latest/"
+Changelog = "https://feedparser.readthedocs.io/en/latest/changelog/"
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
 
 
 # coverage
@@ -86,7 +83,7 @@ filterwarnings = [
 # -----
 
 [tool.scriv]
-version = "literal: pyproject.toml: tool.poetry.version"
+version = "literal: pyproject.toml: project.version"
 categories = [
     "Python support",
     "Added",
