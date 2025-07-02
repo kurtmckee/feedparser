@@ -1,28 +1,13 @@
 Other :abbr:`HTTP (Hypertext Transfer Protocol)` Headers
 ========================================================
 
-You can specify additional :abbr:`HTTP (Hypertext Transfer Protocol)` request
-headers as a dictionary.  When you download a feed from a remote web server,
+When you download a feed from a remote web server,
 :program:`Universal Feed Parser` exposes the complete set of
 :abbr:`HTTP (Hypertext Transfer Protocol)` response headers as a dictionary.
 
 
-..  _example.http.headers.request:
-
-Sending custom :abbr:`HTTP (Hypertext Transfer Protocol)` request headers
--------------------------------------------------------------------------
-
-..  code-block:: python
-
-    import feedparser
-    d = feedparser.parse(
-        '$READTHEDOCS_CANONICAL_URL/examples/atom03.xml',
-        request_headers={'Cache-control': 'max-age=0'},
-    )
-
-
-Accessing other :abbr:`HTTP (Hypertext Transfer Protocol)` response headers
----------------------------------------------------------------------------
+Accessing :abbr:`HTTP (Hypertext Transfer Protocol)` response headers
+---------------------------------------------------------------------
 
 ..  code-block:: pycon
 
@@ -39,3 +24,13 @@ Accessing other :abbr:`HTTP (Hypertext Transfer Protocol)` response headers
     'content-length': '883',
     'connection': 'close',
     'content-type': 'application/xml'}
+
+
+Customizing :abbr:`HTTP (Hypertext Transfer Protocol)` request headers
+----------------------------------------------------------------------
+
+If you need to customize aspects of requests for a feed, such as the request
+headers used, you should retrieve the feed yourself with any settings you need
+(e.g. via `requests <https://requests.readthedocs.io>` - this is what
+:program:`Universal Feed Parser` uses internally), and then you can just call
+``feedparser.parse`` on the retrieved feed content.
