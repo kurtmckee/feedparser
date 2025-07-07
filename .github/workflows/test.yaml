@@ -4,8 +4,6 @@ on:
   pull_request:
   push:
     branches:
-      - "develop"
-      - "master"
       - "main"
       - "releases"
 
@@ -25,7 +23,6 @@ jobs:
               - "3.12"
               - "3.13"
             pypys:
-              - "3.10"
               - "3.11"
             tox-factors:
               - "chardet"
