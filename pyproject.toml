@@ -54,6 +54,15 @@ fail_under = 93
 directory = "htmlcov/"
 
 
+# flake8
+# ------
+
+[tool.flake8]
+max-line-length = 80
+extend-select = ["B950"]
+extend-ignore = ["E203", "E501", "E701"]
+
+
 # isort
 # -----
 
