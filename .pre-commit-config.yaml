@@ -11,7 +11,7 @@ repos:
       - id: "check-useless-excludes"
 
   - repo: "https://github.com/pre-commit/pre-commit-hooks"
-    rev: "v5.0.0"
+    rev: "v6.0.0"
     hooks:
       - id: "check-added-large-files"
       - id: "check-merge-conflict"
@@ -52,12 +52,12 @@ repos:
           - "flake8-bugbear==24.12.12"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker"
-    rev: "v3.3.0"
+    rev: "v3.4.0"
     hooks:
       - id: "editorconfig-checker"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.33.2"
+    rev: "0.33.3"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
