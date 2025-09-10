@@ -1,6 +1,6 @@
 ..
     This file is part of feedparser.
-    Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
+    Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
     Copyright 2002-2008 Mark Pilgrim
     Released under the BSD 2-clause license.
 

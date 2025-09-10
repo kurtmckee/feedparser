@@ -1,5 +1,5 @@
 # Support for the Creative Commons licensing extensions
-# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
