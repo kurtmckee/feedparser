@@ -29,9 +29,9 @@ repos:
     rev: "v3.20.0"
     hooks:
       - id: "pyupgrade"
-        name: "Enforce Python 3.9+ idioms"
+        name: "Enforce Python 3.10+ idioms"
         args:
-          - "--py39-plus"
+          - "--py310-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
     rev: "25.1.0"
