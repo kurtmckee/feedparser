@@ -30,7 +30,7 @@ import io
 import urllib.error
 import urllib.parse
 import xml.sax
-from typing import IO, Optional, Union
+from typing import IO
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
@@ -150,10 +150,10 @@ class StrictFeedParser(StrictXMLParser, XMLParserMixin, xml.sax.handler.ContentH
 
 def parse(
     url_file_stream_or_string,
-    response_headers: Optional[dict[str, str]] = None,
-    resolve_relative_uris: Optional[bool] = None,
-    sanitize_html: Optional[bool] = None,
-    optimistic_encoding_detection: Optional[bool] = None,
+    response_headers: dict[str, str] | None = None,
+    resolve_relative_uris: bool | None = None,
+    sanitize_html: bool | None = None,
+    optimistic_encoding_detection: bool | None = None,
 ) -> FeedParserDict:
     """Parse a feed from a URL, file, stream, or string.
 
@@ -240,12 +240,12 @@ def parse(
 
 
 def _parse_file_inplace(
-    file: Union[IO[bytes], IO[str]],
+    file: IO[bytes] | IO[str],
     result: dict,
     *,
-    resolve_relative_uris: Optional[bool] = None,
-    sanitize_html: Optional[bool] = None,
-    optimistic_encoding_detection: Optional[bool] = None,
+    resolve_relative_uris: bool | None = None,
+    sanitize_html: bool | None = None,
+    optimistic_encoding_detection: bool | None = None,
 ) -> None:
     # Avoid a cyclic import.
     import feedparser
@@ -298,7 +298,7 @@ def _parse_file_inplace(
     if not _XML_AVAILABLE:
         use_strict_parser = False
 
-    feed_parser: Union[JSONParser, StrictFeedParser, LooseFeedParser]
+    feed_parser: JSONParser | StrictFeedParser | LooseFeedParser
 
     if use_strict_parser and not use_json_parser:
         # Initialize the SAX parser.

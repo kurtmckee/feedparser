@@ -17,11 +17,11 @@ jobs:
           - name: "Linux"
             runner: "ubuntu-latest"
             cpythons:
-              - "3.9"
               - "3.10"
               - "3.11"
               - "3.12"
               - "3.13"
+            cpython-beta: "3.14"
             pypys:
               - "3.11"
             tox-factors:
@@ -34,7 +34,7 @@ jobs:
           - name: "macOS"
             runner: "macos-latest"
             cpythons:
-              - "3.9"
+              - "3.10"
               - "3.13"
             tox-factors:
               - "chardet"
@@ -45,7 +45,7 @@ jobs:
           - name: "Windows"
             runner: "windows-latest"
             cpythons:
-              - "3.9"
+              - "3.10"
               - "3.13"
             tox-factors:
               - "chardet"
