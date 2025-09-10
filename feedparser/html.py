@@ -1,4 +1,4 @@
-# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -149,7 +149,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
         :rtype: None
         """
 
-        data = re.sub(r'<!((?!DOCTYPE|--|\[))', r'&lt;!\1', data, re.IGNORECASE)
+        data = re.sub(r"<!((?!DOCTYPE|--|\[))", r"&lt;!\1", data, flags=re.IGNORECASE)
         data = re.sub(r'<([^<>\s]+?)\s*/>', self._shorttag_replace, data)
         data = data.replace('&#39;', "'")
         data = data.replace('&#34;', '"')
@@ -349,7 +349,7 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
 
         try:
             return sgmllib.SGMLParser.parse_declaration(self, i)
-        except sgmllib.SGMLParseError:
+        except (AssertionError, sgmllib.SGMLParseError):
             # Escape the doctype declaration and continue parsing.
             self.handle_data('&lt;')
             return i+1

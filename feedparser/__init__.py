@@ -1,4 +1,4 @@
-# Copyright 2010-2023 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -32,7 +32,7 @@ from .util import FeedParserDict
 
 __author__ = 'Kurt McKee <contactme@kurtmckee.org>'
 __license__ = 'BSD 2-clause'
-__version__ = '6.0.11'
+__version__ = '6.0.12'
 
 # HTTP "User-Agent" header to send to servers when downloading feeds.
 # If you are embedding feedparser in a larger application, you should
