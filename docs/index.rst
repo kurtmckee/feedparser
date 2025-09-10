@@ -1,6 +1,11 @@
-=============
-Documentation
-=============
+..  rst-class:: visually-hidden
+
+feedparser - Parse RSS/Atom/JSON feeds in Python
+################################################
+
+..  image:: _static/banner.png
+    :alt: feedparser - Parse RSS/Atom/JSON feeds in Python
+
 
 This documentation claims to describe the behavior of :program:`feedparser` |version|.
 It does not claim to describe the behavior of any other version.
@@ -19,6 +24,11 @@ implied warranties.  See :ref:`the documentation license <license>` for more det
     advanced
     http
     annotated-examples
-    changelog
     reference
+
+..  toctree::
+    :maxdepth: 1
+
+    changelog
     license
+    colophon
