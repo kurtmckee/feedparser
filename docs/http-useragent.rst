@@ -22,19 +22,6 @@ Customizing the User-Agent
 ..  code-block:: pycon
 
     >>> import feedparser
-    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml',
-    ... agent='MyApp/1.0 +http://example.com/')
-
-You can also set the User-Agent once, globally, and then call the ``parse``
-function normally.
-
-
-Customizing the User-Agent permanently
---------------------------------------
-
-..  code-block:: pycon
-
-    >>> import feedparser
     >>> feedparser.USER_AGENT = "MyApp/1.0 +http://example.com/"
     >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml')
 
@@ -44,13 +31,3 @@ download a feed from a web server.  This is discouraged, because it is a
 violation of `RFC 2616 <http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.36>`_.
 The default behavior is to send a blank referrer, and you should never need to
 override this.
-
-
-Customizing the referrer
-------------------------
-
-..  code-block:: pycon
-
-    >>> import feedparser
-    >>> d = feedparser.parse('$READTHEDOCS_CANONICAL_URL/examples/atom10.xml',
-    ... referrer='http://example.com/')
