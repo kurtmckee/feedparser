@@ -1,0 +1,10 @@
+<!--
+Description:  Ensure multiple elements are parsed into a list
+Expect:       not bozo and entries[0]['madeup_element'] == ['foo', 'bar']
+-->
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:MadeUp="http://madeup.test">
+	<item>
+		<MadeUp:Element>foo</MadeUp:Element>
+		<MadeUp:Element>bar</MadeUp:Element>
+	</item>
+</feed>
