@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://site.invalid/">
 <!--
 Description: unstripped invalid doctype
-Expect:      not bozo and feed['title'] == 'found'
+Expect:      feed['title'] == 'found'
+--><!--
+The Expect-line above doesn't check if the bozo bit is set, because it depends
+on the XML parser used: libxml2 issues an error for the invalid doctype, while
+Expat does not.
 -->
 <rss>
     <channel>
