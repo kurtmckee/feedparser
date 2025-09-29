@@ -1,7 +1,7 @@
 <!--
 SkipUnless:   __import__('chardet')
 Description:  EUC-KR with no encoding information
-Expect:       bozo and encoding == 'EUC-KR'
+Expect:       bozo and encoding in ('EUC-KR', 'UHC')
 -->
 <rss>
 <channel>

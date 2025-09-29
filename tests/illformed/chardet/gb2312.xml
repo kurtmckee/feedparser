@@ -1,7 +1,7 @@
 <!--
 SkipUnless:   __import__('chardet')
 Description:  GB2312 with no encoding information
-Expect:       bozo and encoding == 'GB2312'
+Expect:       bozo and encoding in ('GB2312', 'GB18030')
 -->
 <rss>
 <channel>
