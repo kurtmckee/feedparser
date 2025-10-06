@@ -34,12 +34,12 @@ repos:
           - "--py310-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
-    rev: "25.1.0"
+    rev: "25.9.0"
     hooks:
       - id: "black"
 
   - repo: "https://github.com/pycqa/isort"
-    rev: "6.0.1"
+    rev: "6.1.0"
     hooks:
       - id: "isort"
 
@@ -57,7 +57,7 @@ repos:
       - id: "editorconfig-checker"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.33.3"
+    rev: "0.34.0"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
