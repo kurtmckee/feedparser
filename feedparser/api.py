@@ -32,6 +32,7 @@ import urllib.parse
 import xml.sax
 from typing import Any
 from typing import IO
+from typing import Optional
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
@@ -74,6 +75,7 @@ SUPPORTED_VERSIONS = {
 def _open_resource(
     url_file_stream_or_string: Any,
     result: dict,
+    requests_hooks: Optional[http.RequestHooks] = None,
 ) -> tuple[str, Any]:
     """URL, filename, or string --> stream
 
@@ -82,6 +84,10 @@ def _open_resource(
     and deal with it in a uniform manner.  Returned object is guaranteed
     to have all the basic stdio read methods (read, readline, readlines).
     Just .close() the object when you're done with it.
+
+    :param requests_hooks:
+        A dict of hooks to pass onto :method:`requests.get` if a URL is parsed.
+        See `feedparser.http.RequestHooks`
 
     :return: A Tuple of [the method used, a seekable and readable file object].
     """
@@ -114,7 +120,7 @@ def _open_resource(
         "https",
     )
     if looks_like_url:
-        data = http.get(url_file_stream_or_string, result)
+        data = http.get(url_file_stream_or_string, result, hooks=requests_hooks)
         return "url", io.BytesIO(data)
 
     # try to open with native open function (if url_file_stream_or_string is a filename)
@@ -155,6 +161,7 @@ def parse(
     sanitize_html: bool | None = None,
     optimistic_encoding_detection: bool | None = None,
     archive_url_data: bool | None = None,
+    requests_hooks: Optional[http.RequestHooks] = None,
 ) -> FeedParserDict:
     """Parse a feed from a URL, file, stream, or string.
 
@@ -192,6 +199,9 @@ def parse(
     :param archive_url_data:
         Should feedparser archive the URL headers and content into
         :attr:`FeedParserDict.raw` ? Defaults to ``False```
+    :param requests_hooks:
+        A dict of hooks to pass onto :method:`requests.get` if a URL is parsed.
+        See `feedparser.http.RequestHooks`
     """
 
     result = FeedParserDict(
@@ -206,6 +216,7 @@ def parse(
         _method, file = _open_resource(
             url_file_stream_or_string,
             result,
+            requests_hooks=requests_hooks,
         )
         if _method == "url" and archive_url_data:
             # archive the headers before they are mutated by `response_headers`

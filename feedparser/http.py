@@ -45,18 +45,39 @@ ACCEPT_HEADER: str = (
     ";q=0.1"
 )
 
+# This dict defines the allowable hooks.
+# `response` is the only valid hook in `requests`.
+# `response.postprocess` is used
+RequestHooks = typing.TypedDict(
+    "RequestHooks",
+    {
+        "response": typing.Union[typing.Callable, typing.Sequence[typing.Callable]],
+        "response.postprocess": typing.NotRequired[typing.Callable],
+    }
+)
 
-def get(url: str, result: dict[str, typing.Any]) -> bytes:
+def get(
+    url: str,
+    result: dict[str, typing.Any],
+    hooks: typing.Optional[RequestHooks]=None,
+) -> bytes:
+    _postprocess: typing.Optional[typing.Callable] = None
+    if hooks is not None:
+        _postprocess = hooks.pop("response.postprocess", None)
     try:
         response = requests.get(
             url,
             headers={"Accept": ACCEPT_HEADER},
             timeout=10,
+            hooks=hooks,
         )
     except requests.RequestException as exception:
         result["bozo"] = True
         result["bozo_exception"] = exception
         return b""
+
+    if _postprocess is not None:
+        _postprocess(response, result)
 
     # Lowercase the HTTP header keys for comparisons per RFC 2616.
     result["headers"] = {k.lower(): v for k, v in response.headers.items()}
