@@ -30,9 +30,7 @@ import io
 import urllib.error
 import urllib.parse
 import xml.sax
-from typing import Any
-from typing import IO
-from typing import Optional
+from typing import IO, Any, Optional
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
@@ -72,10 +70,11 @@ SUPPORTED_VERSIONS = {
     "json1": "JSON feed 1",
 }
 
+
 def _open_resource(
     url_file_stream_or_string: Any,
     result: dict,
-    requests_hooks: Optional[http.RequestHooks] = None,
+    requests_hooks: http.RequestHooks | None = None,
 ) -> tuple[str, Any]:
     """URL, filename, or string --> stream
 
@@ -161,7 +160,7 @@ def parse(
     sanitize_html: bool | None = None,
     optimistic_encoding_detection: bool | None = None,
     archive_url_data: bool | None = None,
-    requests_hooks: Optional[http.RequestHooks] = None,
+    requests_hooks: http.RequestHooks | None = None,
 ) -> FeedParserDict:
     """Parse a feed from a URL, file, stream, or string.
 

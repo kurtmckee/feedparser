@@ -53,15 +53,16 @@ RequestHooks = typing.TypedDict(
     {
         "response": typing.Union[typing.Callable, typing.Sequence[typing.Callable]],
         "response.postprocess": typing.NotRequired[typing.Callable],
-    }
+    },
 )
+
 
 def get(
     url: str,
     result: dict[str, typing.Any],
-    hooks: typing.Optional[RequestHooks]=None,
+    hooks: RequestHooks | None = None,
 ) -> bytes:
-    _postprocess: typing.Optional[typing.Callable] = None
+    _postprocess: typing.Callable | None = None
     if hooks is not None:
         _postprocess = hooks.pop("response.postprocess", None)
     try:
