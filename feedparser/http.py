@@ -30,6 +30,7 @@ from __future__ import annotations
 import typing
 
 import requests
+from typing_extensions import NotRequired  # >=py311
 
 from .datetimes import _parse_date
 
@@ -52,7 +53,7 @@ RequestHooks = typing.TypedDict(
     "RequestHooks",
     {
         "response": typing.Union[typing.Callable, typing.Sequence[typing.Callable]],
-        "response.postprocess": typing.NotRequired[typing.Callable],
+        "response.postprocess": NotRequired[typing.Callable],
     },
 )
 
