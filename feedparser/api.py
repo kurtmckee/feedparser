@@ -30,7 +30,7 @@ import io
 import urllib.error
 import urllib.parse
 import xml.sax
-from typing import IO, Any, Optional
+from typing import IO, Any
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
