@@ -628,6 +628,13 @@ class XMLParserMixin(
             else:
                 if element == "description":
                     element = "summary"
+
+                # Store the element to author/contributor dict if inside author context (for custom namespace elements)
+                author_context = self._maybe_get_author_context()
+                if author_context is not None:
+                    author_context[element] = output
+                    return output  # Skip entry-level storage
+
                 old_value_depth = self.property_depth_map.setdefault(
                     self.entries[-1], {}
                 ).get(element)
@@ -766,6 +773,16 @@ class XMLParserMixin(
         else:
             context = self.feeddata
         return context
+
+    def _maybe_get_author_context(self):
+        """Get current author/contributor dict if inside one, else None."""
+        if self.inentry:
+            entry = self.entries[-1]
+            if self.inauthor and entry.get("authors"):
+                return entry["authors"][-1]
+            if self.incontributor and entry.get("contributors"):
+                return entry["contributors"][-1]
+        return None
 
     def _save_author(self, key, value, prefix="author"):
         context = self._get_context()
