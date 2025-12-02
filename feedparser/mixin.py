@@ -629,7 +629,8 @@ class XMLParserMixin(
                 if element == "description":
                     element = "summary"
 
-                # Store the element to author/contributor dict if inside author context (for custom namespace elements)
+                # Store the element in author/contributor dict when inside author
+                # context (for custom namespace elements)
                 author_context = self._maybe_get_author_context()
                 if author_context is not None:
                     author_context[element] = output
