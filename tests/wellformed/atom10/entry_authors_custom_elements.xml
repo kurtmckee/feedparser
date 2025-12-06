@@ -1,0 +1,17 @@
+<!--
+Description: multiple authors each with custom namespace element
+Expect:      not bozo and entries[0]['authors'][0]['arxiv_affiliation'] == 'MIT' and entries[0]['authors'][1]['arxiv_affiliation'] == 'Stanford'
+-->
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:arxiv="http://arxiv.org/schemas/atom">
+<entry>
+  <author>
+    <name>Alice</name>
+    <arxiv:affiliation>MIT</arxiv:affiliation>
+  </author>
+  <author>
+    <name>Bob</name>
+    <arxiv:affiliation>Stanford</arxiv:affiliation>
+  </author>
+</entry>
+</feed>
