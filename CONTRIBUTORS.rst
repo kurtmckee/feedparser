@@ -24,8 +24,9 @@ bug report!
 * `Ade Oshineye <http://blog.oshineye.com/>`_
 * `Tom Parker-Shemilt <https://tevps.net>`_
 * `Martin Pool <http://sourcefrog.net/>`_
+* `Nestor Rodriguez <https://github.com/n3s7or>`_
 * `Sam Ruby <http://intertwingly.net/>`_
 * `Bernd Schlapsi <https://github.com/brot>`_
 * `Aaron Swartz <http://www.aaronsw.com/>`_
+* `Jonathan Vanasco <https://github.com/jvanasco>`_
 * `Jakub Wilk <http://jwilk.net/>`_
-* `Nestor Rodriguez <https://github.com/n3s7or>`_
