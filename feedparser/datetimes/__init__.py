@@ -1,4 +1,4 @@
-# Copyright 2010-2024 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -25,8 +25,8 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+from collections.abc import Callable
 from time import struct_time
-from typing import Callable, Optional
 
 from .asctime import _parse_date_asctime
 from .greek import _parse_date_greek
@@ -37,7 +37,7 @@ from .perforce import _parse_date_perforce
 from .rfc822 import _parse_date_rfc822
 from .w3dtf import _parse_date_w3dtf
 
-_date_handlers: list[Callable[[str], Optional[struct_time]]] = []
+_date_handlers: list[Callable[[str], struct_time | None]] = []
 
 
 def registerDateHandler(func):

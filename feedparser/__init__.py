@@ -1,4 +1,4 @@
-# Copyright 2010-2024 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -38,12 +38,7 @@ from .util import FeedParserDict
 
 __author__ = "Kurt McKee <contactme@kurtmckee.org>"
 __license__ = "BSD 2-clause"
-__version__ = "6.0.11"
-
-# HTTP "User-Agent" header to send to servers when downloading feeds.
-# If you are embedding feedparser in a larger application, you should
-# change this to your application name and URL.
-USER_AGENT = "feedparser/%s +https://github.com/kurtmckee/feedparser/" % __version__
+__version__ = "6.0.12"
 
 # If you want feedparser to automatically resolve all relative URIs, set this
 # to 1.

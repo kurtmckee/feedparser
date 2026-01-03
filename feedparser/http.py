@@ -1,4 +1,4 @@
-# Copyright 2010-2024 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -47,14 +47,10 @@ ACCEPT_HEADER: str = (
 
 
 def get(url: str, result: dict[str, typing.Any]) -> bytes:
-    from . import USER_AGENT
-
-    agent = USER_AGENT
-
     try:
         response = requests.get(
             url,
-            headers={"User-Agent": agent, "Accept": ACCEPT_HEADER},
+            headers={"Accept": ACCEPT_HEADER},
             timeout=10,
         )
     except requests.RequestException as exception:

@@ -4,8 +4,6 @@ on:
   pull_request:
   push:
     branches:
-      - "develop"
-      - "master"
       - "main"
       - "releases"
 
@@ -19,13 +17,13 @@ jobs:
           - name: "Linux"
             runner: "ubuntu-latest"
             cpythons:
-              - "3.9"
               - "3.10"
               - "3.11"
               - "3.12"
               - "3.13"
+            cpython-beta: "3.14"
             pypys:
-              - "3.10"
+              - "3.11"
             tox-factors:
               - "chardet"
             cache-key-hash-files:
@@ -36,7 +34,7 @@ jobs:
           - name: "macOS"
             runner: "macos-latest"
             cpythons:
-              - "3.9"
+              - "3.10"
               - "3.13"
             tox-factors:
               - "chardet"
@@ -47,7 +45,7 @@ jobs:
           - name: "Windows"
             runner: "windows-latest"
             cpythons:
-              - "3.9"
+              - "3.10"
               - "3.13"
             tox-factors:
               - "chardet"
@@ -69,6 +67,6 @@ jobs:
               - "pyproject.toml"
               - "requirements/*/requirements.txt"
 
-    uses: "kurtmckee/github-workflows/.github/workflows/tox.yaml@ca26472ada33aa277527450aa46436f530e3d2c1" # v1.4
+    uses: "kurtmckee/github-workflows/.github/workflows/tox.yaml@19c3c069be51d3bfc3ac73e85e81b2b1646e91a8" # v1.7
     with:
       config: "${{ toJSON(matrix) }}"

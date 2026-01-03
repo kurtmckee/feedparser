@@ -20,6 +20,12 @@ Please see the fragment files in the `changelog.d directory`_.
 
 ..  scriv-insert-here
 
+6.0.12 - 2025-09-10
+===================
+
+*   Fix an ``AssertionError`` crash that occurs with Python 3.10 and higher. (#304)
+*   Fix a ``DeprecationWarning`` thrown during calls to ``re.sub``. (#389)
+*   Add a Read the Docs configuration.
 
 6.0.11 - 2023-12-10
 ===================
