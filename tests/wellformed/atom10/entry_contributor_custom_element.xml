@@ -1,0 +1,13 @@
+<!--
+Description: custom namespace element inside contributor is stored in contributor dict
+Expect:      not bozo and entries[0]['contributors'][0]['custom_role'] == 'editor'
+-->
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:custom="http://example.org/custom">
+<entry>
+  <contributor>
+    <name>Bob Helper</name>
+    <custom:role>editor</custom:role>
+  </contributor>
+</entry>
+</feed>

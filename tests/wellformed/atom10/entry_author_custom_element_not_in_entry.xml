@@ -1,0 +1,13 @@
+<!--
+Description: custom namespace element inside author is NOT stored at entry level
+Expect:      not bozo and 'arxiv_affiliation' not in entries[0]
+-->
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:arxiv="http://arxiv.org/schemas/atom">
+<entry>
+  <author>
+    <name>Example author</name>
+    <arxiv:affiliation>MIT</arxiv:affiliation>
+  </author>
+</entry>
+</feed>
