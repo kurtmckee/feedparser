@@ -1,4 +1,0 @@
-Python support
---------------
-
-*   Drop support for PyPy 3.10.
