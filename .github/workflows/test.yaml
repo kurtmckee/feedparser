@@ -21,12 +21,11 @@ jobs:
               - "3.11"
               - "3.12"
               - "3.13"
-            cpython-beta: "3.14"
-            pypys:
-              - "3.11"
-            tox-factors:
-              - "chardet"
+              - "3.14"
+            cache-paths:
+              - ".mypy_cache/"
             cache-key-hash-files:
+              - "docs/conf.py"
               - "pyproject.toml"
               - "requirements/*/requirements.txt"
 
@@ -35,7 +34,7 @@ jobs:
             runner: "macos-latest"
             cpythons:
               - "3.10"
-              - "3.13"
+              - "3.14"
             tox-factors:
               - "chardet"
             cache-key-hash-files:
@@ -46,24 +45,10 @@ jobs:
             runner: "windows-latest"
             cpythons:
               - "3.10"
-              - "3.13"
+              - "3.14"
             tox-factors:
               - "chardet"
             cache-key-hash-files:
-              - "pyproject.toml"
-              - "requirements/*/requirements.txt"
-
-          - name: "Quality"
-            runner: "ubuntu-latest"
-            cpythons:
-              - "3.13"
-            tox-environments:
-              - "docs"
-              - "mypy"
-            cache-paths:
-              - ".mypy_cache/"
-            cache-key-hash-files:
-              - "docs/conf.py"
               - "pyproject.toml"
               - "requirements/*/requirements.txt"
 
