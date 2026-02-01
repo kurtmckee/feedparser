@@ -4,6 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "semiannually"
+    cooldown:
+      default-days: 20
     groups:
       github-actions:
         patterns:
