@@ -27,6 +27,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 import io
+import multiprocessing
 import urllib.error
 import urllib.parse
 import xml.sax
@@ -374,3 +375,10 @@ def _parse_file_inplace(
         result["namespaces"] = {}
     else:
         result["namespaces"] = feed_parser.namespaces_in_use
+
+    if "bozo_exception" in result and _is_multiprocessing():
+        result["bozo_exception"] = str(result["bozo_exception"])
+
+
+def _is_multiprocessing():
+    return multiprocessing.parent_process() is not None
