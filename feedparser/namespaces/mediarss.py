@@ -49,14 +49,6 @@ class Namespace:
             if term.strip():
                 self._add_tag(term.strip(), None, None)
 
-    def _start_media_title(self, attrs_d):
-        self._start_title(attrs_d)
-
-    def _end_media_title(self):
-        title_depth = self.title_depth
-        self._end_title()
-        self.title_depth = title_depth
-
     def _start_media_group(self, attrs_d):
         # don't do anything, but don't break the enclosed tags either
         pass
@@ -85,10 +77,34 @@ class Namespace:
             context["media_credit"][-1]["content"] = credit
 
     def _start_media_description(self, attrs_d):
-        self._start_description(attrs_d)
+        context = self._get_context()
+        context.setdefault("media_description", [])
+        attrs = attrs_d.copy()
+        if "type" in attrs:
+            attrs["type"] = self.map_content_type(attrs["type"])
+        context["media_description"].append(attrs)
+        self.push("media_desc", 1)
 
     def _end_media_description(self):
-        self._end_description()
+        description_ = self.pop("media_desc")
+        if description_ is not None and description_.strip():
+            context = self._get_context()
+            context["media_description"][-1]["content"] = description_
+
+    def _start_media_title(self, attrs_d):
+        context = self._get_context()
+        context.setdefault("media_title", [])
+        attrs = attrs_d.copy()
+        if "type" in attrs:
+            attrs["type"] = self.map_content_type(attrs["type"])
+        context["media_title"].append(attrs)
+        self.push("title", 1)
+
+    def _end_media_title(self):
+        title_ = self.pop("title")
+        if title_ is not None and title_.strip():
+            context = self._get_context()
+            context["media_title"][-1]["content"] = title_
 
     def _start_media_restriction(self, attrs_d):
         context = self._get_context()
