@@ -34,7 +34,7 @@ repos:
           - "--py310-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
-    rev: "25.11.0"
+    rev: "26.1.0"
     hooks:
       - id: "black"
 
@@ -52,19 +52,19 @@ repos:
           - "flake8-bugbear==24.12.12"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker"
-    rev: "v3.6.0"
+    rev: "v3.6.1"
     hooks:
       - id: "editorconfig-checker"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "0.35.0"
+    rev: "0.36.1"
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
       - id: "check-readthedocs"
 
   - repo: "https://github.com/rhysd/actionlint"
-    rev: "v1.7.9"
+    rev: "v1.7.10"
     hooks:
       - id: "actionlint"
         additional_dependencies:
