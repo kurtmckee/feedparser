@@ -28,6 +28,7 @@
 
 __all__ = [
     "FeedparserError",
+    "CharacterEncodingErrorsReplace",
     "CharacterEncodingOverride",
     "CharacterEncodingUnknown",
     "NonXMLContentType",
@@ -36,6 +37,10 @@ __all__ = [
 
 
 class FeedparserError(Exception):
+    pass
+
+
+class CharacterEncodingErrorsReplace(FeedparserError):
     pass
 
 
