@@ -30,7 +30,7 @@ import io
 import urllib.error
 import urllib.parse
 import xml.sax
-from typing import IO
+from typing import IO, Any
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
@@ -72,9 +72,10 @@ SUPPORTED_VERSIONS = {
 
 
 def _open_resource(
-    url_file_stream_or_string,
-    result,
-):
+    url_file_stream_or_string: Any,
+    result: dict,
+    requests_hooks: http.RequestHooks | None = None,
+) -> tuple[str, Any]:
     """URL, filename, or string --> stream
 
     This function lets you define parsers that take any input source
@@ -83,7 +84,11 @@ def _open_resource(
     to have all the basic stdio read methods (read, readline, readlines).
     Just .close() the object when you're done with it.
 
-    :return: A seekable, readable file object.
+    :param requests_hooks:
+        A dict of hooks to pass onto :method:`requests.get` if a URL is parsed.
+        See `feedparser.http.RequestHooks`
+
+    :return: A Tuple of [the method used, a seekable and readable file object].
     """
 
     # Some notes on the history of the implementation of _open_resource().
@@ -104,8 +109,8 @@ def _open_resource(
     if callable(getattr(url_file_stream_or_string, "read", None)):
         if callable(getattr(url_file_stream_or_string, "seekable", None)):
             if url_file_stream_or_string.seekable():
-                return url_file_stream_or_string
-        return _to_in_memory_file(url_file_stream_or_string.read())
+                return "seekable", url_file_stream_or_string
+        return "read", _to_in_memory_file(url_file_stream_or_string.read())
 
     looks_like_url = isinstance(
         url_file_stream_or_string, str
@@ -114,12 +119,12 @@ def _open_resource(
         "https",
     )
     if looks_like_url:
-        data = http.get(url_file_stream_or_string, result)
-        return io.BytesIO(data)
+        data = http.get(url_file_stream_or_string, result, hooks=requests_hooks)
+        return "url", io.BytesIO(data)
 
     # try to open with native open function (if url_file_stream_or_string is a filename)
     try:
-        return open(url_file_stream_or_string, "rb")
+        return "filepath", open(url_file_stream_or_string, "rb")
     except (OSError, TypeError, ValueError):
         # if url_file_stream_or_string is a str object that
         # cannot be converted to the encoding returned by
@@ -131,7 +136,7 @@ def _open_resource(
         pass
 
     # treat url_file_stream_or_string as bytes/string
-    return _to_in_memory_file(url_file_stream_or_string)
+    return "raw_data", _to_in_memory_file(url_file_stream_or_string)
 
 
 def _to_in_memory_file(data):
@@ -154,6 +159,8 @@ def parse(
     resolve_relative_uris: bool | None = None,
     sanitize_html: bool | None = None,
     optimistic_encoding_detection: bool | None = None,
+    archive_url_data: bool | None = None,
+    requests_hooks: http.RequestHooks | None = None,
 ) -> FeedParserDict:
     """Parse a feed from a URL, file, stream, or string.
 
@@ -188,7 +195,12 @@ def parse(
         (uses less memory, but the wrong encoding may be detected in rare cases).
         Defaults to the value of
         :data:`feedparser.OPTIMISTIC_ENCODING_DETECTION`, which is ``True``.
-
+    :param archive_url_data:
+        Should feedparser archive the URL headers and content into
+        :attr:`FeedParserDict.raw` ? Defaults to ``False```
+    :param requests_hooks:
+        A dict of hooks to pass onto :method:`requests.get` if a URL is parsed.
+        See `feedparser.http.RequestHooks`
     """
 
     result = FeedParserDict(
@@ -196,13 +208,22 @@ def parse(
         entries=[],
         feed=FeedParserDict(),
         headers={},
+        raw={},
     )
 
     try:
-        file = _open_resource(
+        _method, file = _open_resource(
             url_file_stream_or_string,
             result,
+            requests_hooks=requests_hooks,
         )
+        if _method == "url" and archive_url_data:
+            # archive the headers before they are mutated by `response_headers`
+            result.raw["headers"] = result["headers"].copy()
+            # archive the content, then reset the file
+            result.raw["content"] = file.read()
+            file.seek(0)
+
     except urllib.error.URLError as error:
         result.update(
             {
