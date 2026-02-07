@@ -1,0 +1,13 @@
+<!--
+Description: custom namespace element inside author is stored in author dict
+Expect:      not bozo and entries[0]['authors'][0]['arxiv_affiliation'] == 'MIT'
+-->
+<feed xmlns="http://www.w3.org/2005/Atom"
+      xmlns:arxiv="http://arxiv.org/schemas/atom">
+<entry>
+  <author>
+    <name>Example author</name>
+    <arxiv:affiliation>MIT</arxiv:affiliation>
+  </author>
+</entry>
+</feed>
