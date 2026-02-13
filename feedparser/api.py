@@ -221,7 +221,10 @@ def parse(
     file.seek(initial_file_offset)
 
     # overwrite existing headers using response_headers
-    result["headers"].update(response_headers or {})
+    # Lowercase the HTTP header keys for comparisons per RFC 2616.
+    response_headers = response_headers or {}
+    extra_headers = {k.lower(): v for k, v in response_headers.items()}
+    result["headers"].update(extra_headers)
 
     try:
         _parse_file_inplace(
