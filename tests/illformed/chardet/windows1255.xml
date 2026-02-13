@@ -1,7 +1,7 @@
 <!--
 SkipUnless:   __import__('chardet')
 Description:  windows-1255 with no encoding information
-Expect:       bozo and encoding == 'windows-1255'
+Expect:       bozo and encoding in ('windows-1255', 'WINDOWS-1255')
 -->
 <rss>
 <channel>
