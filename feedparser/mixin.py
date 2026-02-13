@@ -631,9 +631,18 @@ class XMLParserMixin(
                 old_value_depth = self.property_depth_map.setdefault(
                     self.entries[-1], {}
                 ).get(element)
-                if old_value_depth is None or self.depth <= old_value_depth:
-                    self.property_depth_map[self.entries[-1]][element] = self.depth
-                    self.entries[-1][element] = output
+                self.property_depth_map[self.entries[-1]][element] = self.depth
+                # Legacy elements are squashed to a singel item
+                legacy_elements = ["title", "summary", "author", "id"]
+                if element in self.entries[-1] and element not in legacy_elements:
+                    previous_output = self.entries[-1][element]
+                    if not isinstance(previous_output, list):
+                        previous_output = [previous_output]
+                    previous_output.append(output)
+                    self.entries[-1][element] = previous_output
+                else:
+                    if old_value_depth is None or self.depth <= old_value_depth:
+                        self.entries[-1][element] = output
                 if self.incontent:
                     contentparams = copy.deepcopy(self.contentparams)
                     contentparams["value"] = output
