@@ -22,12 +22,15 @@ jobs:
               - "3.12"
               - "3.13"
               - "3.14"
+            cpython-beta: "3.15"
             cache-paths:
               - ".mypy_cache/"
             cache-key-hash-files:
               - "docs/conf.py"
               - "pyproject.toml"
               - "requirements/*/requirements.txt"
+            tox-skip-environments:
+              - "coverage-html"
 
             # macOS and Windows tests target only the upper and lower CPython versions.
           - name: "macOS"

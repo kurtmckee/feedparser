@@ -4,7 +4,7 @@ import pytest
 
 from .helpers import fail_unless_eval, get_test_data
 
-paths = pathlib.Path("tests/json").rglob("*.json")
+paths = list(pathlib.Path("tests/json").rglob("*.json"))
 
 
 @pytest.mark.parametrize("path", paths)
