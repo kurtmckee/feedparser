@@ -28,6 +28,8 @@ jobs:
               - "docs/conf.py"
               - "pyproject.toml"
               - "requirements/*/requirements.txt"
+            tox-skip-environments:
+              - "coverage-html"
 
             # macOS and Windows tests target only the upper and lower CPython versions.
           - name: "macOS"
@@ -52,6 +54,6 @@ jobs:
               - "pyproject.toml"
               - "requirements/*/requirements.txt"
 
-    uses: "kurtmckee/github-workflows/.github/workflows/tox.yaml@19c3c069be51d3bfc3ac73e85e81b2b1646e91a8" # v1.7
+    uses: "kurtmckee/github-workflows/.github/workflows/tox.yaml@01d6d9cea4afa3fbcbfd3e12ce3129b782e093e3" # v2.1
     with:
       config: "${{ toJSON(matrix) }}"
