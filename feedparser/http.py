@@ -44,6 +44,7 @@ ACCEPT_HEADER: str = (
     ";q=0.2,*/*"
     ";q=0.1"
 )
+MAX_RESPONSE_BYTES: int = 10 * 1024 * 1024
 
 
 def get(url: str, result: dict[str, typing.Any]) -> bytes:
@@ -52,6 +53,7 @@ def get(url: str, result: dict[str, typing.Any]) -> bytes:
             url,
             headers={"Accept": ACCEPT_HEADER},
             timeout=10,
+            stream=True,
         )
     except requests.RequestException as exception:
         result["bozo"] = True
@@ -69,6 +71,35 @@ def get(url: str, result: dict[str, typing.Any]) -> bytes:
         if modified:
             result["modified"] = modified
             result["modified_parsed"] = _parse_date(modified)
+    content_length = result["headers"].get("content-length")
+    if content_length is not None:
+        try:
+            if int(content_length) > MAX_RESPONSE_BYTES:
+                result["bozo"] = True
+                result["bozo_exception"] = ValueError("response body exceeds maximum size")
+                response.close()
+                return b""
+        except ValueError:
+            pass
+
     result["href"] = response.url
     result["status"] = response.status_code
-    return response.content
+
+    body = bytearray()
+    try:
+        for chunk in response.iter_content(chunk_size=8192):
+            if not chunk:
+                continue
+            body.extend(chunk)
+            if len(body) > MAX_RESPONSE_BYTES:
+                result["bozo"] = True
+                result["bozo_exception"] = ValueError("response body exceeds maximum size")
+                return b""
+    except requests.RequestException as exception:
+        result["bozo"] = True
+        result["bozo_exception"] = exception
+        return b""
+    finally:
+        response.close()
+
+    return bytes(body)
