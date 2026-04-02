@@ -76,7 +76,9 @@ def get(url: str, result: dict[str, typing.Any]) -> bytes:
         try:
             if int(content_length) > MAX_RESPONSE_BYTES:
                 result["bozo"] = True
-                result["bozo_exception"] = ValueError("response body exceeds maximum size")
+                result["bozo_exception"] = ValueError(
+                    "response body exceeds maximum size"
+                )
                 response.close()
                 return b""
         except ValueError:
@@ -93,7 +95,9 @@ def get(url: str, result: dict[str, typing.Any]) -> bytes:
             body.extend(chunk)
             if len(body) > MAX_RESPONSE_BYTES:
                 result["bozo"] = True
-                result["bozo_exception"] = ValueError("response body exceeds maximum size")
+                result["bozo_exception"] = ValueError(
+                    "response body exceeds maximum size"
+                )
                 return b""
     except requests.RequestException as exception:
         result["bozo"] = True
