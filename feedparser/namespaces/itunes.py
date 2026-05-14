@@ -105,9 +105,11 @@ class Namespace:
 
     def _end_itunes_explicit(self):
         value = self.pop("itunes_explicit", 0)
-        # Convert 'yes' -> True, 'clean' to False, and any other value to None
-        # False and None both evaluate as False, so the difference can be ignored
-        # by applications that only need to know if the content is explicit.
-        self._get_context()["itunes_explicit"] = (None, False, True)[
-            (value == "yes" and 2) or value == "clean" or 0
-        ]
+        # Modern Apple spec uses true/false; yes/no/clean are legacy values.
+        if value in ("yes", "true"):
+            explicit = True
+        elif value in ("no", "false", "clean"):
+            explicit = False
+        else:
+            explicit = None
+        self._get_context()["itunes_explicit"] = explicit
