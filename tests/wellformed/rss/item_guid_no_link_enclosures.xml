@@ -1,0 +1,12 @@
+<!--
+Description: item with a guid but no link has an empty enclosures list
+Expect:      not bozo and entries[0]['enclosures'] == []
+-->
+<rss version="2.0">
+<channel>
+<item>
+  <guid>urn:uuid:1</guid>
+  <title>Example</title>
+</item>
+</channel>
+</rss>

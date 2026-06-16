@@ -253,7 +253,10 @@ class Namespace:
     _end_copyright = _end_rights
 
     def _start_item(self, attrs_d):
-        self.entries.append(FeedParserDict())
+        # Seed an empty link list so the computed "enclosures" and "license"
+        # keys return an empty result instead of raising KeyError on entries
+        # that have an id but no link (see issue #340).
+        self.entries.append(FeedParserDict({"links": []}))
         self.push("item", 0)
         self.inentry = 1
         self.guidislink = 0

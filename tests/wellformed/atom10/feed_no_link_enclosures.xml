@@ -1,0 +1,8 @@
+<!--
+Description: feed with no link has an empty enclosures list
+Expect:      not bozo and feed['enclosures'] == []
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <id>urn:uuid:1</id>
+  <title>Example</title>
+</feed>

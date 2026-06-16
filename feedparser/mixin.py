@@ -173,7 +173,10 @@ class XMLParserMixin(
         if not self._matchnamespaces:
             for k, v in self.namespaces.items():
                 self._matchnamespaces[k.lower()] = v
-        self.feeddata = FeedParserDict()  # feed-level data
+        # Seed an empty link list so the computed "enclosures" and "license"
+        # keys return an empty result instead of raising on feeds that have no
+        # link (the feed-level counterpart of issue #340).
+        self.feeddata = FeedParserDict({"links": []})  # feed-level data
         self.entries = []  # list of entry-level data
         self.version = ""  # feed type/version, see SUPPORTED_VERSIONS
         self.namespaces_in_use = {}  # dictionary of namespaces defined by the feed

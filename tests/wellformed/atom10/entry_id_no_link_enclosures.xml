@@ -1,0 +1,10 @@
+<!--
+Description: entry with an id but no link has an empty enclosures list
+Expect:      not bozo and entries[0]['enclosures'] == []
+-->
+<feed xmlns="http://www.w3.org/2005/Atom">
+<entry>
+  <id>urn:uuid:1</id>
+  <title>Example</title>
+</entry>
+</feed>
