@@ -177,6 +177,10 @@ def convert_to_utf8(
     elif data[:4] == UTF32LE_MARKER:
         bom_encoding = "utf-32le"
 
+    # Strip leading ASCII whitespace to handle broken feeds that start
+    # with a newline before the XML declaration (gh#508).
+    data = data.lstrip()
+
     tempdata = data
     try:
         if bom_encoding:
