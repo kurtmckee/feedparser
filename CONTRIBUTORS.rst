@@ -16,6 +16,7 @@ bug report!
 * `François Boulogne <http://www.sciunto.org/>`_
 * `Adrian Damian <https://death.andgravity.com/>`_
 * `Jason Diamond <http://injektilo.org/>`_
+* `Vincent Gao <https://github.com/gaoflow>`_
 * `Jakub Kuczys <https://github.com/jack1142>`_
 * `Fazal Majid <https://majid.info/blog/>`_
 * `Kevin Marks <http://epeus.blogspot.com/>`_

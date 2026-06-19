@@ -39,6 +39,7 @@ from .urls import _urljoin, make_safe_absolute_uri, resolve_relative_uris
 from .util import FeedParserDict
 
 email_pattern = re.compile(
+    r"(?<![a-zA-Z0-9_.+-])"
     r"(([a-zA-Z0-9_.+-]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)"
     r"|(([a-zA-Z0-9-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(]?))"
     r"(\?subject=\S+)?"
