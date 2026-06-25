@@ -1,0 +1,11 @@
+<!--
+Description: the contents of an escaped CDATA section are extracted, not dropped
+Expect:      not bozo and entries[0]['description'] == 'some text'
+-->
+<rss version="2.0">
+<channel>
+<item>
+<description>&lt;![CDATA[some text]]&gt;</description>
+</item>
+</channel>
+</rss>
