@@ -52,6 +52,6 @@ jobs:
               - "pyproject.toml"
               - "requirements/*/requirements.txt"
 
-    uses: "kurtmckee/github-workflows/.github/workflows/tox.yaml@19c3c069be51d3bfc3ac73e85e81b2b1646e91a8" # v1.7
+    uses: "kurtmckee/github-workflows/.github/workflows/tox.yaml@598fc01db95578db9417cde9338ae7e7d891e66b" # v2.1
     with:
       config: "${{ toJSON(matrix) }}"
