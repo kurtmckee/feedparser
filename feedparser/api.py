@@ -34,6 +34,7 @@ from typing import IO
 
 from . import http
 from .encodings import MissingEncoding, convert_file_to_utf8
+from .exceptions import EmptyDocument
 from .html import BaseHTMLProcessor
 from .mixin import XMLParserMixin
 from .parsers.json import JSONParser
@@ -214,9 +215,12 @@ def parse(
 
     # at this point, the file is guaranteed to be seekable;
     # we read 1 byte/character to see if it's empty and return early
-    # (this preserves the behavior in 6.0.8)
+    # (this preserves the 6.0.8 behavior of not attempting to parse empty
+    # input, but flags it via bozo instead of silently reporting success)
     initial_file_offset = file.tell()
     if not file.read(1):
+        result["bozo"] = True
+        result["bozo_exception"] = EmptyDocument("document is empty")
         return result
     file.seek(initial_file_offset)
 

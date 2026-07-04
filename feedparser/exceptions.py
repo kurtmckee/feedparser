@@ -30,6 +30,7 @@ __all__ = [
     "FeedparserError",
     "CharacterEncodingOverride",
     "CharacterEncodingUnknown",
+    "EmptyDocument",
     "NonXMLContentType",
     "UndeclaredNamespace",
 ]
@@ -44,6 +45,10 @@ class CharacterEncodingOverride(FeedparserError):
 
 
 class CharacterEncodingUnknown(FeedparserError):
+    pass
+
+
+class EmptyDocument(FeedparserError):
     pass
 
 
