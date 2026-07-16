@@ -1,0 +1,14 @@
+<!--
+Description: a stray </height> end tag with no matching start tag must not crash the parser
+Expect:      bozo and feed['image']['height'] == 0
+-->
+<rss version="2.0">
+<channel>
+<image>
+<url>http://example.org/url</url>
+<title>Sample image</title>
+<link>http://example.org/link</link>
+</height>
+</image>
+</channel>
+</rss>

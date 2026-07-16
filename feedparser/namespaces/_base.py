@@ -185,7 +185,8 @@ class Namespace:
         value = self.pop("width")
         try:
             value = int(value)
-        except ValueError:
+        except (ValueError, TypeError):
+            # TypeError: a stray </width> with no matching start tag pops None.
             value = 0
         if self.inimage:
             context = self._get_context()
@@ -198,7 +199,8 @@ class Namespace:
         value = self.pop("height")
         try:
             value = int(value)
-        except ValueError:
+        except (ValueError, TypeError):
+            # TypeError: a stray </height> with no matching start tag pops None.
             value = 0
         if self.inimage:
             context = self._get_context()
