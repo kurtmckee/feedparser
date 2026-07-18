@@ -94,6 +94,17 @@ class Namespace:
         context["where"]["srsName"] = srs_name
         context["where"]["srsDimension"] = srs_dimension
 
+    def _swap_for_srs_name(self, srs_name):
+        # Non-numeric EPSG suffixes fall back to GeoRSS default swap, like srsDimension.
+        swap = True
+        if srs_name and "EPSG" in srs_name:
+            try:
+                epsg = int(srs_name.split(":")[-1])
+            except ValueError:
+                return swap
+            swap = bool(epsg in _geogCS)
+        return swap
+
     def _start_gml_point(self, attrs_d):
         self._parse_srs_attrs(attrs_d)
         self.ingeometry = 1
@@ -123,10 +134,7 @@ class Namespace:
         context = self._get_context()
         srs_name = context["where"].get("srsName")
         srs_dimension = context["where"].get("srsDimension", 2)
-        swap = True
-        if srs_name and "EPSG" in srs_name:
-            epsg = int(srs_name.split(":")[-1])
-            swap = bool(epsg in _geogCS)
+        swap = self._swap_for_srs_name(srs_name)
         geometry = _parse_georss_point(this, swap=swap, dims=srs_dimension)
         if geometry:
             self._save_where(geometry)
@@ -139,10 +147,7 @@ class Namespace:
         context = self._get_context()
         srs_name = context["where"].get("srsName")
         srs_dimension = context["where"].get("srsDimension", 2)
-        swap = True
-        if srs_name and "EPSG" in srs_name:
-            epsg = int(srs_name.split(":")[-1])
-            swap = bool(epsg in _geogCS)
+        swap = self._swap_for_srs_name(srs_name)
         geometry = _parse_poslist(this, self.ingeometry, swap=swap, dims=srs_dimension)
         if geometry:
             self._save_where(geometry)

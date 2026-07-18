@@ -1,0 +1,16 @@
+<!--
+Description: GML Point with non-numeric EPSG srsName
+Expect: entries[0]['where']['type'] == 'Point' and entries[0]['where']['coordinates'] == (2.0, 1.0)
+-->
+<feed
+  xmlns="http://www.w3.org/2005/Atom"
+  xmlns:georss="http://www.georss.org/georss"
+  xmlns:gml="http://www.opengis.net/gml">
+  <entry>
+    <georss:where>
+      <gml:Point srsName="EPSG:abc">
+        <gml:pos>1.0 2.0</gml:pos>
+      </gml:Point>
+    </georss:where>
+  </entry>
+</feed>
