@@ -759,7 +759,8 @@ class XMLParserMixin(
             context = self.sourcedata
         elif self.inimage and "image" in self.feeddata:
             context = self.feeddata["image"]
-        elif self.intextinput:
+        elif self.intextinput and "textinput" in self.feeddata:
+            # Same guard as image: nested textInput never creates feeddata["textinput"].
             context = self.feeddata["textinput"]
         elif self.inentry:
             context = self.entries[-1]
