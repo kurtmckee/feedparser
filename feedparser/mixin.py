@@ -44,6 +44,13 @@ email_pattern = re.compile(
     r"(\?subject=\S+)?"
 )
 
+# Feeds are untrusted input, and the domain part of ``email_pattern``
+# backtracks quadratically on long, almost-matching strings. Only run the
+# search on values short enough to plausibly hold an address: RFC 5321 caps
+# an address at 254 octets, and this leaves plenty of room for a display name
+# alongside it. Anything longer is not a real author string, so skip it.
+EMAIL_PATTERN_MAX_LENGTH = 1000
+
 
 class XMLParserMixin(
     _base.Namespace,
@@ -796,7 +803,10 @@ class XMLParserMixin(
             author, email = context.get(key), None
             if not author:
                 return
-            emailmatch = email_pattern.search(author)
+            if len(author) <= EMAIL_PATTERN_MAX_LENGTH:
+                emailmatch = email_pattern.search(author)
+            else:
+                emailmatch = None
             if emailmatch:
                 email = emailmatch.group(0)
                 # probably a better way to do the following, but it passes
