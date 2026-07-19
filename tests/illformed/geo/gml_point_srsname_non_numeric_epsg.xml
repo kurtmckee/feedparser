@@ -8,7 +8,7 @@ Expect: entries[0]['where']['type'] == 'Point' and entries[0]['where']['coordina
   xmlns:gml="http://www.opengis.net/gml">
   <entry>
     <georss:where>
-      <gml:Point srsName="EPSG:abc">
+      <gml:Point srsName="urn:ogc:def:crs:EPSG::abc">
         <gml:pos>1.0 2.0</gml:pos>
       </gml:Point>
     </georss:where>

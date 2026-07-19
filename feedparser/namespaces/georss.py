@@ -96,14 +96,15 @@ class Namespace:
 
     def _swap_for_srs_name(self, srs_name):
         # Non-numeric EPSG suffixes fall back to GeoRSS default swap, like srsDimension.
-        swap = True
-        if srs_name and "EPSG" in srs_name:
-            try:
-                epsg = int(srs_name.split(":")[-1])
-            except ValueError:
-                return swap
-            swap = bool(epsg in _geogCS)
-        return swap
+        if not (srs_name and "EPSG" in srs_name):
+            return True
+
+        try:
+            epsg = int(srs_name.split(":")[-1])
+        except ValueError:
+            return True
+
+        return epsg in _geogCS
 
     def _start_gml_point(self, attrs_d):
         self._parse_srs_attrs(attrs_d)
