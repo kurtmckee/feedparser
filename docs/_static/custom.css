@@ -1,0 +1,23 @@
+.pre, .pre * {
+    font-style: normal;
+    font-family: monospace;
+    white-space: pre;
+}
+
+/*
+ * The CSS code to visually hide elements comes from:
+ * https://www.a11yproject.com/posts/how-to-hide-content/
+ *
+ * The CSS selector for the Sphinx/Alabaster theme comes from:
+ * https://github.com/pallets/pallets-sphinx-themes/blob/1512b53b/src/pallets_sphinx_themes/themes/pocoo/static/pocoo.css#L486-L498
+ */
+
+.visually-hidden > h1:first-child {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+}

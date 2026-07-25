@@ -1,13 +1,11 @@
 ..
     This file is part of feedparser.
-    Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
+    Copyright 2010-2026 Kurt McKee <contactme@kurtmckee.org>
     Copyright 2002-2008 Mark Pilgrim
     Released under the BSD 2-clause license.
 
-feedparser
-##########
-
-Parse Atom and RSS feeds in Python.
+..  image:: https://raw.githubusercontent.com/kurtmckee/feedparser/ad8e98ea352cc71cb159b55b976e31a1b041a6c8/docs/_static/banner.png
+    :alt: feedparser: Parse RSS/Atom/JSON feeds in Python.
 
 ----
 
