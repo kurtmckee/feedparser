@@ -28,7 +28,7 @@
 import html.entities
 import re
 
-from .sgml import *
+from .sgml import sgmllib
 
 _cp1252 = {
     128: '\u20ac',  # euro sign
@@ -61,7 +61,7 @@ _cp1252 = {
 }
 
 
-class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
+class _BaseHTMLProcessor(sgmllib.SGMLParser):
     special = re.compile("""[<>'"]""")
     bare_ampersand = re.compile(r"&(?!#\d+;|#x[0-9a-fA-F]+;|\w+;)")
     elements_no_end_tag = {
@@ -109,35 +109,8 @@ class _BaseHTMLProcessor(sgmllib.SGMLParser, object):
         else:
             return '<' + tag + '></' + tag + '>'
 
-    # By declaring these methods and overriding their compiled code
-    # with the code from sgmllib, the original code will execute in
-    # feedparser's scope instead of sgmllib's. This means that the
-    # `tagfind` and `charref` regular expressions will be found as
-    # they're declared above, not as they're declared in sgmllib.
-    def goahead(self, i):
-        raise NotImplementedError
-
-    # Replace goahead with SGMLParser's goahead() code object.
-    try:
-        goahead.__code__ = sgmllib.SGMLParser.goahead.__code__
-    except AttributeError:
-        # Python 2
-        # noinspection PyUnresolvedReferences
-        goahead.func_code = sgmllib.SGMLParser.goahead.func_code
-
-    def __parse_starttag(self, i):
-        raise NotImplementedError
-
-    # Replace __parse_starttag with SGMLParser's parse_starttag() code object.
-    try:
-        __parse_starttag.__code__ = sgmllib.SGMLParser.parse_starttag.__code__
-    except AttributeError:
-        # Python 2
-        # noinspection PyUnresolvedReferences
-        __parse_starttag.func_code = sgmllib.SGMLParser.parse_starttag.func_code
-
     def parse_starttag(self, i):
-        j = self.__parse_starttag(i)
+        j = super().parse_starttag(i)
         if self._type == 'application/xhtml+xml':
             if j > 2 and self.rawdata[j-2:j] == '/>':
                 self.unknown_endtag(self.lasttag)
