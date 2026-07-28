@@ -1,6 +1,6 @@
 [project]
 name = "feedparser"
-version = "6.0.11"
+version = "6.0.13"
 description = "Parse Atom/RSS/JSON feeds in Python"
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -15,7 +15,7 @@ classifiers = [
     "Topic :: Text Processing :: Markup",
 ]
 dependencies = [
-    "sgmllib3k==1.0.0",
+    "feedparser-sgmllib (>=1, <2)",
     "requests>=2.20.0",
 ]
 

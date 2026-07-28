@@ -12,10 +12,8 @@ Notation)` feeds.  It also parses several
 popular extension modules, including Dublin Core and Apple's :program:`iTunes`
 extensions.
 
-To use :program:`Universal Feed Parser`, you will need :program:`Python` 3.8 or
-later. :program:`Universal Feed Parser` is not meant
-to run standalone; it is a module for you to use as part of a larger
-:program:`Python` program.
+:program:`Universal Feed Parser` is not meant to run standalone;
+it is a module for you to use as part of a larger :program:`Python` program.
 
 :program:`Universal Feed Parser` is easy to use; it has one primary public
 function, ``parse``.  ``parse`` takes a number of arguments, but only one is

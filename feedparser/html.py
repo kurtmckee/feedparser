@@ -28,20 +28,7 @@
 import html.entities
 import re
 
-# These items must all be imported into this module due to .__code__ replacements.
-from .sgml import (  # noqa: F401
-    attrfind,
-    charref,
-    endbracket,
-    entityref,
-    incomplete,
-    interesting,
-    sgmllib,
-    shorttag,
-    shorttagopen,
-    starttagopen,
-    tagfind,
-)
+from .sgml import sgmllib
 
 _cp1252 = {
     128: "\u20ac",  # euro sign
@@ -121,25 +108,8 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
             return "<" + tag + " />"
         return "<" + tag + "></" + tag + ">"
 
-    # By declaring these methods and overriding their compiled code
-    # with the code from sgmllib, the original code will execute in
-    # feedparser's scope instead of sgmllib's. This means that the
-    # `tagfind` and `charref` regular expressions will be found as
-    # they're declared above, not as they're declared in sgmllib.
-    def goahead(self, i):
-        raise NotImplementedError
-
-    # Replace goahead with SGMLParser's goahead() code object.
-    goahead.__code__ = sgmllib.SGMLParser.goahead.__code__
-
-    def __parse_starttag(self, i):
-        raise NotImplementedError
-
-    # Replace __parse_starttag with SGMLParser's parse_starttag() code object.
-    __parse_starttag.__code__ = sgmllib.SGMLParser.parse_starttag.__code__
-
     def parse_starttag(self, i):
-        j = self.__parse_starttag(i)
+        j = super().parse_starttag(i)
         if self._type == "application/xhtml+xml":
             if j > 2 and self.rawdata[j - 2 : j] == "/>":
                 self.unknown_endtag(self.lasttag)
