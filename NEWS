@@ -1,5 +1,10 @@
 coming in the next release:
 
+6.0.13 - 28 July 2026
+    *   Drop support for Python 3.9 and lower.
+    *   Migrate from ``sgmllib3k`` to ``feedparser-sgmllib``.
+    *   Resolve package build warnings.
+
 6.0.12 - 10 September 2025
     *   Fix an ``AssertionError`` crash that occurs with Python 3.10 and higher. (#304)
     *   Fix a ``DeprecationWarning`` thrown during calls to ``re.sub``. (#389)
