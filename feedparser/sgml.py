@@ -27,42 +27,11 @@
 
 import re
 
-import sgmllib  # type: ignore[import]
+import feedparser.sgmllib as sgmllib
 
 __all__ = [
     "sgmllib",
-    "charref",
-    "tagfind",
-    "attrfind",
-    "entityref",
-    "incomplete",
-    "interesting",
-    "shorttag",
-    "shorttagopen",
-    "starttagopen",
-    "endbracket",
 ]
-
-# sgmllib defines a number of module-level regular expressions that are
-# insufficient for the XML parsing feedparser needs. Rather than modify
-# the variables directly in sgmllib, they're defined here using the same
-# names, and the compiled code objects of several sgmllib.SGMLParser
-# methods are copied into _BaseHTMLProcessor so that they execute in
-# feedparser's scope instead of sgmllib's scope.
-charref = re.compile(r"&#(\d+|[xX][0-9a-fA-F]+);")
-tagfind = re.compile(r"[a-zA-Z][-_.:a-zA-Z0-9]*")
-attrfind = re.compile(
-    r"""\s*([a-zA-Z_][-:.a-zA-Z_0-9]*)[$]?(\s*=\s*"""
-    r"""('[^']*'|"[^"]*"|[][\-a-zA-Z0-9./,:;+*%?!&$()_#=~'"@]*))?"""
-)
-
-# Unfortunately, these must be copied over to prevent NameError exceptions
-entityref = sgmllib.entityref
-incomplete = sgmllib.incomplete
-interesting = sgmllib.interesting
-shorttag = sgmllib.shorttag
-shorttagopen = sgmllib.shorttagopen
-starttagopen = sgmllib.starttagopen
 
 
 class _EndBracketRegEx:
@@ -95,4 +64,4 @@ class EndBracketMatch:
         return self.match.end(n)
 
 
-endbracket = _EndBracketRegEx()
+sgmllib.endbracket = _EndBracketRegEx()  # type: ignore[assignment]

@@ -1,8 +1,7 @@
 Python support
 --------------
 
-*   Drop Python 3.9 support.
-*   Begin testing Python 3.14 beta releases.
+*   Support Python 3.14.
 
 
 Project development

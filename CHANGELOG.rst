@@ -20,6 +20,24 @@ Please see the fragment files in the `changelog.d directory`_.
 
 ..  scriv-insert-here
 
+6.0.13 - 2026-07-28
+===================
+
+Python support
+--------------
+
+*   Drop support for Python 3.9 and lower.
+
+Changed
+-------
+
+*   Migrate from ``sgmllib3k`` to ``feedparser-sgmllib``.
+
+Fixed
+-----
+
+*   Resolve package build warnings.
+
 6.0.12 - 2025-09-10
 ===================
 

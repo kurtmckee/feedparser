@@ -38,7 +38,7 @@ from .util import FeedParserDict
 
 __author__ = "Kurt McKee <contactme@kurtmckee.org>"
 __license__ = "BSD 2-clause"
-__version__ = "6.0.12"
+__version__ = "6.0.13"
 
 # If you want feedparser to automatically resolve all relative URIs, set this
 # to 1.
