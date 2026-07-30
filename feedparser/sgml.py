@@ -27,7 +27,7 @@
 
 import re
 
-import feedparser.sgmllib as sgmllib
+import feedparser_sgmllib as sgmllib
 
 __all__ = [
     "sgmllib",

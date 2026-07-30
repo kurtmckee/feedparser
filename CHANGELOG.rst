@@ -20,6 +20,11 @@ Please see the fragment files in the `changelog.d directory`_.
 
 ..  scriv-insert-here
 
+6.0.14 - 2026-07-30
+===================
+
+*   Upgrade to feedparser-sgmllib 2.0.0. (#585)
+
 6.0.13 - 2026-07-28
 ===================
 

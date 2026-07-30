@@ -15,7 +15,7 @@ classifiers = [
     "Topic :: Text Processing :: Markup",
 ]
 dependencies = [
-    "feedparser-sgmllib (>=1, <2)",
+    "feedparser-sgmllib (>=2, <3)",
     "requests>=2.20.0",
 ]
 
