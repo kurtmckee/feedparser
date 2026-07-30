@@ -58,7 +58,7 @@ setuptools.setup(
     download_url='https://pypi.python.org/pypi/feedparser',
     platforms=['POSIX', 'Windows'],
     packages=['feedparser', 'feedparser.datetimes', 'feedparser.namespaces', 'feedparser.parsers'],
-    install_requires=['feedparser-sgmllib (>=1, <2)'],
+    install_requires=['feedparser-sgmllib (>=2, <3)'],
     python_requires='>=3.10',
     keywords=['atom', 'cdf', 'feed', 'parser', 'rdf', 'rss'],
     classifiers=[
