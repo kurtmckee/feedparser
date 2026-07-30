@@ -1,4 +1,5 @@
 # Copyright 2010-2025 Kurt McKee <contactme@kurtmckee.org>
+# Copyright 2025 Tom Most <twm@freecog.net>
 # Copyright 2002-2008 Mark Pilgrim
 # All rights reserved.
 #
@@ -116,6 +117,56 @@ def make_safe_absolute_uri(base, rel=None):
     return uri
 
 
+# Matches image candidate strings within a srcset attribute value as
+# described in https://html.spec.whatwg.org/multipage/images.html#srcset-attributes
+_srcset_candidate = re.compile(
+    r"""
+    # ASCII whitespace: https://infra.spec.whatwg.org/#ascii-whitespace
+    [\t\n\f\r ]*
+    (
+        # URL that doesn't start or end with a comma
+        (?!,)
+        [^\t\n\f\r ]+
+        (?<!,)
+    )
+    (
+        # Width descriptor like "1234w"
+        # https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#non-negative-integers
+        [\t\n\f\r ]+
+        \d+w
+        |
+        # Pixel density descriptor like "2.0x"
+        # https://html.spec.whatwg.org/multipage/common-microsyntaxes.html#valid-floating-point-number
+        [\t\n\f\r ]+
+        \d+(?:\.\d+)?(?:[eE][-+]?\d+)?x
+        |
+    )
+    [\t\n\f\r ]*
+    (?:,|\Z)
+    """,
+    re.VERBOSE | re.ASCII,
+)
+
+
+def srcset_candidates(value: str) -> list[tuple[str, str]]:
+    """
+    Split a ``srcset`` attribute value into candidates:
+
+    >>> srcset_candidates("/foo.jpg, /foo.2x.jpg 2x")
+    [("/foo.jpg", ""), ("/foo.2x.jpg", "2x")]
+
+    This doesn't validate the URLs, nor check for duplicate or conflicting
+    descriptors. It returns an empty list when parsing fails.
+    """
+    pos = 0
+    candidates = []
+    while m := _srcset_candidate.match(value, pos):
+        desc = m[2].strip("\t\n\f\r ")
+        candidates.append((m[1], desc))
+        pos = m.end(0)
+    return candidates
+
+
 class RelativeURIResolver(BaseHTMLProcessor):
     relative_uris = {
         ("a", "href"),
@@ -156,15 +207,23 @@ class RelativeURIResolver(BaseHTMLProcessor):
     def resolve_uri(self, uri):
         return make_safe_absolute_uri(self.baseuri, uri.strip())
 
+    def resolve_srcset(self, srcset):
+        candidates = []
+        for uri, desc in srcset_candidates(srcset):
+            uri = self.resolve_uri(uri)
+            if desc:
+                candidates.append(f"{uri} {desc}")
+            else:
+                candidates.append(uri)
+        return ", ".join(candidates)
+
     def unknown_starttag(self, tag, attrs):
         attrs = self.normalize_attrs(attrs)
-        attrs = [
-            (
-                key,
-                ((tag, key) in self.relative_uris) and self.resolve_uri(value) or value,
-            )
-            for key, value in attrs
-        ]
+        for i, (key, value) in enumerate(attrs):
+            if (tag, key) in self.relative_uris:
+                attrs[i] = (key, self.resolve_uri(value))
+            elif tag in {"img", "source"} and key == "srcset":
+                attrs[i] = (key, self.resolve_srcset(value))
         super().unknown_starttag(tag, attrs)
 
 
