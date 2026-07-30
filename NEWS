@@ -1,5 +1,8 @@
 coming in the next release:
 
+6.0.14 - 30 July 2026
+    *   Upgrade to feedparser-sgmllib 2.0.0. (#585)
+
 6.0.13 - 28 July 2026
     *   Drop support for Python 3.9 and lower.
     *   Migrate from ``sgmllib3k`` to ``feedparser-sgmllib``.
