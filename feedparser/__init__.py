@@ -36,10 +36,6 @@ from .exceptions import (
 )
 from .util import FeedParserDict
 
-__author__ = "Kurt McKee <contactme@kurtmckee.org>"
-__license__ = "BSD 2-clause"
-__version__ = "6.0.14"
-
 # If you want feedparser to automatically resolve all relative URIs, set this
 # to 1.
 RESOLVE_RELATIVE_URIS = 1

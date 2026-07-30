@@ -1,6 +1,6 @@
 [project]
 name = "feedparser"
-version = "6.0.13"
+version = "6.0.14"
 description = "Parse Atom/RSS/JSON feeds in Python"
 readme = "README.rst"
 requires-python = ">=3.10"
@@ -94,6 +94,7 @@ filterwarnings = [
 [tool.scriv]
 version = "literal: pyproject.toml: project.version"
 categories = [
+    "Breaking changes",
     "Python support",
     "Added",
     "Fixed",
