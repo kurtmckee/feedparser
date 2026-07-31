@@ -30,6 +30,7 @@ from .datetimes import registerDateHandler
 from .exceptions import (
     CharacterEncodingOverride,
     CharacterEncodingUnknown,
+    EmptyDocument,
     FeedparserError,
     NonXMLContentType,
     UndeclaredNamespace,
@@ -57,6 +58,7 @@ __all__ = (
     "FeedparserError",
     "CharacterEncodingOverride",
     "CharacterEncodingUnknown",
+    "EmptyDocument",
     "NonXMLContentType",
     "UndeclaredNamespace",
 )
