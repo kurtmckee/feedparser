@@ -39,12 +39,12 @@ repos:
       - id: "black"
 
   - repo: "https://github.com/pycqa/isort"
-    rev: "dac090ce4d9ee313d086e2e89ab1acb8c2664fa1"  # frozen: 9.0.0a3
+    rev: "7f321d375f31a2f03833bc9a548e8783f2b5c420"  # frozen: 9.0.0b1
     hooks:
       - id: "isort"
 
   - repo: "https://github.com/pycqa/flake8"
-    rev: "c48217e1fc006c2dddd14df54e83b67da15de5cd"  # frozen: 7.3.0
+    rev: "d93590f5be797aabb60e3b09f2f52dddb02f349f"  # frozen: 7.3.0
     hooks:
       - id: "flake8"
         additional_dependencies:
@@ -52,12 +52,12 @@ repos:
           - "flake8-bugbear==25.11.29"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker"
-    rev: "6fa6539948897d1dceee75b6680d7e9688b5c9e9"  # frozen: v3.8.0
+    rev: "d5c7d59857d72eed8b772531abeab6c7b2b75051"  # frozen: v3.9.0
     hooks:
       - id: "editorconfig-checker"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "6b63472e72e1a91ed8a2f6d483790dfb644fa1d3"  # frozen: 0.37.4
+    rev: "1a4bb160cab6417b3045e1b37b6b72449243e658"  # frozen: 0.37.4
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
@@ -71,6 +71,6 @@ repos:
           - "github.com/wasilibs/go-shellcheck/cmd/shellcheck@4e7020840c303923eb1ab846fc446d77be892570"
 
   - repo: "https://github.com/kurtmckee/pre-commit-hooks"
-    rev: "44b638c826f1acd2ba2c5995db3156be60c5efea"  # frozen: v1.0.0
+    rev: "e7a0fdfcf7fd4c549a32da19187adf3a0b279d4d"  # frozen: v1.0.0
     hooks:
       - id: "verify-consistent-pyproject-toml-python-requirements"
