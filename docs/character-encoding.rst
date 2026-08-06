@@ -99,6 +99,13 @@ sets the ``bozo`` bit to ``1`` and sets ``bozo_exception`` to
 ``feedparser.CharacterEncodingUnknown``.  In this case, parsed values will be
 strings, not Unicode strings.
 
+.. note::
+
+    When using multiprocessing, Python exceptions cannot always be safely
+    serialized between processes. In such cases, ``bozo_exception`` will
+    contain a string representation of the exception instead of the exception
+    object itself.
+
 
 Handling Incorrectly-Declared Media Types
 -----------------------------------------
