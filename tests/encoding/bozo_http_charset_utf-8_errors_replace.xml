@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+Header:      Content-type: text/rss+xml; charset="utf-8"
+Description: Replace errors instead of falling back to other encodings when charset="utf-8"
+Expect:      bozo and encoding == 'utf-8' and entries[0].summary == '𝐔𝐓𝐅-𝟖, 𝑏𝑢𝑡 𝒆��𝒐𝒓𝒔'
+-->
+
+<rss version="2.0">
+<channel>
+<item>
+<description><![CDATA[ 𝐔𝐓𝐅-𝟖, 𝑏𝑢𝑡 𝒆��𝒐𝒓𝒔 ]]></description>
+</item>
+</channel>
+</rss>

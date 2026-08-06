@@ -28,6 +28,7 @@
 from .api import parse
 from .datetimes import registerDateHandler
 from .exceptions import (
+    CharacterEncodingErrorsReplace,
     CharacterEncodingOverride,
     CharacterEncodingUnknown,
     FeedparserError,
@@ -55,6 +56,7 @@ __all__ = (
     "registerDateHandler",
     "FeedParserDict",
     "FeedparserError",
+    "CharacterEncodingErrorsReplace",
     "CharacterEncodingOverride",
     "CharacterEncodingUnknown",
     "NonXMLContentType",
