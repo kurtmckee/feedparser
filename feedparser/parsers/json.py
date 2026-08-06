@@ -85,23 +85,23 @@ class JSONParser:
             if src in e:
                 entry[dst] = e[src]
 
-        if "content_text" in e:
-            entry["content"] = c = FeedParserDict()
-            c["value"] = e["content_text"]
-            c["type"] = "text"
-        elif "content_html" in e:
+        if "content_html" in e:
             entry["content"] = c = FeedParserDict()
             c["value"] = sanitize_html(
                 e["content_html"], self.encoding, "application/json"
             )
             c["type"] = "html"
+        elif "content_text" in e:
+            entry["content"] = c = FeedParserDict()
+            c["value"] = e["content_text"]
+            c["type"] = "text"
 
         if "date_published" in e:
             entry["published"] = e["date_published"]
             entry["published_parsed"] = _parse_date(e["date_published"])
         if "date_updated" in e:
-            entry["updated"] = e["date_modified"]
-            entry["updated_parsed"] = _parse_date(e["date_modified"])
+            entry["updated"] = e["date_updated"]
+            entry["updated_parsed"] = _parse_date(e["date_updated"])
 
         if "tags" in e:
             entry["category"] = e["tags"]
