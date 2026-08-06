@@ -34,6 +34,16 @@ def test_sanitize_html_off():
     assert d.entries[0].content[0].value == '<script>alert("boo!")</script>'
 
 
+def test_response_headers_case_insensitive():
+    d = feedparser.parse(
+        io.BytesIO(feed_xml),
+        response_headers={"CoNtEnT-LoCaTiOn": "http://example.com/feed"},
+    )
+    assert d.entries[1].content[0].value == (
+        '<a href="http://example.com/boo.html">boo</a>'
+    )
+
+
 def test_resolve_relative_uris_default():
     d = feedparser.parse(
         io.BytesIO(feed_xml),
