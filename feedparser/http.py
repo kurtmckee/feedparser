@@ -27,7 +27,10 @@
 
 from __future__ import annotations
 
+import ipaddress
+import socket
 import typing
+from urllib.parse import urlsplit
 
 import requests
 
@@ -46,12 +49,34 @@ ACCEPT_HEADER: str = (
 )
 
 
+def _is_public_url(url: str) -> bool:
+    try:
+        parsed = urlsplit(url)
+        if parsed.scheme not in {"http", "https"}:
+            return False
+        if not parsed.hostname:
+            return False
+        for address_info in socket.getaddrinfo(parsed.hostname, None):
+            ip = ipaddress.ip_address(address_info[4][0])
+            if not ip.is_global:
+                return False
+    except (ValueError, UnicodeError, socket.gaierror):
+        return False
+    return True
+
+
 def get(url: str, result: dict[str, typing.Any]) -> bytes:
+    if not _is_public_url(url):
+        result["bozo"] = True
+        result["bozo_exception"] = requests.RequestException("Disallowed URL")
+        return b""
+
     try:
         response = requests.get(
             url,
             headers={"Accept": ACCEPT_HEADER},
             timeout=10,
+            allow_redirects=False,
         )
     except requests.RequestException as exception:
         result["bozo"] = True
