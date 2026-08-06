@@ -258,6 +258,29 @@ class BaseHTMLProcessor(sgmllib.SGMLParser):
         # Reconstruct original DOCTYPE
         self.pieces.append("<!%s>" % text)
 
+    def unknown_decl(self, data):
+        """
+        :type data: str
+        :rtype: None
+        """
+
+        # Called for a markup declaration that isn't a comment or DOCTYPE,
+        # most commonly a CDATA marked section. ``data`` is the body of the
+        # section, e.g. 'CDATA[some text' for the input '<![CDATA[some text]]>'.
+        #
+        # The base SGMLParser.unknown_decl() silently discards the section,
+        # which drops the character data of a CDATA marked section. This
+        # happens when a feed escapes a CDATA section (e.g. the content of a
+        # <description> is the literal text '<![CDATA[...]]>'); the wrapper
+        # is meaningless once the document has been parsed, so emit the
+        # character data it contains rather than dropping it.
+        if data.startswith("CDATA["):
+            text = data[len("CDATA[") :]
+            # The contents of a CDATA section are character data, so escape
+            # the few characters that are special in the surrounding markup.
+            text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+            self.handle_data(text)
+
     _new_declname_match = re.compile(r"[a-zA-Z][-_.a-zA-Z0-9:]*\s*").match
 
     def _scan_name(self, i, declstartpos):
