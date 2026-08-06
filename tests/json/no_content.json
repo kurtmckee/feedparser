@@ -1,0 +1,17 @@
+{
+    "__TEST__": "Description: basic JSON tests Expect: bozo and 'neither' in str(bozo_exception) -->",
+    "version": "https://jsonfeed.org/version/1",
+    "title": "no content",
+    "home_page_url": "https://example.org/",
+    "feed_url": "https://example.org/feed.json",
+    "icon": "https://example.org/feed.png",
+    "author": { "name": "me" },
+    "items": [
+        {
+            "id": "1",
+            "author": { "name": "you", "url": "http://example.net/~you" },
+            "summary": "Hello, world!\n",
+            "url": "https://example.org/initial-post"
+        }
+    ]
+}
