@@ -17,6 +17,7 @@ classifiers = [
 dependencies = [
     "feedparser-sgmllib (>=2, <3)",
     "requests>=2.20.0",
+    "typing_extensions>=4.0.0",  # NotRequired >=py311
 ]
 
 [project.urls]
