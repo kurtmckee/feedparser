@@ -1,0 +1,16 @@
+<!--
+Description: media_content title and description at entry top
+Expect:      entries[0]['summary'] == 'Test description' and entries[0]['media_content'][0]['url'] == 'https://example.com/img.jpg' and entries[0]['media_title'][0]['content'] == 'Media title' and entries[0]['media_title'][0]['type'] == 'text/plain' and entries[0]['media_description'][0]['content'] == 'Media description' and entries[0]['media_description'][0]['type'] == 'text/plain' and entries[0]['media_credit'][0]['content'] == 'Media credit'
+-->
+<feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:media="http://search.yahoo.com/mrss/">
+    <entry>
+        <title>Example Atom</title>
+        <description>Test description</description>
+        <media:content width="644" height="322"
+                       url="https://example.com/img.jpg">
+            <media:title type="plain">Media title</media:title>
+            <media:description type="plain">Media description</media:description>
+            <media:credit scheme="urn:ebu">Media credit</media:credit>
+        </media:content>
+    </entry>
+</feed>

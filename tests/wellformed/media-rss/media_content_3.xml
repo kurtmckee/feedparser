@@ -1,0 +1,22 @@
+<!--
+Description: media_content with multiple media tags
+Expect:      entries[0]['summary'] == 'Test description' and entries[0]['media_content'][0]['url'] == 'https://example.com/img.jpg' and entries[0]['media_title'][0]['content'] == 'Media title' and entries[0]['media_title'][0]['type'] == 'text/plain' and entries[0]['media_description'][0]['content'] == 'Media description' and entries[0]['media_description'][0]['type'] == 'text/plain' and entries[0]['media_credit'][0]['content'] == 'Media credit' and entries[0]['media_content'][1]['url'] == 'https://example.com/img2.jpg' and entries[0]['media_title'][1]['content'] == 'Media title 2' and entries[0]['media_title'][1]['type'] == 'text/plain' and entries[0]['media_description'][1]['content'] == 'Media description 2' and entries[0]['media_description'][0]['type'] == 'text/plain' and entries[0]['media_credit'][1]['content'] == 'Media credit 2'
+-->
+<feed version="0.3" xmlns="http://purl.org/atom/ns#" xmlns:media="http://search.yahoo.com/mrss/">
+    <entry>
+        <title>Example Atom</title>
+        <description>Test description</description>
+        <media:content width="644" height="322"
+                       url="https://example.com/img.jpg">
+            <media:title type="plain">Media title</media:title>
+            <media:description type="plain">Media description</media:description>
+            <media:credit scheme="urn:ebu">Media credit</media:credit>
+        </media:content>
+        <media:content width="644" height="322"
+                       url="https://example.com/img2.jpg">
+            <media:title type="plain">Media title 2</media:title>
+            <media:description type="plain">Media description 2</media:description>
+            <media:credit scheme="urn:ebu">Media credit 2</media:credit>
+        </media:content>
+    </entry>
+</feed>
