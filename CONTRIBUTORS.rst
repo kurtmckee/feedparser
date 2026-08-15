@@ -25,6 +25,7 @@ bug report!
 * `Tom Parker-Shemilt <https://tevps.net>`_
 * `Martin Pool <http://sourcefrog.net/>`_
 * `Sam Ruby <http://intertwingly.net/>`_
+* `Eesh Saxena <https://github.com/eeshsaxena>`_
 * `Bernd Schlapsi <https://github.com/brot>`_
 * `Aaron Swartz <http://www.aaronsw.com/>`_
 * `Jakub Wilk <http://jwilk.net/>`_

@@ -1,0 +1,9 @@
+<!--
+Description: numeric character reference above the C int range is left unresolved
+Expect:      feed['title'] == 'testing &#4294967296; entity'
+-->
+<rss>
+<channel>
+<title>testing &#4294967296; entity</title>
+</channel>
+</rss>

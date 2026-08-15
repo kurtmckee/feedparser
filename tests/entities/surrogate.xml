@@ -1,0 +1,9 @@
+<!--
+Description: character reference for a lone surrogate is left unresolved
+Expect:      feed['title'] == 'testing &#xd800; entity'
+-->
+<rss>
+<channel>
+<title>testing &#xd800; entity</title>
+</channel>
+</rss>

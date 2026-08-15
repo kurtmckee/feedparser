@@ -373,7 +373,13 @@ class XMLParserMixin(
                 c = int(ref[1:], 16)
             else:
                 c = int(ref)
-            text = chr(c).encode("utf-8")
+            try:
+                text = chr(c).encode("utf-8")
+            except (ValueError, OverflowError):
+                # Numeric character reference outside the valid Unicode range,
+                # or a lone surrogate that cannot be encoded as UTF-8. Leave it
+                # unresolved instead of raising, like the unknown-entity path.
+                text = "&#%s;" % ref
         self.elementstack[-1][2].append(text)
 
     def handle_entityref(self, ref):
