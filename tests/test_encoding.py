@@ -47,7 +47,9 @@ def test_leading_whitespace_before_xml_declaration():
     "XML or text declaration not at start of entity".
     """
 
-    feed = "\n<?xml version='1.0' encoding='utf-8'?>\n<feed><title>Example</title></feed>"
+    feed = (
+        "\n<?xml version='1.0' encoding='utf-8'?>\n<feed><title>Example</title></feed>"
+    )
 
     converted = feedparser.encodings.convert_to_utf8({}, feed.encode("utf-8"), {})
     assert converted.count(b"<?xml") == 1
