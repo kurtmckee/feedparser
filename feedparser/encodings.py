@@ -63,9 +63,10 @@ UTF32LE_MARKER = b"\x3c\x00\x00\x00"
 
 ZERO_BYTES = b"\x00\x00"
 
-# Match the opening XML declaration.
+# Match the opening XML declaration,
+# tolerating leading whitespace so that it is replaced rather than duplicated.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_DECLARATION = re.compile(r"^<\?xml[^>]*?>")
+RE_XML_DECLARATION = re.compile(r"^\s*<\?xml[^>]*?>")
 
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>

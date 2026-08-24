@@ -5,6 +5,7 @@ import os
 import pytest
 
 import feedparser
+import feedparser.encodings
 
 from .helpers import (
     fail_unless_eval,
@@ -33,6 +34,27 @@ def test_doctype_replacement():
     doc = codecs.BOM_UTF16_BE + doc.encode("utf-16be")
     result = feedparser.parse(doc)
     assert result["feed"]["title"] == "&amp;exponential3"
+
+
+def test_leading_whitespace_before_xml_declaration():
+    """
+    Ensure documents with leading whitespace get one XML declaration, not two.
+
+    ``RE_XML_DECLARATION`` is anchored at the start of the document.
+    When it failed to tolerate leading whitespace the existing declaration
+    was not substituted, and a second declaration was prepended instead.
+    Expat then rejected the document with
+    "XML or text declaration not at start of entity".
+    """
+
+    feed = "\n<?xml version='1.0' encoding='utf-8'?>\n<feed><title>Example</title></feed>"
+
+    converted = feedparser.encodings.convert_to_utf8({}, feed.encode("utf-8"), {})
+    assert converted.count(b"<?xml") == 1
+
+    result = feedparser.parse(feed)
+    assert not result.bozo
+    assert result.feed.title == "Example"
 
 
 def test_gb2312_converted_to_gb18030_in_xml_encoding():
