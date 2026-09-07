@@ -378,6 +378,22 @@ class TestOpenResource(unittest.TestCase):
         r = feedparser.api._open_resource(io.BytesIO(b''), '', '', '', '', [], {}, {})
         self.assertEqual(r, b'')
 
+    def test_text_fileobj(self):
+        """A text-mode file-like object (e.g. io.StringIO) must come back as bytes.
+
+        Everything downstream, starting with convert_to_utf8(), works with
+        raw bytes and matches against byte regex patterns, so returning the
+        str data untouched breaks parsing of any text-mode stream.
+        """
+        r = feedparser.api._open_resource(io.StringIO('<feed></feed>'), '', '', '', '', [], {}, {})
+        self.assertEqual(r, b'<feed></feed>')
+
+    def test_parse_text_stringio(self):
+        text = '<rss version="2.0"><channel><item><title>hello</title></item></channel></rss>'
+        result = feedparser.parse(io.StringIO(text))
+        self.assertFalse(result.bozo)
+        self.assertEqual(result.entries[0].title, 'hello')
+
     def test_feed(self):
         f = feedparser.parse('feed://localhost:8097/tests/http/target.xml')
         self.assertEqual(f.href, 'http://localhost:8097/tests/http/target.xml')

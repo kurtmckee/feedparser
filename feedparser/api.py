@@ -108,7 +108,10 @@ def _open_resource(url_file_stream_or_string, etag, modified, agent, referrer, h
     """
 
     if hasattr(url_file_stream_or_string, 'read'):
-        return url_file_stream_or_string.read()
+        data = url_file_stream_or_string.read()
+        if not isinstance(data, bytes):
+            return data.encode('utf-8')
+        return data
 
     if isinstance(url_file_stream_or_string, str) \
        and urllib.parse.urlparse(url_file_stream_or_string)[0] in ('http', 'https', 'ftp', 'file', 'feed'):
