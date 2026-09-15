@@ -19,6 +19,9 @@ dependencies = [
     "requests>=2.20.0",
 ]
 
+[project.scripts]
+feedparser = "feedparser.cli:main"
+
 [project.urls]
 Source = "https://github.com/kurtmckee/feedparser"
 Documentation = "https://feedparser.readthedocs.io/en/latest/"
