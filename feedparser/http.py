@@ -71,4 +71,13 @@ def get(url: str, result: dict[str, typing.Any]) -> bytes:
             result["modified_parsed"] = _parse_date(modified)
     result["href"] = response.url
     result["status"] = response.status_code
+
+    if response.status_code >= 400:
+        # An HTTP error page's body (an HTML error page, a plain-text
+        # message, etc.) isn't feed content. Feeding it to the XML parser
+        # produces a confusing bozo_exception that looks like a malformed
+        # feed instead of clearly surfacing the HTTP failure, which is
+        # already recorded above in result["status"].
+        return b""
+
     return response.content
