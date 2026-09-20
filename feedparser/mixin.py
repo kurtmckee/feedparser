@@ -369,11 +369,16 @@ class XMLParserMixin(
         if ref in ("34", "38", "39", "60", "62", "x22", "x26", "x27", "x3c", "x3e"):
             text = "&#%s;" % ref
         else:
-            if ref[0] == "x":
-                c = int(ref[1:], 16)
-            else:
-                c = int(ref)
-            text = chr(c).encode("utf-8")
+            try:
+                if ref[0] == "x":
+                    c = int(ref[1:], 16)
+                else:
+                    c = int(ref)
+                text = chr(c).encode("utf-8")
+            except (OverflowError, ValueError, UnicodeEncodeError):
+                # Invalid code points (out of range or surrogates) — keep the
+                # original reference instead of aborting the entire parse.
+                text = "&#%s;" % ref
         self.elementstack[-1][2].append(text)
 
     def handle_entityref(self, ref):

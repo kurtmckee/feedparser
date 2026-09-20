@@ -1,0 +1,9 @@
+<!--
+Description: hex character reference above U+10FFFF is left unresolved
+Expect:      feed['title'] == 'testing &#x110000; entity'
+-->
+<rss>
+<channel>
+<title>testing &#x110000; entity</title>
+</channel>
+</rss
