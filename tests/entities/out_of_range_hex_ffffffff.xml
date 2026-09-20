@@ -1,0 +1,9 @@
+<!--
+Description: hex character reference far above Unicode range is left unresolved
+Expect:      feed['title'] == 'testing &#xffffffff; entity'
+-->
+<rss>
+<channel>
+<title>testing &#xFFFFFFFF; entity</title>
+</channel>
+</rss
