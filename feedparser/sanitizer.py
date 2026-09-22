@@ -967,7 +967,9 @@ def replace_doctype(data: bytes) -> tuple[str | None, bytes, dict[str, str]]:
                 + b">\n<!ENTITY ".join(safe_entities)
                 + b">\n]>"
             )
-    data = RE_DOCTYPE_PATTERN.sub(replacement, head) + data
+    # Use a function so backslashes in entity values are not treated as
+    # escapes or group references by re.sub().
+    data = RE_DOCTYPE_PATTERN.sub(lambda _: replacement, head) + data
 
     # Precompute the safe entities for the loose parser.
     entities = {

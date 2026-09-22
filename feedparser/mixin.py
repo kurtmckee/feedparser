@@ -373,6 +373,9 @@ class XMLParserMixin(
                 c = int(ref[1:], 16)
             else:
                 c = int(ref)
+            if c > 0x10FFFF or 0xD800 <= c <= 0xDFFF:
+                # Not a valid Unicode scalar value; use U+FFFD like HTML parsers.
+                c = 0xFFFD
             text = chr(c).encode("utf-8")
         self.elementstack[-1][2].append(text)
 

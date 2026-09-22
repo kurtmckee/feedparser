@@ -125,8 +125,7 @@ class Namespace:
         srs_dimension = context["where"].get("srsDimension", 2)
         swap = True
         if srs_name and "EPSG" in srs_name:
-            epsg = int(srs_name.split(":")[-1])
-            swap = bool(epsg in _geogCS)
+            swap = _epsg_is_geographic(srs_name)
         geometry = _parse_georss_point(this, swap=swap, dims=srs_dimension)
         if geometry:
             self._save_where(geometry)
@@ -141,8 +140,7 @@ class Namespace:
         srs_dimension = context["where"].get("srsDimension", 2)
         swap = True
         if srs_name and "EPSG" in srs_name:
-            epsg = int(srs_name.split(":")[-1])
-            swap = bool(epsg in _geogCS)
+            swap = _epsg_is_geographic(srs_name)
         geometry = _parse_poslist(this, self.ingeometry, swap=swap, dims=srs_dimension)
         if geometry:
             self._save_where(geometry)
@@ -188,6 +186,18 @@ def _gen_georss_coords(value, swap=True, dims=2):
             yield tuple(t)
         except StopIteration:
             return
+
+
+def _epsg_is_geographic(srs_name):
+    """Return True if an EPSG srsName names a geographic CRS.
+
+    Codes that are not integers are treated like a missing srsName.
+    """
+    try:
+        epsg = int(srs_name.split(":")[-1])
+    except ValueError:
+        return True
+    return epsg in _geogCS
 
 
 def _parse_georss_point(value, swap=True, dims=2):

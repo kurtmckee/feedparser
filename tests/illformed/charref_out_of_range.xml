@@ -1,0 +1,9 @@
+<!--
+Description: character references outside the Unicode range become U+FFFD
+Expect:      bozo and feed['title'] == 'a \ufffd b \ufffd c \ufffd d'
+-->
+<rss version="2.0">
+<channel>
+<title>a &#1114112; b &#x110000; c &#55296; d</title>
+</channel>
+</rss>

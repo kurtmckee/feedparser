@@ -1,0 +1,16 @@
+<!--
+Description: backslashes in a DOCTYPE entity value are kept as-is
+Expect:      not bozo and entries[0]['guid'] == r'C:\data\1\new'
+-->
+
+<!DOCTYPE rss [
+  <!ENTITY path "C:\data\1\new">
+]>
+
+<rss version="2.0">
+<channel>
+<item>
+<guid isPermaLink='false'>&path;</guid>
+</item>
+</channel>
+</rss>
