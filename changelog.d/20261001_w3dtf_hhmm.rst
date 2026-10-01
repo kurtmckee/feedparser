@@ -1,0 +1,7 @@
+Fixed
+-----
+
+*   Keep the minutes of a four-digit timezone offset in W3C dates.
+
+    ``2003-12-31T10:14:55+0530`` was read as +05:00.
+    ``+05:30`` is unchanged.
