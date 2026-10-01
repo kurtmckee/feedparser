@@ -256,6 +256,16 @@ def test_year_10000_date():
         ),  # Tokyo timezone
         (
             _parse_date_w3dtf,
+            "2003-12-31T10:14:55+0530",
+            (2003, 12, 31, 4, 44, 55, 2, 365, 0),
+        ),  # +hhmm, same offset as +05:30
+        (
+            _parse_date_w3dtf,
+            "2003-12-31T10:14:55-0530",
+            (2003, 12, 31, 15, 44, 55, 2, 365, 0),
+        ),  # -hhmm, same offset as -05:30
+        (
+            _parse_date_w3dtf,
             "2007-04-23T23:25:47.538+10:00",
             (2007, 4, 23, 13, 25, 47, 0, 113, 0),
         ),  # fractional seconds

@@ -99,9 +99,16 @@ def _parse_date_w3dtf(datestr):
     # minutes and seconds, if missing, will default to 0.
     time.extend(["0"] * (3 - len(time)))
     if parts[2][:1] in ("-", "+"):
+        rest = parts[2][1:]
         try:
-            tzhour = int(parts[2][1:3])
-            tzmin = int(parts[2][4:])
+            # ``+0530`` has no colon, so the minutes are the last two digits.
+            # ``+05:30`` keeps the colon between the hours and the minutes.
+            if len(rest) == 4 and rest.isdigit():
+                tzhour = int(rest[:2])
+                tzmin = int(rest[2:])
+            else:
+                tzhour = int(rest[:2])
+                tzmin = int(rest[3:])
         except ValueError:
             return None
         if parts[2].startswith("-"):
