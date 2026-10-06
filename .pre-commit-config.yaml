@@ -34,17 +34,17 @@ repos:
           - "--py310-plus"
 
   - repo: "https://github.com/psf/black-pre-commit-mirror"
-    rev: "4160603246a6b365d4a2af661c6d71b0a0f50478"  # frozen: 26.5.1
+    rev: "96ae3e5802f3fe2d551e703e18f0a367d1a81ac2"  # frozen: 26.10.0
     hooks:
       - id: "black"
 
   - repo: "https://github.com/pycqa/isort"
-    rev: "dac090ce4d9ee313d086e2e89ab1acb8c2664fa1"  # frozen: 9.0.0a3
+    rev: "9f905615631c545f5aea2516508109350d1d2f7d"  # frozen: 9.0.2
     hooks:
       - id: "isort"
 
   - repo: "https://github.com/pycqa/flake8"
-    rev: "c48217e1fc006c2dddd14df54e83b67da15de5cd"  # frozen: 7.3.0
+    rev: "cfbbfdeb2391c14a37e101e92a77f54f329e1726"  # frozen: 7.4.1
     hooks:
       - id: "flake8"
         additional_dependencies:
@@ -52,12 +52,12 @@ repos:
           - "flake8-bugbear==25.11.29"
 
   - repo: "https://github.com/editorconfig-checker/editorconfig-checker"
-    rev: "6fa6539948897d1dceee75b6680d7e9688b5c9e9"  # frozen: v3.8.0
+    rev: "0adfdb012938ada0cf563a40f2fceaf9466290ca"  # frozen: v4.0.2
     hooks:
       - id: "editorconfig-checker"
 
   - repo: "https://github.com/python-jsonschema/check-jsonschema"
-    rev: "6b63472e72e1a91ed8a2f6d483790dfb644fa1d3"  # frozen: 0.37.4
+    rev: "4f85d46a92dc17713078e5de73f8a13190edf6fc"  # frozen: 0.38.2
     hooks:
       - id: "check-dependabot"
       - id: "check-github-workflows"
@@ -71,6 +71,6 @@ repos:
           - "github.com/wasilibs/go-shellcheck/cmd/shellcheck@4e7020840c303923eb1ab846fc446d77be892570"
 
   - repo: "https://github.com/kurtmckee/pre-commit-hooks"
-    rev: "44b638c826f1acd2ba2c5995db3156be60c5efea"  # frozen: v1.0.0
+    rev: "e7a0fdfcf7fd4c549a32da19187adf3a0b279d4d"  # frozen: v1.0.0
     hooks:
       - id: "verify-consistent-pyproject-toml-python-requirements"
