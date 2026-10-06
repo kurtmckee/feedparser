@@ -183,6 +183,8 @@ class Namespace:
 
     def _end_width(self):
         value = self.pop("width")
+        if value is None:
+            return
         try:
             value = int(value)
         except ValueError:
@@ -196,6 +198,8 @@ class Namespace:
 
     def _end_height(self):
         value = self.pop("height")
+        if value is None:
+            return
         try:
             value = int(value)
         except ValueError:
