@@ -46,3 +46,37 @@ def test_http_conditions(info):
     assert result["bozo"] is True
     assert eval(eval_string, {"datetime": datetime}, result), description
     assert everything_is_unicode(result)
+
+
+@pytest.mark.parametrize("dimension", ["height", "width"])
+def test_stray_dimension_end_tag(dimension):
+    result = feedparser.parse(f"</{dimension}>")
+
+    assert result.bozo
+    assert result.feed == {}
+    assert result.entries == []
+
+
+@pytest.mark.parametrize("dimension", ["height", "width"])
+@pytest.mark.parametrize(
+    "image_content, expected_dimension",
+    [
+        ("<title>logo</title></{dimension}>", None),
+        ("<{dimension}>42</{dimension}></{dimension}><title>logo</title>", 42),
+        ("<title>lo</{dimension}>go</title>", None),
+    ],
+)
+def test_stray_dimension_end_tag_in_image(dimension, image_content, expected_dimension):
+    image_content = image_content.format(dimension=dimension)
+    result = feedparser.parse(
+        f"<rss><channel><image>{image_content}</image>"
+        "<title>feed title</title></channel></rss>"
+    )
+
+    assert result.bozo
+    assert result.feed.title == "feed title"
+    assert result.feed.image.title == "logo"
+    if expected_dimension is None:
+        assert dimension not in result.feed.image
+    else:
+        assert result.feed.image[dimension] == expected_dimension
