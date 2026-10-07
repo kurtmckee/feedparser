@@ -59,6 +59,8 @@ class Namespace:
 
     def _end_creativecommons_license(self):
         value = self.pop("license")
+        if value is None:
+            return
         context = self._get_context()
         attrs_d = FeedParserDict()
         attrs_d["rel"] = "license"
