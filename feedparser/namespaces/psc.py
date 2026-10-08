@@ -65,6 +65,8 @@ format_ = re.compile(r"^((\d{2}):)?(\d{2}):(\d{2})(\.(\d{3}))?$")
 
 
 def _parse_psc_chapter_start(start):
+    if start is None:
+        return None
     m = format_.match(start)
     if m is None:
         return None
