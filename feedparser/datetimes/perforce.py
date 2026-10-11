@@ -41,6 +41,8 @@ def _parse_date_perforce(date_string):
     if m is None:
         return None
     dow, year, month, day, hour, minute, second, tz = m.groups()
+    if not month or not 1 <= int(month) <= 12:
+        return None
     months = [
         "Jan",
         "Feb",
