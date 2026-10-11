@@ -321,3 +321,21 @@ def test_year_10000_date():
 def test_date_parser(parse_date, input_value, expected_value):
     parsed_value = parse_date(input_value)
     assert parsed_value == expected_value
+
+
+@pytest.mark.parametrize("month", ["00", "13", "99", ""])
+def test_perforce_invalid_month(month):
+    date = f"Fri, 2006/{month}/15 08:19:53 EDT"
+    assert _parse_date_perforce(date) is None
+
+
+@pytest.mark.parametrize("month", ["00", "13", "99", ""])
+def test_feed_with_invalid_perforce_month(month):
+    from feedparser import parse
+
+    date = f"Fri, 2006/{month}/15 08:19:53 EDT"
+    result = parse(
+        f"<rss><channel><item><pubDate>{date}</pubDate></item></channel></rss>"
+    )
+    assert result.entries[0].published == date
+    assert result.entries[0].published_parsed is None
