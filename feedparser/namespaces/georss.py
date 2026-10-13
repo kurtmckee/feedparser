@@ -172,6 +172,8 @@ def _parse_poslist(value, geom_type, swap=True, dims=2):
         return _parse_georss_line(value, swap, dims)
     if geom_type == "polygon":
         ring = _parse_georss_line(value, swap, dims)
+        if ring is None:
+            return None
         return {"type": "Polygon", "coordinates": (ring["coordinates"],)}
     return None
 
