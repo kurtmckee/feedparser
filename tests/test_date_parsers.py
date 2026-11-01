@@ -74,6 +74,21 @@ def test_year_10000_date():
             "2003-12-31T10:14:55.1234Z",
             (2003, 12, 31, 10, 14, 55, 2, 365, 0),
         ),  # fractional seconds
+        (
+            _parse_date_iso8601,
+            "20031231T101455Z",
+            (2003, 12, 31, 10, 14, 55, 2, 365, 0),
+        ),  # basic (compact) format: time is not discarded
+        (
+            _parse_date_iso8601,
+            "20031231T101455",
+            (2003, 12, 31, 10, 14, 55, 2, 365, 0),
+        ),  # basic (compact) format without timezone
+        (
+            _parse_date_iso8601,
+            "2003-12-31T10:14:55+0530",
+            (2003, 12, 31, 4, 44, 55, 2, 365, 0),
+        ),  # basic (compact) timezone offset
         # Special case for Google's extra zero in the month
         (
             _parse_date_iso8601,
