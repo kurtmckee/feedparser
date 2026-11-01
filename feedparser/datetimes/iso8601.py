@@ -62,10 +62,10 @@ _iso8601_re = [
     .replace("DD", r"(?P<day>[0123]\d)")
     .replace("OOO", r"(?P<ordinal>[0123]\d\d)")
     .replace("CC", r"(?P<century>\d\d$)")
-    + r"(T?(?P<hour>\d{2}):(?P<minute>\d{2})"
-    + r"(:(?P<second>\d{2}))?"
+    + r"(T?(?P<hour>\d{2}):?(?P<minute>\d{2})"
+    + r"(:?(?P<second>\d{2}))?"
     + r"(\.(?P<fracsecond>\d+))?"
-    + r"(?P<tz>[+-](?P<tzhour>\d{2})(:(?P<tzmin>\d{2}))?|Z)?)?"
+    + r"(?P<tz>[+-](?P<tzhour>\d{2})(:?(?P<tzmin>\d{2}))?|Z)?)?"
     for tmpl in _iso8601_tmpl
 ]
 _iso8601_matches = [re.compile(regex).match for regex in _iso8601_re]
