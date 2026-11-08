@@ -18,6 +18,23 @@ def test_none():
     assert _parse_date(None) is None
 
 
+@pytest.mark.parametrize(
+    "date_string",
+    (
+        "0000-00-00",  # the classic MySQL zero date, seen in Atom updated/published
+        "0000-00-00T00:00:00Z",
+        "2026-13-01T00:00:00Z",  # month 13
+        "9999-12-31T23:59:59-99:99",  # W3DTF documents this as out-of-range
+        "2026-11-31",  # calendar-invalid day must not become Dec 1
+        "2026-02-30",  # must not become Mar 2
+        "2026-11-08T25:61:61Z",  # must not roll into the next day
+    ),
+)
+def test_structurally_invalid_iso8601_dates_are_declined(date_string):
+    # these must not be normalized into neighboring valid dates (#612)
+    assert _parse_date(date_string) is None
+
+
 def test_year_10000_date():
     date = _parse_date_rfc822("Sun, 31 Dec 9999 23:59:59 -9999")
     assert date is None
@@ -80,6 +97,38 @@ def test_year_10000_date():
             "2003-012-31T10:14:55+00:00",
             (2003, 12, 31, 10, 14, 55, 2, 365, 0),
         ),
+        # Structurally invalid dates are declined, not normalized (issue #612)
+        (_parse_date_iso8601, "0000-00-00", None),  # MySQL zero date
+        (_parse_date_iso8601, "0000-00-00T00:00:00Z", None),
+        (_parse_date_iso8601, "2026-13-01T00:00:00Z", None),  # month 13
+        (_parse_date_iso8601, "2026-00-08", None),  # month 00
+        (_parse_date_iso8601, "2026-11-00", None),  # day 00
+        (_parse_date_iso8601, "2026-11-39", None),  # day 39
+        (
+            _parse_date_iso8601,
+            "9999-12-31T23:59:59-99:99",
+            None,
+        ),  # out-of-range offset, as W3DTF documents
+        (_parse_date_iso8601, "2026-11-31", None),  # November has 30 days
+        (_parse_date_iso8601, "2026-02-30", None),  # not a leap year day
+        (_parse_date_iso8601, "2023-02-29", None),  # 2023 is not a leap year
+        (_parse_date_iso8601, "20260132", None),  # compact form of the above
+        (_parse_date_iso8601, "2026-11-08T25:61:61Z", None),  # invalid time
+        (
+            _parse_date_iso8601,
+            "2024-02-29",
+            (2024, 2, 29, 0, 0, 0, 3, 60, 0),
+        ),  # leap day kept
+        (
+            _parse_date_iso8601,
+            "2000-02-29",
+            (2000, 2, 29, 0, 0, 0, 1, 60, 0),
+        ),  # leap century kept
+        (
+            _parse_date_iso8601,
+            "2026-11-08T24:00:00Z",
+            (2026, 11, 9, 0, 0, 0, 0, 313, 0),
+        ),  # ISO 8601 end-of-day timestamp
         #
         # _parse_date_nate
         (_parse_date_nate, "", None),  # empty string
