@@ -1,0 +1,11 @@
+{
+    "__TEST__": "Description: a nonstandard date_updated alone still populates updated instead of raising KeyError Expect: not bozo and len(entries) == 1 and entries[0].updated == '2026-11-08T19:00:00Z' -->",
+    "version": "https://jsonfeed.org/version/1.1",
+    "title": "dates",
+    "items": [
+        {
+            "id": "1",
+            "date_updated": "2026-11-08T19:00:00Z"
+        }
+    ]
+}

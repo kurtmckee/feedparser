@@ -99,9 +99,13 @@ class JSONParser:
         if "date_published" in e:
             entry["published"] = e["date_published"]
             entry["published_parsed"] = _parse_date(e["date_published"])
-        if "date_updated" in e:
-            entry["updated"] = e["date_modified"]
-            entry["updated_parsed"] = _parse_date(e["date_modified"])
+        if "date_modified" in e or "date_updated" in e:
+            # JSON Feed's spec names the item's modification date date_modified;
+            # accept date_updated too for feeds written against the code's
+            # old spelling, but never drop the spec field
+            modified = e["date_modified"] if "date_modified" in e else e["date_updated"]
+            entry["updated"] = modified
+            entry["updated_parsed"] = _parse_date(modified)
 
         if "tags" in e:
             entry["category"] = e["tags"]
