@@ -25,6 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+import calendar
 import re
 import time
 
@@ -97,6 +98,17 @@ def _parse_date_iso8601(date_string):
     day_match = params.get("day")
     if day_match and not 1 <= int(day_match) <= 31:
         return None
+    hour_match = params.get("hour")
+    if hour_match and int(hour_match) > 24:
+        # 24:00 is a valid ISO 8601 end-of-day timestamp; 25 and up are not
+        return None
+    minute_match = params.get("minute")
+    if minute_match and int(minute_match) > 59:
+        return None
+    second_match = params.get("second")
+    if second_match and int(second_match) > 60:
+        # second 60 is a leap second; 61 and up are invalid
+        return None
     tz_match = params.get("tz")
     if (
         tz_match
@@ -104,6 +116,14 @@ def _parse_date_iso8601(date_string):
         and (int(params.get("tzhour") or 0) > 23 or int(params.get("tzmin") or 0) > 59)
     ):
         return None
+    if month_match and day_match:
+        # a day beyond its month's length (e.g. 2026-11-31) is not a date to
+        # normalize into the next month; decline it like the W3DTF handler does
+        year_for_month = int(year_match) if year_match and len(year_match) == 4 else None
+        if year_for_month is None:
+            year_for_month = 100 * int(time.gmtime()[0] / 100) if year_match else time.gmtime()[0]
+        if int(day_match) > calendar.monthrange(year_for_month, int(month_match))[1]:
+            return None
     ordinal = params.get("ordinal", 0)
     if ordinal:
         ordinal = int(ordinal)

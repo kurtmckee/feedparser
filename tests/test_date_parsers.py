@@ -25,6 +25,9 @@ def test_none():
         "0000-00-00T00:00:00Z",
         "2026-13-01T00:00:00Z",  # month 13
         "9999-12-31T23:59:59-99:99",  # W3DTF documents this as out-of-range
+        "2026-11-31",  # calendar-invalid day must not become Dec 1
+        "2026-02-30",  # must not become Mar 2
+        "2026-11-08T25:61:61Z",  # must not roll into the next day
     ),
 )
 def test_structurally_invalid_iso8601_dates_are_declined(date_string):
@@ -106,6 +109,18 @@ def test_year_10000_date():
             "9999-12-31T23:59:59-99:99",
             None,
         ),  # out-of-range offset, as W3DTF documents
+        (_parse_date_iso8601, "2026-11-31", None),  # November has 30 days
+        (_parse_date_iso8601, "2026-02-30", None),  # not a leap year day
+        (_parse_date_iso8601, "2023-02-29", None),  # 2023 is not a leap year
+        (_parse_date_iso8601, "20260132", None),  # compact form of the above
+        (_parse_date_iso8601, "2026-11-08T25:61:61Z", None),  # invalid time
+        (_parse_date_iso8601, "2024-02-29", (2024, 2, 29, 0, 0, 0, 3, 60, 0)),  # leap day kept
+        (_parse_date_iso8601, "2000-02-29", (2000, 2, 29, 0, 0, 0, 1, 60, 0)),  # leap century kept
+        (
+            _parse_date_iso8601,
+            "2026-11-08T24:00:00Z",
+            (2026, 11, 9, 0, 0, 0, 0, 313, 0),
+        ),  # ISO 8601 end-of-day timestamp
         #
         # _parse_date_nate
         (_parse_date_nate, "", None),  # empty string
