@@ -1,0 +1,13 @@
+{
+    "__TEST__": "Description: the JSON Feed spec's date_modified populates updated; without it the entry's updated fell back to the published date Expect: not bozo and len(entries) == 1 and entries[0].updated == '2026-11-08T19:00:00Z' and entries[0].updated_parsed.tm_mday == 8 and entries[0].published == '2026-11-01T10:00:00Z' -->",
+    "version": "https://jsonfeed.org/version/1.1",
+    "title": "dates",
+    "items": [
+        {
+            "id": "1",
+            "title": "one",
+            "date_published": "2026-11-01T10:00:00Z",
+            "date_modified": "2026-11-08T19:00:00Z"
+        }
+    ]
+}
