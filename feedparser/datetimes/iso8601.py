@@ -83,6 +83,27 @@ def _parse_date_iso8601(date_string):
     if m.span() == (0, 0):
         return
     params = m.groupdict()
+    # Structurally invalid dates must not be silently normalized into
+    # neighboring valid dates by mktime(); decline them so _parse_date
+    # can try its other handlers, matching the W3DTF behavior.
+    # A 4-digit year of 0 is invalid; a 2-digit "00" means the current
+    # century and is completed below, so it is not rejected here.
+    year_match = params.get("year")
+    if year_match and len(year_match) == 4 and int(year_match) == 0:
+        return None
+    month_match = params.get("month")
+    if month_match and not 1 <= int(month_match) <= 12:
+        return None
+    day_match = params.get("day")
+    if day_match and not 1 <= int(day_match) <= 31:
+        return None
+    tz_match = params.get("tz")
+    if (
+        tz_match
+        and tz_match != "Z"
+        and (int(params.get("tzhour") or 0) > 23 or int(params.get("tzmin") or 0) > 59)
+    ):
+        return None
     ordinal = params.get("ordinal", 0)
     if ordinal:
         ordinal = int(ordinal)
