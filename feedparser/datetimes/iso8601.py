@@ -119,9 +119,13 @@ def _parse_date_iso8601(date_string):
     if month_match and day_match:
         # a day beyond its month's length (e.g. 2026-11-31) is not a date to
         # normalize into the next month; decline it like the W3DTF handler does
-        year_for_month = int(year_match) if year_match and len(year_match) == 4 else None
+        year_for_month = (
+            int(year_match) if year_match and len(year_match) == 4 else None
+        )
         if year_for_month is None:
-            year_for_month = 100 * int(time.gmtime()[0] / 100) if year_match else time.gmtime()[0]
+            year_for_month = (
+                100 * int(time.gmtime()[0] / 100) if year_match else time.gmtime()[0]
+            )
         if int(day_match) > calendar.monthrange(year_for_month, int(month_match))[1]:
             return None
     ordinal = params.get("ordinal", 0)

@@ -114,8 +114,16 @@ def test_year_10000_date():
         (_parse_date_iso8601, "2023-02-29", None),  # 2023 is not a leap year
         (_parse_date_iso8601, "20260132", None),  # compact form of the above
         (_parse_date_iso8601, "2026-11-08T25:61:61Z", None),  # invalid time
-        (_parse_date_iso8601, "2024-02-29", (2024, 2, 29, 0, 0, 0, 3, 60, 0)),  # leap day kept
-        (_parse_date_iso8601, "2000-02-29", (2000, 2, 29, 0, 0, 0, 1, 60, 0)),  # leap century kept
+        (
+            _parse_date_iso8601,
+            "2024-02-29",
+            (2024, 2, 29, 0, 0, 0, 3, 60, 0),
+        ),  # leap day kept
+        (
+            _parse_date_iso8601,
+            "2000-02-29",
+            (2000, 2, 29, 0, 0, 0, 1, 60, 0),
+        ),  # leap century kept
         (
             _parse_date_iso8601,
             "2026-11-08T24:00:00Z",
