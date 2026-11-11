@@ -80,6 +80,27 @@ def test_year_10000_date():
             "2003-012-31T10:14:55+00:00",
             (2003, 12, 31, 10, 14, 55, 2, 365, 0),
         ),
+        # Invalid dates are rejected instead of normalized by mktime()
+        # (issue #612). The W3DTF handler rejects the same inputs.
+        (_parse_date_iso8601, "0000-00-00T00:00:00Z", None),  # MySQL zero date
+        (_parse_date_iso8601, "0000-00-00", None),  # MySQL zero date, no time
+        (_parse_date_iso8601, "2026-13-01T00:00:00Z", None),  # month 13
+        (_parse_date_iso8601, "2026-00-15T00:00:00Z", None),  # month 00
+        (_parse_date_iso8601, "2026-01-00T00:00:00Z", None),  # day 00
+        (_parse_date_iso8601, "2026-01-32T00:00:00Z", None),  # day 32
+        (
+            _parse_date_iso8601,
+            "9999-12-31T23:59:59-99:99",
+            None,
+        ),  # bogus timezone offset rolls the year to 10000
+        (_parse_date_iso8601, "2003-12-31T25:14:55Z", None),  # invalid hour
+        (_parse_date_iso8601, "2003-12-31T10:61:55Z", None),  # invalid minute
+        (_parse_date_iso8601, "2003-12-31T10:14:61Z", None),  # invalid second
+        # The same inputs through the dispatcher, which tries W3DTF
+        # first and then ISO-8601: no handler may accept them.
+        (_parse_date, "0000-00-00T00:00:00Z", None),
+        (_parse_date, "2026-13-01T00:00:00Z", None),
+        (_parse_date, "9999-12-31T23:59:59-99:99", None),
         #
         # _parse_date_nate
         (_parse_date_nate, "", None),  # empty string
