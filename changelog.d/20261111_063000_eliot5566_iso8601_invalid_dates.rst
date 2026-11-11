@@ -1,0 +1,8 @@
+Fixed
+-----
+
+*   Reject structurally invalid dates in the ISO-8601 handler instead of
+    letting ``time.mktime()`` normalize them: ``0000-00-00`` no longer
+    becomes 1899-11-30, month 13 no longer rolls into the next year, and
+    out-of-range times and timezone offsets no longer produce dates
+    outside the representable range. (#612)
