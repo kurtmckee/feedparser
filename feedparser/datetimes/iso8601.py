@@ -83,6 +83,12 @@ def _parse_date_iso8601(date_string):
     if m.span() == (0, 0):
         return
     params = m.groupdict()
+    # Whether the month/day were actually present in the input, as opposed
+    # to defaulted below (partial dates like "2003-12" or "2003" have no
+    # day, and "2003-12-31" has no ordinal). Only explicitly present
+    # fields are range-checked.
+    month_given = params.get("month") is not None
+    day_given = params.get("day") is not None
     ordinal = params.get("ordinal", 0)
     if ordinal:
         ordinal = int(ordinal)
@@ -129,6 +135,23 @@ def _parse_date_iso8601(date_string):
     hour = int(params.get("hour", 0))
     minute = int(params.get("minute", 0))
     second = int(float(params.get("second", 0)))
+    # Reject structurally invalid dates instead of letting mktime()
+    # silently normalize them: month 13 rolling into the next year, the
+    # MySQL zero date 0000-00-00 becoming 1899-11-30, a 25th hour rolling
+    # into the next day, and so on. This matches the W3DTF handler,
+    # which rejects the same inputs.
+    if not 1 <= year <= 9999:
+        return None
+    if month_given and not 1 <= month <= 12:
+        return None
+    if day_given and not 1 <= day <= 31:
+        return None
+    if ordinal and not 1 <= ordinal <= 366:
+        return None
+    if not 0 <= hour <= 23:
+        return None
+    if not 0 <= minute <= 59 or not 0 <= second <= 59:
+        return None
     # weekday is normalized by mktime(), we can ignore it
     weekday = 0
     daylight_savings_flag = -1
@@ -146,6 +169,12 @@ def _parse_date_iso8601(date_string):
     # ISO 8601 time zone adjustments
     tz = params.get("tz")
     if tz and tz != "Z":
+        # A bogus offset such as -99:99 must not be applied: adjusting
+        # the hour/minute by it rolls the date into a different year.
+        if not 0 <= int(params.get("tzhour", 0)) <= 23:
+            return None
+        if not 0 <= int(params.get("tzmin", 0)) <= 59:
+            return None
         if tz[0] == "-":
             tm[3] += int(params.get("tzhour", 0))
             tm[4] += int(params.get("tzmin", 0))
@@ -157,4 +186,10 @@ def _parse_date_iso8601(date_string):
     # Python's time.mktime() is a wrapper around the ANSI C mktime(3c)
     # which is guaranteed to normalize d/m/y/h/m/s.
     # Many implementations have bugs, but we'll pretend they don't.
-    return time.localtime(time.mktime(tuple(tm)))
+    parsed = time.localtime(time.mktime(tuple(tm)))
+    # Even valid-looking fields can roll out of range once the timezone
+    # offset is applied (for example, 9999-12-31 in a far-west zone
+    # becomes year 10000, which no datetime can represent).
+    if not 1 <= parsed[0] <= 9999:
+        return None
+    return parsed
