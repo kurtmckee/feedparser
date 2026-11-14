@@ -850,9 +850,16 @@ class HTMLSanitizer(BaseHTMLProcessor):
             style,
         ):
             return ""
-        # This replaced a regexp that used re.match and was prone to
-        # pathological back-tracking.
-        if re.sub(r"\s*[-\w]+\s*:\s*[^:;]*;?", "", style).strip():
+        # Every ";"-separated piece must be a "name: value" declaration,
+        # except the last piece, which may also be whitespace. Checking
+        # pieces individually avoids the quadratic backtracking that a
+        # global re.sub() exhibits on long runs of word characters.
+        pieces = style.split(";")
+        for piece in pieces[:-1]:
+            if not re.fullmatch(r"\s*[-\w]+\s*:[^:;]*", piece):
+                return ""
+        last = pieces[-1]
+        if last.strip() and not re.fullmatch(r"\s*[-\w]+\s*:[^:;]*", last):
             return ""
 
         clean = []
