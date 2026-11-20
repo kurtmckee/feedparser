@@ -69,7 +69,16 @@ RE_XML_DECLARATION = re.compile(r"^<\?xml[^>]*?>")
 
 # Capture the value of the XML processing instruction's encoding attribute.
 # Example: <?xml version="1.0" encoding="utf-8"?>
-RE_XML_PI_ENCODING = re.compile(rb'^<\?.*encoding=[\'"](.*?)[\'"].*\?>')
+#
+# The pattern must not be able to search past the end of the processing
+# instruction. Some feeds are served as a single line, and a pattern that
+# can backtrack across the entire document may effectively never finish.
+RE_XML_PI_ENCODING = re.compile(
+    # Confirm that the document starts with a complete processing instruction,
+    rb"^(?=<\?[^>\n]*\?>)"
+    # then capture the encoding attribute's value from inside of it.
+    rb"<\?[^>\n]*encoding=[\"']([^\"'\n>]*)[\"']"
+)
 
 
 def parse_content_type(line: str) -> tuple[str, str]:

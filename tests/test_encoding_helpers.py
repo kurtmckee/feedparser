@@ -209,3 +209,24 @@ def test_convert_file_to_utf8(headers, length):
 
     actual_result.pop("bozo_exception", None)
     assert actual_result == expected_result
+
+
+def test_convert_to_utf8_single_line_document():
+    # Feeds may be served as a single line and contain many "encoding"
+    # attributes after the XML declaration (for example, KaTeX's MathML).
+    # Finding the declared encoding must not backtrack across the document.
+    data = (
+        b'<?xml version="1.0" encoding="iso-8859-1"?><rss>'
+        + b'<annotation encoding="application/x-tex">x</annotation>' * 10_000
+        + b"</rss>"
+    )
+    result = {}
+    feedparser.encodings.convert_to_utf8({}, data, result)
+    assert result["encoding"] == "iso-8859-1"
+
+
+def test_convert_to_utf8_ignores_encoding_after_xml_declaration():
+    data = b'<?xml version="1.0"?><a encoding="iso-8859-1"/><?pi?>'
+    result = {}
+    feedparser.encodings.convert_to_utf8({}, data, result)
+    assert result["encoding"] == "utf-8"
