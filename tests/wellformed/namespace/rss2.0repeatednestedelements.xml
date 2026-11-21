@@ -1,0 +1,26 @@
+<!--
+Description: repeated nested elements are not dropped from entries
+Expect:      not bozo and entries[0]['bc_name'] == ['Location name', 'Contact name']
+-->
+<rss version="2.0" xmlns:bc="http://example.com/rss">
+  <channel>
+    <title>Posts</title>
+    <description>RSS feed</description>
+    <link>https://example.com/feed</link>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 13 Jul 2018 01:15:06 +00:00</lastBuildDate>
+    <generator uri="https://www.example.com" version="1.0">Example</generator>
+      <item>
+        <title>Title</title>
+        <description><![CDATA[Some description]]></description>
+        <link>https://example.com/posts</link>
+        <guid>https://example.com/posts/123</guid>
+        <bc:location>
+          <bc:name>Location name</bc:name>
+        </bc:location>
+        <bc:contact>
+          <bc:name>Contact name</bc:name>
+        </bc:contact>
+      </item>
+  </channel>
+</rss>
