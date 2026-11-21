@@ -628,12 +628,7 @@ class XMLParserMixin(
             else:
                 if element == "description":
                     element = "summary"
-                old_value_depth = self.property_depth_map.setdefault(
-                    self.entries[-1], {}
-                ).get(element)
-                if old_value_depth is None or self.depth <= old_value_depth:
-                    self.property_depth_map[self.entries[-1]][element] = self.depth
-                    self.entries[-1][element] = output
+                self._store_or_merge(self.entries[-1], element, output)
                 if self.incontent:
                     contentparams = copy.deepcopy(self.contentparams)
                     contentparams["value"] = output
@@ -644,17 +639,42 @@ class XMLParserMixin(
             context = self._get_context()
             if element == "description":
                 element = "subtitle"
-            context[element] = output
             if element == "link":
                 # fix query variables; see above for the explanation
                 output = re.sub("&([A-Za-z0-9_]+);", r"&\g<1>", output)
                 context[element] = output
                 context["links"][-1]["href"] = output
             elif self.incontent:
+                context[element] = output
                 contentparams = copy.deepcopy(self.contentparams)
                 contentparams["value"] = output
                 context[element + "_detail"] = contentparams
+            else:
+                self._store_or_merge(context, element, output)
         return output
+
+    def _merge_duplicate_value(self, context, element, output):
+        existing = context.get(element)
+        if existing is None:
+            context[element] = output
+        elif isinstance(existing, list):
+            if output not in existing:
+                existing.append(output)
+        elif existing != output:
+            context[element] = [existing, output]
+
+    def _store_or_merge(self, context, element, output):
+        depth_map = self.property_depth_map.setdefault(context, {})
+        old_value = depth_map.get(element)
+        parent_chain = tuple(frame[0] for frame in self.elementstack)
+        if old_value is None or self.depth < old_value[0]:
+            depth_map[element] = (self.depth, parent_chain)
+            context[element] = output
+        elif self.depth == old_value[0]:
+            if parent_chain == old_value[1]:
+                context[element] = output
+            else:
+                self._merge_duplicate_value(context, element, output)
 
     def push_content(self, tag, attrs_d, default_content_type, expecting_text):
         self.incontent += 1
