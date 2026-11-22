@@ -810,7 +810,7 @@ class HTMLSanitizer(BaseHTMLProcessor):
             elif key in acceptable_attributes:
                 key = keymap.get(key, key)
                 # make sure the uri uses an acceptable uri scheme
-                if key == "href":
+                if key in ("href", "xlink:href"):
                     value = make_safe_absolute_uri(value)
                 clean_attrs.append((key, value))
         super().unknown_starttag(tag, clean_attrs)
