@@ -1,0 +1,13 @@
+<!--
+Description: iTunes channel with owner before author in document order
+Expect:      not bozo and feed['author'] == 'Example Author' and feed['publisher_detail']['name'] == 'Example Owner'
+-->
+<rss xmlns:itunes="http://www.itunes.com/DTDs/Podcast-1.0.dtd">
+<channel>
+<itunes:owner>
+<itunes:name>Example Owner</itunes:name>
+<itunes:email>owner@example.com</itunes:email>
+</itunes:owner>
+<itunes:author>Example Author</itunes:author>
+</channel>
+</rss>
