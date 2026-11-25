@@ -771,9 +771,10 @@ class XMLParserMixin(
         context = self._get_context()
         context.setdefault(prefix + "_detail", FeedParserDict())
         context[prefix + "_detail"][key] = value
-        self._sync_author_detail()
-        context.setdefault("authors", [FeedParserDict()])
-        context["authors"][-1][key] = value
+        if prefix == "author":
+            self._sync_author_detail()
+            context.setdefault("authors", [FeedParserDict()])
+            context["authors"][-1][key] = value
 
     def _save_contributor(self, key, value):
         context = self._get_context()
