@@ -13,6 +13,14 @@ CASES: list[tuple[str, bytes]] = [
         b'<?l?><d xmlns=":\xa0\xff\xa0o">',
     ),
     (
+        "prefixed element whose namespace URI contains whitespace",
+        b'<d xmlns:p=":\xa0\xff\xa0o"><p:e/></d>',
+    ),
+    (
+        "prefixed element and closing tag both with a whitespace-bearing URI",
+        b'<p:d xmlns:p="a\xa0b"><p:e>x</p:e></p:d>',
+    ),
+    (
         "XML declaration encoding containing a NUL byte",
         b'<?encoding="\x00"?>',
     ),
