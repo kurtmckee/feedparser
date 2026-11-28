@@ -187,7 +187,16 @@ def convert_to_utf8(
         xml_encoding_match = RE_XML_PI_ENCODING.match(tempdata)
 
     if xml_encoding_match:
-        xml_encoding = xml_encoding_match.groups()[0].decode("utf-8").lower()
+        # The declared encoding name is decoded as UTF-8 without any error
+        # handling. A malformed declaration can contain bytes that are not
+        # valid UTF-8, and the resulting UnicodeDecodeError would escape
+        # parse(). Ignore the declaration and fall back to sniffing instead.
+        try:
+            xml_encoding = xml_encoding_match.groups()[0].decode("utf-8").lower()
+        except UnicodeDecodeError:
+            xml_encoding_match = None
+
+    if xml_encoding_match:
         # Normalize the xml_encoding if necessary.
         if bom_encoding and (
             xml_encoding
@@ -297,7 +306,9 @@ def convert_to_utf8(
         tried_encodings.append(proposed_encoding)
         try:
             text = data.decode(proposed_encoding)
-        except (UnicodeDecodeError, LookupError):
+        except (UnicodeDecodeError, LookupError, ValueError):
+            # ValueError covers encoding names that bytes.decode() rejects
+            # outright, such as names containing a NUL character.
             continue
 
         known_encoding = True

@@ -55,7 +55,22 @@ class StrictXMLParser:
             self.decls["xmlns:" + prefix] = uri
 
     def startElementNS(self, name, qname, attrs):
-        namespace, localname = name
+        # The SAX layer builds these tuples by splitting expat's
+        # "namespace localname [prefix]" string with str.split(), which treats
+        # every Unicode whitespace character as a separator -- including
+        # U+00A0 NO-BREAK SPACE. A namespace URI containing such a character
+        # is therefore split into a longer tuple instead of the usual
+        # (namespace, localname) pair. Unpacking that with a plain assignment
+        # would raise ValueError and escape parse(), which is documented to
+        # report problems via bozo_exception.
+        #
+        # The trailing element is the local name for well-formed documents and
+        # for malformed ones without a namespace prefix. When a prefix is
+        # present *and* the URI contains whitespace, the trailing element is
+        # that prefix instead; those documents are bozo either way, and this
+        # best-effort recovery keeps the reported tag name as close to the
+        # original as the flattened tuple allows.
+        namespace, localname = name[0], name[-1]
         lowernamespace = str(namespace or "").lower()
         if lowernamespace.find("backend.userland.com/rss") != -1:
             # match any backend.userland.com namespace
@@ -112,7 +127,11 @@ class StrictXMLParser:
         self.handle_data(text)
 
     def endElementNS(self, name, qname):
-        namespace, localname = name
+        # Same shape as in startElementNS(): the SAX layer can hand back a
+        # longer tuple when the namespace URI contains whitespace. This method
+        # needs the same handling or the ValueError fires here instead, which
+        # is what happens for ``<d xmlns:p="a b"><p:e/></d>``.
+        namespace, localname = name[0], name[-1]
         lowernamespace = str(namespace or "").lower()
         if qname and qname.find(":") > 0:
             givenprefix = qname.split(":")[0]
