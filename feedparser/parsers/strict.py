@@ -56,11 +56,13 @@ class StrictXMLParser:
 
     def startElementNS(self, name, qname, attrs):
         # The SAX layer builds these tuples by splitting expat's
-        # "namespace localname [prefix]" string on whitespace, so a namespace
-        # URI that itself contains whitespace is split into a longer tuple
-        # instead of the usual (namespace, localname) pair. Unpacking that
-        # with a plain assignment would raise ValueError and escape parse(),
-        # which is documented to report problems via bozo_exception.
+        # "namespace localname [prefix]" string with str.split(), which treats
+        # every Unicode whitespace character as a separator -- including
+        # U+00A0 NO-BREAK SPACE. A namespace URI containing such a character
+        # is therefore split into a longer tuple instead of the usual
+        # (namespace, localname) pair. Unpacking that with a plain assignment
+        # would raise ValueError and escape parse(), which is documented to
+        # report problems via bozo_exception.
         #
         # The trailing element is the local name for well-formed documents and
         # for malformed ones without a namespace prefix. When a prefix is

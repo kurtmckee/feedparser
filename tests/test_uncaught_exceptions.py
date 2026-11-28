@@ -9,7 +9,7 @@ import feedparser
 # documented to use.
 CASES: list[tuple[str, bytes]] = [
     (
-        "namespace declaration that expat reports as a longer name tuple",
+        "default namespace declaration whose URI contains a non-breaking space",
         b'<?l?><d xmlns=":\xa0\xff\xa0o">',
     ),
     (
