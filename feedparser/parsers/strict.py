@@ -55,7 +55,12 @@ class StrictXMLParser:
             self.decls["xmlns:" + prefix] = uri
 
     def startElementNS(self, name, qname, attrs):
-        namespace, localname = name
+        # expat normally reports name as a two-tuple of (namespace, localname),
+        # but for some malformed namespace declarations it yields a longer
+        # tuple instead of rejecting the document outright. Unpacking it with
+        # a plain assignment would then raise ValueError and escape parse(),
+        # which is documented to report problems via bozo_exception.
+        namespace, localname = name[0], name[-1]
         lowernamespace = str(namespace or "").lower()
         if lowernamespace.find("backend.userland.com/rss") != -1:
             # match any backend.userland.com namespace
